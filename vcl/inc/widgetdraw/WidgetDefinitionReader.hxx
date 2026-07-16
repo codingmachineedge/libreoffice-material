@@ -12,6 +12,7 @@
 
 #include <vcl/dllapi.h>
 #include <widgetdraw/WidgetDefinition.hxx>
+#include <map>
 #include <memory>
 #include <rtl/ustring.hxx>
 #include <tools/XmlWalker.hxx>
@@ -23,6 +24,11 @@ class VCL_DLLPUBLIC WidgetDefinitionReader
 private:
     OUString m_rDefinitionFile;
     OUString m_rResourcePath;
+    std::map<OString, Color> m_aColorTokens;
+    bool m_bValid;
+
+    SAL_DLLPRIVATE bool readColor(OString const& rValue, Color& rColor) const;
+    SAL_DLLPRIVATE void readColorPalette(tools::XmlWalker& rWalker);
 
     SAL_DLLPRIVATE void readDefinition(tools::XmlWalker& rWalker,
                                        WidgetDefinition& rWidgetDefinition, ControlType eType);

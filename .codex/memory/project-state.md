@@ -12,12 +12,15 @@ licensing and provenance.
 
 ## Current milestone
 
-**Milestone 0 — reproducible foundation, in progress.**
+**Phase 1 — second Material VCL source milestone, in progress. Phase 0's native
+build/evidence gate remains open.**
 
-The repository contains an imported LibreOffice source baseline, an initial
-native Material source slice, design contract, roadmap, published GitHub Pages
-site, screenshot registry, and headless evidence plan. The automation harness
-has passed a Notepad-only off-screen preflight. The native slice has not been
+The repository contains an imported LibreOffice source baseline, two native
+Material source milestones, a design contract, roadmap, published GitHub Pages
+site, screenshot registry, and headless evidence plan. The second milestone
+adds semantic tokens, a strict definition reader, expanded shared-control state
+coverage, renderer corrections, and source validation. The automation harness
+has passed a Notepad-only off-screen preflight. The native source has not been
 built or run as LibreOffice, so this does not prove a whole-GUI rewrite or any
 completed application surface.
 
@@ -36,6 +39,14 @@ completed application surface.
   theme selection/cache/fallback; definition-aware support; palette reader
   coverage; Material control/menu/progress states; and Start Center
   spacing/header/surface/recent/template treatment.
+- Second Material VCL source milestone: 19 semantic light color tokens with
+  order-independent resolution; strict invalid/unknown/duplicate definition
+  rejection; 70 definition-backed parts and 172 states; expanded reader tests
+  and negative fixtures; combo/RTL, toolbar grip, region, slider, and graphics
+  cache corrections; and a standalone static source validator.
+- Local source validation passes for 19 tokens, 70 parts, 172 states, selected
+  WCAG contrast pairs, the Start Center UI linter, XML parsing, C++ formatting,
+  and whitespace. The C++ unit target remains unexecuted.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
@@ -57,14 +68,15 @@ completed application surface.
 
 ## Required next gates
 
-1. install a supported LibreOffice build environment and document a reproducible
-   native build for the fork;
+1. create a detached LF worktree, complete a supported LibreOffice build
+   profile, and document a reproducible native build for the fork;
 2. run `vcl_widget_definition_reader_test` against the local Material changes;
 3. launch the built start center with the two opt-in variables and an isolated
    profile on the proven headless desktop;
 4. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
    screenshot;
-5. verify and expand semantic Material tokens and shared VCL primitives;
+5. implement dynamic dark/high-contrast/platform color resolution and the
+   remaining non-color token families and VCL primitives;
 6. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
 
 ## Known evidence gaps
@@ -73,14 +85,18 @@ completed application surface.
 - no headless LibreOffice Material scenario is registered;
 - no screenshot is registered;
 - no application surface is verified Material-complete;
-- this host has no installed WSL distribution/configured WSL helper and lacks
-  the Windows-native LibreOffice prerequisites, so the C++ unit target and real
-  application capture have not run.
+- Build Tools 2022 is usable, but the host has no complete supported
+  LibreOffice build profile: WSL 2.7.10 has zero distributions, required
+  Unix/configuration and Java tooling is incomplete, and the active imported
+  worktree was mostly materialized with CRLF endings. The C++ unit target and
+  real application capture have not run.
 
 ## Multi-repository boundary
 
-The low-level driver is currently external to this repository. If project
-orchestration later requires several independently versioned repositories, a
-separate master repository may pin them as Git submodules. That orchestration
-decision does not convert unverified external state into evidence and must
-record exact submodule commits.
+The low-level driver is external test tooling, not another deliverable of the
+LibreOffice Material product. One product repository remains sufficient, so no
+master repository or submodule graph is currently justified. If later work
+creates several independently versioned product repositories, a separate master
+repository must pin them as Git submodules. That orchestration decision does not
+convert unverified external state into evidence and must record exact submodule
+commits.

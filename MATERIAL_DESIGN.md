@@ -6,11 +6,22 @@ implements these rules.
 
 ## Current implementation status
 
-An initial native slice now exists in the local source worktree. It packages a
-Material file-widget definition, adds safe keyed theme selection and
-definition-aware fallback in VCL, expands style-palette reader coverage, and
-begins the Start Center surface/header treatment. The definition includes
-control, menu, progress, focus, and interaction states.
+Two native source milestones now exist. They package an opt-in Material
+file-widget definition, add safe keyed theme selection and definition-aware
+fallback in VCL, begin the Start Center surface/header treatment, and implement
+a static light palette of 19 semantic roles. The reader resolves `@token`
+references independently of declaration order and rejects invalid colors,
+unknown or duplicate tokens, and unknown or duplicate control parts. The theme
+currently validates 70 definition-backed parts and 172 states, including mixed
+and disabled controls, flat buttons, selected-hover/focus tabs, toolbar
+buttons/grips, list nodes, and borderless and multiline edits.
+
+The shared renderer also contains source corrections for composite combo and
+RTL geometry, toolbar grip regions, slider sizing, definition-backed regions,
+and native line/fill cache invalidation. A standalone validator checks token
+discipline, unused roles, required control/state coverage, and selected contrast
+pairs; expanded C++ reader tests and negative fixtures are present but have not
+executed.
 
 This slice is **implemented source, not verified behavior**: it has not been
 compiled or run as LibreOffice. Once a compatible build exists, it is intended
@@ -68,6 +79,10 @@ should cover:
 Token resolution must incorporate the operating system theme, LibreOffice user
 preferences, high-contrast/forced-color requirements, display scale, and the
 active density profile. Contrast and legibility outrank brand palette matching.
+
+The current file-widget definition implements only a static light semantic
+color layer. Dynamic dark, high-contrast, forced-color, platform, density,
+typography, shape, elevation, and motion resolution remain planned.
 
 ## Component behavior
 

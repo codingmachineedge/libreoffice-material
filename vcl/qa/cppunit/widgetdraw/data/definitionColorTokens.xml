@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <style>
+        <faceColor value="@surface"/>
+    </style>
+    <pushbutton>
+        <part value="Entire">
+            <state>
+                <rect stroke="@outline" fill="@surface" stroke-width="1" rx="8" ry="8"/>
+            </state>
+        </part>
+    </pushbutton>
+    <!-- Intentionally after its uses to prove palette resolution is order-independent. -->
+    <palette>
+        <color name="surface" value="#ABCDEF"/>
+        <color name="outline" value="#123456"/>
+    </palette>
+</widgets>

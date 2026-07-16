@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <pushbutton>
+        <part value="NotAControlPart">
+            <state><rect stroke="#123456" fill="#ABCDEF" stroke-width="1"/></state>
+        </part>
+    </pushbutton>
+</widgets>

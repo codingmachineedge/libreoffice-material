@@ -135,8 +135,7 @@ button:focus-visible {
   min-height: 76px;
   margin: 0 auto;
   padding: 0.65rem 0;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  backdrop-filter: blur(18px);
+  background: var(--surface);
 }
 
 .top-app-bar::before {
@@ -145,7 +144,7 @@ button:focus-visible {
   z-index: -1;
   height: 76px;
   border-bottom: 1px solid color-mix(in srgb, var(--outline-variant) 62%, transparent);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  background: var(--surface);
   content: "";
 }
 

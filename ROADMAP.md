@@ -29,8 +29,9 @@ No phase is currently marked verified.
 
 Current evidence: the Windows harness preflight passed on 2026-07-16 using a
 temporary Notepad process, but no LibreOffice build or window was involved. The
-native build gate is blocked on this host by missing WSL distribution/helper
-setup and missing Windows-native prerequisites.
+host has usable Visual Studio Build Tools 2022, but no complete supported
+LibreOffice build profile: WSL 2.7.10 has no installed distribution/helper, and
+required Unix/configuration and Java tooling remains incomplete.
 
 Exit gate:
 
@@ -43,26 +44,36 @@ Exit gate:
 
 **Status: in progress — source only; build and runtime verification pending**
 
-Initial local slice:
+Implemented source milestones:
 
-- packaged `material/definition.xml` with Material colors and control, menu,
-  tab, surface, focus, state, and progress definitions;
+- packaged `material/definition.xml` with a 19-role static light semantic
+  palette, 70 definition-backed parts, and 172 control states;
 - opt-in `VCL_FILE_WIDGET_THEME=material` selection behind the existing
   `VCL_DRAW_WIDGETS_FROM_FILE` gate, with safe theme names, a keyed cache, and
   fallback to the `online` definition;
 - support reporting limited to definition-backed parts so unsupported parts
   preserve their existing fallback;
-- expanded reader palette mapping and Material definition assertions.
+- order-independent semantic `@token` resolution with strict rejection of
+  invalid colors, unknown or duplicate tokens, and unknown or duplicate parts;
+- expanded mixed/disabled controls, flat buttons, selected-hover/focus tabs,
+  toolbar buttons and grips, list nodes, edit variants, scrollbars, sliders,
+  menus, progress, and surfaces;
+- composite combo/RTL geometry, native-region and slider sizing corrections,
+  plus native graphics line/fill cache invalidation;
+- local static validation for token discipline, required parts/states, unused
+  tokens, and selected contrast pairs, with expanded unexecuted C++ reader tests
+  and negative fixtures.
 
-None of this slice has been compiled or executed in LibreOffice yet.
+The standalone validator passes with 19 tokens, 70 parts, and 172 states. None
+of the C++ source has been compiled or executed in LibreOffice yet.
 
-- semantic color roles with light, dark, high-contrast, and platform mappings;
+- dynamic light, dark, high-contrast, forced-color, and platform token mapping;
 - typography, spacing, shape, elevation, opacity, motion, and density tokens;
-- state layers for hover, focus, pressed, dragged, selected, and disabled states;
+- remaining dragged, read-only, invalid, and platform-specific state layers;
 - reusable focus rings and keyboard modality handling;
 - core button, icon button, checkbox, radio, switch, text field, list, tab,
   tooltip, menu, progress, and surface primitives;
-- automated token contrast and component-state coverage.
+- build-backed C++ and pixel/region regression coverage across platforms.
 
 Exit gate:
 
@@ -76,7 +87,7 @@ Exit gate:
 
 **Status: in progress — initial Start Center source only; runtime pending**
 
-The local Start Center slice adds spacing, a Home header/subtitle, distinct
+The Start Center source slice adds spacing, a Home header/subtitle, distinct
 navigation/content/container surfaces, and VCL-derived recent/template colors.
 It has not been built, displayed, or captured.
 

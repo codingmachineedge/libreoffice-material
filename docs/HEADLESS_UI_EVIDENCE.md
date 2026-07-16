@@ -41,11 +41,15 @@ capture, and clean up a test window on an off-screen Win32 desktop.
 
 ## Current LibreOffice build blocker
 
-The current host has no installed WSL distribution or configured LibreOffice
-WSL helper, and the Windows-native build prerequisites are unavailable. The
+A corrected host audit found a usable Visual Studio Build Tools 2022
+installation, but no complete supported LibreOffice build profile. WSL 2.7.10
+is enabled with zero installed distributions, the Unix/configuration and Java
+tooling is incomplete, and the active imported worktree is unsuitable for a
+configure run because most tracked files were materialized with CRLF endings.
+A fresh LF worktree and a completed build profile are required. The
 `vcl_widget_definition_reader_test` C++ target was therefore not run, no
-`soffice` binary containing the local changes was launched, and no real
-LibreOffice headless capture exists.
+`soffice` binary containing these changes was launched, and no real LibreOffice
+headless capture exists.
 
 ## Evidence principles
 

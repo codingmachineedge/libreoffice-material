@@ -1,0 +1,44 @@
+name: Validate Material UI source
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "bin/check-material-theme.py"
+      - "sfx2/uiconfig/ui/startcenter.ui"
+      - "vcl/inc/widgetdraw/**"
+      - "vcl/source/gdi/FileDefinitionWidgetDraw.cxx"
+      - "vcl/source/gdi/WidgetDefinition*.cxx"
+      - "vcl/source/outdev/nativecontrols.cxx"
+      - "vcl/qa/cppunit/widgetdraw/**"
+      - "vcl/uiconfig/theme_definitions/material/**"
+      - ".github/workflows/material-source.yml"
+  pull_request:
+    paths:
+      - "bin/check-material-theme.py"
+      - "sfx2/uiconfig/ui/startcenter.ui"
+      - "vcl/inc/widgetdraw/**"
+      - "vcl/source/gdi/FileDefinitionWidgetDraw.cxx"
+      - "vcl/source/gdi/WidgetDefinition*.cxx"
+      - "vcl/source/outdev/nativecontrols.cxx"
+      - "vcl/qa/cppunit/widgetdraw/**"
+      - "vcl/uiconfig/theme_definitions/material/**"
+      - ".github/workflows/material-source.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate semantic Material theme
+        run: python3 bin/check-material-theme.py
+
+      - name: Lint Start Center UI
+        run: python3 bin/lint-ui.py sfx2/uiconfig/ui/startcenter.ui

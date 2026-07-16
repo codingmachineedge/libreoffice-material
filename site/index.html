@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f9f7ff">
     <meta
       name="description"
-      content="LibreOffice Material is an early engineering fork with an initial native Material source slice and a suite-wide roadmap."
+      content="LibreOffice Material is an engineering fork with a second native Material VCL source milestone and a suite-wide roadmap."
     >
     <link rel="canonical" href="https://codingmachineedge.github.io/libreoffice-material/">
     <link rel="stylesheet" href="styles.css">
@@ -43,7 +43,7 @@
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Milestone 0 · native source slice</p>
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · second VCL source milestone</p>
           <h1 id="hero-title">The LibreOffice desktop, thoughtfully renewed.</h1>
           <p class="hero-lede">
             A native, suite-wide exploration of Material Design 3—built on
@@ -58,7 +58,7 @@
             >Read the design contract</a>
           </div>
           <p class="truth-note">
-            Native Material and Start Center changes now exist locally, but
+            Native Material and Start Center changes are present in source, but
             LibreOffice has not been built or run with them. The whole GUI is
             incomplete, and verified application screenshots remain at zero.
           </p>
@@ -70,7 +70,7 @@
               <p class="card-kicker">Repository readiness</p>
               <h2 id="readiness-title">What exists now</h2>
             </div>
-            <span class="milestone-badge">M0</span>
+            <span class="milestone-badge">P1</span>
           </div>
           <dl class="readiness-list">
             <div>
@@ -79,7 +79,7 @@
             </div>
             <div>
               <dt>Native source slice</dt>
-              <dd><span class="state state-progress">Coded locally</span></dd>
+              <dd><span class="state state-progress">Source checked</span></dd>
             </div>
             <div>
               <dt>Headless harness</dt>
@@ -104,7 +104,7 @@
       <section class="status-band" aria-label="Project facts">
         <div>
           <strong>Source slice</strong>
-          <span>Implemented locally · unbuilt</span>
+          <span>19 tokens · 70 parts · 172 states · unbuilt</span>
         </div>
         <div>
           <strong>Harness preflight</strong>
@@ -123,12 +123,13 @@
       <section class="section slice-section" aria-labelledby="slice-title">
         <div class="slice-heading">
           <div>
-            <p class="eyebrow">First native implementation</p>
-            <h2 id="slice-title">Shared Material plumbing is now in source.</h2>
+            <p class="eyebrow">Second Material VCL milestone</p>
+            <h2 id="slice-title">Semantic Material plumbing is now in source.</h2>
             <p>
               This is meaningful implementation progress, with a strict runtime
-              caveat: the local C++ and XML changes have not yet been compiled,
-              launched, or captured as LibreOffice.
+              caveat: the C++ and XML changes have not yet been compiled,
+              launched, or captured as LibreOffice. The earlier Start Center
+              spacing, header, and surface treatment also remains in source.
             </p>
           </div>
           <div class="slice-status" aria-label="Implementation status">
@@ -140,23 +141,23 @@
         <div class="slice-grid">
           <article>
             <span aria-hidden="true">01</span>
-            <h3>Material definition</h3>
-            <p>Packaged control, focus, menu, tab, surface, and progress states.</p>
+            <h3>Semantic definition</h3>
+            <p>19 light color roles drive 70 definition-backed parts and 172 states.</p>
           </article>
           <article>
             <span aria-hidden="true">02</span>
-            <h3>Safe VCL selection</h3>
-            <p>Restricted theme names, keyed cache, online fallback, and unsupported-part fallback.</p>
+            <h3>Strict VCL reader</h3>
+            <p>Order-independent tokens, safe selection, strict rejection, and unsupported-part fallback.</p>
           </article>
           <article>
             <span aria-hidden="true">03</span>
-            <h3>Reader coverage</h3>
-            <p>Expanded palette mapping and Material definition assertions, still unexecuted.</p>
+            <h3>Shared renderer</h3>
+            <p>Expanded states plus combo/RTL, grip, region, slider, and graphics-cache corrections.</p>
           </article>
           <article>
             <span aria-hidden="true">04</span>
-            <h3>Start Center</h3>
-            <p>New spacing, Home header, surfaces, and VCL-derived recent/template colors.</p>
+            <h3>Source checks</h3>
+            <p>Static token, state, part, and contrast checks pass; expanded C++ tests remain unexecuted.</p>
           </article>
         </div>
 
@@ -174,9 +175,10 @@
 VCL_FILE_WIDGET_THEME=material</code></pre>
         </div>
         <p class="blocker-note">
-          <strong>Current build blocker:</strong> no installed WSL distribution
-          or configured LibreOffice WSL helper, plus unavailable Windows-native
-          prerequisites. The C++ unit target and real app run remain pending.
+          <strong>Current build gate:</strong> Build Tools 2022 is usable, but no
+          complete supported profile exists. WSL 2.7.10 has zero distributions,
+          and Unix/configuration and Java tooling remains incomplete. The C++
+          unit target and real app run remain pending.
         </p>
       </section>
 
@@ -336,11 +338,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         <ol class="roadmap-list">
           <li class="roadmap-item current">
             <span class="phase-number">0</span>
-            <div><p class="phase-state">In progress</p><h3>Reproducible foundation</h3><p>Provenance, design contract, site, and a passed harness preflight; native build remains blocked.</p></div>
+            <div><p class="phase-state">In progress</p><h3>Reproducible foundation</h3><p>Provenance, design contract, site, and a passed harness preflight; the native build/evidence gate remains open.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
-            <div><p class="phase-state">Source in progress</p><h3>VCL Material primitives</h3><p>Initial definition, selection, fallback, palette mapping, and component states exist but are unbuilt.</p></div>
+            <div><p class="phase-state">Source milestone 2</p><h3>VCL Material primitives</h3><p>Semantic roles, strict parsing, expanded component states, renderer corrections, and static checks exist but are unbuilt.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">2</span>

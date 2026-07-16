@@ -42,11 +42,13 @@
 ## D-005 — publish a dependency-free static project site
 
 - Date: 2026-07-16
-- State: implemented locally; deployment unverified
+- State: deployed and verified
 - Decision: serve `site/index.html` and `site/styles.css` directly through a
   GitHub Pages Actions workflow.
 - Reason: a static artifact keeps deployment auditable, accessible, responsive,
   and independent of package registries or externally hotlinked assets.
+- Verification: Pages run `29510014215` succeeded and the public index and
+  stylesheet returned HTTP `200`.
 
 ## D-006 — retain explicit import provenance
 
@@ -55,3 +57,26 @@
 - Decision: distinguish the fork's new root import commit from the upstream
   commit even though their tree objects match.
 - Reason: tree equivalence does not preserve or recreate upstream ancestry.
+
+## D-007 — resolve semantic color roles inside the file-widget reader
+
+- Date: 2026-07-16
+- State: implemented source; build verification pending
+- Decision: let file-widget definitions declare named palette roles and use
+  `@token` references, resolve them before style/action parsing regardless of
+  declaration order, and reject malformed colors plus unknown or duplicate
+  tokens and control parts.
+- Reason: repeated literal colors make cross-suite light/dark/high-contrast
+  evolution error-prone, while silently accepting malformed definitions can
+  leave VCL callers on inconsistent partial themes.
+
+## D-008 — preserve generic fallbacks when file geometry lacks semantics
+
+- Date: 2026-07-16
+- State: active policy
+- Decision: do not claim file-widget support for controls whose current caller
+  geometry cannot preserve meaning. `LevelBar`, `ListNet`, and Frame borders
+  remain on existing fallback paths in this milestone.
+- Reason: painting a generic filled level bar would erase its threshold colors,
+  the current ListNet caller provides an empty region, and Frame requires a
+  verified inner-content contract rather than a pass-through border rectangle.

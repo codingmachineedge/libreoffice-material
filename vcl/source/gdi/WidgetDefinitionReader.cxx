@@ -13,11 +13,13 @@
 #include <frozen/unordered_map.h>
 
 #include <unordered_map>
+#include <optional>
 #include <utility>
 
 #include <widgetdraw/WidgetDefinitionReader.hxx>
 
 #include <sal/config.h>
+#include <sal/log.hxx>
 #include <osl/file.hxx>
 #include <tools/stream.hxx>
 #include <o3tl/string_view.hxx>
@@ -48,7 +50,7 @@ OString getValueOrAny(OString const& rInputString)
     return rInputString;
 }
 
-ControlPart xmlStringToControlPart(std::string_view sPart)
+std::optional<ControlPart> xmlStringToControlPart(std::string_view sPart)
 {
     if (o3tl::equalsIgnoreAsciiCase(sPart, "NONE"))
         return ControlPart::NONE;
@@ -120,7 +122,7 @@ ControlPart xmlStringToControlPart(std::string_view sPart)
         return ControlPart::Border;
     else if (o3tl::equalsIgnoreAsciiCase(sPart, "Focus"))
         return ControlPart::Focus;
-    return ControlPart::NONE;
+    return std::nullopt;
 }
 
 bool getControlTypeForXmlString(std::string_view rString, ControlType& reType)
@@ -131,6 +133,8 @@ bool getControlTypeForXmlString(std::string_view rString, ControlType& reType)
         { "checkbox", ControlType::Checkbox },
         { "combobox", ControlType::Combobox },
         { "editbox", ControlType::Editbox },
+        { "editboxnoborder", ControlType::EditboxNoBorder },
+        { "multilineeditbox", ControlType::MultilineEditbox },
         { "listbox", ControlType::Listbox },
         { "scrollbar", ControlType::Scrollbar },
         { "spinbox", ControlType::Spinbox },
@@ -167,7 +171,56 @@ bool getControlTypeForXmlString(std::string_view rString, ControlType& reType)
 WidgetDefinitionReader::WidgetDefinitionReader(OUString aDefinitionFile, OUString aResourcePath)
     : m_rDefinitionFile(std::move(aDefinitionFile))
     , m_rResourcePath(std::move(aResourcePath))
+    , m_bValid(true)
 {
+}
+
+bool WidgetDefinitionReader::readColor(OString const& rValue, Color& rColor) const
+{
+    if (!rValue.startsWith("@"))
+    {
+        if (color::createFromString(rValue, rColor))
+            return true;
+        SAL_WARN("vcl.gdi", "Invalid file-widget color value: " << rValue);
+        return false;
+    }
+
+    auto const aToken = m_aColorTokens.find(rValue.copy(1));
+    if (aToken == m_aColorTokens.end())
+    {
+        SAL_WARN("vcl.gdi", "Unknown file-widget color token: " << rValue);
+        return false;
+    }
+
+    rColor = aToken->second;
+    return true;
+}
+
+void WidgetDefinitionReader::readColorPalette(tools::XmlWalker& rWalker)
+{
+    rWalker.children();
+    while (rWalker.isValid())
+    {
+        if (rWalker.name() == "color")
+        {
+            OString const sName = rWalker.attribute("name"_ostr);
+            OString const sValue = rWalker.attribute("value"_ostr);
+            Color aColor;
+            if (sName.isEmpty() || sValue.startsWith("@")
+                || !color::createFromString(sValue, aColor))
+            {
+                SAL_WARN("vcl.gdi", "Invalid file-widget color token: " << sName);
+                m_bValid = false;
+            }
+            else if (!m_aColorTokens.emplace(sName, aColor).second)
+            {
+                SAL_WARN("vcl.gdi", "Duplicate file-widget color token: " << sName);
+                m_bValid = false;
+            }
+        }
+        rWalker.next();
+    }
+    rWalker.parent();
 }
 
 void WidgetDefinitionReader::readDrawingDefinition(
@@ -179,9 +232,11 @@ void WidgetDefinitionReader::readDrawingDefinition(
         if (rWalker.name() == "rect")
         {
             Color aStrokeColor;
-            color::createFromString(rWalker.attribute("stroke"_ostr), aStrokeColor);
+            if (!readColor(rWalker.attribute("stroke"_ostr), aStrokeColor))
+                m_bValid = false;
             Color aFillColor;
-            color::createFromString(rWalker.attribute("fill"_ostr), aFillColor);
+            if (!readColor(rWalker.attribute("fill"_ostr), aFillColor))
+                m_bValid = false;
             OString sStrokeWidth = rWalker.attribute("stroke-width"_ostr);
             sal_Int32 nStrokeWidth = -1;
             if (!sStrokeWidth.isEmpty())
@@ -215,7 +270,8 @@ void WidgetDefinitionReader::readDrawingDefinition(
         else if (rWalker.name() == "line")
         {
             Color aStrokeColor;
-            color::createFromString(rWalker.attribute("stroke"_ostr), aStrokeColor);
+            if (!readColor(rWalker.attribute("stroke"_ostr), aStrokeColor))
+                m_bValid = false;
 
             OString sStrokeWidth = rWalker.attribute("stroke-width"_ostr);
             sal_Int32 nStrokeWidth = -1;
@@ -262,7 +318,15 @@ void WidgetDefinitionReader::readDefinition(tools::XmlWalker& rWalker,
         if (rWalker.name() == "part")
         {
             OString sPart = rWalker.attribute("value"_ostr);
-            ControlPart ePart = xmlStringToControlPart(sPart);
+            auto const oPart = xmlStringToControlPart(sPart);
+            if (!oPart)
+            {
+                SAL_WARN("vcl.gdi", "Unknown file-widget control part: " << sPart);
+                m_bValid = false;
+                rWalker.next();
+                continue;
+            }
+            ControlPart const ePart = *oPart;
 
             std::shared_ptr<WidgetDefinitionPart> pPart = std::make_shared<WidgetDefinitionPart>();
 
@@ -300,7 +364,12 @@ void WidgetDefinitionReader::readDefinition(tools::XmlWalker& rWalker,
                 pPart->msOrientation = sOrientation;
             }
 
-            rWidgetDefinition.maDefinitions.emplace(ControlTypeAndPart(eType, ePart), pPart);
+            if (!rWidgetDefinition.maDefinitions.emplace(ControlTypeAndPart(eType, ePart), pPart)
+                     .second)
+            {
+                SAL_WARN("vcl.gdi", "Duplicate file-widget control part: " << sPart);
+                m_bValid = false;
+            }
             readPart(rWalker, pPart);
         }
         rWalker.next();
@@ -339,6 +408,31 @@ void WidgetDefinitionReader::readPart(tools::XmlWalker& rWalker,
 bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
 {
     if (!lcl_fileExists(m_rDefinitionFile))
+        return false;
+
+    m_aColorTokens.clear();
+    m_bValid = true;
+    rWidgetDefinition.maDefinitions.clear();
+
+    // Resolve the palette in a dedicated pass so definitions may place it
+    // anywhere under the root without making token use order-dependent.
+    {
+        SvFileStream aPaletteStream(m_rDefinitionFile, StreamMode::READ);
+        tools::XmlWalker aPaletteWalker;
+        if (!aPaletteWalker.open(&aPaletteStream) || aPaletteWalker.name() != "widgets")
+            return false;
+
+        aPaletteWalker.children();
+        while (aPaletteWalker.isValid())
+        {
+            if (aPaletteWalker.name() == "palette")
+                readColorPalette(aPaletteWalker);
+            aPaletteWalker.next();
+        }
+        aPaletteWalker.parent();
+    }
+
+    if (!m_bValid)
         return false;
 
     rWidgetDefinition.mpStyle = std::make_shared<WidgetDefinitionStyle>();
@@ -446,7 +540,11 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
     while (aWalker.isValid())
     {
         ControlType eType;
-        if (aWalker.name() == "style")
+        if (aWalker.name() == "palette")
+        {
+            // Parsed in the order-independent first pass.
+        }
+        else if (aWalker.name() == "style")
         {
             aWalker.children();
             while (aWalker.isValid())
@@ -454,13 +552,14 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
                 auto pair = aStyleColorMap.find(aWalker.name());
                 if (pair != aStyleColorMap.end())
                 {
-                    color::createFromString(aWalker.attribute("value"_ostr), *pair->second);
+                    if (!readColor(aWalker.attribute("value"_ostr), *pair->second))
+                        m_bValid = false;
                 }
                 aWalker.next();
             }
             aWalker.parent();
         }
-        if (aWalker.name() == "settings")
+        else if (aWalker.name() == "settings")
         {
             aWalker.children();
             while (aWalker.isValid())
@@ -482,7 +581,7 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
     }
     aWalker.parent();
 
-    return true;
+    return m_bValid;
 }
 
 } // end vcl namespace

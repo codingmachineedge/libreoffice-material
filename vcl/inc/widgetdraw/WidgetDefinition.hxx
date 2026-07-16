@@ -185,10 +185,10 @@ public:
 class VCL_DLLPUBLIC WidgetDefinitionPart
 {
 public:
-    sal_Int32 mnWidth;
-    sal_Int32 mnHeight;
-    sal_Int32 mnMarginWidth;
-    sal_Int32 mnMarginHeight;
+    sal_Int32 mnWidth = 0;
+    sal_Int32 mnHeight = 0;
+    sal_Int32 mnMarginWidth = 0;
+    sal_Int32 mnMarginHeight = 0;
     OString msOrientation;
 
     std::vector<std::shared_ptr<WidgetDefinitionState>> getStates(ControlType eType,

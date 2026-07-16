@@ -48,10 +48,27 @@ remains zero.
 
 ## 2026-07-16 — native verification blocker
 
-- No installed WSL distribution or configured LibreOffice WSL helper was
-  available.
-- Windows-native LibreOffice build prerequisites were unavailable.
-- `vcl_widget_definition_reader_test` and a real `soffice` capture were not run.
+The earlier blanket statement that Windows-native prerequisites were
+unavailable is superseded by this component-level audit:
+
+- Visual Studio Build Tools 2022 is complete and launchable at `C:\Program`,
+  with MSVC 19.44, MSBuild 17.14, and Windows SDKs. ATL, LLVM, and bundled CMake
+  were not present in that instance.
+- Visual Studio 2026 Enterprise contains MSVC 19.51, Clang 22.1.3, ATL, and
+  CMake, but installer state `13` is incomplete/unregistered. ATL was observed
+  for toolset 14.51, not the selected 14.52 toolset.
+- WSL 2.7.10 is enabled and running with zero installed distributions.
+- The available Git Bash environment lacks `make`, `autoconf`, `pkgconf`,
+  `flex`, `bison`, `gperf`, `nasm`, and `zip`.
+- Java, Ant, and JUnit are absent; the Docker daemon is stopped.
+- `git ls-files --eol` reported 149,218 tracked paths: 51,657 with `w/crlf`
+  and 17 with `w/mixed`; `autogen.sh` itself reported `i/lf w/crlf`. A fresh
+  detached worktree created with `core.autocrlf=false` is required before
+  configure rather than normalizing the active development worktree.
+
+Scope conclusion: usable compiler components exist, but there is no complete
+supported LibreOffice build profile. `vcl_widget_definition_reader_test` and a
+real `soffice` capture were not run.
 
 ## 2026-07-16 — local implementation source audit
 
@@ -70,6 +87,50 @@ Read-only inspection of the dirty worktree confirmed source for:
 
 Scope conclusion: implementation source exists locally. This inspection is not
 a compiler, unit-test, runtime, accessibility, or visual result.
+
+## 2026-07-16 — second Material VCL source milestone validation
+
+- `bin/check-material-theme.py` passed with 19 semantic color tokens, 70
+  definition-backed parts, and 172 states. It also checked palette-only color
+  literals, unused/unknown token references, required control parts, checkbox
+  and radio matrices, combined tab/menu/toolbar states, slider states, and
+  selected WCAG contrast pairs.
+- The validator passed Python bytecode compilation with the sibling driver's
+  isolated Python environment.
+- `bin/lint-ui.py sfx2/uiconfig/ui/startcenter.ui` exited successfully.
+- PowerShell XML parsing succeeded for the Material definition and five new
+  positive/negative reader fixtures.
+- Visual Studio Clang 22.1.3 `clang-format --dry-run --Werror` passed for the
+  modified C++ files, and `git diff --check` was clean.
+- Read-only source reviews found and prompted fixes for unreachable Frame
+  drawing, selected+focused menu items, checked+pressed toolbar buttons,
+  composite combo RTL geometry, and a one-pixel button-region mismatch. Frame,
+  `LevelBar`, and `ListNet` are intentionally left on existing fallback paths
+  pending geometry/semantic coverage.
+
+Scope conclusion: source-level validation passed. The new C++ tests and
+fixtures have not been compiled or executed, no LibreOffice binary was launched,
+and accepted native application evidence remains zero.
+
+## 2026-07-16 — second-milestone project-site refresh
+
+- Local link validation found 16 unique HTML IDs, validated 22 HTML links, and
+  validated 46 Markdown links across 12 authored Markdown files.
+- The in-app browser rendered the refreshed Phase 1 status at the default
+  desktop viewport with `clientWidth = scrollWidth = 1265` and no out-of-bounds
+  elements.
+- A temporary `390×844` viewport reported `clientWidth = scrollWidth = 375`,
+  no out-of-bounds elements, and correctly stacked the hero and implementation
+  cards. The viewport override was reset afterward.
+- Visual inspection found a sticky-header paint artifact caused by the
+  translucent backdrop treatment. Replacing it with an opaque semantic surface
+  removed the artifact on the repeated scrolled desktop/mobile capture.
+- The browser console reported no messages. Preview tabs and the run-scoped
+  local HTTP server were closed after verification.
+
+Scope conclusion: the documentation site refresh is locally render-verified.
+Temporary site captures are not LibreOffice application evidence and were not
+retained or added to the screenshot registry.
 
 ## 2026-07-16 — status-site refresh
 

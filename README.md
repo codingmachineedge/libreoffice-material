@@ -4,11 +4,12 @@ An experimental LibreOffice engineering fork exploring a suite-wide Material
 Design 3 interface while retaining LibreOffice's native implementation stack,
 document engine, file-format support, and accessibility foundations.
 
-> **Current milestone: 0 — foundation with an initial native source slice.**
-> Material widget definitions, VCL selection/fallback plumbing, reader coverage,
-> and Start Center changes now exist in the local worktree. They have **not**
-> been compiled or run as LibreOffice. The whole GUI has not been rewritten, and
-> no application surface is Material-complete.
+> **Current development focus: Phase 1 — second Material VCL source milestone.**
+> Phase 0's native-build and application-evidence gate remains open. Semantic
+> widget tokens, stricter VCL definition parsing, broader state coverage, and
+> Start Center changes are present in source, but they have **not** been compiled
+> or run as LibreOffice. The whole GUI has not been rewritten, and no application
+> surface is Material-complete.
 
 [Project site](https://codingmachineedge.github.io/libreoffice-material/) ·
 [Roadmap](ROADMAP.md) ·
@@ -22,7 +23,7 @@ document engine, file-format support, and accessibility foundations.
 | --- | --- | --- |
 | LibreOffice source baseline | Imported | This repository's initial tree matches upstream commit `63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21` |
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
-| Initial native implementation | Source present, unbuilt | Material file theme/VCL plumbing and Start Center source changes are local; build and runtime gates remain open |
+| Material VCL implementation | Second source milestone, unbuilt | The file theme, strict parser, shared renderer fixes, static validator, and Start Center source changes are present; build and runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
 | Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
 | Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
@@ -30,13 +31,15 @@ document engine, file-format support, and accessibility foundations.
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
 
-## Initial native slice
+## Material VCL source milestones
 
-The first implementation slice is intentionally opt-in and shared-layer first.
-The current local source changes include:
+The implementation is intentionally opt-in and shared-layer first. The current
+source includes:
 
-- a packaged `material/definition.xml` file-widget theme with Material palette,
-  controls, focus/state variants, menus, tabs, surfaces, and progress drawing;
+- a packaged `material/definition.xml` file-widget theme with 19 semantic light
+  color roles, 70 definition-backed parts, and 172 component states;
+- order-independent `@token` resolution and strict rejection of malformed
+  colors, unknown or duplicate tokens, and unknown or duplicate control parts;
 - selection through `VCL_FILE_WIDGET_THEME`, with a restricted safe theme name,
   a mutex-protected cache keyed by theme, and fallback to the existing `online`
   definition when a requested theme cannot load;
@@ -45,10 +48,22 @@ The current local source changes include:
   `VCL_DRAW_WIDGETS_FROM_FILE` is present;
 - definition-aware support reporting so parts absent from the selected file
   theme stay on their existing fallback path;
-- expanded `WidgetDefinitionReader` style/palette mapping and C++ assertions for
-  the Material definition;
+- expanded mixed, disabled, hover, pressed, focus, selected, flat-button,
+  toolbar, list-node, edit, scrollbar, slider, tab, menu, and progress coverage;
+- shared renderer corrections for composite combo geometry and RTL placement,
+  toolbar grips, native control regions, slider sizing, and raw graphics-state
+  invalidation;
+- a standalone source validator for semantic-token use, required parts and
+  states, unused tokens, and selected WCAG contrast pairs, plus expanded C++
+  reader tests and negative XML fixtures;
 - Start Center spacing, a Home header/subtitle, surface roles, and recent/template
   text and fill colors derived from VCL style settings.
+
+The local static validator passes with 19 semantic color tokens, 70 parts, and
+172 states. This is source validation only: the C++ test target and `soffice`
+have not run, no application surface is verified Material-complete, and the
+screenshot count remains 0. Controls whose current file-widget geometry cannot
+preserve native semantics continue through LibreOffice's existing fallback.
 
 Once a compatible LibreOffice build exists, the intended Windows opt-in is to
 set both variables before launching the built application:
@@ -132,10 +147,15 @@ cross-platform native project; consult The Document Foundation's current
 [platform build instructions](https://wiki.documentfoundation.org/Development/How_to_build)
 and the imported build files before configuring a machine.
 
-> **Current build blocker:** this host has no installed WSL distribution or
-> configured LibreOffice WSL helper, and the Windows-native LibreOffice build
-> prerequisites are not available. Consequently the C++ unit target and a real
-> application capture have not been run.
+> **Current build gate:** a corrected host audit found a usable Visual Studio
+> Build Tools 2022 installation, but no complete supported LibreOffice build
+> profile. WSL 2.7.10 has no installed distribution/helper, and required
+> Unix/configuration and Java tooling remains incomplete. No native C++ test or
+> LibreOffice application run has occurred.
+
+The imported checkout was also materialized mostly with CRLF worktree endings.
+Use a fresh detached worktree created with `core.autocrlf=false` for any native
+configure/build attempt rather than normalizing the development worktree.
 
 At the imported baseline, the upstream README records these minimum build
 baselines:

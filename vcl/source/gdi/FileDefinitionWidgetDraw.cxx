@@ -34,6 +34,7 @@
 #include <vcl/bitmap.hxx>
 #include <vcl/BitmapTools.hxx>
 #include <vcl/gradient.hxx>
+#include <toolbarvalue.hxx>
 
 #include <comphelper/seqstream.hxx>
 #include <comphelper/processfactory.hxx>
@@ -71,6 +72,37 @@ bool lcl_fileExists(OUString const& sFilename)
     return osl::FileBase::E_None == eRC;
 }
 
+struct ComboBoxPartRegions
+{
+    tools::Rectangle maButton;
+    tools::Rectangle maSubEdit;
+};
+
+ComboBoxPartRegions lcl_getComboBoxPartRegions(const tools::Rectangle& rControlRegion,
+                                               const Size& rRequestedButtonSize, bool bRtl)
+{
+    // Native-control regions use device coordinates. Keep their physical RTL
+    // placement identical to the composite drawn for ControlPart::Entire.
+    const tools::Long nControlWidth = std::max<tools::Long>(rControlRegion.GetWidth(), 0);
+    const tools::Long nControlHeight = std::max<tools::Long>(rControlRegion.GetHeight(), 0);
+    const tools::Long nButtonWidth
+        = std::clamp<tools::Long>(rRequestedButtonSize.Width(), 0, nControlWidth);
+    const tools::Long nButtonHeight
+        = std::clamp<tools::Long>(rRequestedButtonSize.Height(), 0, nControlHeight);
+    const tools::Long nButtonX
+        = bRtl ? rControlRegion.Left() : rControlRegion.Left() + nControlWidth - nButtonWidth;
+    const tools::Long nButtonY = rControlRegion.Top() + (nControlHeight - nButtonHeight) / 2;
+
+    const tools::Long nSubEditWidth = std::max<tools::Long>(nControlWidth - nButtonWidth - 1, 0);
+    const tools::Long nSubEditHeight = std::max<tools::Long>(nControlHeight - 2, 0);
+    const tools::Long nSubEditX
+        = bRtl ? rControlRegion.Left() + nButtonWidth : rControlRegion.Left() + 1;
+
+    return { tools::Rectangle(Point(nButtonX, nButtonY), Size(nButtonWidth, nButtonHeight)),
+             tools::Rectangle(Point(nSubEditX, rControlRegion.Top() + 1),
+                              Size(nSubEditWidth, nSubEditHeight)) };
+}
+
 std::shared_ptr<WidgetDefinition> getWidgetDefinition(OUString const& rDefinitionFile,
                                                       OUString const& rDefinitionResourcesPath)
 {
@@ -84,10 +116,12 @@ std::shared_ptr<WidgetDefinition> getWidgetDefinition(OUString const& rDefinitio
 bool lcl_isSafeThemeName(std::string_view rThemeName)
 {
     return !rThemeName.empty()
-           && std::all_of(rThemeName.begin(), rThemeName.end(), [](unsigned char c) {
-                  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-                         || (c >= '0' && c <= '9') || c == '-' || c == '_';
-              });
+           && std::all_of(rThemeName.begin(), rThemeName.end(),
+                          [](unsigned char c)
+                          {
+                              return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                                     || (c >= '0' && c <= '9') || c == '-' || c == '_';
+                          });
 }
 
 OUString lcl_getRequestedThemeName()
@@ -193,18 +227,22 @@ bool FileDefinitionWidgetDraw::isNativeControlSupported(ControlType eType, Contr
         && ePart == ControlPart::HasBackgroundTexture)
         return false;
 
+    // ComboBox border drawing suppresses the child drop-down button because
+    // native themes are expected to paint the composite in the Entire call.
+    if (eType == ControlType::Combobox && ePart == ControlPart::Entire)
+        return m_pWidgetDefinition->getDefinition(eType, ControlPart::Entire)
+               && m_pWidgetDefinition->getDefinition(eType, ControlPart::ButtonDown);
+
     if (eType == ControlType::Spinbox && ePart == ControlPart::AllButtons)
         return false;
 
     if (eType == ControlType::Scrollbar
-        && (ePart == ControlPart::DrawBackgroundHorz
-            || ePart == ControlPart::DrawBackgroundVert))
+        && (ePart == ControlPart::DrawBackgroundHorz || ePart == ControlPart::DrawBackgroundVert))
         return false;
 
     if (eType == ControlType::Slider)
     {
-        const bool bHasThumb
-            = bool(m_pWidgetDefinition->getDefinition(eType, ControlPart::Button));
+        const bool bHasThumb = bool(m_pWidgetDefinition->getDefinition(eType, ControlPart::Button));
         if (ePart == ControlPart::TrackHorzArea)
             return bHasThumb
                    && m_pWidgetDefinition->getDefinition(eType, ControlPart::TrackHorzLeft)
@@ -624,6 +662,24 @@ bool FileDefinitionWidgetDraw::drawNativeControl(ControlType eType, ControlPart 
         case ControlType::Combobox:
         {
             bOK = resolveDefinition(eType, ePart, eState, rValue, nX, nY, nWidth, nHeight);
+            if (bOK && ePart == ControlPart::Entire)
+            {
+                auto const pButton
+                    = m_pWidgetDefinition->getDefinition(eType, ControlPart::ButtonDown);
+                if (!pButton || pButton->mnWidth <= 0 || pButton->mnHeight <= 0)
+                {
+                    bOK = false;
+                    break;
+                }
+
+                const bool bRtl = bool(m_rGraphics.GetLayout() & SalLayoutFlags::BiDiRtl);
+                const ComboBoxPartRegions aRegions = lcl_getComboBoxPartRegions(
+                    rControlRegion, Size(pButton->mnWidth, pButton->mnHeight), bRtl);
+                bOK = resolveDefinition(eType, ControlPart::ButtonDown, eState, rValue,
+                                        aRegions.maButton.Left(), aRegions.maButton.Top(),
+                                        aRegions.maButton.GetWidth() - 1,
+                                        aRegions.maButton.GetHeight() - 1);
+            }
         }
         break;
         case ControlType::Editbox:
@@ -738,7 +794,22 @@ bool FileDefinitionWidgetDraw::drawNativeControl(ControlType eType, ControlPart 
         break;
         case ControlType::Toolbar:
         {
-            bOK = resolveDefinition(eType, ePart, eState, rValue, nX, nY, nWidth, nHeight);
+            if (ePart == ControlPart::ThumbHorz || ePart == ControlPart::ThumbVert)
+            {
+                if (rValue.getType() != ControlType::Toolbar)
+                    break;
+                auto const& rToolbarValue = static_cast<ToolbarValue const&>(rValue);
+                if (rToolbarValue.maGripRect.IsEmpty())
+                    break;
+                bOK = resolveDefinition(
+                    eType, ePart, eState, rValue, rToolbarValue.maGripRect.Left(),
+                    rToolbarValue.maGripRect.Top(), rToolbarValue.maGripRect.GetWidth() - 1,
+                    rToolbarValue.maGripRect.GetHeight() - 1);
+            }
+            else
+            {
+                bOK = resolveDefinition(eType, ePart, eState, rValue, nX, nY, nWidth, nHeight);
+            }
         }
         break;
         case ControlType::Menubar:
@@ -810,6 +881,8 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
             Size aButtonSizeDown(pButtonDownPart->mnWidth, pButtonDownPart->mnHeight);
 
             auto const pEntirePart = m_pWidgetDefinition->getDefinition(eType, ControlPart::Entire);
+            if (!pEntirePart)
+                return false;
 
             OString sOrientation = pEntirePart->msOrientation;
 
@@ -901,7 +974,8 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
                 return false;
 
             Size aSize(pPart->mnWidth, pPart->mnHeight);
-            rNativeContentRegion = tools::Rectangle(Point(), aSize);
+            rNativeContentRegion = tools::Rectangle(aLocation, aSize);
+            rNativeBoundingRegion = rNativeContentRegion;
             return true;
         }
         case ControlType::TabItem:
@@ -927,13 +1001,15 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
             sal_Int32 nHeight = rBoundingControlRegion.GetHeight();
 
             auto const pPart = m_pWidgetDefinition->getDefinition(eType, ControlPart::Entire);
-            if (pPart)
-                nHeight = std::max(nHeight, pPart->mnHeight);
+            if (!pPart)
+                return false;
+            nHeight = std::max(nHeight, pPart->mnHeight);
 
             Size aSize(rBoundingControlRegion.GetWidth(), nHeight);
             rNativeContentRegion = tools::Rectangle(aLocation, aSize);
             rNativeBoundingRegion = rNativeContentRegion;
-            rNativeBoundingRegion.expand(2);
+            if (eType != ControlType::EditboxNoBorder)
+                rNativeBoundingRegion.expand(2);
             return true;
         }
         break;
@@ -958,28 +1034,27 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
         case ControlType::Listbox:
         {
             auto const pPart = m_pWidgetDefinition->getDefinition(eType, ControlPart::ButtonDown);
-            Size aComboButtonSize(pPart->mnWidth, pPart->mnHeight);
+            if (!pPart || pPart->mnWidth <= 0 || pPart->mnHeight <= 0)
+                return false;
+            const bool bRtl = bool(m_rGraphics.GetLayout() & SalLayoutFlags::BiDiRtl);
+            const ComboBoxPartRegions aRegions = lcl_getComboBoxPartRegions(
+                rBoundingControlRegion, Size(pPart->mnWidth, pPart->mnHeight), bRtl);
 
             if (ePart == ControlPart::ButtonDown)
             {
-                Point aPoint(aLocation.X() + rBoundingControlRegion.GetWidth()
-                                 - aComboButtonSize.Width() - 1,
-                             aLocation.Y());
-                rNativeContentRegion = tools::Rectangle(aPoint, aComboButtonSize);
+                rNativeContentRegion = aRegions.maButton;
                 rNativeBoundingRegion = rNativeContentRegion;
                 return true;
             }
             else if (ePart == ControlPart::SubEdit)
             {
-                Size aSize(rBoundingControlRegion.GetWidth() - aComboButtonSize.Width(),
-                           aComboButtonSize.Height());
-                rNativeContentRegion = tools::Rectangle(aLocation + Point(1, 1), aSize);
+                rNativeContentRegion = aRegions.maSubEdit;
                 rNativeBoundingRegion = rNativeContentRegion;
                 return true;
             }
             else if (ePart == ControlPart::Entire)
             {
-                Size aSize(rBoundingControlRegion.GetWidth(), aComboButtonSize.Height());
+                Size aSize(rBoundingControlRegion.GetWidth(), pPart->mnHeight);
                 rNativeContentRegion = tools::Rectangle(aLocation, aSize);
                 rNativeBoundingRegion = rNativeContentRegion;
                 rNativeBoundingRegion.expand(2);
@@ -989,8 +1064,7 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
         break;
         case ControlType::MenuPopup:
         {
-            if (ePart == ControlPart::MenuItemCheckMark
-                || ePart == ControlPart::MenuItemRadioMark
+            if (ePart == ControlPart::MenuItemCheckMark || ePart == ControlPart::MenuItemRadioMark
                 || ePart == ControlPart::SubmenuArrow)
             {
                 auto const pPart = m_pWidgetDefinition->getDefinition(eType, ePart);
@@ -1007,7 +1081,12 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
         case ControlType::Slider:
             if (ePart == ControlPart::ThumbHorz || ePart == ControlPart::ThumbVert)
             {
-                rNativeContentRegion = tools::Rectangle(aLocation, Size(28, 28));
+                auto const pPart = m_pWidgetDefinition->getDefinition(eType, ControlPart::Button);
+                if (!pPart)
+                    return false;
+                tools::Long const nWidth = pPart->mnWidth > 0 ? pPart->mnWidth : 28;
+                tools::Long const nHeight = pPart->mnHeight > 0 ? pPart->mnHeight : 28;
+                rNativeContentRegion = tools::Rectangle(aLocation, Size(nWidth, nHeight));
                 rNativeBoundingRegion = rNativeContentRegion;
                 return true;
             }

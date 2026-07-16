@@ -288,6 +288,13 @@ bool OutputDevice::DrawNativeControl( ControlType nType,
 
     bool bRet = mpGraphics->DrawNativeControl(nType, nPart, screenRegion, nState, *aScreenCtrlValue, aCaption, *this, rBackgroundColor);
 
+    // Native backends, including file-defined widgets, may change SalGraphics'
+    // raw line and fill colors without going through OutputDevice. Reinitialize
+    // both before the next ordinary VCL drawing operation so its cached state
+    // cannot leak a widget color into unrelated content.
+    mbInitLineColor = true;
+    mbInitFillColor = true;
+
     return bRet;
 }
 

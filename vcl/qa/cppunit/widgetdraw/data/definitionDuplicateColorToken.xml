@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <palette>
+        <color name="surface" value="#ABCDEF"/>
+        <color name="surface" value="#123456"/>
+    </palette>
+    <style>
+        <faceColor value="@surface"/>
+    </style>
+</widgets>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <pushbutton>
+        <part value="Entire"><state/></part>
+        <part value="Entire"><state/></part>
+    </pushbutton>
+</widgets>

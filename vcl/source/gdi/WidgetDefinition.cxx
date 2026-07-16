@@ -66,7 +66,8 @@ WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlSta
 
         if (state->msButtonValue != "any"
             && !((state->msButtonValue == "true" && eButtonValue == ButtonValue::On)
-                 || (state->msButtonValue == "false" && eButtonValue == ButtonValue::Off)))
+                 || (state->msButtonValue == "false" && eButtonValue == ButtonValue::Off)
+                 || (state->msButtonValue == "mixed" && eButtonValue == ButtonValue::Mixed)))
         {
             bAdd = false;
         }
@@ -77,6 +78,8 @@ WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlSta
         {
             case ControlType::TabItem:
             {
+                if (rValue.getType() != ControlType::TabItem)
+                    break;
                 auto const& rTabItemValue = static_cast<TabitemValue const&>(rValue);
 
                 if (rTabItemValue.isLeftAligned() && rTabItemValue.isRightAligned()
@@ -103,9 +106,13 @@ WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlSta
             break;
             case ControlType::Pushbutton:
             {
+                if (rValue.getType() != ControlType::Pushbutton)
+                    break;
                 auto const& rPushButtonValue = static_cast<PushButtonValue const&>(rValue);
                 if (rPushButtonValue.mbIsAction)
                     sExtra = "action";
+                else if (rPushButtonValue.m_bFlatButton)
+                    sExtra = "flat";
             }
             break;
             default:

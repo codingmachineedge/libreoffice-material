@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <palette>
+        <color name="surface" value="#ABCDEF"/>
+    </palette>
+    <style>
+        <faceColor value="@missing"/>
+    </style>
+</widgets>
