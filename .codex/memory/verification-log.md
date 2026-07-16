@@ -386,3 +386,31 @@ Scope conclusion: repository-side source and static project-site checks pass
 for the fifth milestone. No affected C++ target was compiled or executed, no
 LibreOffice binary or window ran, the low-level headless driver had no fork
 binary to test, and accepted application screenshots remain **0**.
+
+## 2026-07-16 — fifth Material milestone publication
+
+- Source commit `a644ed9abb6d5112f182ff7ec6e0826b1754c89e` was pushed directly to
+  remote `main`; an authenticated `gh api` query reported the same SHA for the
+  remote branch.
+- GitHub Actions run `29524039805` (`Validate Material UI source`) completed
+  successfully. Its semantic theme validation, validator unittest, and Start
+  Center lint steps each reported `success`.
+- GitHub Pages run `29524040737` completed successfully for the same source
+  commit. The Pages API continued to report workflow deployment mode.
+- Direct requests to the published index and stylesheet returned HTTP `200`.
+  The index contained the exact fifth-milestone
+  `2 schemes · 23 color tokens · 3 type roles · 72 style slots · 74 parts ·
+  190 states · unbuilt` summary, `Source milestone 5`, and a verified-capture
+  count of `0`.
+- The clean detached LF worktree at
+  `C:\Users\Administrator\Documents\GitHub\libreoffice-material-build` was
+  moved without reset from `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba` to
+  `a644ed9abb6d5112f182ff7ec6e0826b1754c89e`. All scoped source files report
+  `w/lf`; the validator again reported 2 schemes, 23 tokens each, 3 typography
+  roles, 72 style slots, 74 parts, and 190 states; all eleven validator unittest
+  methods passed; `git diff --check` and worktree status were clean.
+
+Scope conclusion: the fifth source milestone is published, its repository-side
+CI and project site are green, and the line-ending-safe build worktree is pinned
+to the exact source commit. No C++ target or LibreOffice binary ran, and accepted
+application screenshots remain **0**.

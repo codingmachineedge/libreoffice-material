@@ -45,6 +45,8 @@ prove a whole-GUI rewrite or any completed application surface.
   `ddeec51e886f4642718eaa626ea2f48cdd9aa6a8`.
 - Fourth Material VCL source milestone commit:
   `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba`.
+- Fifth Material VCL source milestone commit:
+  `a644ed9abb6d5112f182ff7ec6e0826b1754c89e`.
 - The two commits shared tree object
   `68ccb73abac4f7da67f894f11b0802627e90b474` when verified.
 - Initial native source slice: packaged Material definition; opt-in file-widget
@@ -83,12 +85,16 @@ prove a whole-GUI rewrite or any completed application surface.
 - GitHub Actions source-validation run `29522004268` completed successfully for
   fourth-milestone commit `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba`,
   including the new validator unittest step.
+- GitHub Actions source-validation run `29524039805` completed successfully for
+  fifth-milestone commit `a644ed9abb6d5112f182ff7ec6e0826b1754c89e`;
+  semantic theme validation, all validator unittests, and Start Center lint each
+  passed.
 - A detached build worktree exists at
   `C:\Users\Administrator\Documents\GitHub\libreoffice-material-build`, pinned
-  to `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba`. `autogen.sh`, `configure.ac`,
-  the modified VCL renderer/reader/typography sources, and Material definition
-  all report `w/lf`; the validator and its seven unittest methods pass from that
-  clean worktree.
+  to `a644ed9abb6d5112f182ff7ec6e0826b1754c89e`. The modified VCL settings,
+  renderer, reader, tests, validator, and Material definition all report
+  `w/lf`; the validator and its eleven unittest methods pass from that clean
+  worktree.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
@@ -123,6 +129,10 @@ prove a whole-GUI rewrite or any completed application surface.
   `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba` successfully; the live index and
   stylesheet returned HTTP `200`, exposed 3 typography roles alongside the
   color/part/state counts, and kept the verified-capture count at `0`.
+- Pages run `29524040737` deployed fifth-milestone commit
+  `a644ed9abb6d5112f182ff7ec6e0826b1754c89e` successfully; the live index and
+  stylesheet returned HTTP `200`, exposed the exact 23-token, 72-style-slot,
+  74-part, 190-state summary, and kept the verified-capture count at `0`.
 
 ## Required next gates
 
