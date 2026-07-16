@@ -321,3 +321,30 @@ Scope conclusion: repository-side source and project-site checks pass for the
 fourth milestone. No affected C++ target was compiled or executed, no
 LibreOffice process or window ran, no native renderer behavior was observed,
 and accepted application screenshots remain **0**.
+
+## 2026-07-16 — fourth Material milestone publication
+
+- Source commit `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba` was pushed directly to
+  remote `main`; the GitHub API subsequently reported the same SHA for remote
+  `main`.
+- GitHub Actions source-validation run `29522004268` completed successfully.
+  Its semantic-theme validation, validator unittest, and Start Center lint
+  steps each reported `success`.
+- GitHub Pages run `29522004306` completed successfully for the same source
+  commit. The Pages API continued to report workflow deployment mode.
+- Direct requests to the published index and stylesheet returned HTTP `200`.
+  The index contained the exact fourth-milestone color/type/part/state summary
+  and a verified-capture count of `0`.
+- The clean detached LF worktree at
+  `C:\Users\Administrator\Documents\GitHub\libreoffice-material-build` was
+  moved without reset from `ddeec51e886f4642718eaa626ea2f48cdd9aa6a8` to
+  `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba`. Key configure, validator, Material
+  definition, reader, renderer, and typography source files report `w/lf`.
+- From that detached worktree, the validator again reported 2 schemes, 19
+  tokens each, 3 typography roles, 74 parts, and 190 states; all seven validator
+  unittest methods passed; `git diff --check` and worktree status were clean.
+
+Scope conclusion: the fourth source milestone is published, its repository-side
+CI and project site are green, and the line-ending-safe build worktree is pinned
+to the exact source commit. No C++ target or LibreOffice binary ran, and accepted
+application screenshots remain **0**.

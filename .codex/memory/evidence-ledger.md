@@ -28,7 +28,7 @@ link, gallery artifact, or accepted visual result.
 | Date | Scope | Result | Evidence effect |
 | --- | --- | --- | --- |
 | 2026-07-16 | Fork binary search | No installed, worktree, AppX, WSL, or running `soffice`/LibreOffice binary found | Runtime gate remains closed |
-| 2026-07-16 | Detached build worktree | Clean at `ddeec51e886f4642718eaa626ea2f48cdd9aa6a8`; no configure output, build directory, `instdir`, or initialized optional source submodules | Source is prepared, not built |
+| 2026-07-16 | Detached build worktree | Clean at `7c33dd2462aaa6ee168f8ff711d89026f9b0d1ba`; validator and seven unittest methods pass; no configure output, build directory, `instdir`, or initialized optional source submodules | Source is prepared, not built |
 | 2026-07-16 | Windows build profile | WSL has no distro; selectable VS 2022 lacks ATL/configured CMake; selected SDK 28000 lacks required files; other helpers remain incomplete | No supported build command was run |
 | 2026-07-16 | Low-level driver | Clean commit `806d9ba85e4afbc2af58d7499496babfa7c68891`, MCP on `127.0.0.1:8765`; no LibreOffice scenario; launch/PID/teardown limitations recorded | Driver readiness only; no UI evidence |
 
