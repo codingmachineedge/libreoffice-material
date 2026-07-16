@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <pushbutton>
+        <part value="Entire">
+            <state>
+                <rect stroke="#123456" fill="#ABCDEF" radius="8"/>
+            </state>
+        </part>
+    </pushbutton>
+    <shapes>
+        <radius name="corner-small" value="8"/>
+    </shapes>
+</widgets>

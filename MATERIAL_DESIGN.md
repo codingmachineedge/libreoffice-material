@@ -6,7 +6,7 @@ implements these rules.
 
 ## Current implementation status
 
-Five native source milestones now exist. They package an opt-in Material
+Six native source milestones now exist. They package an opt-in Material
 file-widget definition, add safe keyed theme selection and definition-aware
 fallback in VCL, begin the Start Center surface/header treatment, and implement
 matched light and dark palettes of 23 semantic roles each. The reader resolves
@@ -36,12 +36,22 @@ so an older or out-of-tree theme that omits them keeps the native values instead
 of receiving empty defaults. Material itself requires every slot and exact
 semantic mapping.
 
+The sixth milestone introduces eight semantic corner roles. A strict optional
+`shapes` section is resolved in the reader's order-independent first pass, and
+one `radius="@role"` reference populates both existing native rectangle radius
+axes. The 146 rounded Material rectangles use the exact `corner-checkbox`,
+`corner-indicator`, `corner-focus`, `corner-small`, `corner-control`,
+`corner-container`, `corner-toolbar`, and `corner-pill` roles; the 11 square
+rectangles keep their prior implicit geometry. Existing themes that use numeric
+`rx` and `ry` attributes retain that legacy path, while mixing the new and old
+forms is rejected as ambiguous.
+
 The shared renderer also contains source corrections for composite combo and
 RTL geometry, toolbar grip regions, slider sizing, definition-backed regions,
 and native line/fill cache invalidation. A standalone validator checks token
-discipline, the exact 72-slot style schema, light/dark schema parity, unused
-roles, required control/state coverage, list/selection/feedback contrast pairs,
-and native font-preservation invariants;
+discipline, the exact shape and 72-slot style schemas, light/dark schema parity,
+unused roles, required control/state coverage, list/selection/feedback contrast
+pairs, and native font-preservation invariants;
 dedicated XML-walker, reader, and headless draw C++ coverage plus negative
 fixtures are present but have not executed.
 
@@ -103,7 +113,8 @@ preferences, high-contrast/forced-color requirements, display scale, and the
 active density profile. Contrast and legibility outrank brand palette matching.
 
 The current definition contains matched light and dark semantic palettes, an
-exact 72-slot style mapping, and three native-preserving typography roles.
+exact 72-slot style mapping, three native-preserving typography roles, and eight
+semantic corner roles.
 Source selects between them from resolved dark mode; resolved high contrast
 takes precedence, restores the captured native style/framework baseline, and
 bypasses Material drawing for native or generic fallback. Controls refresh
@@ -111,8 +122,8 @@ native-focus suppression when the profile changes so generic fallback can
 retain a visible VCL focus indicator. Headless VCL maps an explicit dark
 preference because it has no operating-system appearance signal. This routing
 is unbuilt and unverified. Forced-color/platform signal completeness, density,
-line-height and letter-spacing typography, shape, elevation, and motion
-resolution remain planned.
+line-height and letter-spacing typography, density-aware/full radius behavior,
+elevation, and motion resolution remain planned.
 
 ## Component behavior
 

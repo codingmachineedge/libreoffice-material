@@ -31,6 +31,7 @@ link, gallery artifact, or accepted visual result.
 | 2026-07-16 | Detached build worktree | Clean at `a644ed9abb6d5112f182ff7ec6e0826b1754c89e`; validator and eleven unittest methods pass with 23 tokens and 72 style slots; no configure output, build directory, `instdir`, or initialized optional source submodules | Source is prepared, not built |
 | 2026-07-16 | Windows build profile | WSL has no distro; selectable VS 2022 lacks ATL/configured CMake; selected SDK 28000 lacks required files; other helpers remain incomplete | No supported build command was run |
 | 2026-07-16 | Low-level driver | Clean commit `806d9ba85e4afbc2af58d7499496babfa7c68891`, MCP on `127.0.0.1:8765`; no LibreOffice scenario; launch/PID/teardown limitations recorded | Driver readiness only; no UI evidence |
+| 2026-07-16 | Sixth-milestone source audit | Validator reports 8 exact shape roles across 146 rounded and 11 implicit-square rectangles; 16 Python tests and static source checks pass; the C++ reader/tests remain uncompiled | Source consistency only; no renderer or UI evidence |
 
 These audits are reproducibility facts, not accepted build, interaction, or
 visual runs. The verified LibreOffice Material screenshot count remains zero.

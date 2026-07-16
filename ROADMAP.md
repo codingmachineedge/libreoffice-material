@@ -68,34 +68,40 @@ Implemented source milestones:
   100–200% nonshrinking scale bounds, explicit minimum weights, and native
   font identity preservation across app, help, field, control, menu, tab, and
   title slots;
+- eight semantic corner roles with strict, order-independent native reader
+  resolution; 146 rounded Material rectangles now use one role reference each,
+  11 square rectangles remain implicit, and legacy numeric `rx`/`ry` themes
+  retain their existing path;
 - Qt proxy/no-native high-contrast signal handling and explicit dark-profile
   selection when headless VCL has no operating-system appearance signal;
 - support reporting limited to definition-backed parts so unsupported parts
   preserve their existing fallback;
-- order-independent semantic `@token` resolution with strict rejection of
-  invalid colors, invalid or duplicate palettes, mismatched palette schemas,
-  unknown or duplicate tokens, and unknown or duplicate parts;
+- order-independent semantic color and shape `@token` resolution with strict
+  rejection of invalid colors or radii, invalid or duplicate token sections,
+  mismatched palette schemas, ambiguous radius attributes, unknown references,
+  and unknown or duplicate parts;
 - expanded mixed/disabled controls, flat buttons, selected-hover/focus tabs,
   toolbar buttons and grips, list nodes, edit variants, scrollbars, sliders,
   menus, progress, surfaces, and standalone vertical/horizontal spin buttons;
 - composite combo/RTL geometry, native-region and slider sizing corrections,
   exact standalone spin geometry/direction, and native graphics line/fill cache
   invalidation;
-- local static validation for token discipline, an exact 72-slot Material style
-  schema, required parts/states, unused tokens, light/dark schema parity, and
-  selected contrast pairs, with reader and headless drawing C++ targets plus
-  negative fixtures; the headless target now includes source coverage that
-  dispatches settings through the real file renderer.
+- local static validation for color/shape token discipline, an exact 72-slot
+  Material style schema, required parts/states, unused tokens, light/dark schema
+  parity, and selected contrast pairs, with reader and headless drawing C++
+  targets plus negative fixtures; the headless target now includes source
+  coverage that dispatches settings through the real file renderer.
 
 The standalone validator passes with 2 schemes, 23 color tokens each, 3
-typography roles, 72 style slots, 74 parts, and 190 states. No affected C++
-target has been compiled or executed, and none of this source has run in
-LibreOffice yet.
+typography roles, 8 shape tokens, 72 style slots, 74 parts, and 190 states. No
+affected C++ target has been compiled or executed, and none of this source has
+run in LibreOffice yet.
 
 - build/runtime verification of light/dark, focus, and high-contrast routing,
   plus complete forced-color and platform-signal coverage;
 - remaining typography properties (line height and letter spacing), spacing,
-  shape, elevation, opacity, motion, and density tokens;
+  density-aware/full shape semantics, elevation, opacity, motion, and density
+  tokens;
 - remaining dragged, read-only, invalid, and platform-specific state layers;
 - reusable focus rings and keyboard modality handling;
 - core button, icon button, checkbox, radio, switch, text field, list, tab,

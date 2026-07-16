@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <pushbutton>
+        <part value="Entire">
+            <state>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-checkbox"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-indicator"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-focus"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-small"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-control"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-container"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-toolbar"/>
+                <rect stroke="#123456" fill="#ABCDEF" stroke-width="1" radius="@corner-pill"/>
+            </state>
+        </part>
+    </pushbutton>
+    <!-- Intentionally after its use to prove shape-token resolution is order-independent. -->
+    <shapes>
+        <radius name="corner-checkbox" value="3"/>
+        <radius name="corner-indicator" value="4"/>
+        <radius name="corner-focus" value="6"/>
+        <radius name="corner-small" value="8"/>
+        <radius name="corner-control" value="10"/>
+        <radius name="corner-container" value="12"/>
+        <radius name="corner-toolbar" value="18"/>
+        <radius name="corner-pill" value="20"/>
+    </shapes>
+</widgets>

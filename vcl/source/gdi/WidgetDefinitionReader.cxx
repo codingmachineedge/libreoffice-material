@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <initializer_list>
+#include <limits>
 #include <map>
 #include <optional>
 #include <unordered_map>
@@ -79,7 +80,7 @@ bool haveOnlyAttributes(tools::XmlWalker const& rWalker,
         const std::string_view aAttribute(rAttribute.getStr(), rAttribute.getLength());
         if (std::find(aAllowed.begin(), aAllowed.end(), aAttribute) == aAllowed.end())
         {
-            SAL_WARN("vcl.gdi", "Unsupported file-widget typography attribute: " << rAttribute);
+            SAL_WARN("vcl.gdi", "Unsupported file-widget attribute: " << rAttribute);
             return false;
         }
     }
@@ -117,7 +118,7 @@ std::optional<sal_Int32> readTypographyScale(OString const& rScale)
     return nScale;
 }
 
-bool hasTypographyRoleContent(tools::XmlWalker& rWalker)
+bool hasUnexpectedChildContent(tools::XmlWalker& rWalker)
 {
     bool bHasContent = false;
     rWalker.children();
@@ -129,6 +130,124 @@ bool hasTypographyRoleContent(tools::XmlWalker& rWalker)
     }
     rWalker.parent();
     return bHasContent;
+}
+
+bool isTokenName(OString const& rName)
+{
+    if (rName.isEmpty() || rName[0] < 'a' || rName[0] > 'z')
+        return false;
+    for (sal_Int32 i = 1; i < rName.getLength(); ++i)
+    {
+        const char c = rName[i];
+        if ((c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '-')
+            return false;
+    }
+    return true;
+}
+
+std::optional<sal_Int32> readNonNegativeInteger(OString const& rValue)
+{
+    if (rValue.isEmpty() || (rValue.getLength() > 1 && rValue[0] == '0'))
+        return std::nullopt;
+
+    sal_Int64 nValue = 0;
+    for (sal_Int32 i = 0; i < rValue.getLength(); ++i)
+    {
+        const char c = rValue[i];
+        if (c < '0' || c > '9')
+            return std::nullopt;
+        nValue = nValue * 10 + (c - '0');
+        if (nValue > std::numeric_limits<sal_Int32>::max())
+            return std::nullopt;
+    }
+    return static_cast<sal_Int32>(nValue);
+}
+
+bool readShapeTokens(tools::XmlWalker& rWalker, std::map<OString, sal_Int32>& rRadiusTokens)
+{
+    bool bValid = true;
+    if (!rWalker.attributeNames().empty())
+    {
+        SAL_WARN("vcl.gdi", "File-widget shapes section must not have attributes");
+        bValid = false;
+    }
+
+    rWalker.children();
+    while (rWalker.isValid())
+    {
+        if (!rWalker.isElement())
+        {
+            if (!rWalker.isBlank() && !rWalker.isComment())
+            {
+                SAL_WARN("vcl.gdi", "Unexpected content in file-widget shapes section");
+                bValid = false;
+            }
+            rWalker.next();
+            continue;
+        }
+        if (rWalker.name() != "radius")
+        {
+            SAL_WARN("vcl.gdi", "Unsupported file-widget shape element: " << rWalker.name());
+            bValid = false;
+            rWalker.next();
+            continue;
+        }
+
+        const auto aAttributes = rWalker.attributeNames();
+        if (aAttributes.size() != 2 || !haveOnlyAttributes(rWalker, { "name", "value" }))
+        {
+            SAL_WARN("vcl.gdi", "File-widget radius tokens require name and value");
+            bValid = false;
+        }
+
+        const OString aName = rWalker.attribute("name"_ostr);
+        const OString aValue = rWalker.attribute("value"_ostr);
+        const auto nValue = readNonNegativeInteger(aValue);
+        if (!isTokenName(aName) || !nValue)
+        {
+            SAL_WARN("vcl.gdi", "Invalid file-widget radius token: " << aName);
+            bValid = false;
+        }
+        else if (!rRadiusTokens.emplace(aName, *nValue).second)
+        {
+            SAL_WARN("vcl.gdi", "Duplicate file-widget radius token: " << aName);
+            bValid = false;
+        }
+
+        if (hasUnexpectedChildContent(rWalker))
+        {
+            SAL_WARN("vcl.gdi", "File-widget radius tokens must not have content");
+            bValid = false;
+        }
+        rWalker.next();
+    }
+    rWalker.parent();
+
+    if (rRadiusTokens.empty())
+    {
+        SAL_WARN("vcl.gdi", "Empty file-widget shapes section");
+        bValid = false;
+    }
+    return bValid;
+}
+
+bool readRadiusReference(OString const& rValue, const std::map<OString, sal_Int32>& rRadiusTokens,
+                         sal_Int32& rRadius)
+{
+    if (!rValue.startsWith("@"))
+    {
+        SAL_WARN("vcl.gdi", "File-widget radius must reference a shape token: " << rValue);
+        return false;
+    }
+
+    const auto aToken = rRadiusTokens.find(rValue.copy(1));
+    if (aToken == rRadiusTokens.end())
+    {
+        SAL_WARN("vcl.gdi", "Unknown file-widget radius token: " << rValue);
+        return false;
+    }
+    rRadius = aToken->second;
+    return true;
 }
 
 bool readTypography(tools::XmlWalker& rWalker, WidgetDefinitionTypography& rTypography)
@@ -227,7 +346,7 @@ bool readTypography(tools::XmlWalker& rWalker, WidgetDefinitionTypography& rTypo
             pRole->meWeight = *eWeight;
         }
 
-        if (hasTypographyRoleContent(rWalker))
+        if (hasUnexpectedChildContent(rWalker))
         {
             SAL_WARN("vcl.gdi", "File-widget typography roles must not have content");
             bValid = false;
@@ -445,7 +564,8 @@ bool WidgetDefinitionReader::readColorPalette(tools::XmlWalker& rWalker,
 }
 
 void WidgetDefinitionReader::readDrawingDefinition(
-    tools::XmlWalker& rWalker, const std::shared_ptr<WidgetDefinitionState>& rpState)
+    tools::XmlWalker& rWalker, const std::shared_ptr<WidgetDefinitionState>& rpState,
+    const std::map<OString, sal_Int32>& rRadiusTokens)
 {
     rWalker.children();
     while (rWalker.isValid())
@@ -464,14 +584,37 @@ void WidgetDefinitionReader::readDrawingDefinition(
                 nStrokeWidth = sStrokeWidth.toInt32();
 
             sal_Int32 nRx = -1;
-            OString sRx = rWalker.attribute("rx"_ostr);
-            if (!sRx.isEmpty())
-                nRx = sRx.toInt32();
-
             sal_Int32 nRy = -1;
-            OString sRy = rWalker.attribute("ry"_ostr);
-            if (!sRy.isEmpty())
-                nRy = sRy.toInt32();
+            const auto aAttributes = rWalker.attributeNames();
+            const bool bHasRadius = std::find(aAttributes.begin(), aAttributes.end(), "radius"_ostr)
+                                    != aAttributes.end();
+            const bool bHasRx
+                = std::find(aAttributes.begin(), aAttributes.end(), "rx"_ostr) != aAttributes.end();
+            const bool bHasRy
+                = std::find(aAttributes.begin(), aAttributes.end(), "ry"_ostr) != aAttributes.end();
+            if (bHasRadius)
+            {
+                if (bHasRx || bHasRy)
+                {
+                    SAL_WARN("vcl.gdi", "File-widget radius cannot be combined with rx or ry");
+                    m_bValid = false;
+                }
+                sal_Int32 nRadius = -1;
+                if (readRadiusReference(rWalker.attribute("radius"_ostr), rRadiusTokens, nRadius))
+                    nRx = nRy = nRadius;
+                else
+                    m_bValid = false;
+            }
+            else
+            {
+                OString sRx = rWalker.attribute("rx"_ostr);
+                if (!sRx.isEmpty())
+                    nRx = sRx.toInt32();
+
+                OString sRy = rWalker.attribute("ry"_ostr);
+                if (!sRy.isEmpty())
+                    nRy = sRy.toInt32();
+            }
 
             OString sX1 = rWalker.attribute("x1"_ostr);
             float fX1 = sX1.isEmpty() ? 0.0 : sX1.toFloat();
@@ -531,7 +674,8 @@ void WidgetDefinitionReader::readDrawingDefinition(
 }
 
 void WidgetDefinitionReader::readDefinition(tools::XmlWalker& rWalker,
-                                            WidgetDefinition& rWidgetDefinition, ControlType eType)
+                                            WidgetDefinition& rWidgetDefinition, ControlType eType,
+                                            const std::map<OString, sal_Int32>& rRadiusTokens)
 {
     rWalker.children();
     while (rWalker.isValid())
@@ -591,7 +735,7 @@ void WidgetDefinitionReader::readDefinition(tools::XmlWalker& rWalker,
                 SAL_WARN("vcl.gdi", "Duplicate file-widget control part: " << sPart);
                 m_bValid = false;
             }
-            readPart(rWalker, pPart);
+            readPart(rWalker, pPart, rRadiusTokens);
         }
         rWalker.next();
     }
@@ -599,7 +743,8 @@ void WidgetDefinitionReader::readDefinition(tools::XmlWalker& rWalker,
 }
 
 void WidgetDefinitionReader::readPart(tools::XmlWalker& rWalker,
-                                      const std::shared_ptr<WidgetDefinitionPart>& rpPart)
+                                      const std::shared_ptr<WidgetDefinitionPart>& rpPart,
+                                      const std::map<OString, sal_Int32>& rRadiusTokens)
 {
     rWalker.children();
     while (rWalker.isValid())
@@ -619,7 +764,7 @@ void WidgetDefinitionReader::readPart(tools::XmlWalker& rWalker,
                 sEnabled, sFocused, sPressed, sRollover, sDefault, sSelected, sButtonValue, sExtra);
 
             rpPart->maStates.push_back(pState);
-            readDrawingDefinition(rWalker, pState);
+            readDrawingDefinition(rWalker, pState, rRadiusTokens);
         }
         rWalker.next();
     }
@@ -636,10 +781,13 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
     rWidgetDefinition.maDefinitions.clear();
     rWidgetDefinition.mpTypography.reset();
 
-    // Resolve every palette in a dedicated pass so definitions may place them
-    // anywhere under the root without making token use order-dependent. All
-    // profiles are validated even though only one is selected for this read.
+    // Resolve every semantic token section in a dedicated pass so definitions
+    // may place them anywhere under the root without making token use
+    // order-dependent. All color profiles are validated even though only one
+    // is selected for this read.
     std::map<OString, std::map<OString, Color>> aColorPalettes;
+    std::map<OString, sal_Int32> aRadiusTokens;
+    bool bHasShapes = false;
     {
         SvFileStream aPaletteStream(m_rDefinitionFile, StreamMode::READ);
         tools::XmlWalker aPaletteWalker;
@@ -660,6 +808,20 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
                     SAL_WARN("vcl.gdi", "Duplicate file-widget color palette scheme: " << aScheme);
                     m_bValid = false;
                 }
+            }
+            else if (aPaletteWalker.name() == "shapes")
+            {
+                std::map<OString, sal_Int32> aShapeTokens;
+                if (!readShapeTokens(aPaletteWalker, aShapeTokens))
+                    m_bValid = false;
+                if (bHasShapes)
+                {
+                    SAL_WARN("vcl.gdi", "Duplicate file-widget shapes section");
+                    m_bValid = false;
+                }
+                else
+                    aRadiusTokens = std::move(aShapeTokens);
+                bHasShapes = true;
             }
             aPaletteWalker.next();
         }
@@ -820,6 +982,10 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
         {
             // Parsed in the order-independent first pass.
         }
+        else if (aWalker.name() == "shapes")
+        {
+            // Parsed in the order-independent first pass.
+        }
         else if (aWalker.name() == "style")
         {
             aWalker.children();
@@ -877,7 +1043,7 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
         }
         else if (getControlTypeForXmlString(aWalker.name(), eType))
         {
-            readDefinition(aWalker, rWidgetDefinition, eType);
+            readDefinition(aWalker, rWidgetDefinition, eType, aRadiusTokens);
         }
         aWalker.next();
     }

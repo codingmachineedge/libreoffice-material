@@ -17,6 +17,7 @@
 #include <cppunit/TestAssert.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/plugin/TestPlugIn.h>
+#include <osl/file.hxx>
 #include <unotest/bootstrapfixturebase.hxx>
 #include <vcl/font.hxx>
 #include <vcl/settings.hxx>
@@ -67,6 +68,7 @@ public:
     void testReadTypography();
     void testReadColorTokens();
     void testReadColorPalettes();
+    void testReadShapeTokens();
     void testRejectInvalidDefinitions();
     void testReadMaterialTheme();
 
@@ -76,6 +78,7 @@ public:
     CPPUNIT_TEST(testReadTypography);
     CPPUNIT_TEST(testReadColorTokens);
     CPPUNIT_TEST(testReadColorPalettes);
+    CPPUNIT_TEST(testReadShapeTokens);
     CPPUNIT_TEST(testRejectInvalidDefinitions);
     CPPUNIT_TEST(testReadMaterialTheme);
     CPPUNIT_TEST_SUITE_END();
@@ -102,6 +105,30 @@ void WidgetDefinitionReaderTest::testReadColorTokens()
         = static_cast<const vcl::WidgetDrawActionRectangle&>(*aStates[0]->mpWidgetDrawActions[0]);
     CPPUNIT_ASSERT_EQUAL(u"123456"_ustr, rRect.maStrokeColor.AsRGBHexString());
     CPPUNIT_ASSERT_EQUAL(u"abcdef"_ustr, rRect.maFillColor.AsRGBHexString());
+}
+
+void WidgetDefinitionReaderTest::testReadShapeTokens()
+{
+    vcl::WidgetDefinition aDefinition;
+    vcl::WidgetDefinitionReader aReader(getFullUrl(u"definitionShapeTokens.xml"), getFullUrl(u""));
+    CPPUNIT_ASSERT(aReader.read(aDefinition));
+
+    auto pPushButton = aDefinition.getDefinition(ControlType::Pushbutton, ControlPart::Entire);
+    CPPUNIT_ASSERT(pPushButton);
+    const auto aStates = pPushButton->getStates(ControlType::Pushbutton, ControlPart::Entire,
+                                                ControlState::ENABLED, PushButtonValue());
+    CPPUNIT_ASSERT_EQUAL(size_t(1), aStates.size());
+    constexpr std::array<sal_Int32, 8> aExpectedRadii = { 3, 4, 6, 8, 10, 12, 18, 20 };
+    CPPUNIT_ASSERT_EQUAL(aExpectedRadii.size(), aStates[0]->mpWidgetDrawActions.size());
+    for (size_t i = 0; i < aExpectedRadii.size(); ++i)
+    {
+        CPPUNIT_ASSERT_EQUAL(vcl::WidgetDrawActionType::RECTANGLE,
+                             aStates[0]->mpWidgetDrawActions[i]->maType);
+        const auto& rRect = static_cast<const vcl::WidgetDrawActionRectangle&>(
+            *aStates[0]->mpWidgetDrawActions[i]);
+        CPPUNIT_ASSERT_EQUAL(aExpectedRadii[i], rRect.mnRx);
+        CPPUNIT_ASSERT_EQUAL(aExpectedRadii[i], rRect.mnRy);
+    }
 }
 
 void WidgetDefinitionReaderTest::testReadColorPalettes()
@@ -223,6 +250,42 @@ void WidgetDefinitionReaderTest::testRejectInvalidDefinitions()
     {
         vcl::WidgetDefinition aDefinition;
         vcl::WidgetDefinitionReader aReader(getFullUrl(aFileName), getFullUrl(u""));
+        CPPUNIT_ASSERT(!aReader.read(aDefinition));
+    }
+
+    constexpr std::array<std::u16string_view, 23> aInvalidShapeDefinitions = {
+        u"definitionDuplicateShapesSection.xml",
+        u"definitionDuplicateRadiusToken.xml",
+        u"definitionEmptyShapes.xml",
+        u"definitionShapesSectionAttribute.xml",
+        u"definitionMissingRadiusName.xml",
+        u"definitionMissingRadiusValue.xml",
+        u"definitionExtraRadiusAttribute.xml",
+        u"definitionInvalidRadiusName.xml",
+        u"definitionInvalidRadiusValue.xml",
+        u"definitionLeadingZeroRadiusValue.xml",
+        u"definitionOverflowRadiusValue.xml",
+        u"definitionAliasedRadiusValue.xml",
+        u"definitionUnknownShapeElement.xml",
+        u"definitionUnknownRadiusToken.xml",
+        u"definitionEmptyRadiusReference.xml",
+        u"definitionShapesText.xml",
+        u"definitionShapesProcessingInstruction.xml",
+        u"definitionRadiusTokenText.xml",
+        u"definitionNestedRadiusToken.xml",
+        u"definitionRadiusTokenProcessingInstruction.xml",
+        u"definitionLiteralRadius.xml",
+        u"definitionRadiusWithRx.xml",
+        u"definitionRadiusWithRy.xml",
+    };
+    for (const auto aFileName : aInvalidShapeDefinitions)
+    {
+        const OUString aDefinitionUrl = getFullUrl(aFileName);
+        osl::DirectoryItem aItem;
+        CPPUNIT_ASSERT_EQUAL(osl::DirectoryItem::E_None,
+                             osl::DirectoryItem::get(aDefinitionUrl, aItem));
+        vcl::WidgetDefinition aDefinition;
+        vcl::WidgetDefinitionReader aReader(aDefinitionUrl, getFullUrl(u""));
         CPPUNIT_ASSERT(!aReader.read(aDefinition));
     }
 }
@@ -785,6 +848,10 @@ void WidgetDefinitionReaderTest::testRead()
                              aStates[0]->mpWidgetDrawActions[0]->maType);
         CPPUNIT_ASSERT_EQUAL(vcl::WidgetDrawActionType::LINE,
                              aStates[0]->mpWidgetDrawActions[1]->maType);
+        const auto& rRect = static_cast<const vcl::WidgetDrawActionRectangle&>(
+            *aStates[0]->mpWidgetDrawActions[0]);
+        CPPUNIT_ASSERT_EQUAL(sal_Int32(5), rRect.mnRx);
+        CPPUNIT_ASSERT_EQUAL(sal_Int32(5), rRect.mnRy);
     }
 
     // Radiobutton

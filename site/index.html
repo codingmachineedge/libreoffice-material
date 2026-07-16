@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f9f7ff">
     <meta
       name="description"
-      content="LibreOffice Material is an engineering fork with a fifth native Material VCL source milestone and a suite-wide roadmap."
+      content="LibreOffice Material is an engineering fork with a sixth native Material VCL source milestone and a suite-wide roadmap."
     >
     <link rel="canonical" href="https://codingmachineedge.github.io/libreoffice-material/">
     <link rel="stylesheet" href="styles.css">
@@ -43,7 +43,7 @@
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · fifth VCL source milestone</p>
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · sixth VCL source milestone</p>
           <h1 id="hero-title">The LibreOffice desktop, thoughtfully renewed.</h1>
           <p class="hero-lede">
             A native, suite-wide exploration of Material Design 3—built on
@@ -104,7 +104,7 @@
       <section class="status-band" aria-label="Project facts">
         <div>
           <strong>Source slice</strong>
-          <span>2 schemes · 23 color tokens · 3 type roles · 72 style slots · 74 parts · 190 states · unbuilt</span>
+          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 72 style slots · 74 parts · 190 states · unbuilt</span>
         </div>
         <div>
           <strong>Harness preflight</strong>
@@ -123,13 +123,14 @@
       <section class="section slice-section" aria-labelledby="slice-title">
         <div class="slice-heading">
           <div>
-            <p class="eyebrow">Fifth Material VCL milestone</p>
-            <h2 id="slice-title">Semantic Material colors now cover every native style slot.</h2>
+            <p class="eyebrow">Sixth Material VCL milestone</p>
+            <h2 id="slice-title">Named Material corners now resolve in native VCL.</h2>
             <p>
               This is meaningful implementation progress, with a strict runtime
               caveat: the C++ and XML changes have not yet been compiled,
               launched, or captured as LibreOffice. Native-preserving typography
-              and the earlier Start Center treatment also remain in source.
+              complete style-color coverage, and the earlier Start Center
+              treatment also remain in source.
             </p>
           </div>
           <div class="slice-status" aria-label="Implementation status">
@@ -146,18 +147,18 @@
           </article>
           <article>
             <span aria-hidden="true">02</span>
-            <h3>Complete style contract</h3>
-            <p>All 72 StyleSettings color slots have exact Material mappings, including list selection and warning/error feedback.</p>
+            <h3>Semantic shape contract</h3>
+            <p>Eight corner roles replace 292 duplicated radius attributes across all 146 rounded Material rectangles.</p>
           </article>
           <article>
             <span aria-hidden="true">03</span>
-            <h3>Legacy-safe renderer</h3>
-            <p>The ten new fields apply only when declared, preserving native colors for partial legacy and out-of-tree themes.</p>
+            <h3>Legacy-safe reader</h3>
+            <p>One named radius resolves to both native axes; existing numeric rx/ry definitions and square geometry stay unchanged.</p>
           </article>
           <article>
             <span aria-hidden="true">04</span>
             <h3>Source checks</h3>
-            <p>Strict style, token, type, state, part, and feedback-contrast checks pass; affected C++ targets remain unexecuted.</p>
+            <p>Strict color, shape, style, type, state, part, and feedback-contrast checks pass; affected C++ targets remain unexecuted.</p>
           </article>
         </div>
 
@@ -342,7 +343,7 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
-            <div><p class="phase-state">Source milestone 5</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, strict parsing, high-contrast fallback, expanded states, standalone spins, and static checks exist but are unbuilt.</p></div>
+            <div><p class="phase-state">Source milestone 6</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, eight semantic corner roles, strict parsing, high-contrast fallback, expanded states, standalone spins, and static checks exist but are unbuilt.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">2</span>

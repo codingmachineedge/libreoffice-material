@@ -12,10 +12,10 @@ licensing and provenance.
 
 ## Current milestone
 
-**Phase 1 — fifth Material VCL source milestone, in progress. Phase 0's native
+**Phase 1 — sixth Material VCL source milestone, in progress. Phase 0's native
 build/evidence gate remains open.**
 
-The repository contains an imported LibreOffice source baseline, five native
+The repository contains an imported LibreOffice source baseline, six native
 Material source milestones, a design contract, roadmap, published GitHub Pages
 site, screenshot registry, and headless evidence plan. The third milestone adds
 matched light/dark profiles, source-level high-contrast fallback routing,
@@ -27,6 +27,10 @@ captured native font baseline instead of replacing platform/user fonts.
 The fifth milestone closes all 72 `StyleSettings` color slots with exact
 Material mappings, including list/collection and warning/error feedback roles,
 while keeping the ten additions optional for partial legacy themes.
+The sixth milestone adds eight semantic corner roles, resolves a single named
+radius into both existing native rectangle axes, converts all 146 rounded
+Material rectangles, and preserves the 11 implicit square rectangles plus the
+legacy numeric `rx`/`ry` path.
 The native source has not been built or run as LibreOffice, so this does not
 prove a whole-GUI rewrite or any completed application surface.
 
@@ -76,10 +80,17 @@ prove a whole-GUI rewrite or any completed application surface.
   warning, and error reader fields; conditional renderer application that
   preserves omitted legacy values; and source-level real-renderer dispatch,
   idempotence, and high-contrast fallback assertions.
+- Sixth Material VCL source milestone: eight strict semantic corner roles;
+  optional order-independent `shapes` parsing; singular `radius="@token"`
+  resolution into the existing `mnRx`/`mnRy` fields; local token storage that
+  avoids exported reader-layout changes; 146 converted rounded rectangles and
+  11 unchanged implicit squares; legacy numeric radius compatibility; and 23
+  new malformed-shape reader fixtures.
 - Local source validation passes for 2 schemes, 23 color tokens each, 3
-  typography roles, 72 style slots, 74 parts, 190 states, selected WCAG
-  contrast pairs, native font source invariants, XML parsing, and whitespace.
-  The affected C++ targets remain unexecuted.
+  typography roles, 8 shape tokens, 72 style slots, 74 parts, 190 states,
+  selected WCAG contrast pairs, native font/shape source invariants, XML
+  parsing, and whitespace. All 16 Python validator unittest methods pass. The
+  affected C++ targets remain unexecuted.
 - GitHub Actions source-validation run `29517978358` completed successfully for
   third-milestone commit `ddeec51e886f4642718eaa626ea2f48cdd9aa6a8`.
 - GitHub Actions source-validation run `29522004268` completed successfully for
@@ -144,9 +155,9 @@ prove a whole-GUI rewrite or any completed application surface.
    profile on the proven headless desktop;
 4. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
    screenshot;
-5. build/runtime-verify light/dark, focus, and high-contrast routing, complete
-   forced-color/platform signal coverage, and implement the remaining non-color
-   token families and VCL primitives;
+5. build/runtime-verify light/dark, focus, shape geometry, and high-contrast
+   routing, complete forced-color/platform signal coverage, and implement the
+   remaining token families and VCL primitives;
 6. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
 
 ## Known evidence gaps

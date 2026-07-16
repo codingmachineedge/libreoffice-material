@@ -414,3 +414,46 @@ Scope conclusion: the fifth source milestone is published, its repository-side
 CI and project site are green, and the line-ending-safe build worktree is pinned
 to the exact source commit. No C++ target or LibreOffice binary ran, and accepted
 application screenshots remain **0**.
+
+## 2026-07-16 — sixth Material VCL source milestone validation
+
+- `bin/check-material-theme.py` reported
+  `Material theme OK: 2 schemes, 23 tokens each, 3 typography roles, 8 shape
+  tokens, 72 style slots, 74 parts, 190 states`.
+- All 16 Python unittest methods passed. Shape mutations cover the exact token
+  schema and values, duplicate/missing/misplaced sections and roles, attributes,
+  text, nesting, processing instructions, malformed/literal/unknown references,
+  shape/color namespace separation, legacy `rx`/`ry` rejection in Material,
+  complete token use, exact geometry counts, and section-order independence.
+- The native reader performs a first-pass parse of an optional `shapes` section
+  into invocation-local storage. A singular `radius="@token"` resolves to both
+  existing `mnRx`/`mnRy` fields; mixed singular and legacy axes fail, while the
+  radius-absent numeric branch is unchanged. No exported reader data member,
+  draw-action structure, or renderer call changed.
+- The Material definition contains exactly 8 roles and 157 rectangles: 146 use
+  one semantic radius reference, 11 remain implicit squares, and none use
+  legacy axes. Exact use counts are checkbox 12, indicator 10, focus 2, small
+  19, control 26, container 51, toolbar 8, and pill 18.
+- The reader C++ source test adds an order-independent positive fixture that
+  exercises all eight values and asserts equal resolved axes, pins the existing
+  numeric `5`/`5` behavior, and references 23 new invalid-shape fixtures. The
+  negative loop asserts each fixture exists before expecting parser rejection,
+  preventing a missing file from false-passing. All 53 unique reader fixture
+  references resolve; the Material definition plus all 53 fixture XML files
+  parse successfully.
+- Python bytecode compilation, the Start Center UI linter, all three workflow
+  YAML parses, `git diff --check`, and Visual Studio Clang 22.1.3 formatting
+  checks passed. All 38 changed source/documentation files were UTF-8 without a
+  byte-order mark and LF-only at this stage.
+- Static site integrity found 16 unique IDs, validated 22 HTML links and 38
+  local Markdown targets across 12 authored files, found balanced CSS, and
+  confirmed no image, inline SVG, or CSS URL asset. The site truthfully reports
+  source milestone 6, 8 shape tokens, an unbuilt state, and 0 verified captures.
+- Independent static inspection found no C++ signature-plumbing, walker-stack,
+  integer-overflow, legacy-compatibility, class-layout, draw-action ABI, or
+  renderer blocker after formatting and fixture additions.
+
+Scope conclusion: repository-side source and static project-site checks pass
+for the sixth milestone. No affected C++ target was compiled or executed, no
+LibreOffice binary or window ran, the low-level headless driver still has no
+fork binary to test, and accepted application screenshots remain **0**.

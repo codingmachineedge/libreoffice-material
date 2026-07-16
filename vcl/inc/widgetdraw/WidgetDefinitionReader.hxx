@@ -34,14 +34,16 @@ private:
                                          std::map<OString, Color>& rColorTokens) const;
 
     SAL_DLLPRIVATE void readDefinition(tools::XmlWalker& rWalker,
-                                       WidgetDefinition& rWidgetDefinition, ControlType eType);
+                                       WidgetDefinition& rWidgetDefinition, ControlType eType,
+                                       const std::map<OString, sal_Int32>& rRadiusTokens);
 
     SAL_DLLPRIVATE void readPart(tools::XmlWalker& rWalker,
-                                 const std::shared_ptr<WidgetDefinitionPart>& rpPart);
+                                 const std::shared_ptr<WidgetDefinitionPart>& rpPart,
+                                 const std::map<OString, sal_Int32>& rRadiusTokens);
 
-    SAL_DLLPRIVATE void
-    readDrawingDefinition(tools::XmlWalker& rWalker,
-                          const std::shared_ptr<WidgetDefinitionState>& rStates);
+    SAL_DLLPRIVATE void readDrawingDefinition(tools::XmlWalker& rWalker,
+                                              const std::shared_ptr<WidgetDefinitionState>& rStates,
+                                              const std::map<OString, sal_Int32>& rRadiusTokens);
 
 public:
     WidgetDefinitionReader(OUString aDefinitionFile, OUString aResourcePath,

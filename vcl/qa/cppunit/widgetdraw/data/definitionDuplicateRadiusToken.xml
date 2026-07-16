@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+    <shapes>
+        <radius name="corner-small" value="8"/>
+        <radius name="corner-small" value="12"/>
+    </shapes>
+</widgets>

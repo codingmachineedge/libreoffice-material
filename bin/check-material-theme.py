@@ -5,7 +5,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-"""Validate the semantic palette and required VCL Material widget coverage."""
+"""Validate semantic tokens and required VCL Material widget coverage."""
 
 from __future__ import annotations
 
@@ -20,12 +20,23 @@ from pathlib import Path
 TOKEN_NAME = re.compile(r"^[a-z][a-z0-9-]*$")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 TOKEN_REFERENCE = re.compile(r"^@([a-z][a-z0-9-]*)$")
+RADIUS_VALUE = re.compile(r"^(?:0|[1-9][0-9]*)$")
 REQUIRED_SCHEMES = {"light", "dark"}
 ALLOWED_TYPOGRAPHY_WEIGHTS = {"preserve", "normal", "medium", "semibold", "bold"}
 REQUIRED_TYPOGRAPHY = {
     "body": (100, "preserve"),
     "label": (100, "medium"),
     "title": (120, "semibold"),
+}
+REQUIRED_SHAPES = {
+    "corner-checkbox": 3,
+    "corner-indicator": 4,
+    "corner-focus": 6,
+    "corner-small": 8,
+    "corner-control": 10,
+    "corner-container": 12,
+    "corner-toolbar": 18,
+    "corner-pill": 20,
 }
 
 REQUIRED_FEEDBACK_COLORS = {
@@ -417,6 +428,72 @@ def read_typography(root: ET.Element) -> dict[str, tuple[int, str]]:
     return roles
 
 
+def read_shapes(root: ET.Element) -> dict[str, int]:
+    sections = root.findall("shapes")
+    if len(sections) != 1:
+        fail(f"expected exactly one <shapes> section, found {len(sections)}")
+    shapes = sections[0]
+    if shapes.attrib:
+        fail("shapes section must not have attributes")
+    if (shapes.text or "").strip():
+        fail("shapes section must not contain text")
+
+    radii: dict[str, int] = {}
+    for element in shapes:
+        if not isinstance(element.tag, str):
+            fail("shapes section must not contain processing instructions")
+        if element.tag != "radius":
+            fail(f"shapes has unknown element <{element.tag}>")
+        if list(element) or (element.text or "").strip():
+            fail(
+                f"shape radius {element.get('name', '')!r} must not have content"
+            )
+        if (element.tail or "").strip():
+            fail("shapes section must not contain text")
+
+        unknown_attributes = sorted(set(element.attrib) - {"name", "value"})
+        if unknown_attributes:
+            fail(
+                "shape radius has unknown attributes: "
+                + ", ".join(unknown_attributes)
+            )
+        if set(element.attrib) != {"name", "value"}:
+            fail("shape radii require exactly name and value attributes")
+
+        name = element.get("name", "")
+        if not TOKEN_NAME.fullmatch(name):
+            fail(f"invalid shape token name {name!r}")
+        if name not in REQUIRED_SHAPES:
+            fail(f"unknown shape token {name!r}")
+        if name in radii:
+            fail(f"duplicate shape token {name!r}")
+
+        value_text = element.get("value", "")
+        if not RADIUS_VALUE.fullmatch(value_text):
+            fail(f"invalid shape radius {value_text!r} for {name!r}")
+        value = int(value_text)
+        if not 0 <= value <= 64:
+            fail(f"shape radius for {name!r} must be between 0 and 64")
+        expected = REQUIRED_SHAPES[name]
+        if value != expected:
+            fail(f"shape token {name!r} must be radius {expected}, found {value}")
+        radii[name] = value
+
+    missing = sorted(REQUIRED_SHAPES.keys() - radii.keys())
+    if missing:
+        fail(f"missing shape tokens: {', '.join(missing)}")
+
+    shape_elements = set(shapes.iter())
+    for element in root.iter():
+        if (
+            isinstance(element.tag, str)
+            and element.tag in {"shapes", "radius"}
+            and element not in shape_elements
+        ):
+            fail(f"<{element.tag}> must appear only in the root <shapes> section")
+    return radii
+
+
 def read_style(root: ET.Element, token_names: set[str]) -> dict[str, str]:
     sections = root.findall("style")
     if len(sections) != 1:
@@ -515,7 +592,24 @@ def validate_native_style_source(paths: tuple[Path, ...]) -> None:
             fail(f"native style source is missing pattern {pattern!r}")
 
 
-def validate(path: Path) -> tuple[int, int, int, int, int, int]:
+def validate_native_shape_source(paths: tuple[Path, ...]) -> None:
+    source = "\n".join(path.read_text(encoding="utf-8") for path in paths)
+    source = re.sub(r"//[^\n]*|/\*.*?\*/", "", source, flags=re.DOTALL)
+    required = (
+        r"bool\s+readShapeTokens\s*\(",
+        r"bool\s+readRadiusReference\s*\(",
+        r'aPaletteWalker\.name\(\)\s*==\s*"shapes"',
+        r'rWalker\.attribute\(\s*"radius"_ostr\s*\)',
+        r"if\s*\(\s*bHasRx\s*\|\|\s*bHasRy\s*\)",
+        r"nRx\s*=\s*nRy\s*=\s*nRadius",
+        r"readDefinition\s*\([^;]*aRadiusTokens\s*\)",
+    )
+    for pattern in required:
+        if re.search(pattern, source) is None:
+            fail(f"native shape source is missing pattern {pattern!r}")
+
+
+def validate(path: Path) -> tuple[int, int, int, int, int, int, int]:
     parser = ET.XMLParser(target=ET.TreeBuilder(insert_pis=True))
     root = ET.parse(path, parser=parser).getroot()
     if root.tag != "widgets":
@@ -524,6 +618,7 @@ def validate(path: Path) -> tuple[int, int, int, int, int, int]:
     palettes, palette_elements = read_palettes(root)
     token_names = set(palettes["light"])
     typography = read_typography(root)
+    shapes = read_shapes(root)
 
     settings_sections = root.findall("settings")
     if len(settings_sections) != 1:
@@ -538,7 +633,23 @@ def validate(path: Path) -> tuple[int, int, int, int, int, int]:
     if any(not isinstance(element.tag, str) for element in root.iter()):
         fail("Material definition must not contain processing instructions")
 
+    shape_references: set[str] = set()
     for element in root.iter():
+        if "rx" in element.attrib or "ry" in element.attrib:
+            fail(f"{element.tag} must not use legacy rx or ry in Material definition")
+
+        radius = element.get("radius")
+        if radius is not None:
+            if element.tag != "rect":
+                fail(f"{element.tag}/@radius is only valid on <rect>")
+            match = TOKEN_REFERENCE.fullmatch(radius)
+            if match is None:
+                fail("rect/@radius must reference a shape token")
+            name = match.group(1)
+            if name not in shapes:
+                fail(f"rect/@radius references unknown shape token {name!r}")
+            shape_references.add(name)
+
         if element in palette_elements:
             continue
         for attribute in ("stroke", "fill"):
@@ -556,6 +667,9 @@ def validate(path: Path) -> tuple[int, int, int, int, int, int]:
     unused = sorted(token_names - references)
     if unused:
         fail(f"unused semantic tokens: {', '.join(unused)}")
+    unused_shapes = sorted(shapes.keys() - shape_references)
+    if unused_shapes:
+        fail(f"unused shape tokens: {', '.join(unused_shapes)}")
 
     for control_name, required_parts in REQUIRED_PARTS.items():
         control = root.find(control_name)
@@ -658,12 +772,13 @@ def validate(path: Path) -> tuple[int, int, int, int, int, int]:
             )
 
     part_count = sum(len(control.findall("part")) for control in root
-                     if control.tag not in {"palette", "style", "settings", "typography"})
+                     if control.tag not in {"palette", "shapes", "style", "settings", "typography"})
     state_count = sum(1 for _ in root.iter("state"))
     return (
         len(palettes),
         len(token_names),
         len(typography),
+        len(shapes),
         len(style_references),
         part_count,
         state_count,
@@ -695,6 +810,7 @@ def main() -> int:
             scheme_count,
             token_count,
             typography_count,
+            shape_count,
             style_count,
             part_count,
             state_count,
@@ -711,12 +827,19 @@ def main() -> int:
                 / "vcl/qa/cppunit/widgetdraw/FileDefinitionWidgetDrawTest.cxx",
             )
         )
+        validate_native_shape_source(
+            (
+                repository / "vcl/inc/widgetdraw/WidgetDefinitionReader.hxx",
+                repository / "vcl/source/gdi/WidgetDefinitionReader.cxx",
+            )
+        )
     except (ET.ParseError, OSError, ValidationError) as error:
         print(f"{args.definition}: {error}", file=sys.stderr)
         return 1
     print(
         f"Material theme OK: {scheme_count} schemes, {token_count} tokens each, "
-        f"{typography_count} typography roles, {style_count} style slots, "
+        f"{typography_count} typography roles, {shape_count} shape tokens, "
+        f"{style_count} style slots, "
         f"{part_count} parts, {state_count} states"
     )
     return 0

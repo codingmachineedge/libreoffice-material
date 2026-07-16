@@ -158,3 +158,20 @@
 - Reason: unthemed collection and feedback colors make a light/dark Material
   profile visibly incoherent, but unconditionally applying default-constructed
   values would regress older definitions such as the partial iOS theme.
+
+## D-015 — resolve semantic corners without changing rectangle ABI
+
+- Date: 2026-07-16
+- State: implemented source; build verification pending
+- Decision: define eight used, nonzero semantic corner roles in an optional
+  root `shapes` section, resolve that section before drawing definitions, and
+  let one `radius="@token"` reference populate both existing `mnRx` and `mnRy`
+  fields. Keep the token map local to one reader invocation, reject mixed
+  singular/legacy radius attributes, leave square rectangles attribute-free,
+  and preserve the prior numeric `rx`/`ry` path for legacy and out-of-tree
+  themes.
+- Reason: 146 Material rectangles repeated 292 equal-axis radius attributes.
+  Central roles remove that drift without growing the exported reader object or
+  changing the draw-action/renderer ABI. A synthetic zero token would alter the
+  existing implicit-square `-1` path, and strict parsing of old numeric values
+  would create an unrelated compatibility break.
