@@ -167,3 +167,32 @@ retained or added to the screenshot registry.
 Scope conclusion: the documentation/status site is publicly deployed. This
 does not change the native application evidence count, which remains zero until
 a fork build and LibreOffice headless scenario pass the evidence contract.
+
+## 2026-07-16 — second Material milestone publication
+
+- Commit `c4414aa3919642ebb1079427b5ce27ce77049901` was pushed directly to remote
+  `main`.
+- GitHub Actions run `29513175997` (`Validate Material UI source`) completed
+  with conclusion `success` for that commit.
+- GitHub Actions run `29513175965` (`Deploy project site to GitHub Pages`)
+  completed with conclusion `success` for that commit.
+- Direct requests to the published index and stylesheet returned HTTP `200`.
+  The index contained the Phase 1 second-milestone label and the 19-token,
+  70-part, 172-state summary; the stylesheet contained the opaque header fix
+  and no `backdrop-filter` rule.
+
+## 2026-07-16 — detached LF build worktree preparation
+
+- Created
+  `C:\Users\Administrator\Documents\GitHub\libreoffice-material-build` with
+  `git -c core.autocrlf=false worktree add --detach` at source commit
+  `c4414aa3919642ebb1079427b5ce27ce77049901`.
+- The detached worktree was clean. `git ls-files --eol` reported `w/lf` for
+  `autogen.sh`, `configure.ac`, `vcl/source/gdi/FileDefinitionWidgetDraw.cxx`,
+  and the Material definition.
+- `bin/check-material-theme.py` passed from the detached worktree with 19
+  tokens, 70 parts, and 172 states.
+
+Scope conclusion: the source is now prepared in a line-ending-safe worktree for
+a native configure/build attempt. No toolchain was installed, no C++ target was
+run, and no LibreOffice application evidence was created.

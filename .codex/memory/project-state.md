@@ -33,6 +33,8 @@ completed application surface.
 - Fork import commit: `44d393283e776c7e099763496c57b02ae509cd15`.
 - Initial Material implementation commit:
   `46807f76f9a744fe61732e90f6085cc82eef16f5`.
+- Second Material VCL source milestone commit:
+  `c4414aa3919642ebb1079427b5ce27ce77049901`.
 - The two commits shared tree object
   `68ccb73abac4f7da67f894f11b0802627e90b474` when verified.
 - Initial native source slice: packaged Material definition; opt-in file-widget
@@ -47,6 +49,13 @@ completed application surface.
 - Local source validation passes for 19 tokens, 70 parts, 172 states, selected
   WCAG contrast pairs, the Start Center UI linter, XML parsing, C++ formatting,
   and whitespace. The C++ unit target remains unexecuted.
+- GitHub Actions source-validation run `29513175997` completed successfully for
+  second-milestone commit `c4414aa3919642ebb1079427b5ce27ce77049901`.
+- A detached build worktree exists at
+  `C:\Users\Administrator\Documents\GitHub\libreoffice-material-build`, pinned
+  to `c4414aa3919642ebb1079427b5ce27ce77049901`. `autogen.sh`, `configure.ac`,
+  the modified VCL renderer, and the Material definition all report `w/lf`; the
+  theme validator passes from that clean worktree.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
@@ -65,11 +74,14 @@ completed application surface.
 - Pages uses GitHub Actions workflow mode. Run `29510014215` deployed commit
   `46807f76f9a744fe61732e90f6085cc82eef16f5` successfully on 2026-07-16;
   follow-up endpoint checks returned HTTP `200` for both `/` and `styles.css`.
+- Pages run `29513175965` deployed second-milestone commit
+  `c4414aa3919642ebb1079427b5ce27ce77049901` successfully; the live index and
+  stylesheet returned HTTP `200` and exposed the refreshed milestone/counts.
 
 ## Required next gates
 
-1. create a detached LF worktree, complete a supported LibreOffice build
-   profile, and document a reproducible native build for the fork;
+1. complete a supported LibreOffice build profile and document a reproducible
+   native build from the prepared detached LF worktree;
 2. run `vcl_widget_definition_reader_test` against the local Material changes;
 3. launch the built start center with the two opt-in variables and an isolated
    profile on the proven headless desktop;
