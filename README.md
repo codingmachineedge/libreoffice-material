@@ -16,7 +16,11 @@ document engine, file-format support, and accessibility foundations.
 > [design reference](https://codingmachineedge.github.io/libreoffice-material/prototype.html)
 > (a mockup, not the app). To run the actual editor, install upstream LibreOffice
 > from [libreoffice.org](https://www.libreoffice.org/download/), which does not
-> include these Material changes.
+> include these Material changes. An automated pipeline
+> ([`build-installer.yml`](.github/workflows/build-installer.yml)) attempts a
+> from-source build on each source push and manual dispatch and would publish a
+> release **only** if a build actually produces installer artifacts — so the
+> absence of releases faithfully reflects that no build has yet succeeded.
 
 [Project site](https://codingmachineedge.github.io/libreoffice-material/) ·
 [Interactive preview](https://codingmachineedge.github.io/libreoffice-material/prototype.html) ·
