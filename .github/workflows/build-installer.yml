@@ -7,12 +7,11 @@
 # a failed or artifact-less build produces NO release.
 #
 # A complete LibreOffice build is enormous — many hours of CPU and tens of GB of
-# disk and downloads. GitHub-hosted runners (ubuntu-latest, ~14 GB usable disk)
-# are almost certainly too small, so these runs are EXPECTED to fail at the
-# configure/make/disk stage until this is pointed at adequate infrastructure
-# (a self-hosted or large runner). No successful build or installer has been
-# produced by this project yet; the verified-capture count remains 0. This
-# pipeline is the path that WOULD publish an installer once a build succeeds.
+# disk and downloads. The pinned hosted runner may still hit its time or resource
+# limits, but dependency, configure, focused C++ test, build, and package errors
+# are treated as real failures and their diagnostics are preserved. No successful
+# build or installer has been produced by this project yet; the verified-capture
+# count remains 0. This pipeline publishes only packages from a successful build.
 
 name: Build installer and publish release
 
@@ -42,12 +41,12 @@ concurrency:
 
 jobs:
   build-linux-installer:
-    name: Linux build + package (best effort)
-    runs-on: ubuntu-latest
+    name: Linux focused tests + build + package
+    runs-on: ubuntu-24.04
     timeout-minutes: 350
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Free disk space
         run: |
@@ -60,21 +59,34 @@ jobs:
 
       - name: Install build dependencies
         run: |
+          test -f /etc/apt/sources.list.d/ubuntu.sources
+          sudo sed -Ei \
+            's/^Types:[[:space:]]*deb$/Types: deb deb-src/' \
+            /etc/apt/sources.list.d/ubuntu.sources
+          grep -Eq '^Types:.*deb-src' /etc/apt/sources.list.d/ubuntu.sources
           sudo apt-get update
-          # Pull LibreOffice's declared build-deps where available, plus core tooling.
-          sudo apt-get build-dep -y libreoffice || true
+          sudo apt-get build-dep -y libreoffice
           sudo apt-get install -y --no-install-recommends \
-            build-essential ccache zip nasm autoconf gperf \
-            libxrandr-dev libxinerama-dev libcups2-dev libfontconfig1-dev \
-            libxslt1-dev libxml2-dev flex bison python3-dev || true
+            ccache fakeroot libarchive-zip-perl
+
+      - name: Validate build prerequisites
+        run: |
+          for tool in \
+            gcc g++ make gawk autoconf pkg-config bison flex gperf nasm \
+            ccache perl python3 zip unzip xsltproc fakeroot dpkg dpkg-deb; do
+            command -v "$tool"
+          done
+          perl -MArchive::Zip -e 1
+          python3 -c 'import sys; assert sys.version_info >= (3, 11)'
+          test "$(gcc -dumpfullversion | cut -d. -f1)" -ge 13
 
       - name: Configure ccache
         run: |
-          ccache --max-size=5G || true
+          ccache --max-size=5G
           echo "CCACHE_DIR=$HOME/.ccache" >> "$GITHUB_ENV"
 
       - name: Restore ccache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v6
         with:
           path: ~/.ccache
           key: lo-ccache-${{ runner.os }}-${{ github.sha }}
@@ -85,36 +97,59 @@ jobs:
         run: |
           ./autogen.sh \
             --enable-release-build \
+            --enable-epm \
             --disable-online-update \
             --without-java \
+            --without-dotnet \
             --without-help \
             --without-helppack-integration \
             --without-myspell-dicts \
             --without-doxygen \
-            --disable-odk
+            --disable-odk \
+            --with-epm=internal \
+            --with-package-format=deb
 
-      - name: Build
+      - name: Run required native C++ tests
         run: |
-          make -j"$(nproc)" build-nocheck
+          make -j"$(nproc)" \
+            CppunitTest_tools_test \
+            CppunitTest_vcl_widget_definition_reader_test \
+            CppunitTest_vcl_file_definition_widget_draw_test
 
-      - name: Package installer set
-        run: make distro-pack-install || true
+      - name: Build application and Debian installation set
+        run: make -j"$(nproc)" build
+
+      - name: Materialize Debian packages
+        run: make -j"$(nproc)" CustomTarget_instsetoo_native/install
 
       - name: Stage installer artifacts
         id: stage
         run: |
-          shopt -s globstar nullglob
+          set -euo pipefail
           mkdir -p dist
-          found=false
-          for f in \
-            **/*.deb **/*.rpm \
-            workdir/installation/**/*.tar.gz \
-            instsetoo_native/**/*.tar.gz \
-            instdir/**/*.tar.gz ; do
-            if [ -f "$f" ]; then cp -v "$f" dist/ && found=true; fi
+          packages=()
+          if [[ -d workdir/installation ]]; then
+            mapfile -d '' packages < <(
+              find workdir/installation \
+                -type f \
+                -path '*/deb/install/*' \
+                -name '*.deb' \
+                -print0
+            )
+          fi
+
+          for package in "${packages[@]}"; do
+            dpkg-deb --info "$package" >/dev/null
+            install -m 0644 "$package" dist/
           done
-          echo "found=$found" >> "$GITHUB_OUTPUT"
-          echo "Staged files:"; ls -la dist || true
+
+          if (( ${#packages[@]} )); then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Staged files:"
+          ls -la dist
 
       - name: Publish release (only when real artifacts exist)
         if: steps.stage.outputs.found == 'true'
@@ -134,3 +169,27 @@ jobs:
           echo "This is expected until the build runs on infrastructure large enough for a full LibreOffice build."
           # Fail the job so the absence of a real installer is visible, never silently green.
           exit 1
+
+      - name: Preserve native build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-build-diagnostics-${{ github.run_id }}
+          path: |
+            config.log
+            autogen.input
+            config_host.mk
+            dist/
+            workdir/CppunitTest/*.test.log
+            workdir/CppunitTest/*.core
+            workdir/CustomTarget/instsetoo_native/install/*.log
+            workdir/installation/**/*.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Save ccache
+        if: always()
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.ccache
+          key: lo-ccache-${{ runner.os }}-${{ github.sha }}

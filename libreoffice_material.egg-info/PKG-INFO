@@ -1,9 +1,0 @@
-Metadata-Version: 2.4
-Name: libreoffice-material
-Version: 0.0.1
-Summary: Material Design theme for LibreOffice
-Requires-Python: >=3.10
-License-File: COPYING
-License-File: COPYING.LGPL
-License-File: COPYING.MPL
-Dynamic: license-file
