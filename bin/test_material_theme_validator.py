@@ -71,7 +71,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
 
     def test_canonical_theme_and_native_sources_pass(self) -> None:
         self.assertEqual(
-            VALIDATOR.validate(DEFINITION_PATH), (2, 23, 3, 8, 15, 72, 77, 199)
+            VALIDATOR.validate(DEFINITION_PATH), (2, 23, 3, 8, 15, 72, 79, 201)
         )
         VALIDATOR.validate_native_typography_source(
             (RENDERER_PATH, TYPOGRAPHY_SOURCE_PATH)
@@ -450,8 +450,8 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         rects = list(root.iter("rect"))
         rounded = [element for element in rects if "radius" in element.attrib]
         square = [element for element in rects if "radius" not in element.attrib]
-        self.assertEqual(len(rects), 166)
-        self.assertEqual(len(rounded), 155)
+        self.assertEqual(len(rects), 167)
+        self.assertEqual(len(rounded), 156)
         self.assertEqual(len(square), 11)
         self.assertFalse(
             any("rx" in element.attrib or "ry" in element.attrib for element in root.iter())
@@ -465,7 +465,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                     "corner-focus": 2,
                     "corner-small": 19,
                     "corner-control": 26,
-                    "corner-container": 51,
+                    "corner-container": 52,
                     "corner-toolbar": 8,
                     "corner-pill": 18,
                 }
@@ -478,7 +478,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 77, 199)
+            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 201)
         )
 
     def test_metric_structure_is_strict(self) -> None:
@@ -855,7 +855,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         metrics = VALIDATOR.read_metrics(root)
         references, digest = VALIDATOR.validate_metric_usage(root, metrics)
         self.assertEqual(references, Counter(VALIDATOR.REQUIRED_METRIC_USAGE))
-        self.assertEqual(sum(references.values()), 340)
+        self.assertEqual(sum(references.values()), 341)
         self.assertEqual(digest, VALIDATOR.METRIC_GEOMETRY_SHA256)
         self.assertFalse(
             any(
@@ -872,7 +872,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 77, 199)
+            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 201)
         )
 
         swapped = self.definition.replace(
@@ -1487,6 +1487,113 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                         VALIDATOR.validate_native_typography_source(
                             (renderer, typography)
                         )
+
+
+    def test_container_frame_and_listnet_controls_are_required(self) -> None:
+        root = ET.parse(DEFINITION_PATH).getroot()
+
+        frame = root.find("frame")
+        self.assertIsNotNone(frame, "definition is missing the <frame> control")
+        frame_parts = {part.get("value") for part in frame.findall("part")}
+        self.assertEqual(frame_parts, {"Border"})
+        border = frame.find("part")
+        rectangles = list(border.iter("rect"))
+        self.assertEqual(len(rectangles), 1)
+        self.assertEqual(
+            rectangles[0].attrib,
+            {
+                "stroke": "@outline-variant",
+                "fill": "@surface-container",
+                "stroke-width": "@stroke-thin",
+                "radius": "@corner-container",
+            },
+        )
+
+        listnet = root.find("listnet")
+        self.assertIsNotNone(listnet, "definition is missing the <listnet> control")
+        listnet_parts = {part.get("value") for part in listnet.findall("part")}
+        self.assertEqual(listnet_parts, {"Entire"})
+        # The net-less Material tree relies on a supported-but-empty Entire
+        # state: the renderer returns true and draws nothing so VCL suppresses
+        # its own connector nets.
+        entire = listnet.find("part")
+        self.assertEqual(len(entire.findall("state")), 1)
+        self.assertEqual(list(entire.find("state")), [])
+
+        missing_border = self.replace_once(
+            '<frame><part value="Border">', '<frame><part value="Entire">'
+        )
+        self.assert_definition_fails(missing_border, "frame missing parts: Border")
+
+        without_listnet = self.replace_once(
+            '    <listnet><part value="Entire"><state enabled="true"/></part></listnet>\n',
+            "",
+        )
+        self.assert_definition_fails(without_listnet, "missing control listnet")
+
+    def test_required_native_container_patterns_cannot_hide_in_comments(self) -> None:
+        commented_renderer = "\n".join(
+            (
+                "// case ControlType::Frame:",
+                "// case ControlType::ListNet:",
+                "// getDefinition(eType, ControlPart::Border)",
+                "// rNativeBoundingRegion = rBoundingControlRegion;",
+                "// rNativeContentRegion = rBoundingControlRegion;",
+                "// rNativeContentRegion.AdjustLeft(2);",
+                "// rNativeContentRegion.AdjustRight(-2);",
+            )
+        )
+        real_reader = READER_SOURCE_PATH
+        with tempfile.TemporaryDirectory() as directory:
+            renderer = Path(directory) / "renderer.cxx"
+            renderer.write_text(commented_renderer, encoding="utf-8")
+            with self.assertRaisesRegex(
+                VALIDATOR.ValidationError,
+                "native container renderer is missing the inset Frame region case",
+            ):
+                VALIDATOR.validate_native_container_source(
+                    (renderer,), (real_reader,)
+                )
+
+        commented_reader = "\n".join(
+            (
+                '// { "frame", ControlType::Frame },',
+                '// { "listnet", ControlType::ListNet },',
+                '// o3tl::equalsIgnoreAsciiCase(sPart, "Border")',
+            )
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            reader = Path(directory) / "reader.cxx"
+            reader.write_text(commented_reader, encoding="utf-8")
+            with self.assertRaisesRegex(
+                VALIDATOR.ValidationError,
+                "native container reader source is missing pattern",
+            ):
+                VALIDATOR.validate_native_container_source(
+                    (RENDERER_PATH,), (reader,)
+                )
+
+        # The production sources must satisfy every required pattern.
+        VALIDATOR.validate_native_container_source((RENDERER_PATH,), (real_reader,))
+
+        # Dropping the frame's content inset must fail the check even though the
+        # pre-existing drawNativeControl Frame dispatch still matches, so the
+        # native content-region inset cannot silently regress.
+        renderer_source = RENDERER_PATH.read_text(encoding="utf-8")
+        without_inset = renderer_source.replace(
+            "            rNativeContentRegion.AdjustLeft(2);\n", "", 1
+        )
+        self.assertNotEqual(without_inset, renderer_source)
+        with tempfile.TemporaryDirectory() as directory:
+            renderer = Path(directory) / "renderer.cxx"
+            renderer.write_text(without_inset, encoding="utf-8")
+            with self.assertRaisesRegex(
+                VALIDATOR.ValidationError,
+                "native container renderer is missing the inset Frame region case",
+            ):
+                VALIDATOR.validate_native_container_source(
+                    (renderer,), (real_reader,)
+                )
 
 
 if __name__ == "__main__":

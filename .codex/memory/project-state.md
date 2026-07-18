@@ -1,6 +1,6 @@
 # Project state
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-18
 
 ## Objective
 
@@ -12,10 +12,10 @@ licensing and provenance.
 
 ## Current milestone
 
-**Phase 1 — eighth Material VCL source milestone published; suite-wide work
+**Phase 1 — ninth Material VCL source milestone published; suite-wide work
 continues. Phase 0's native build/evidence gate remains open.**
 
-The repository contains an imported LibreOffice source baseline, eight native
+The repository contains an imported LibreOffice source baseline, nine native
 Material source milestones, a design contract, roadmap, published GitHub Pages
 site, screenshot registry, and headless evidence plan. The third milestone adds
 matched light/dark profiles, source-level high-contrast fallback routing,
@@ -42,9 +42,15 @@ The eighth milestone adds optional full-width `TrackHorzArea` anatomy to the
 native file renderer for progress and level indicators, keeps `Entire` as the
 numeric-value-clipped fill, paints the track at zero, and maps level values to
 the existing critical/low/medium/high 25% bands. Fill-only legacy definitions
-retain their previous renderer path. The Material definition now has 77 parts,
-199 states, 155 rounded rectangles, and 340 metric references; these changes
-remain uncompiled and unexecuted.
+retain their previous renderer path.
+The ninth milestone defines the two reader-recognized controls that were still
+on fallback: an outlined `Frame`/`Border` container drawn as one shared rounded
+rectangle, with `getNativeControlRegion` now returning a native frame region and
+a 2px content-region inset (the prerequisite D-017 required, see D-018); and a
+net-less `ListNet`/`Entire` state that returns success while drawing nothing so
+VCL suppresses its own tree connector nets (D-019). The Material definition now
+has 79 parts, 201 states, 156 rounded rectangles, and 341 metric references;
+these changes remain uncompiled and unexecuted.
 The native source has not been built or run as LibreOffice, so this does not
 prove a whole-GUI rewrite or any completed application surface.
 

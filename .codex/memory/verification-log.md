@@ -663,3 +663,40 @@ Scope conclusion: the eighth source milestone is published, its repository
 static CI and project site are green, and the prepared LF build worktree is
 pinned to the exact source commit. No C++ target or LibreOffice binary ran, and
 accepted application screenshots remain **0**.
+
+## 2026-07-18 — ninth container source validation
+
+- The Material definition adds the two reader-recognized controls that were
+  still on fallback: `frame`/`Border` (one outlined container rectangle) and
+  `listnet`/`Entire` (a supported-but-empty state). This raises the definition
+  from 77 to 79 parts and 199 to 201 states, and from 155 to 156 rounded
+  rectangles (the 11 implicit squares are unchanged).
+- The frame rectangle reuses existing tokens only — `outline-variant` stroke,
+  `surface-container` fill, `stroke-thin` width, `corner-container` radius — so
+  it adds one rounded rectangle and one `stroke-thin` reference and no new
+  token. `stroke-thin` usage moves from 45 to 46 and the exact metric reference
+  total from 340 to 341 (302 strokes, 34 part dimensions/margins, 5 settings).
+- The resolved metric-geometry hash becomes
+  `f70697ac8fc47cc952e2312afa9a02f88aed27fb69f1cb60a1bddd32bc714082`. Because the
+  frame rectangle omits explicit `x1`/`y1`/`x2`/`y2`, the 676 normalized
+  coordinate scalars and their `0979f2b3...331ed2e` hash are unchanged.
+- `FileDefinitionWidgetDraw::getNativeControlRegion` now returns a native
+  `Frame`/`Border` region — bounding equal to the requested rectangle and the
+  content region inset by 2px on each edge, matching `decoview`'s
+  `DrawFrameStyle::Group` fallback — which satisfies the content-region-inset
+  prerequisite D-017 set for enabling the frame (see D-018). `ListNet` returns
+  success while drawing nothing so VCL suppresses its own connector nets (see
+  D-019).
+- The standalone validator reports exactly 2 schemes, 23 color tokens per
+  scheme, 3 typography roles, 8 shape tokens, 15 metric tokens, 72 style slots,
+  79 parts, and 201 states. All 26 Python unittest methods pass on a portable
+  CPython 3.12.7 interpreter, and the Start Center UI lint passes. A new native
+  container source guard requires the `Frame`/`ListNet` renderer cases, the 2px
+  content inset, and the reader's `frame`/`listnet`/`Border` mappings, and two
+  new regression fixtures lock the frame/listnet parts and the guard itself.
+
+Scope conclusion: repository-side semantic validation, 26 validator unittests,
+and the UI lint pass for the ninth slice. No affected C++ target or LibreOffice
+binary was compiled or run, the low-level headless driver still has no fork
+binary to launch, and accepted application screenshots remain **0**. GitHub
+Actions and Pages verification follow the push to `main`.

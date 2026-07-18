@@ -6,14 +6,14 @@ implements these rules.
 
 ## Current implementation status
 
-Eight native source milestones now exist. They package an opt-in Material
+Nine native source milestones now exist. They package an opt-in Material
 file-widget definition, add safe keyed theme selection and definition-aware
 fallback in VCL, begin the Start Center surface/header treatment, and implement
 matched light and dark palettes of 23 semantic roles each. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates
-77 definition-backed parts and 199 states, including mixed and disabled
+79 definition-backed parts and 201 states, including mixed and disabled
 controls, flat buttons, selected-hover/focus tabs, toolbar buttons/grips, list
 nodes, borderless and multiline edits, and standalone vertical/horizontal spin
 buttons, plus full-track progress and value-sensitive level indicators.
@@ -39,7 +39,7 @@ semantic mapping.
 The sixth milestone introduces eight semantic corner roles. A strict optional
 `shapes` section is resolved in the reader's order-independent first pass, and
 one `radius="@role"` reference populates both existing native rectangle radius
-axes. The 155 rounded Material rectangles use the exact `corner-checkbox`,
+axes. The 156 rounded Material rectangles use the exact `corner-checkbox`,
 `corner-indicator`, `corner-focus`, `corner-small`, `corner-control`,
 `corner-container`, `corner-toolbar`, and `corner-pill` roles; the 11 square
 rectangles keep their prior implicit geometry. Existing themes that use numeric
@@ -65,8 +65,24 @@ bands at the existing 25%, 50%, and 75% boundaries, so the generic level-bar
 meaning is not flattened into one color. Zero still paints the track; legacy
 file themes that define only `Entire` retain their prior fill-only behavior.
 These nine new rounded actions reuse the existing shape and metric contracts,
-bringing the current definition to 155 rounded rectangles and 340 metric
-references (301 strokes, 34 part dimensions/margins, and 5 settings).
+bringing the current definition to 156 rounded rectangles and 341 metric
+references (302 strokes, 34 part dimensions/margins, and 5 settings).
+
+The ninth milestone adds native Material anatomy for two controls the reader
+already recognized but the theme had not yet defined: the outlined frame
+(`ControlType::Frame`/`Border`) and the tree connector net
+(`ControlType::ListNet`/`Entire`). The frame is a single outlined container
+rectangle—`outline-variant` stroke, `surface-container` fill so it blends into
+the dialog it groups, `stroke-thin` width, and the `corner-container` radius—so
+it introduces one new rounded rectangle and one `stroke-thin` reference and no
+new tokens. The shared renderer now reports a native frame region (bounding and
+content equal to the requested rectangle), which is the signal `decoview`
+requires before it issues the file-definition `Border` draw. `ListNet` is
+declared with a single supported-but-empty `Entire` state: because the renderer
+returns success while drawing nothing, VCL's tree view suppresses its own
+connector nets, giving the flatter Material tree that native GTK and macOS
+themes already produce. Both controls remain source only, unbuilt, and
+unexecuted.
 
 The 676 normalized fractional drawing coordinates remain component-local
 literals. They describe proportional glyph and inset geometry rather than

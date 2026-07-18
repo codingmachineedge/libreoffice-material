@@ -566,6 +566,8 @@
         <part value="BackgroundDialog"><state><rect stroke="@surface-container" fill="@surface-container" stroke-width="@stroke-none"/></state></part>
     </windowbackground>
 
+    <frame><part value="Border"><state enabled="true"><rect stroke="@outline-variant" fill="@surface-container" stroke-width="@stroke-thin" radius="@corner-container"/></state></part></frame>
+
     <toolbar>
         <part value="Entire"><state><rect stroke="@surface-container" fill="@surface-container" stroke-width="@stroke-none"/></state></part>
         <part value="DrawBackgroundHorz"><state><rect stroke="@surface-container" fill="@surface-container" stroke-width="@stroke-none"/></state></part>
@@ -598,6 +600,7 @@
             <state enabled="false" button-value="true"><line stroke="@outline-variant" stroke-width="@stroke-standard" x1="0.28" y1="0.38" x2="0.5" y2="0.62"/><line stroke="@outline-variant" stroke-width="@stroke-standard" x1="0.5" y1="0.62" x2="0.72" y2="0.38"/></state>
         </part>
     </listnode>
+    <listnet><part value="Entire"><state enabled="true"/></part></listnet>
     <listheader>
         <part value="Button">
             <state><rect stroke="@outline-variant" fill="@surface-container" stroke-width="@stroke-thin" radius="@corner-small"/></state>

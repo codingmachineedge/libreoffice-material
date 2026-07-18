@@ -60,7 +60,7 @@ REQUIRED_METRICS = {
 }
 REQUIRED_METRIC_USAGE = {
     "stroke-none": 95,
-    "stroke-thin": 45,
+    "stroke-thin": 46,
     "stroke-standard": 153,
     "stroke-track": 8,
     "space-list-entry": 1,
@@ -126,7 +126,7 @@ STROKE_METRICS = {
 }
 METRIC_PART_ATTRIBUTES = ("width", "height", "margin-width", "margin-height")
 METRIC_GEOMETRY_SHA256 = (
-    "0345bb83fae32d79a5b596cc4f17046737a453de0d345a1fa144f737b9b35140"
+    "f70697ac8fc47cc952e2312afa9a02f88aed27fb69f1cb60a1bddd32bc714082"
 )
 NORMALIZED_COORDINATE_SHA256 = (
     "0979f2b3d1d4dff15278fb6b1d1d708795d207045cb339d3ad42a9dcb331ed2e"
@@ -286,6 +286,7 @@ REQUIRED_PARTS = {
     "tabpane": {"Entire"},
     "tabbody": {"Entire"},
     "windowbackground": {"Entire", "BackgroundWindow", "BackgroundDialog"},
+    "frame": {"Border"},
     "toolbar": {
         "Entire",
         "DrawBackgroundHorz",
@@ -297,6 +298,7 @@ REQUIRED_PARTS = {
         "Button",
     },
     "listnode": {"Entire"},
+    "listnet": {"Entire"},
     "listheader": {"Button", "Arrow"},
     "menubar": {"Entire", "MenuItem"},
     "menupopup": {
@@ -1170,6 +1172,49 @@ def validate_native_indicator_source(paths: tuple[Path, ...]) -> None:
             fail(f"native indicator source is missing pattern {pattern!r}")
 
 
+def validate_native_container_source(
+    renderer_paths: tuple[Path, ...], reader_paths: tuple[Path, ...]
+) -> None:
+    renderer = strip_cpp_non_code(
+        "\n".join(path.read_text(encoding="utf-8") for path in renderer_paths)
+    )
+    reader = strip_cpp_non_code(
+        "\n".join(path.read_text(encoding="utf-8") for path in reader_paths)
+    )
+    # The frame's native region case is the only source this milestone adds to
+    # the renderer, so it is asserted as a single unit: the Border-guard, the
+    # full-bleed bounding region, and the 2px content inset must co-occur. That
+    # inset is the native content-region inset D-017 required before the frame
+    # could leave fallback; anchoring it here fails the check if the region case
+    # is removed even though the pre-existing drawNativeControl Frame dispatch
+    # remains.
+    frame_region_case = (
+        r"case\s+ControlType::Frame\s*:.*?"
+        r"getDefinition\s*\(\s*eType\s*,\s*ControlPart::Border\s*\).*?"
+        r"rNativeBoundingRegion\s*=\s*rBoundingControlRegion\s*;\s*"
+        r"rNativeContentRegion\s*=\s*rBoundingControlRegion\s*;\s*"
+        r"rNativeContentRegion\s*\.\s*AdjustLeft\s*\(\s*2\s*\)\s*;\s*"
+        r"rNativeContentRegion\s*\.\s*AdjustTop\s*\(\s*2\s*\)\s*;\s*"
+        r"rNativeContentRegion\s*\.\s*AdjustRight\s*\(\s*-\s*2\s*\)\s*;\s*"
+        r"rNativeContentRegion\s*\.\s*AdjustBottom\s*\(\s*-\s*2\s*\)\s*;"
+    )
+    if re.search(frame_region_case, renderer, flags=re.DOTALL) is None:
+        fail("native container renderer is missing the inset Frame region case")
+    # Dependency assertions on the support chain these controls rely on. The
+    # reader mappings and the ListNet draw dispatch are shared/upstream scaffolding
+    # rather than code this milestone added, but the Material frame and net-less
+    # tree break silently if any of them is later removed, so they are checked.
+    if re.search(r"case\s+ControlType::ListNet\s*:", renderer, flags=re.DOTALL) is None:
+        fail("native container renderer is missing the ListNet draw dispatch")
+    for pattern in (
+        r'\{\s*"frame"\s*,\s*ControlType::Frame\s*\}',
+        r'\{\s*"listnet"\s*,\s*ControlType::ListNet\s*\}',
+        r'o3tl::equalsIgnoreAsciiCase\s*\(\s*sPart\s*,\s*"Border"\s*\)',
+    ):
+        if re.search(pattern, reader, flags=re.DOTALL) is None:
+            fail(f"native container reader source is missing pattern {pattern!r}")
+
+
 def validate(path: Path) -> tuple[int, int, int, int, int, int, int, int]:
     parser = ET.XMLParser(target=ET.TreeBuilder(insert_pis=True))
     root = ET.parse(path, parser=parser).getroot()
@@ -1417,6 +1462,10 @@ def main() -> int:
                 repository
                 / "vcl/qa/cppunit/widgetdraw/FileDefinitionWidgetDrawTest.cxx",
             )
+        )
+        validate_native_container_source(
+            (args.renderer,),
+            (repository / "vcl/source/gdi/WidgetDefinitionReader.cxx",),
         )
     except (ET.ParseError, OSError, ValidationError) as error:
         print(f"{args.definition}: {error}", file=sys.stderr)

@@ -220,3 +220,48 @@
   but a one-color LevelBar would regress the semantic bands that generic and
   platform renderers expose. Reusing an existing control part avoids a new VCL
   enum/ABI, and an optional lookup avoids breaking older file themes.
+
+## D-018 — enable the Material frame with a native content-region inset
+
+- Date: 2026-07-18
+- State: published source; native build verification pending
+- Supersedes: the Frame clause of [D-017], which kept `Frame` on fallback
+  "until its native content-region inset is implemented and verified".
+- Decision: define `Frame`/`Border` as one shared outlined container rectangle
+  (`outline-variant` stroke, `surface-container` fill, `stroke-thin` width,
+  `corner-container` radius) and implement the missing content-region inset in
+  `FileDefinitionWidgetDraw::getNativeControlRegion`: the bounding region is the
+  requested rectangle and the content region is inset by 2px on each edge, the
+  same inset `decoview`'s own `DrawFrameStyle::Group` fallback applies, so
+  callers keep the content geometry they already expect. The renderer must
+  report this region because `decoview` only issues the file-definition `Border`
+  draw when a native region is returned.
+- Decision: fill the frame interior with `surface-container` (the dialog color)
+  rather than a lighter surface, so on its dominant dialog host only the outline
+  and rounded corners read as the grouping, matching a Material outlined
+  container instead of a raised card. Children paint on top, so the fill is a
+  background, not an overpaint.
+- Reason: the content-region inset was the explicit, objective prerequisite
+  D-017 named; implementing it (mirroring the generic fallback inset) satisfies
+  the "implemented" half honestly. The "verified" half still awaits a native
+  build, exactly like every other source milestone in this project. The
+  standalone validator now asserts the inset so it cannot silently regress.
+
+## D-019 — make the Material tree net-less instead of drawing connector nets
+
+- Date: 2026-07-18
+- State: published source; native build verification pending
+- Supersedes: the ListNet clause of [D-017], which kept `ListNet` on fallback
+  because "the current file definition lacks the caller geometry needed to
+  represent their meaning faithfully".
+- Decision: define `ListNet`/`Entire` with a single supported-but-empty enabled
+  state. `SvImpLBox::DrawNet` calls `DrawNativeControl(ListNet, Entire)` with an
+  empty rectangle; because `resolveDefinition` returns success while the empty
+  state draws nothing, VCL suppresses its own connector nets and the tree renders
+  net-less.
+- Reason: D-017's blocker was that faithful connector nets cannot be drawn from
+  the empty caller rectangle. Rather than fake geometry the caller does not
+  provide (which D-017 rightly rejected) or retain the dated connector lines,
+  the net-less result is the same flatter hierarchy the native GTK and macOS
+  themes already produce, and it is reversible by removing the definition. Tree
+  expander glyphs are a separate control (`ListNode`) and are unaffected.

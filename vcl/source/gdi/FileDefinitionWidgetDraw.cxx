@@ -1361,6 +1361,26 @@ bool FileDefinitionWidgetDraw::getNativeControlRegion(
                 return true;
             }
             break;
+        case ControlType::Frame:
+        {
+            // The outlined Material frame decorates the given region in place:
+            // the bounding region is drawn as-is, and the content region is
+            // inset so grouped children sit inside the border instead of over
+            // it. The 2px inset matches decoview's own DrawFrameStyle::Group
+            // fallback so callers keep the same content geometry they expect
+            // from the generic frame. decoview only issues the file-definition
+            // Border draw when a native region is returned here.
+            if (!pWidgetDefinition->getDefinition(eType, ControlPart::Border))
+                return false;
+            rNativeBoundingRegion = rBoundingControlRegion;
+            rNativeContentRegion = rBoundingControlRegion;
+            rNativeContentRegion.AdjustLeft(2);
+            rNativeContentRegion.AdjustTop(2);
+            rNativeContentRegion.AdjustRight(-2);
+            rNativeContentRegion.AdjustBottom(-2);
+            return true;
+        }
+        break;
         default:
             break;
     }

@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f9f7ff">
     <meta
       name="description"
-      content="LibreOffice Material is an engineering fork with an eighth native Material VCL source milestone and a suite-wide roadmap."
+      content="LibreOffice Material is an engineering fork with a ninth native Material VCL source milestone and a suite-wide roadmap."
     >
     <link rel="canonical" href="https://codingmachineedge.github.io/libreoffice-material/">
     <link rel="stylesheet" href="styles.css">
@@ -43,7 +43,7 @@
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · eighth VCL source milestone</p>
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · ninth VCL source milestone</p>
           <h1 id="hero-title">The LibreOffice desktop, thoughtfully renewed.</h1>
           <p class="hero-lede">
             A native, suite-wide exploration of Material Design 3—built on
@@ -104,7 +104,7 @@
       <section class="status-band" aria-label="Project facts">
         <div>
           <strong>Source slice</strong>
-          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 77 parts · 199 states · unbuilt</span>
+          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 79 parts · 201 states · unbuilt</span>
         </div>
         <div>
           <strong>Harness preflight</strong>
@@ -123,14 +123,15 @@
       <section class="section slice-section" aria-labelledby="slice-title">
         <div class="slice-heading">
           <div>
-            <p class="eyebrow">Eighth Material VCL milestone</p>
-            <h2 id="slice-title">Progress and level indicators now keep their complete Material anatomy.</h2>
+            <p class="eyebrow">Ninth Material VCL milestone</p>
+            <h2 id="slice-title">Outlined frames and net-less trees complete the reader-recognized controls.</h2>
             <p>
-              The native file-widget path paints a full track before clipping
-              the fill to its numeric value, while level indicators retain four
-              value bands. The C++ and XML changes have not been compiled,
-              launched, or captured as LibreOffice; the accepted screenshot
-              count remains zero.
+              Two controls the native reader already mapped—the frame border and
+              the tree connector net—now have Material anatomy. Group frames draw
+              a single outlined container, and tree views drop their connector
+              nets for a flatter hierarchy. The C++ and XML changes have not been
+              compiled, launched, or captured as LibreOffice; the accepted
+              screenshot count remains zero.
             </p>
           </div>
           <div class="slice-status" aria-label="Implementation status">
@@ -142,23 +143,23 @@
         <div class="slice-grid">
           <article>
             <span aria-hidden="true">01</span>
-            <h3>Full track first</h3>
-            <p>An optional horizontal track spans the complete control before the determinate fill is drawn.</p>
+            <h3>Outlined frame</h3>
+            <p>A single shared container rectangle—outline-variant stroke, surface-container fill, thin stroke, and container corners—groups content without introducing a new token.</p>
           </article>
           <article>
             <span aria-hidden="true">02</span>
-            <h3>Value-clipped fill</h3>
-            <p>The existing numeric value still controls fill width, including a track-only zero state and a complete high value.</p>
+            <h3>Native frame region</h3>
+            <p>The renderer now reports a native frame region so <code>decoview</code> issues the file-definition border draw it previously skipped.</p>
           </article>
           <article>
             <span aria-hidden="true">03</span>
-            <h3>Meaningful level bands</h3>
-            <p>Critical, low, medium, and high states preserve the existing 25%, 50%, and 75% boundaries instead of flattening every value to one color.</p>
+            <h3>Net-less tree</h3>
+            <p>ListNet is supported yet draws nothing, so VCL suppresses its own connector nets—the flatter tree that native GTK and macOS themes already produce.</p>
           </article>
           <article>
             <span aria-hidden="true">04</span>
             <h3>Compatibility retained</h3>
-            <p>Fill-only legacy themes keep their prior path; unsupported semantic geometry still falls back, and all affected C++ remains unexecuted.</p>
+            <p>No new tokens, one added stroke-thin reference, one rounded rectangle; unsupported geometry still falls back, and all affected C++ remains unexecuted.</p>
           </article>
         </div>
 
@@ -343,7 +344,7 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
-            <div><p class="phase-state">Source milestone 8</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, strict parsing, high-contrast fallback, expanded states, and static checks exist but are unbuilt.</p></div>
+            <div><p class="phase-state">Source milestone 9</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, outlined frames, net-less tree connectors, strict parsing, high-contrast fallback, expanded states, and static checks exist but are unbuilt.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">2</span>
