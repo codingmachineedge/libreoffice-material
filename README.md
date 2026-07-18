@@ -11,7 +11,12 @@ document engine, file-format support, and accessibility foundations.
 > definition parsing, broader state coverage, and Start Center changes are
 > present in source, but they have **not** been compiled or run as LibreOffice.
 > The whole GUI has not been rewritten, and no application surface is
-> Material-complete.
+> Material-complete. **There is no installer or downloadable build yet** —
+> nothing runnable has been produced, only source milestones and the interactive
+> [design reference](https://codingmachineedge.github.io/libreoffice-material/prototype.html)
+> (a mockup, not the app). To run the actual editor, install upstream LibreOffice
+> from [libreoffice.org](https://www.libreoffice.org/download/), which does not
+> include these Material changes.
 
 [Project site](https://codingmachineedge.github.io/libreoffice-material/) ·
 [Interactive preview](https://codingmachineedge.github.io/libreoffice-material/prototype.html) ·
@@ -197,7 +202,13 @@ The interactive reference at
 interaction drawn as a self-contained, dependency-free HTML page (system fonts,
 inline SVG icons, no web fonts or CDN). Every search bar in it carries a full
 regex builder — token palette, `i`/`g`/`m`/`s` flags, live validity and match
-count — filtering the real Start Center, command-catalog, and gallery data. Every color, corner, and metric mirrors
+count — filtering the real Start Center, command-catalog, and gallery data, and
+the Dialogs surface includes a working Find & Replace that runs the same builder
+over live document text. The token contract behind it is documented in
+[`docs/DESIGN_TOKENS.md`](docs/DESIGN_TOKENS.md), and
+[`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) is a dependency-free
+Node check of the prototype's self-containment, tokens, icons, and regex engine
+(`node bin/validate-prototype.mjs`). Every color, corner, and metric mirrors
 the semantic roles in
 [`vcl/uiconfig/theme_definitions/material/definition.xml`](vcl/uiconfig/theme_definitions/material/definition.xml).
 It is a design specification aid, **not** a screenshot of a compiled LibreOffice
