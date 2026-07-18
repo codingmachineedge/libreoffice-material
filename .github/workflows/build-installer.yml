@@ -1,0 +1,136 @@
+# Build installer and publish release
+#
+# HONESTY NOTE (read before trusting a green check):
+# This workflow ATTEMPTS a full from-source LibreOffice build and, only if that
+# build actually emits installer artifacts, publishes them as a GitHub Release.
+# It never fabricates a release: the publish step is gated on real artifacts, so
+# a failed or artifact-less build produces NO release.
+#
+# A complete LibreOffice build is enormous — many hours of CPU and tens of GB of
+# disk and downloads. GitHub-hosted runners (ubuntu-latest, ~14 GB usable disk)
+# are almost certainly too small, so these runs are EXPECTED to fail at the
+# configure/make/disk stage until this is pointed at adequate infrastructure
+# (a self-hosted or large runner). No successful build or installer has been
+# produced by this project yet; the verified-capture count remains 0. This
+# pipeline is the path that WOULD publish an installer once a build succeeds.
+
+name: Build installer and publish release
+
+on:
+  push:
+    branches: [main]
+    # Skip doc/site/mockup-only pushes — they cannot change the build output.
+    paths-ignore:
+      - "site/**"
+      - "docs/**"
+      - "**/*.md"
+      - ".github/**"
+      - "bin/validate-prototype.mjs"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why are you running the build?"
+        required: false
+        default: "manual dispatch"
+
+permissions:
+  contents: write # required to create tags/releases
+
+concurrency:
+  group: build-installer
+  cancel-in-progress: false
+
+jobs:
+  build-linux-installer:
+    name: Linux build + package (best effort)
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Free disk space
+        run: |
+          echo "Before cleanup:"; df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost || true
+          sudo docker image prune -a -f || true
+          sudo apt-get clean || true
+          echo "After cleanup:"; df -h /
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          # Pull LibreOffice's declared build-deps where available, plus core tooling.
+          sudo apt-get build-dep -y libreoffice || true
+          sudo apt-get install -y --no-install-recommends \
+            build-essential ccache zip nasm autoconf gperf \
+            libxrandr-dev libxinerama-dev libcups2-dev libfontconfig1-dev \
+            libxslt1-dev libxml2-dev flex bison python3-dev || true
+
+      - name: Configure ccache
+        run: |
+          ccache --max-size=5G || true
+          echo "CCACHE_DIR=$HOME/.ccache" >> "$GITHUB_ENV"
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: lo-ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            lo-ccache-${{ runner.os }}-
+
+      - name: Configure (lean release build)
+        run: |
+          ./autogen.sh \
+            --enable-release-build \
+            --disable-online-update \
+            --without-java \
+            --without-help \
+            --without-helppack-integration \
+            --without-myspell-dicts \
+            --without-doxygen \
+            --disable-odk
+
+      - name: Build
+        run: |
+          make -j"$(nproc)" build-nocheck
+
+      - name: Package installer set
+        run: make distro-pack-install || true
+
+      - name: Stage installer artifacts
+        id: stage
+        run: |
+          shopt -s globstar nullglob
+          mkdir -p dist
+          found=false
+          for f in \
+            **/*.deb **/*.rpm \
+            workdir/installation/**/*.tar.gz \
+            instsetoo_native/**/*.tar.gz \
+            instdir/**/*.tar.gz ; do
+            if [ -f "$f" ]; then cp -v "$f" dist/ && found=true; fi
+          done
+          echo "found=$found" >> "$GITHUB_OUTPUT"
+          echo "Staged files:"; ls -la dist || true
+
+      - name: Publish release (only when real artifacts exist)
+        if: steps.stage.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="build-${{ github.run_number }}-$(git rev-parse --short HEAD)"
+          gh release create "$tag" dist/* \
+            --title "LibreOffice Material — automated build ${{ github.run_number }}" \
+            --prerelease \
+            --notes "Unofficial, unsigned, EXPERIMENTAL from-source build of commit ${{ github.sha }}. Not verified for correctness, security, or document compatibility. Produced automatically by build-installer.yml; use at your own risk."
+
+      - name: No artifacts — nothing to publish (honest)
+        if: steps.stage.outputs.found != 'true'
+        run: |
+          echo "::notice::The build did not produce installer artifacts, so no release was created."
+          echo "This is expected until the build runs on infrastructure large enough for a full LibreOffice build."
+          # Fail the job so the absence of a real installer is visible, never silently green.
+          exit 1

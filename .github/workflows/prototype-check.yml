@@ -1,0 +1,42 @@
+# Fast, real check of the interactive design reference.
+# Runs the dependency-free validator (bin/validate-prototype.mjs) on every change
+# to the prototype or its data, guarding self-containment (no external assets),
+# inline-script syntax, icon coverage, token/palette parity, catalog shape, and
+# the regex engine. Unlike build-installer.yml this always CAN pass, because it
+# checks the mockup, not a compiled build.
+
+name: Validate interactive prototype
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/prototype.html"
+      - "site/prototype-features.json"
+      - "bin/validate-prototype.mjs"
+      - ".github/workflows/prototype-check.yml"
+  pull_request:
+    paths:
+      - "site/prototype.html"
+      - "site/prototype-features.json"
+      - "bin/validate-prototype.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-prototype:
+    name: Validate prototype (self-contained mockup)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate prototype
+        run: node bin/validate-prototype.mjs
