@@ -291,8 +291,10 @@ var S = {
   rx:{
     start:   {q:'',flags:'i',regex:false,open:false,caret:null},
     features:{q:'',flags:'i',regex:false,open:false,caret:null},
-    gallery: {q:'',flags:'i',regex:false,open:false,caret:null}
+    gallery: {q:'',flags:'i',regex:false,open:false,caret:null},
+    find:    {q:'revenue',flags:'i',regex:false,open:false,caret:7}
   },
+  frReplace:'', frWholeWord:false,
   _focusRx:null
 };
 
@@ -374,6 +376,37 @@ function rxBuilder(id, pred, total, matched){
     + tokHtml
     + '<div style="display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:10px;border-top:var(--bw) solid var(--outline-v);font:400 12px/1.3 inherit">'+status+'<button data-act="rxclear:'+id+'" data-hov="background:var(--pc)" style="margin-left:auto;flex:0 0 auto;height:30px;padding:0 12px;border:var(--bw) solid var(--outline);background:transparent;color:var(--p);border-radius:var(--r-pill);cursor:pointer;font:600 12px/1 inherit">Clear</button></div>'
     + '</div>';
+}
+
+/* ---- Find & Replace: regex applied to real document text ---- */
+var DOC_RUNS=[
+  'Revenue grew 18% quarter over quarter, driven by strong adoption across the enterprise segment and disciplined expansion of the direct sales team.',
+  'Gross margin held steady while operating expenses moderated relative to plan.',
+  'The remainder of this report details performance by business unit, summarizes the updated hiring roadmap, and outlines three strategic initiatives proposed for the coming fiscal year.',
+  'Net retention reached a record 121%.',
+  'Two flagship accounts renewed early at expanded scope, and the partner channel contributed a growing share of qualified pipeline.'
+];
+function escapeRegExp(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function frCompile(global){
+  var st=S.rx.find; if(st.q==='') return null;
+  var pat, fl;
+  if(!st.regex){ pat=escapeRegExp(st.q); fl = st.flags.indexOf('i')>=0 ? 'i' : ''; }
+  else { pat=st.q; fl=(st.flags||'').replace(/[^gimsuy]/g,'').replace('g',''); }
+  if(S.frWholeWord) pat='\\b(?:'+pat+')\\b';
+  if(global) fl+='g';
+  try{ return new RegExp(pat, fl); }catch(e){ return null; }
+}
+function frTest(run){ var re=frCompile(false); return re ? re.test(run) : false; }
+function frHighlight(run){
+  var re=frCompile(true); if(!re) return esc(run);
+  var out='', last=0, m, guard=0;
+  re.lastIndex=0;
+  while((m=re.exec(run))!==null && guard++<2000){
+    out += esc(run.slice(last, m.index)) + '<mark style="background:var(--p);color:var(--on-p);border-radius:3px;padding:0 1px">'+esc(m[0])+'</mark>';
+    last = m.index + m[0].length;
+    if(m[0].length===0) re.lastIndex++;
+  }
+  return out + esc(run.slice(last));
 }
 
 /* ---- render ---- */
@@ -995,12 +1028,13 @@ function featuresBody(){
 /* ---- Dialogs ---- */
 function dialogsBody(){
   var st=S;
-  var pick=[['options','Options'],['save','Save As'],['print','Print']], pickHtml='';
+  var pick=[['find','Find & Replace'],['options','Options'],['save','Save As'],['print','Print']], pickHtml='';
   for(var i=0;i<pick.length;i++){ var a=st.dialog===pick[i][0];
     pickHtml+='<button data-act="set:dialog:'+pick[i][0]+'" aria-pressed="'+a+'" style="appearance:none;border:none;cursor:pointer;padding:7px 16px;border-radius:16px;font:600 13px/1 inherit;background:'+(a?'var(--p)':'transparent')+';color:'+(a?'var(--on-p)':'var(--on-sv)')+'">'+pick[i][1]+'</button>'; }
 
   var dialog='';
-  if(st.dialog==='options') dialog=optionsDialog();
+  if(st.dialog==='find') dialog=findReplaceDialog();
+  else if(st.dialog==='options') dialog=optionsDialog();
   else if(st.dialog==='save') dialog=saveDialog();
   else if(st.dialog==='print') dialog=printDialog();
 
@@ -1063,6 +1097,44 @@ function printDialog(){
   var footer=dlgFooter('<div style="flex:1"></div>'+outBtn('Cancel')+fillBtn('Print'));
   return dlgWrap(720, dlgHead('Print')+body+footer);
 }
+function findReplaceDialog(){
+  var st=S;
+  var matchedRuns=DOC_RUNS.filter(frTest).length;
+  var re=frCompile(true), occ=0; if(re){ DOC_RUNS.forEach(function(r){ var mm=r.match(re); if(mm) occ+=mm.length; }); }
+  var findField = renderSearch('find','Find', DOC_RUNS.length, matchedRuns, 'width:100%');
+  var matchCase = st.rx.find.flags.indexOf('i')<0;
+  function opt(label, checked, act){
+    return '<label data-act="'+act+'" style="display:flex;align-items:center;gap:8px;cursor:pointer"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:var(--r-check);flex:0 0 auto;background:'+(checked?'var(--p)':'transparent')+';border:2px solid '+(checked?'var(--p)':'var(--on-sv)')+'">'+(checked?ic('check',14,'var(--on-p)'):'')+'</span><span style="font:400 13px/1 inherit;color:var(--on-s)">'+label+'</span></label>';
+  }
+  var options = '<div style="display:flex;flex-wrap:wrap;gap:14px 22px;margin:14px 0 6px">'
+    + opt('Match case', matchCase, 'rxflag:find:i')
+    + opt('Whole words only', st.frWholeWord, 'toggle:frWholeWord')
+    + opt('Regular expressions', st.rx.find.regex, 'rxmode:find')
+    + '</div>';
+  var replaceField = '<div style="position:relative;margin-top:14px"><input id="fr-replace" value="'+esc(st.frReplace)+'" aria-label="Replace with" placeholder="Replace with…" autocomplete="off" style="width:100%;height:44px;padding:0 14px;border:var(--bw) solid var(--outline);border-radius:var(--r-cont);background:var(--surface);color:var(--on-s);font:400 14px/1 inherit;outline:none"><span style="position:absolute;top:-8px;left:12px;padding:0 4px;background:var(--sc);color:var(--on-sv);font:500 12px/1 inherit">Replace</span></div>';
+  var runsHtml='';
+  for(var i=0;i<DOC_RUNS.length;i++){ var hit=frTest(DOC_RUNS[i]);
+    runsHtml+='<div style="padding:8px 10px;border-radius:var(--r-sm);margin-bottom:4px;font:400 13px/1.6 inherit;color:var(--on-s);background:'+(hit?'color-mix(in srgb,var(--pc) 55%,transparent)':'transparent')+';border-left:3px solid '+(hit?'var(--p)':'transparent')+'">'+frHighlight(DOC_RUNS[i])+'</div>'; }
+  var summary = st.rx.find.q==='' ? 'Enter a search term or build a pattern.'
+    : (occ+' match'+(occ===1?'':'es')+' in '+matchedRuns+' of '+DOC_RUNS.length+' paragraphs');
+  var body = '<div style="padding:6px 20px 18px">'
+    + '<div style="font:400 12px/1.4 inherit;color:var(--on-sv);margin-bottom:6px">Search the document — the same full regex builder is one click away (the <strong>.*</strong> toggle mirrors the “Regular expressions” option below).</div>'
+    + findField
+    + options
+    + replaceField
+    + '<div style="display:flex;align-items:center;gap:10px;margin:16px 0 8px"><span style="font:600 12px/1 inherit;color:var(--on-s)">Document</span><span style="font:600 12px/1 inherit;color:var(--p)">'+esc(summary)+'</span></div>'
+    + '<div class="lo-scroll" style="max-height:150px;overflow:auto;border:var(--bw) solid var(--outline-v);border-radius:var(--r-cont);padding:8px;background:var(--scl)">'+runsHtml+'</div>'
+    + '</div>';
+  var footer = '<div style="display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:var(--bw) solid var(--outline-v)">'
+    + outBtn('Find All') + outBtn('Find Next')
+    + '<div style="flex:1"></div>'
+    + outBtn('Replace')
+    + '<button data-act="frreplaceall" data-hov="background:var(--pa-hover)" style="height:40px;padding:0 22px;border:none;border-radius:var(--r-pill);background:var(--p);color:var(--on-p);font:600 14px/1 inherit;cursor:pointer">Replace All</button>'
+    + '</div>';
+  // overflow:visible so the regex-builder popover can escape the dialog box
+  return '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(680px,94%);background:var(--sc);border:var(--bw) solid var(--outline-v);border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:visible;animation:lo-pop .16s ease">'
+    + dlgHead('Find &amp; Replace') + body + footer + '</div>';
+}
 
 /* ---- status bar ---- */
 function statusBar(){
@@ -1105,7 +1177,9 @@ app.addEventListener('click', function(e){
       set(key,val); break; }
     case 'toast': toast(decodeURIComponent(arg)); break;
     case 'menu': { var l=decodeURIComponent(arg); S.menuOpen = S.menuOpen===l ? null : l; render(); break; }
-    case 'menuitem': { var lbl=decodeURIComponent(arg); S.menuOpen=null; render(); toast(lbl); break; }
+    case 'menuitem': { var lbl=decodeURIComponent(arg); S.menuOpen=null;
+      if(/Find & Replace/.test(lbl)){ S.screen='dialogs'; S.dialog='find'; }
+      render(); toast(lbl); break; }
     case 'closemenus': S.menuOpen=null; render(); break;
     case 'toggle': S[arg]=!S[arg]; render(); break;
     case 'fmt': S.fmt[arg]=!S.fmt[arg]; render(); break;
@@ -1124,6 +1198,8 @@ app.addEventListener('click', function(e){
       var tk=RX_TOKENS[gi].t[ti], rs=S.rx[tid]; var cc=(rs.caret==null?rs.q.length:rs.caret);
       rs.q = rs.q.slice(0,cc)+tk[2]+rs.q.slice(cc); rs.caret = cc + tk[2].length - (tk[3]||0);
       rs.regex=true; S._focusRx=tid; render(); break; }
+    case 'frreplaceall': { var fre=frCompile(true), n=0; if(fre){ DOC_RUNS.forEach(function(r){ var mm=r.match(fre); if(mm) n+=mm.length; }); }
+      toast(n ? ('Replaced '+n+' occurrence'+(n===1?'':'s')+(S.frReplace ? (' with “'+S.frReplace+'”') : '')) : 'No matches to replace'); break; }
   }
 });
 
@@ -1133,14 +1209,16 @@ app.addEventListener('click', function(e){
   if(!b || b.disabled || b.closest('[data-silent]')) return;
   var act=b.getAttribute('data-act')||'';
   // items that already produce their own toast / are pure navigation are skipped
-  if(/^(toast:|menuitem:|feat:|menu:|set:featCat)/.test(act)) return;
+  if(/^(toast:|menuitem:|feat:|menu:|set:featCat|frreplaceall)/.test(act)) return;
   var label=(b.getAttribute('title')||b.textContent||'').trim();
   if(label) toast(label);
 }, true);
 
 /* regex search inputs (live filter; preserves focus + caret across re-render) */
 app.addEventListener('input', function(e){
-  var t=e.target; if(!t || !t.id || t.id.indexOf('rxin-')!==0) return;
+  var t=e.target; if(!t || !t.id) return;
+  if(t.id==='fr-replace'){ S.frReplace=t.value; return; } // no re-render: keep native caret/focus
+  if(t.id.indexOf('rxin-')!==0) return;
   var id=t.id.slice(5); if(!S.rx[id]) return;
   S.rx[id].q=t.value; S.rx[id].caret=t.selectionStart; S._focusRx=id; render();
 });
