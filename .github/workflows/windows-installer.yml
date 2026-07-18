@@ -1,0 +1,369 @@
+# Build a genuine Windows x64 MSI from this source tree.
+#
+# This job deliberately keeps the unofficial LibreOfficeDev product identity,
+# validates the Windows payload without installing it into the runner, and
+# publishes only after a real MSI has been produced and opened successfully.
+
+name: Build Windows MSI
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: "Parallel native build jobs"
+        required: true
+        default: "3"
+        type: choice
+        options:
+          - "2"
+          - "3"
+          - "4"
+      reason:
+        description: "Why are you running the Windows build?"
+        required: false
+        default: "manual Windows installer build"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-msi-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows-msi:
+    name: Windows x64 tests + build + MSI
+    runs-on: windows-2022
+    timeout-minutes: 355
+    env:
+      LO_BUILD_ROOT: C:\lo
+      LO_BUILD_DIR: C:\lo\build
+      LO_TARBALL_DIR: C:\lo\tarballs
+      BUILD_JOBS: ${{ inputs.jobs }}
+
+    steps:
+      - name: Force an LF checkout
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Confirm checkout and reclaim build disk
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $eol = git ls-files --eol autogen.sh configure.ac distro-configs/LibreOfficeWin64.conf
+          $eol | Write-Host
+          if ($eol -match 'w/crlf') {
+            throw 'The Windows build requires an LF checkout; CRLF files were detected.'
+          }
+
+          Get-PSDrive -PSProvider FileSystem | Format-Table Name, Used, Free, Root
+          $reclaim = @(
+            'C:\Android',
+            'C:\Program Files\dotnet',
+            'C:\hostedtoolcache\windows\CodeQL',
+            'C:\vcpkg'
+          )
+          foreach ($path in $reclaim) {
+            if (Test-Path -LiteralPath $path) {
+              Write-Host "Removing unused runner payload: $path"
+              try {
+                Remove-Item -LiteralPath $path -Recurse -Force -ErrorAction Stop
+              }
+              catch {
+                Write-Warning "Could not fully remove ${path}: $($_.Exception.Message)"
+              }
+            }
+          }
+
+          New-Item -ItemType Directory -Force -Path $env:LO_BUILD_DIR, $env:LO_TARBALL_DIR | Out-Null
+          $free = (Get-PSDrive -Name C).Free
+          Write-Host ("C: free after cleanup: {0:N1} GiB" -f ($free / 1GB))
+          if ($free -lt 30GB) {
+            throw 'Fewer than 30 GiB remain on C:; refusing to start a build that cannot package reliably.'
+          }
+
+      - name: Validate Visual Studio and Windows SDK packaging tools
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (-not (Test-Path -LiteralPath $vswhere)) {
+            throw 'vswhere.exe is missing.'
+          }
+
+          $vs = & $vswhere -latest -version '[17.0,18.0)' -products '*' -requires `
+            Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            Microsoft.VisualStudio.Component.VC.ATL `
+            Microsoft.VisualStudio.Component.VC.Redist.MSM `
+            Microsoft.VisualStudio.Component.VC.CMake.Project `
+            -property installationPath
+          if (-not $vs) {
+            throw 'Visual Studio 2022 with MSVC x64, ATL, CMake, and CRT merge modules was not found.'
+          }
+          Write-Host "Visual Studio: $vs"
+
+          $cmake = Join-Path $vs 'Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe'
+          if (-not (Test-Path -LiteralPath $cmake)) {
+            throw "Visual Studio CMake is missing: $cmake"
+          }
+          $atl = Get-ChildItem -Path (Join-Path $vs 'VC\Tools\MSVC') -Recurse -Filter atlbase.h -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $atl) {
+            throw 'ATL headers are missing.'
+          }
+          $msm = Get-ChildItem -Path (Join-Path $vs 'VC\Redist\MSVC') -Recurse -Filter Microsoft_VC143_CRT_x86.msm -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $msm) {
+            throw 'The Visual C++ v143 CRT merge module is missing.'
+          }
+
+          $kitsRoot = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows Kits\Installed Roots').KitsRoot10
+          if (-not $kitsRoot) {
+            throw 'Windows 10/11 SDK root is not registered.'
+          }
+          $sdk = Get-ChildItem -LiteralPath (Join-Path $kitsRoot 'bin') -Directory |
+            Where-Object { $_.Name -match '^10\.0\.\d+\.0$' } |
+            Sort-Object { [version]$_.Name } -Descending |
+            Where-Object {
+              $version = $_.Name
+              $required = @(
+                (Join-Path $kitsRoot "Include\$version\um\adoint.h"),
+                (Join-Path $kitsRoot "Include\$version\um\SqlUcode.h"),
+                (Join-Path $kitsRoot "Include\$version\um\usp10.h"),
+                (Join-Path $kitsRoot "Lib\$version\um\x64\user32.lib"),
+                (Join-Path $kitsRoot "bin\$version\x64\midl.exe"),
+                (Join-Path $kitsRoot "bin\$version\x86\MsiInfo.exe"),
+                (Join-Path $kitsRoot "bin\$version\x86\MsiDb.exe"),
+                (Join-Path $kitsRoot "bin\$version\x86\MsiTran.exe"),
+                (Join-Path $kitsRoot "bin\$version\x86\uuidgen.exe")
+              )
+              -not ($required | Where-Object { -not (Test-Path -LiteralPath $_) })
+            } |
+            Select-Object -First 1
+          if (-not $sdk) {
+            throw 'No complete Windows SDK with desktop headers, libraries, MIDL, and MSI tools was found.'
+          }
+
+          Write-Host "Windows SDK: $($sdk.Name)"
+          Write-Host "ATL: $($atl.FullName)"
+          Write-Host "CRT merge module: $($msm.FullName)"
+          & $cmake --version
+
+      - name: Install Cygwin build prerequisites
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $setup = 'C:\cygwin-setup.exe'
+          curl.exe -fL --retry 5 --retry-delay 5 https://cygwin.com/setup-x86_64.exe -o $setup
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Downloading the official Cygwin installer failed.'
+          }
+          $signature = Get-AuthenticodeSignature -LiteralPath $setup
+          Write-Host "Cygwin setup signature: $($signature.Status) / $($signature.SignerCertificate.Subject)"
+          if ($signature.Status -ne 'Valid') {
+            throw 'The Cygwin installer signature is not valid.'
+          }
+
+          $packages = @(
+            'autoconf', 'automake', 'bison', 'cabextract', 'diffutils', 'file',
+            'flex', 'gawk', 'gettext-devel', 'git', 'gperf', 'libxml2-devel',
+            'libxslt', 'make', 'nasm', 'patch', 'perl', 'perl-Archive-Zip',
+            'perl-Font-TTF', 'perl-IO-String', 'pkg-config', 'python3', 'rsync',
+            'unzip', 'wget', 'which', 'zip'
+          ) -join ','
+          & $setup -q -n -N -d -R C:\cygwin64 -s https://mirrors.kernel.org/sourceware/cygwin/ -P $packages
+          if ($LASTEXITCODE -ne 0) {
+            throw "Cygwin setup failed with exit code $LASTEXITCODE."
+          }
+
+          $toolDir = 'C:\cygwin64\opt\lo\bin'
+          New-Item -ItemType Directory -Force -Path $toolDir | Out-Null
+          $downloads = @{
+            'make.exe' = 'https://dev-www.libreoffice.org/bin/cygwin/make-4.2.1-msvc.exe'
+            'pkgconf-2.4.3.exe' = 'https://dev-www.libreoffice.org/extern/pkgconf-2.4.3.exe'
+            'nasm.exe' = 'https://dev-www.libreoffice.org/bin/cygwin/nasm.exe'
+          }
+          foreach ($entry in $downloads.GetEnumerator()) {
+            $destination = Join-Path $toolDir $entry.Key
+            curl.exe -fL --retry 5 --retry-delay 5 $entry.Value -o $destination
+            if ($LASTEXITCODE -ne 0 -or (Get-Item -LiteralPath $destination).Length -lt 10000) {
+              throw "Downloading $($entry.Key) failed."
+            }
+            $hash = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash
+            Write-Host "$($entry.Key) SHA-256 $hash"
+          }
+
+      - name: Validate Cygwin and LibreOffice build tools
+        shell: C:\cygwin64\bin\bash.exe --noprofile --norc -eo pipefail {0}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          for tool in autoconf automake bison flex gawk gperf patch perl python3 rsync unzip wget zip; do
+            command -v "$tool"
+          done
+          perl -MArchive::Zip -e 1
+          perl -MFont::TTF::Font -e 1
+          /opt/lo/bin/make.exe --version | tee /tmp/make-version.txt
+          grep -q 'Built for Windows' /tmp/make-version.txt
+          /opt/lo/bin/pkgconf-2.4.3.exe --version
+          /opt/lo/bin/nasm.exe -v
+
+      - name: Configure lean Windows x64 LibreOfficeDev build
+        shell: C:\cygwin64\bin\bash.exe --noprofile --norc -eo pipefail {0}
+        env:
+          SOURCE_CHECKOUT: ${{ github.workspace }}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          src_dir="$(cygpath -u "$SOURCE_CHECKOUT")"
+          build_dir="$(cygpath -u "$LO_BUILD_DIR")"
+          tarball_dir="$(cygpath -u "$LO_TARBALL_DIR")"
+          mkdir -p "$build_dir" "$tarball_dir"
+          cd "$build_dir"
+          "$src_dir/autogen.sh" \
+            --host=x86_64-pc-cygwin \
+            --with-visual-studio=2022 \
+            --with-windows-sdk=10.0 \
+            --with-package-format=msi \
+            --with-external-tar=C:/lo/tarballs \
+            --with-lang=en-US \
+            --disable-online-update \
+            --disable-python \
+            --without-java \
+            --without-junit \
+            --without-dotnet \
+            --without-help \
+            --without-helppack-integration \
+            --without-myspell-dicts \
+            --without-doxygen \
+            --without-fonts \
+            --with-galleries=no \
+            --disable-odk \
+            --disable-ccache \
+            --disable-skia \
+            --disable-pdfium \
+            --disable-database-connectivity \
+            --disable-cairo-canvas
+
+      - name: Run required native C++ regression tests
+        shell: C:\cygwin64\bin\bash.exe --noprofile --norc -eo pipefail {0}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          cd "$(cygpath -u "$LO_BUILD_DIR")"
+          /opt/lo/bin/make.exe -j"$BUILD_JOBS" \
+            CppunitTest_tools_test \
+            CppunitTest_vcl_widget_definition_reader_test \
+            CppunitTest_vcl_file_definition_widget_draw_test
+
+      - name: Build LibreOfficeDev and Windows installation set
+        shell: C:\cygwin64\bin\bash.exe --noprofile --norc -eo pipefail {0}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          cd "$(cygpath -u "$LO_BUILD_DIR")"
+          /opt/lo/bin/make.exe -j"$BUILD_JOBS" build
+
+      - name: Materialize MSI packages
+        shell: C:\cygwin64\bin\bash.exe --noprofile --norc -eo pipefail {0}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          cd "$(cygpath -u "$LO_BUILD_DIR")"
+          /opt/lo/bin/make.exe -j"$BUILD_JOBS" CustomTarget_instsetoo_native/install
+
+      - name: Stage and structurally validate MSI artifacts
+        id: stage
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installation = Join-Path $env:LO_BUILD_DIR 'workdir\installation'
+          $msis = @(Get-ChildItem -LiteralPath $installation -Recurse -Filter '*.msi' -File -ErrorAction SilentlyContinue)
+          if ($msis.Count -eq 0) {
+            throw "No MSI was produced under $installation."
+          }
+
+          $dist = Join-Path $env:GITHUB_WORKSPACE 'dist-windows'
+          $checkRoot = Join-Path $env:LO_BUILD_ROOT 'msi-check'
+          New-Item -ItemType Directory -Force -Path $dist, $checkRoot | Out-Null
+          $manifest = @()
+          for ($index = 0; $index -lt $msis.Count; $index++) {
+            $msi = $msis[$index]
+            $extract = Join-Path $checkRoot $index
+            $log = Join-Path $dist "$($msi.BaseName)-admin-extract.log"
+            New-Item -ItemType Directory -Force -Path $extract | Out-Null
+            $process = Start-Process -FilePath "$env:SystemRoot\System32\msiexec.exe" `
+              -ArgumentList @('/a', $msi.FullName, '/qn', "TARGETDIR=$extract", '/L*V', $log) `
+              -Wait -PassThru
+            if ($process.ExitCode -notin @(0, 3010)) {
+              throw "Administrative extraction failed for $($msi.Name) with exit code $($process.ExitCode)."
+            }
+            $soffice = Get-ChildItem -LiteralPath $extract -Recurse -Filter soffice.exe -File -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $soffice) {
+              throw "The MSI $($msi.Name) does not contain a soffice.exe payload."
+            }
+
+            $destination = Join-Path $dist $msi.Name
+            Copy-Item -LiteralPath $msi.FullName -Destination $destination
+            $hash = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($msi.Name)" | Set-Content -LiteralPath "$destination.sha256" -Encoding ascii
+            $manifest += [ordered]@{
+              file = $msi.Name
+              bytes = $msi.Length
+              sha256 = $hash
+              source_commit = '${{ github.sha }}'
+              administrative_extract = 'passed'
+              payload = $soffice.FullName.Substring($extract.Length).TrimStart('\')
+              runtime_verified = $false
+              signed = $false
+            }
+          }
+          $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $dist 'windows-msi-manifest.json') -Encoding utf8
+          Get-ChildItem -LiteralPath $dist | Format-Table Name, Length
+          "found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload validated Windows MSI artifact
+        if: steps.stage.outputs.found == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: libreoffice-material-windows-x64-${{ github.sha }}
+          path: dist-windows/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish experimental Windows MSI prerelease
+        if: steps.stage.outputs.found == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $short = '${{ github.sha }}'.Substring(0, 10)
+          $tag = "windows-msi-${{ github.run_number }}-$short"
+          $notes = @"
+          Unofficial, unsigned, EXPERIMENTAL LibreOfficeDev Windows x64 build from commit ${{ github.sha }}.
+
+          The MSI passed an administrative extraction check and contains soffice.exe. It has not yet passed the repository's required low-level off-screen desktop interaction and screenshot gate. Use only for testing; do not install over an official LibreOffice release.
+
+          Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          "@
+          gh release create $tag dist-windows/*.msi dist-windows/*.sha256 dist-windows/windows-msi-manifest.json `
+            --title "LibreOffice Material Windows x64 — experimental $short" `
+            --prerelease `
+            --notes $notes
+
+      - name: Preserve Windows build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-build-diagnostics-${{ github.run_id }}
+          path: |
+            C:\lo\build\config.log
+            C:\lo\build\autogen.input
+            C:\lo\build\autogen.lastrun
+            C:\lo\build\config_host.mk
+            C:\lo\build\workdir\CppunitTest\*.test.log
+            C:\lo\build\workdir\CppunitTest\*.core
+            C:\lo\build\workdir\CustomTarget\instsetoo_native\install\*.log
+            C:\lo\build\workdir\installation\**\*.log
+            dist-windows\
+          if-no-files-found: ignore
+          retention-days: 14
