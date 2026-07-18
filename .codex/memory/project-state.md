@@ -217,6 +217,18 @@ prove a whole-GUI rewrite or any completed application surface.
   names no longer collide. A five-dimension adversarial review
   (`wf_e8395840-a9f`) confirmed self-containment and the honesty contract and
   drove these fixes.
+- Complete written design specification published at `docs/design/` (D-022):
+  an index plus twelve files (~46,000 words) covering foundations, actions,
+  selection, inputs, navigation, containers, feedback, dialogs, Start Center,
+  Writer/Calc, Impress/Draw, and Base/Math/shared surfaces. Component files
+  carry anatomy/states/interaction/accessibility/density/RTL/platform/
+  verification sections; surface files carry layout/flows/states/density/
+  keyboard/a11y/verification. Authored by a 12-agent workflow
+  (`wf_65acdda7-e4c`) whose completeness critic verified zero invented tokens,
+  zero honesty violations, and coverage of all 19 components required by
+  MATERIAL_DESIGN.md; its three minor gaps (RTL sections in chapters 10/12, a
+  slider-stroke wording) were fixed before publication. The spec describes the
+  target design only — nothing in it is build- or runtime-verified.
 - Pages uses GitHub Actions workflow mode. Run `29510014215` deployed commit
   `46807f76f9a744fe61732e90f6085cc82eef16f5` successfully on 2026-07-16;
   follow-up endpoint checks returned HTTP `200` for both `/` and `styles.css`.

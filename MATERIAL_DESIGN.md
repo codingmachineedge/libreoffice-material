@@ -4,6 +4,13 @@ This document translates Material Design 3 ideas into LibreOffice's native
 desktop architecture. It is a starting contract, not proof that the current UI
 implements these rules.
 
+The complete written design specification — foundations, every shared
+component, and every application surface, with per-component anatomy, state,
+interaction, accessibility, density, RTL, platform, and verification sections —
+lives in [`docs/design/`](docs/design/README.md). This document remains the
+short contract; the spec set is its full elaboration and inherits its honesty
+rules.
+
 The canonical visual and interaction reference is the interactive prototype at
 [`site/prototype.html`](site/prototype.html): a hand-built, dependency-free HTML
 rendering of the whole suite (Start Center, Writer, Calc, Impress, Draw, Base,

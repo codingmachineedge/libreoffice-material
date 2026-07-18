@@ -353,3 +353,35 @@
   target. Hosting it under `site/` satisfies Phase 0's "publish an honest project
   site" work and gives every subsequent phase a concrete visual reference, while
   the mockup labeling preserves the source-vs-verified honesty contract.
+
+## D-022 — author the complete written design specification set
+
+- Date: 2026-07-18
+- State: published documentation; not build/runtime evidence
+- Context: the operator directed "fully write the design". MATERIAL_DESIGN.md is
+  deliberately a short contract; its "Component behavior" section lists what
+  every component specification must define, but until now no per-component or
+  per-surface specification existed. The token values, native part/state
+  inventory, and the interactive reference gave enough ground truth to write
+  the full spec without inventing values.
+- Decision: author `docs/design/` — an index plus twelve specification files
+  (01 foundations; 02 actions; 03 selection; 04 inputs; 05 navigation;
+  06 containers; 07 feedback; 08 dialogs; 09 Start Center; 10 Writer & Calc;
+  11 Impress & Draw; 12 Base, Math & shared). Component files carry the
+  contract-mandated sections (anatomy/tokens, states, interaction,
+  accessibility, density, RTL, platform, verification hooks); surface files
+  carry layout/flows/states/density/keyboard/a11y/verification. Every token
+  name and pixel value is grounded in `definition.xml`, `docs/DESIGN_TOKENS.md`,
+  or `site/prototype.html`, with implementation status marked per item
+  ("implemented in definition.xml (unbuilt)" / "prototype-only" / "specified
+  here, not yet implemented"). Authored by a 12-agent parallel workflow with an
+  adversarial completeness critic; gaps found by the critic were fixed before
+  publication.
+- Decision: the spec inherits the honesty contract. Every file opens with a
+  status note that nothing is build- or runtime-verified; the spec describes
+  the target and does not advance any acceptance gate or the verified-capture
+  count (0). MATERIAL_DESIGN.md, README.md, and the site link to the set as
+  the full elaboration of the short contract.
+- Reason: Phase 2+ native work needs a written target more precise than the
+  short contract, and the audit trail is stronger when the design is stated
+  before implementation rather than reverse-engineered after it.

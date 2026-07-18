@@ -26,6 +26,7 @@ document engine, file-format support, and accessibility foundations.
 [Interactive preview](https://codingmachineedge.github.io/libreoffice-material/prototype.html) ·
 [Roadmap](ROADMAP.md) ·
 [Material specification](MATERIAL_DESIGN.md) ·
+[Full design spec](docs/design/README.md) ·
 [Headless UI evidence plan](docs/HEADLESS_UI_EVIDENCE.md) ·
 [Screenshot index](docs/SCREENSHOTS.md)
 
