@@ -544,6 +544,7 @@
             <state enabled="true" selected="true" rollover="true"><rect stroke="@primary" fill="@primary-hover" stroke-width="@stroke-thin" radius="@corner-pill"/></state>
             <state enabled="true" selected="true" focused="true"><rect stroke="@primary" fill="@primary-container" stroke-width="@stroke-standard" radius="@corner-pill"/></state>
             <state enabled="false"><rect stroke="@disabled-container" fill="@disabled-container" stroke-width="@stroke-none" radius="@corner-pill"/></state>
+            <state enabled="false" selected="true"><rect stroke="@outline" fill="@disabled-container" stroke-width="@stroke-thin" radius="@corner-pill"/></state>
         </part>
         <part value="MenuItem">
             <state enabled="true"><rect stroke="@surface-container" fill="@surface-container" stroke-width="@stroke-none" radius="@corner-container"/></state>
@@ -553,6 +554,7 @@
             <state enabled="true" focused="true"><rect stroke="@primary" fill="@surface-container" stroke-width="@stroke-standard" radius="@corner-container"/></state>
             <state enabled="true" selected="true" focused="true"><rect stroke="@primary" fill="@primary-container" stroke-width="@stroke-standard" radius="@corner-container"/></state>
             <state enabled="false"><rect stroke="@disabled-container" fill="@disabled-container" stroke-width="@stroke-none" radius="@corner-container"/></state>
+            <state enabled="false" selected="true"><rect stroke="@outline" fill="@disabled-container" stroke-width="@stroke-thin" radius="@corner-container"/></state>
         </part>
     </tabitem>
 
@@ -585,6 +587,7 @@
             <state enabled="true" pressed="true" button-value="true"><rect stroke="@primary" fill="@primary-pressed" stroke-width="@stroke-thin" radius="@corner-toolbar"/></state>
             <state enabled="true" focused="true"><rect stroke="@primary" fill="@surface-container" stroke-width="@stroke-standard" radius="@corner-toolbar"/></state>
             <state enabled="false"><rect stroke="@disabled-container" fill="@disabled-container" stroke-width="@stroke-none" radius="@corner-toolbar"/></state>
+            <state enabled="false" button-value="true"><rect stroke="@outline" fill="@disabled-container" stroke-width="@stroke-thin" radius="@corner-toolbar"/></state>
         </part>
     </toolbar>
 
@@ -636,7 +639,7 @@
             <state enabled="false" pressed="true"><rect stroke="@outline" fill="@outline" stroke-width="@stroke-thin" radius="@corner-indicator" x1="0.28" y1="0.28" x2="0.72" y2="0.72"/></state>
         </part>
         <part value="Separator"><state><line stroke="@outline-variant" stroke-width="@stroke-thin" x1="0.08" y1="0.5" x2="0.92" y2="0.5"/></state></part>
-        <part value="SubmenuArrow" width="@size-menu-indicator" height="@size-menu-indicator"><state><line stroke="@on-surface-variant" stroke-width="@stroke-standard" x1="0.4" y1="0.28" x2="0.62" y2="0.5"/><line stroke="@on-surface-variant" stroke-width="@stroke-standard" x1="0.62" y1="0.5" x2="0.4" y2="0.72"/></state></part>
+        <part value="SubmenuArrow" width="@size-menu-indicator" height="@size-menu-indicator"><state><line stroke="@on-surface-variant" stroke-width="@stroke-standard" x1="0.4" y1="0.28" x2="0.62" y2="0.5"/><line stroke="@on-surface-variant" stroke-width="@stroke-standard" x1="0.62" y1="0.5" x2="0.4" y2="0.72"/></state><state enabled="false"><line stroke="@outline" stroke-width="@stroke-standard" x1="0.4" y1="0.28" x2="0.62" y2="0.5"/><line stroke="@outline" stroke-width="@stroke-standard" x1="0.62" y1="0.5" x2="0.4" y2="0.72"/></state></part>
     </menupopup>
     <tooltip><part value="Entire"><state><rect stroke="@inverse-surface" fill="@inverse-surface" stroke-width="@stroke-none" radius="@corner-small"/></state></part></tooltip>
 </widgets>

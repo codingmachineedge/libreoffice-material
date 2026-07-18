@@ -265,3 +265,42 @@
   the net-less result is the same flatter hierarchy the native GTK and macOS
   themes already produce, and it is reversible by removing the definition. Tree
   expander glyphs are a separate control (`ListNode`) and are unaffected.
+
+## D-020 — close disabled-affordance state gaps; defer the design-decision gaps
+
+- Date: 2026-07-18
+- State: published source; native build verification pending
+- Context: a five-family coverage audit cross-checked VCL's real native-control
+  draw call sites against the definition and adversarially verified each claim.
+  It confirmed the control inventory is complete (no missing control types) and
+  surfaced six real state-level gaps and three non-gaps.
+- Decision: implement only the three unambiguous disabled-affordance
+  corrections, where a disabled tuple VCL genuinely passes collapses onto a
+  generic state and loses meaning:
+  - `MenuPopup`/`SubmenuArrow` gains an `enabled="false"` state stroking
+    `@outline` (a disabled submenu parent passes `ControlState::NONE`;
+    `menu.cxx` draws the arrow with no enable guard);
+  - `toolbar`/`Button` gains `enabled="false" button-value="true"`
+    (`@outline` stroke over `@disabled-container`) so a disabled checked tool
+    keeps a dimmed checked affordance (`ToolBox::ImplDrawItem` passes
+    `NONE` + tristate `On`);
+  - `tabitem`/`Entire` and `tabitem`/`MenuItem` gain
+    `enabled="false" selected="true"` so a disabled tab control still marks its
+    current page (the page keeps `SELECTED` with `ENABLED` cleared).
+  All four states reuse existing tokens and are ordered after the generic
+  disabled state so last-match-wins selects them for the specific tuple.
+- Decision: explicitly defer three other verified-real gaps because they are
+  design decisions, not corrections, and cannot be judged without a build:
+  - emphasizing the keyboard-default push button (`ControlState::DEFAULT`)
+    distinctly from its `action` siblings — every `VclButtonBox` button is
+    already `setAction(true)` (`builder.cxx:2231`), so this would restyle the
+    whole dialog button box and demote non-default actions;
+  - hover feedback on outlined text/spin fields — the editbox verifier ruled
+    that rendering the idle state on hover is intended for the field family, so
+    a spinbox hover state would make spinbox inconsistent with editbox;
+  - press/hover feedback on scrollbar troughs — subtle interaction polish that
+    conflicts with the minimal Material scrollbar and is best judged visually.
+- Reason: the corrections restore disabled-affordance legibility that the
+  accessibility contract requires, are additive and reversible, and change no
+  existing state. The deferrals need a human design call and real captures, so
+  recording them keeps the audit honest without acting unilaterally.

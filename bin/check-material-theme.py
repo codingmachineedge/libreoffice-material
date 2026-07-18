@@ -60,8 +60,8 @@ REQUIRED_METRICS = {
 }
 REQUIRED_METRIC_USAGE = {
     "stroke-none": 95,
-    "stroke-thin": 46,
-    "stroke-standard": 153,
+    "stroke-thin": 49,
+    "stroke-standard": 155,
     "stroke-track": 8,
     "space-list-entry": 1,
     "space-tab-inline": 1,
@@ -126,10 +126,10 @@ STROKE_METRICS = {
 }
 METRIC_PART_ATTRIBUTES = ("width", "height", "margin-width", "margin-height")
 METRIC_GEOMETRY_SHA256 = (
-    "f70697ac8fc47cc952e2312afa9a02f88aed27fb69f1cb60a1bddd32bc714082"
+    "dc16a577f59c30ce215aeebb3c930617477572ec31884feebe43585e65c60515"
 )
 NORMALIZED_COORDINATE_SHA256 = (
-    "0979f2b3d1d4dff15278fb6b1d1d708795d207045cb339d3ad42a9dcb331ed2e"
+    "8345cd2865759bc8a73f9a7845af2b5d420ea4812c75bcdfe3ba038a13c402e8"
 )
 
 REQUIRED_FEEDBACK_COLORS = {
@@ -911,8 +911,8 @@ def validate_metric_usage(
                     fail(f"{element.tag}/@{attribute} must not reference a metric token")
                 fail(f"{element.tag}/@{attribute} must not reference a token")
 
-    if coordinate_count != 676:
-        fail(f"expected 676 normalized coordinate scalars, found {coordinate_count}")
+    if coordinate_count != 684:
+        fail(f"expected 684 normalized coordinate scalars, found {coordinate_count}")
     if len(coordinate_patterns) != 45:
         fail(
             "expected 45 normalized coordinate patterns, "

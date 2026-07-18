@@ -4,7 +4,7 @@ An experimental LibreOffice engineering fork exploring a suite-wide Material
 Design 3 interface while retaining LibreOffice's native implementation stack,
 document engine, file-format support, and accessibility foundations.
 
-> **Current development focus: Phase 1 — ninth Material VCL source milestone.**
+> **Current development focus: Phase 1 — tenth Material VCL source milestone.**
 > Phase 0's native-build and application-evidence gate remains open. Semantic
 > widget tokens, full-track progress indicators, value-sensitive level
 > indicators, native outlined frames, net-less tree connectors, stricter VCL
@@ -25,7 +25,7 @@ document engine, file-format support, and accessibility foundations.
 | --- | --- | --- |
 | LibreOffice source baseline | Imported | This repository's initial tree matches upstream commit `63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21` |
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
-| Material VCL implementation | Ninth source milestone, unbuilt | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present; build and runtime gates remain open |
+| Material VCL implementation | Tenth source milestone, unbuilt | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present; build and runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
 | Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
 | Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
@@ -40,17 +40,17 @@ source includes:
 
 - a packaged `material/definition.xml` file-widget theme with matching light and
   dark palettes of 23 semantic color roles each, 79 definition-backed parts,
-  and 201 component states;
+  and 205 component states;
 - eight semantic corner roles resolved order-independently by the native XML
-  reader into both existing rectangle radius axes; all 156 rounded Material
+  reader into both existing rectangle radius axes; all 159 rounded Material
   rectangles use one named role while the 11 square rectangles remain
   attribute-free, and legacy numeric `rx`/`ry` definitions stay supported;
 - 15 semantic native integer metric roles for strokes, control dimensions,
-  spacing, tab/title heights, and list-preview geometry; 341 integer values now
-  resolve through those roles—302 drawing strokes, 34 explicit part
+  spacing, tab/title heights, and list-preview geometry; 346 integer values now
+  resolve through those roles—307 drawing strokes, 34 explicit part
   dimensions/margins, and 5 numeric settings—while the existing native action,
   part, and settings representations remain unchanged;
-- all 676 normalized `x1`/`y1`/`x2`/`y2` coordinate values remain local
+- all 684 normalized `x1`/`y1`/`x2`/`y2` coordinate values remain local
   literals because they describe proportional component geometry rather than
   integer metrics; typography scaling and rectangle corners retain their
   separate semantic contracts;
@@ -96,6 +96,12 @@ source includes:
   `decoview` issues the file-definition border draw, and a net-less Material
   tree (`ControlType::ListNet`/`Entire`) that is supported yet draws nothing so
   VCL suppresses its own connector nets for a flatter tree;
+- disabled-affordance state completeness for three controls that previously
+  collapsed a disabled tuple onto a generic state: a dimmed `SubmenuArrow` when a
+  submenu parent is disabled, a dimmed-but-checked toolbar button
+  (`enabled="false"` + `button-value="true"`), and a disabled-but-selected tab
+  (`Entire` and `MenuItem`) so a disabled tab control still identifies its
+  current page;
 - shared renderer corrections for composite combo geometry and RTL placement,
   toolbar grips, standalone spin geometry and direction, native control regions,
   slider sizing, and raw graphics-state invalidation;
@@ -109,7 +115,7 @@ source includes:
 
 The local static validator passes with 2 schemes, 23 semantic color tokens per
 scheme, 3 semantic typography roles, 8 semantic shape tokens, 15 semantic
-metric roles, 72 style slots, 79 parts, and 201 states.
+metric roles, 72 style slots, 79 parts, and 205 states.
 This is source validation only: no affected C++ test target or `soffice` has
 run, no application surface is verified Material-complete, and the screenshot
 count remains 0. Controls whose current file-widget geometry cannot preserve

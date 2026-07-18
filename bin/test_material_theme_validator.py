@@ -71,7 +71,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
 
     def test_canonical_theme_and_native_sources_pass(self) -> None:
         self.assertEqual(
-            VALIDATOR.validate(DEFINITION_PATH), (2, 23, 3, 8, 15, 72, 79, 201)
+            VALIDATOR.validate(DEFINITION_PATH), (2, 23, 3, 8, 15, 72, 79, 205)
         )
         VALIDATOR.validate_native_typography_source(
             (RENDERER_PATH, TYPOGRAPHY_SOURCE_PATH)
@@ -450,8 +450,8 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         rects = list(root.iter("rect"))
         rounded = [element for element in rects if "radius" in element.attrib]
         square = [element for element in rects if "radius" not in element.attrib]
-        self.assertEqual(len(rects), 167)
-        self.assertEqual(len(rounded), 156)
+        self.assertEqual(len(rects), 170)
+        self.assertEqual(len(rounded), 159)
         self.assertEqual(len(square), 11)
         self.assertFalse(
             any("rx" in element.attrib or "ry" in element.attrib for element in root.iter())
@@ -465,9 +465,9 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                     "corner-focus": 2,
                     "corner-small": 19,
                     "corner-control": 26,
-                    "corner-container": 52,
-                    "corner-toolbar": 8,
-                    "corner-pill": 18,
+                    "corner-container": 53,
+                    "corner-toolbar": 9,
+                    "corner-pill": 19,
                 }
             ),
         )
@@ -478,7 +478,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 201)
+            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 205)
         )
 
     def test_metric_structure_is_strict(self) -> None:
@@ -855,7 +855,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         metrics = VALIDATOR.read_metrics(root)
         references, digest = VALIDATOR.validate_metric_usage(root, metrics)
         self.assertEqual(references, Counter(VALIDATOR.REQUIRED_METRIC_USAGE))
-        self.assertEqual(sum(references.values()), 341)
+        self.assertEqual(sum(references.values()), 346)
         self.assertEqual(digest, VALIDATOR.METRIC_GEOMETRY_SHA256)
         self.assertFalse(
             any(
@@ -872,7 +872,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 201)
+            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 205)
         )
 
         swapped = self.definition.replace(
@@ -1530,6 +1530,59 @@ class MaterialThemeValidatorTest(unittest.TestCase):
             "",
         )
         self.assert_definition_fails(without_listnet, "missing control listnet")
+
+    def test_disabled_affordance_states_are_present_and_dimmed(self) -> None:
+        root = ET.parse(DEFINITION_PATH).getroot()
+
+        def part(control: str, value: str) -> ET.Element:
+            element = root.find(control)
+            self.assertIsNotNone(element, f"missing control {control}")
+            for candidate in element.findall("part"):
+                if candidate.get("value") == value:
+                    return candidate
+            self.fail(f"missing {control}/{value}")
+
+        def state(part_element: ET.Element, **attributes: str) -> ET.Element:
+            for candidate in part_element.findall("state"):
+                if all(candidate.get(k) == v for k, v in attributes.items()) and all(
+                    candidate.get(k) is None
+                    for k in ("focused", "pressed", "rollover", "default")
+                    if k not in attributes
+                ):
+                    return candidate
+            self.fail(f"missing state {attributes!r}")
+
+        # A disabled submenu-parent passes ControlState::NONE; the arrow must dim
+        # rather than keep the enabled @on-surface-variant stroke.
+        arrow = part("menupopup", "SubmenuArrow")
+        self.assertEqual(len(arrow.findall("state")), 2)
+        disabled_arrow = state(arrow, enabled="false")
+        strokes = {line.get("stroke") for line in disabled_arrow.findall("line")}
+        self.assertEqual(strokes, {"@outline"})
+
+        # A disabled but checked toolbar button keeps a dimmed checked affordance
+        # instead of collapsing to the plain disabled fill.
+        toolbar_button = part("toolbar", "Button")
+        disabled_checked = state(
+            toolbar_button, enabled="false", **{"button-value": "true"}
+        )
+        rect = disabled_checked.find("rect")
+        self.assertEqual(rect.get("stroke"), "@outline")
+        self.assertEqual(rect.get("fill"), "@disabled-container")
+
+        # A disabled tab control keeps the current page identifiable.
+        for value in ("Entire", "MenuItem"):
+            tab = part("tabitem", value)
+            disabled_selected = state(tab, enabled="false", selected="true")
+            rect = disabled_selected.find("rect")
+            self.assertEqual(rect.get("stroke"), "@outline")
+            self.assertEqual(rect.get("fill"), "@disabled-container")
+            plain_disabled = state(tab, enabled="false")
+            self.assertNotEqual(
+                plain_disabled.find("rect").get("stroke"),
+                disabled_selected.find("rect").get("stroke"),
+                "disabled+selected tab must be distinct from plain disabled",
+            )
 
     def test_required_native_container_patterns_cannot_hide_in_comments(self) -> None:
         commented_renderer = "\n".join(

@@ -6,14 +6,14 @@ implements these rules.
 
 ## Current implementation status
 
-Nine native source milestones now exist. They package an opt-in Material
+Ten native source milestones now exist. They package an opt-in Material
 file-widget definition, add safe keyed theme selection and definition-aware
 fallback in VCL, begin the Start Center surface/header treatment, and implement
 matched light and dark palettes of 23 semantic roles each. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates
-79 definition-backed parts and 201 states, including mixed and disabled
+79 definition-backed parts and 205 states, including mixed and disabled
 controls, flat buttons, selected-hover/focus tabs, toolbar buttons/grips, list
 nodes, borderless and multiline edits, and standalone vertical/horizontal spin
 buttons, plus full-track progress and value-sensitive level indicators.
@@ -39,7 +39,7 @@ semantic mapping.
 The sixth milestone introduces eight semantic corner roles. A strict optional
 `shapes` section is resolved in the reader's order-independent first pass, and
 one `radius="@role"` reference populates both existing native rectangle radius
-axes. The 156 rounded Material rectangles use the exact `corner-checkbox`,
+axes. The 159 rounded Material rectangles use the exact `corner-checkbox`,
 `corner-indicator`, `corner-focus`, `corner-small`, `corner-control`,
 `corner-container`, `corner-toolbar`, and `corner-pill` roles; the 11 square
 rectangles keep their prior implicit geometry. Existing themes that use numeric
@@ -65,8 +65,8 @@ bands at the existing 25%, 50%, and 75% boundaries, so the generic level-bar
 meaning is not flattened into one color. Zero still paints the track; legacy
 file themes that define only `Entire` retain their prior fill-only behavior.
 These nine new rounded actions reuse the existing shape and metric contracts,
-bringing the current definition to 156 rounded rectangles and 341 metric
-references (302 strokes, 34 part dimensions/margins, and 5 settings).
+bringing the current definition to 159 rounded rectangles and 346 metric
+references (307 strokes, 34 part dimensions/margins, and 5 settings).
 
 The ninth milestone adds native Material anatomy for two controls the reader
 already recognized but the theme had not yet defined: the outlined frame
@@ -84,7 +84,26 @@ connector nets, giving the flatter Material tree that native GTK and macOS
 themes already produce. Both controls remain source only, unbuilt, and
 unexecuted.
 
-The 676 normalized fractional drawing coordinates remain component-local
+The tenth milestone closes three disabled-affordance gaps found by auditing
+VCL's real native-control draw calls against the definition: cases where a
+disabled control tuple VCL genuinely passes collapsed onto a generic state and
+lost its meaning. A disabled submenu parent (`MenuPopup`/`SubmenuArrow`,
+`ControlState::NONE`) now dims its arrow to `@outline` instead of keeping the
+enabled stroke; a disabled but checked toolbar button
+(`enabled="false"` + `button-value="true"`) keeps a dimmed `@outline` checked
+outline instead of the plain disabled fill; and a disabled tab control keeps its
+current page identifiable through `enabled="false" selected="true"` states on
+both `tabitem`/`Entire` and `tabitem`/`MenuItem`. All four states reuse existing
+tokens, adding four states, three rounded rectangles, one dimmed arrow pair, and
+five stroke references with no new token. Three other verified gaps were left out
+of this slice because they are design decisions rather than corrections:
+emphasizing the keyboard-default push button distinctly from its `action`
+siblings (which would restyle every dialog button box), hover feedback on
+outlined text/spin fields (the field family intentionally renders its idle state
+on hover), and press/hover feedback on scrollbar troughs. This slice, like the
+others, is unbuilt and unexecuted as LibreOffice.
+
+The 684 normalized fractional drawing coordinates remain component-local
 literals. They describe proportional glyph and inset geometry rather than
 integer metrics; giving individual scalars shared names would obscure the
 45 complete coordinate patterns instead of creating reusable primitives.

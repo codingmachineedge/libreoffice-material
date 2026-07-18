@@ -49,7 +49,7 @@ Exit gate:
 Implemented source milestones:
 
 - packaged `material/definition.xml` with matched light and dark palettes of 23
-  semantic roles each, 79 definition-backed parts, and 201 control states;
+  semantic roles each, 79 definition-backed parts, and 205 control states;
 - exact semantic coverage for all 72 `StyleSettings` color slots, including the
   formerly native-dependent accent, list-box collection/selection,
   alternating-row, warning, and error roles; the ten additions are optional in
@@ -69,14 +69,14 @@ Implemented source milestones:
   font identity preservation across app, help, field, control, menu, tab, and
   title slots;
 - eight semantic corner roles with strict, order-independent native reader
-  resolution; 156 rounded Material rectangles now use one role reference each,
+  resolution; 159 rounded Material rectangles now use one role reference each,
   11 square rectangles remain implicit, and legacy numeric `rx`/`ry` themes
   retain their existing path;
 - 15 semantic native integer metric roles with strict, order-independent native
-  reader resolution; 341 current integer uses reference those roles—302 drawing
+  reader resolution; 346 current integer uses reference those roles—307 drawing
   strokes, 34 explicit part dimensions/margins, and 5 numeric settings—while
   generic legacy themes retain literal numeric compatibility;
-- exact geometry preservation across that conversion: the 676 normalized
+- exact geometry preservation across that conversion: the 684 normalized
   fractional drawing coordinates stay literal, implicit dimensions remain
   implicit, and typography scale and corner radius keep their separate token
   contracts;
@@ -101,6 +101,10 @@ Implemented source milestones:
   its border draw, and a net-less tree connector (`ListNet`/`Entire`) that is
   supported but draws nothing so VCL suppresses its own connector nets; both add
   no new tokens and only one `stroke-thin` reference and one rounded rectangle;
+- disabled-affordance state completeness: a dimmed disabled `SubmenuArrow`, a
+  dimmed-but-checked toolbar button, and a disabled-but-selected tab (`Entire`
+  and `MenuItem`), closing three cases where a disabled tuple VCL passes
+  previously collapsed onto a generic state and lost its meaning;
 - composite combo/RTL geometry, native-region and slider sizing corrections,
   exact standalone spin geometry/direction, and native graphics line/fill cache
   invalidation;
@@ -113,7 +117,7 @@ Implemented source milestones:
 
 The standalone validator passes with 2 schemes, 23 color tokens each, 3
 typography roles, 8 shape tokens, 15 metric roles, 72 style slots, 79 parts, and
-201 states. No affected C++ target has been compiled or executed, and none of
+205 states. No affected C++ target has been compiled or executed, and none of
 this source has run in LibreOffice yet. The metric roles preserve the current
 integers and existing downstream native conversions; they add no density
 profile or new DPI-aware, `dp`, fractional-scale, or touch-sizing policy.

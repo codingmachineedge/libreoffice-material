@@ -12,10 +12,10 @@ licensing and provenance.
 
 ## Current milestone
 
-**Phase 1 — ninth Material VCL source milestone published; suite-wide work
+**Phase 1 — tenth Material VCL source milestone published; suite-wide work
 continues. Phase 0's native build/evidence gate remains open.**
 
-The repository contains an imported LibreOffice source baseline, nine native
+The repository contains an imported LibreOffice source baseline, ten native
 Material source milestones, a design contract, roadmap, published GitHub Pages
 site, screenshot registry, and headless evidence plan. The third milestone adds
 matched light/dark profiles, source-level high-contrast fallback routing,
@@ -48,9 +48,15 @@ on fallback: an outlined `Frame`/`Border` container drawn as one shared rounded
 rectangle, with `getNativeControlRegion` now returning a native frame region and
 a 2px content-region inset (the prerequisite D-017 required, see D-018); and a
 net-less `ListNet`/`Entire` state that returns success while drawing nothing so
-VCL suppresses its own tree connector nets (D-019). The Material definition now
-has 79 parts, 201 states, 156 rounded rectangles, and 341 metric references;
-these changes remain uncompiled and unexecuted.
+VCL suppresses its own tree connector nets (D-019).
+The tenth milestone follows a 14-agent coverage audit (VCL native-draw calls vs
+the definition) that confirmed inventory completeness and closes three
+disabled-affordance gaps: a dimmed disabled `SubmenuArrow`, a disabled-but-checked
+`toolbar`/`Button`, and a disabled-but-selected `tabitem` (`Entire` and
+`MenuItem`). Three other verified gaps (default-button emphasis, field hover,
+scrollbar-trough feedback) are deferred as design decisions (D-020). The Material
+definition now has 79 parts, 205 states, 159 rounded rectangles, and 346 metric
+references; these changes remain uncompiled and unexecuted.
 The native source has not been built or run as LibreOffice, so this does not
 prove a whole-GUI rewrite or any completed application surface.
 

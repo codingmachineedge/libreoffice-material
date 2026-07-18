@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f9f7ff">
     <meta
       name="description"
-      content="LibreOffice Material is an engineering fork with a ninth native Material VCL source milestone and a suite-wide roadmap."
+      content="LibreOffice Material is an engineering fork with a tenth native Material VCL source milestone and a suite-wide roadmap."
     >
     <link rel="canonical" href="https://codingmachineedge.github.io/libreoffice-material/">
     <link rel="stylesheet" href="styles.css">
@@ -43,7 +43,7 @@
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · ninth VCL source milestone</p>
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Phase 1 · tenth VCL source milestone</p>
           <h1 id="hero-title">The LibreOffice desktop, thoughtfully renewed.</h1>
           <p class="hero-lede">
             A native, suite-wide exploration of Material Design 3—built on
@@ -104,7 +104,7 @@
       <section class="status-band" aria-label="Project facts">
         <div>
           <strong>Source slice</strong>
-          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 79 parts · 201 states · unbuilt</span>
+          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 79 parts · 205 states · unbuilt</span>
         </div>
         <div>
           <strong>Harness preflight</strong>
@@ -123,15 +123,15 @@
       <section class="section slice-section" aria-labelledby="slice-title">
         <div class="slice-heading">
           <div>
-            <p class="eyebrow">Ninth Material VCL milestone</p>
-            <h2 id="slice-title">Outlined frames and net-less trees complete the reader-recognized controls.</h2>
+            <p class="eyebrow">Tenth Material VCL milestone</p>
+            <h2 id="slice-title">Disabled affordances now read as disabled.</h2>
             <p>
-              Two controls the native reader already mapped—the frame border and
-              the tree connector net—now have Material anatomy. Group frames draw
-              a single outlined container, and tree views drop their connector
-              nets for a flatter hierarchy. The C++ and XML changes have not been
-              compiled, launched, or captured as LibreOffice; the accepted
-              screenshot count remains zero.
+              An audit of VCL's real native-draw calls found three controls whose
+              disabled state collapsed onto a generic one. A disabled submenu
+              arrow now dims, a disabled-but-checked toolbar button keeps a dimmed
+              check, and a disabled tab control still marks its current page. The
+              XML changes have not been compiled, launched, or captured as
+              LibreOffice; the accepted screenshot count remains zero.
             </p>
           </div>
           <div class="slice-status" aria-label="Implementation status">
@@ -143,23 +143,23 @@
         <div class="slice-grid">
           <article>
             <span aria-hidden="true">01</span>
-            <h3>Outlined frame</h3>
-            <p>A single shared container rectangle—outline-variant stroke, surface-container fill, thin stroke, and container corners—groups content without introducing a new token.</p>
+            <h3>Dimmed submenu arrow</h3>
+            <p>A disabled submenu parent passes <code>ControlState::NONE</code>; the arrow now strokes <code>@outline</code> so it dims with the rest of the disabled item.</p>
           </article>
           <article>
             <span aria-hidden="true">02</span>
-            <h3>Native frame region</h3>
-            <p>The renderer now reports a native frame region so <code>decoview</code> issues the file-definition border draw it previously skipped.</p>
+            <h3>Disabled, still checked</h3>
+            <p>A checked toolbar button that is disabled keeps a dimmed <code>@outline</code> checked outline instead of collapsing to the plain disabled fill.</p>
           </article>
           <article>
             <span aria-hidden="true">03</span>
-            <h3>Net-less tree</h3>
-            <p>ListNet is supported yet draws nothing, so VCL suppresses its own connector nets—the flatter tree that native GTK and macOS themes already produce.</p>
+            <h3>Disabled tab keeps its page</h3>
+            <p>When the whole tab control is disabled, an <code>enabled="false" selected="true"</code> state keeps the current page identifiable rather than blank.</p>
           </article>
           <article>
             <span aria-hidden="true">04</span>
-            <h3>Compatibility retained</h3>
-            <p>No new tokens, one added stroke-thin reference, one rounded rectangle; unsupported geometry still falls back, and all affected C++ remains unexecuted.</p>
+            <h3>Audit-driven, scoped</h3>
+            <p>Found by cross-checking VCL draw calls; three further verified gaps were left out as design decisions, not corrections. No new tokens; all affected source remains unexecuted.</p>
           </article>
         </div>
 
@@ -344,7 +344,7 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
-            <div><p class="phase-state">Source milestone 9</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, outlined frames, net-less tree connectors, strict parsing, high-contrast fallback, expanded states, and static checks exist but are unbuilt.</p></div>
+            <div><p class="phase-state">Source milestone 10</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, outlined frames, net-less tree connectors, disabled-affordance state completeness, strict parsing, high-contrast fallback, expanded states, and static checks exist but are unbuilt.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">2</span>

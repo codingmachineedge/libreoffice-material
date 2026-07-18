@@ -700,3 +700,35 @@ and the UI lint pass for the ninth slice. No affected C++ target or LibreOffice
 binary was compiled or run, the low-level headless driver still has no fork
 binary to launch, and accepted application screenshots remain **0**. GitHub
 Actions and Pages verification follow the push to `main`.
+
+## 2026-07-18 — tenth disabled-affordance source validation
+
+- A five-family coverage audit (14 agents; VCL native-draw call sites vs the
+  Material definition, each claim adversarially verified) confirmed the control
+  inventory is complete and surfaced six real state gaps plus three non-gaps.
+  This slice implements the three unambiguous disabled-affordance corrections and
+  defers the three design-decision gaps (see D-020).
+- New states: `menupopup`/`SubmenuArrow` `enabled="false"` (two `@outline`
+  lines), `toolbar`/`Button` `enabled="false" button-value="true"` (one rounded
+  rect), and `tabitem`/`Entire` and `tabitem`/`MenuItem`
+  `enabled="false" selected="true"` (one rounded rect each). Four new states, no
+  new part, no new token.
+- Metric closure moves from 341 to 346 references: `stroke-standard` 153→155
+  (the disabled arrow's two lines) and `stroke-thin` 46→49 (the three disabled
+  rects), i.e. 307 strokes, 34 part dimensions/margins, and 5 settings. The
+  eight new normalized coordinates (the disabled arrow lines, reusing the
+  enabled arrow's two patterns) raise the coordinate total 676→684 while the
+  pattern count stays 45. New geometry hashes:
+  metric `dc16a577f59c30ce215aeebb3c930617477572ec31884feebe43585e65c60515`,
+  coordinate `8345cd2865759bc8a73f9a7845af2b5d420ea4812c75bcdfe3ba038a13c402e8`.
+- The standalone validator reports exactly 2 schemes, 23 color tokens per
+  scheme, 3 typography roles, 8 shape tokens, 15 metric tokens, 72 style slots,
+  79 parts, and 205 states. All 27 Python unittest methods pass on portable
+  CPython 3.12.7 and the Start Center UI lint passes; a new regression fixture
+  asserts each disabled affordance is present and dimmed distinctly from the
+  state it previously collapsed onto.
+
+Scope conclusion: repository-side semantic validation, 27 validator unittests,
+and the UI lint pass for the tenth slice. No affected C++ target or LibreOffice
+binary was compiled or run, and accepted application screenshots remain **0**.
+GitHub Actions and Pages verification follow the push to `main`.
