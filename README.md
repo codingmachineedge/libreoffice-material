@@ -18,12 +18,14 @@ document engine, file-format support, and accessibility foundations.
 > from [libreoffice.org](https://www.libreoffice.org/download/), which does not
 > include these Material changes. An automated pipeline
 > ([`build-installer.yml`](.github/workflows/build-installer.yml)) attempts a
-> from-source build on each source push and manual dispatch and would publish
-> artifacts **only** if a build actually produces them. The latest attempt,
-> commit `d6f66b686` in Actions run `29662095462`, stopped during configure
-> because Perl `Archive::Zip` was missing; no build, test, package, or installer
-> resulted. A public assetless release/tag named `e` exists, but it contains no
-> build and does not satisfy the project's build, release, or evidence gates.
+> Linux build, while [`windows-installer.yml`](.github/workflows/windows-installer.yml)
+> now provides a manually dispatched Visual Studio 2022/Cygwin path for a real
+> Windows x64 MSI. Both publish **only** after genuine packages pass structural
+> validation. Linux run `29665678719` at `542e4077b` stopped during prerequisite
+> validation because `nasm` was absent; configure, tests, build, and packaging
+> did not run. The Windows workflow has not completed yet, so there is still no
+> MSI to download. A public assetless release/tag named `e` exists, but it
+> contains no build and does not satisfy the project's gates.
 
 [Project site](https://codingmachineedge.github.io/libreoffice-material/) ·
 [Interactive preview](https://codingmachineedge.github.io/libreoffice-material/prototype.html) ·
@@ -44,7 +46,7 @@ document engine, file-format support, and accessibility foundations.
 | Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
 | Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
-| Installer / release | No genuine build artifact | [`build-installer.yml`](.github/workflows/build-installer.yml) has not completed a build; the assetless `e` release/tag is not an installer or accepted evidence |
+| Installer / release | Windows MSI workflow added; no genuine artifact yet | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, enforces LF source, provisions Cygwin, runs the three required C++ targets, and publishes only a structurally validated MSI; no successful run exists yet, and assetless release/tag `e` is not an installer or accepted evidence |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.

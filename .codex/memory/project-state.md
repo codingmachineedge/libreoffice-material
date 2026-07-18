@@ -60,12 +60,15 @@ references; these changes remain uncompiled and unexecuted.
 The native source has not been built or run as LibreOffice, so this does not
 prove a whole-GUI rewrite or any completed application surface.
 
-The latest automated build attempt, commit `d6f66b686551b0d03cc3317fb18a80e74879cce1`
-in Actions run `29662095462`, stopped during configure because Perl
-`Archive::Zip` was missing. No native build, required C++ regression target,
-package, installer, or capture resulted. The workflow is being repaired to
-enforce required dependencies and tests. A public assetless release/tag `e`
-points at that commit, but contains no build and is not accepted evidence.
+Linux Actions run `29665678719` at commit
+`542e4077b61507e634af8ee0f8925b1de47a6db2` installed the previously missing
+Perl `Archive::Zip` module but stopped during prerequisite validation because
+`nasm` was absent. Configure, native tests, build, and packaging did not run.
+A separate manually dispatched Windows x64 workflow now pins VS 2022,
+provisions Cygwin and TDF's native tools, runs the three required C++ targets,
+and gates publication on a structurally validated LibreOfficeDev MSI. It has
+not completed yet, so no installer or capture exists. Public assetless
+release/tag `e` remains non-evidence.
 
 ## Recorded facts
 

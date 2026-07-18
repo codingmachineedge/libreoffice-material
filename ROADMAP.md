@@ -28,27 +28,28 @@ No phase is currently marked verified.
   hand-built mockup, not a build screenshot);
 - guard that reference and the build path in CI: a dependency-free validator
   (`bin/validate-prototype.mjs`) and `prototype-check.yml` check its
-  self-containment, tokens, icons, and regex engine, while a best-effort
-  `build-installer.yml` attempts a from-source build and would publish an
-  installer only if one is actually produced;
+  self-containment, tokens, icons, and regex engine, while `build-installer.yml`
+  attempts a Linux package and the manually dispatched `windows-installer.yml`
+  pins Visual Studio 2022, provisions Cygwin, runs the required native tests,
+  and publishes only a structurally validated Windows x64 MSI;
 - define native build profiles and artifact retention rules;
 - preflight the low-level computer-use driver and an off-screen desktop;
 - connect that proven harness to a built LibreOffice binary and isolated profile;
 - establish a repository-memory ledger for decisions, evidence, and progress.
 
 Current evidence: the Windows harness preflight passed on 2026-07-16 using a
-temporary Notepad process, but no LibreOffice build or window was involved. The
-host has usable Visual Studio Build Tools 2022, but no complete supported
-LibreOffice build profile: WSL 2.7.10 has no installed distribution/helper, the
-selectable Visual Studio instance lacks ATL and its configured CMake, SDK 28000
-is selected despite missing required desktop files, and supporting build tools
-remain incomplete.
+temporary Notepad process, but no LibreOffice build or window was involved. A
+2026-07-18 refresh found that the local Windows SDK 26100 is complete, but the
+local Visual Studio Build Tools instance still lacks ATL and CRT merge modules,
+and no supported Cygwin or WSL helper environment is installed. The hosted
+Windows workflow uses a clean LF checkout and a pinned runner that declares
+those components; it still must complete before this is build evidence.
 
-The latest automated build attempt, commit `d6f66b686` in Actions run
-`29662095462`, stopped during configure because Perl `Archive::Zip` was absent.
-The build, required native regression targets, packaging, and artifact staging
-therefore did not run. The workflow is being repaired to enforce its required
-dependencies and the `tools_test`, `vcl_widget_definition_reader_test`, and
+Linux run `29665678719` at commit `542e4077b` installed the previous missing
+Perl module but stopped during prerequisite validation because `nasm` was
+absent. Configure, the required native regression targets, build, packaging,
+and artifact staging therefore did not run. Both native workflows now enforce
+the `tools_test`, `vcl_widget_definition_reader_test`, and
 `vcl_file_definition_widget_draw_test` gates before packaging.
 
 An interactive, dependency-free Material design reference for the whole suite is
@@ -64,8 +65,8 @@ every search bar, and a Find & Replace dialog. Its tokens mirror
 of a compiled build, so it does not advance any acceptance gate or the
 verified-capture count. No genuine build or installer release exists; the
 public assetless release/tag `e` contains no build and does not satisfy any
-release or evidence gate. `build-installer.yml` would publish artifacts only if
-a real build produces them.
+release or evidence gate. Neither package workflow publishes unless a real
+package is produced and validated.
 
 Exit gate:
 

@@ -30,6 +30,7 @@ link, gallery artifact, or accepted visual result.
 | Date | Source / run | Result | Evidence effect |
 | --- | --- | --- | --- |
 | 2026-07-18 | `d6f66b686551b0d03cc3317fb18a80e74879cce1` / Actions `29662095462` | Configure stopped because Perl `Archive::Zip` was missing; build, required native regression targets, packaging, and artifact staging did not run | No binary, installer, test result, interaction result, or visual evidence; workflow repair and rerun remain pending |
+| 2026-07-18 | `542e4077b61507e634af8ee0f8925b1de47a6db2` / Actions `29665678719` | Dependency installation passed, then prerequisite validation stopped at missing `nasm`; configure, tests, build, packaging, and staging did not run | No binary, installer, test result, interaction result, or visual evidence; Linux dependency list corrected and a genuine Windows MSI workflow added for a new run |
 
 Release/tag `e` points at the same commit but has no assets. It is a non-build
 remote marker, not a successful release or accepted artifact.
@@ -40,7 +41,7 @@ remote marker, not a successful release or accepted artifact.
 | --- | --- | --- | --- |
 | 2026-07-16 | Fork binary search | No installed, worktree, AppX, WSL, or running `soffice`/LibreOffice binary found | Runtime gate remains closed |
 | 2026-07-16 | Detached build worktree | Clean at `2ce2cfd3e7489dc0acd6ce09f7e5461546fbb731`; validator and 22 unittest methods pass with 23 color tokens, 8 shape tokens, 15 metric tokens, and 72 style slots; no configure output, build directory, `instdir`, or initialized optional source submodules | Source is prepared, not built |
-| 2026-07-16 | Windows build profile | WSL has no distro; selectable VS 2022 lacks ATL/configured CMake; selected SDK 28000 lacks required files; other helpers remain incomplete | No supported build command was run |
+| 2026-07-18 | Windows build profile refresh | Local VS Build Tools 2022 has MSVC and CMake but lacks ATL and CRT merge modules; SDK 26100 is complete; no Cygwin or supported WSL helper is installed; checkout is CRLF | No supported local build command was run; the new hosted workflow uses a clean LF checkout and validates every missing component before configure |
 | 2026-07-16 | Low-level driver | Clean commit `806d9ba85e4afbc2af58d7499496babfa7c68891`, MCP on `127.0.0.1:8765`; no LibreOffice scenario; launch/PID/teardown limitations recorded | Driver readiness only; no UI evidence |
 | 2026-07-16 | Sixth-milestone source audit | Validator reports 8 exact shape roles across 146 rounded and 11 implicit-square rectangles; 16 Python tests and static source checks pass; the C++ reader/tests remain uncompiled | Source consistency only; no renderer or UI evidence |
 | 2026-07-16 | Seventh-milestone source audit | Published source `2ce2cfd3e7489dc0acd6ce09f7e5461546fbb731` defines 15 native integer roles for 331 existing uses; exact metric/coordinate hashes, 22 validator tests, 38 reader fixtures, Actions run `29527917064`, and Pages run `29527917148` pass | Source consistency only; no compiled, runtime, interaction, or visual evidence |
