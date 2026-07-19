@@ -278,6 +278,12 @@ jobs:
           cd "$(cygpath -u "$LO_BUILD_DIR")"
           /opt/lo/bin/make.exe -j"$BUILD_JOBS" build
 
+      - name: Save external source tarballs
+        uses: actions/cache/save@v6
+        with:
+          path: C:\lo\tarballs
+          key: windows-external-tarballs-${{ hashFiles('download.lst') }}
+
       - name: Materialize MSI packages
         shell: cygbash --noprofile --norc -eo pipefail {0}
         run: |
@@ -394,10 +400,3 @@ jobs:
             dist-windows\
           if-no-files-found: ignore
           retention-days: 14
-
-      - name: Save external source tarballs
-        if: always()
-        uses: actions/cache/save@v6
-        with:
-          path: C:\lo\tarballs
-          key: windows-external-tarballs-${{ hashFiles('download.lst') }}
