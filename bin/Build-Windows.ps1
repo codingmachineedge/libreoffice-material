@@ -26,7 +26,7 @@ param(
     [string] $ToolRoot = (Join-Path $env:ProgramData 'LibreOfficeMaterialTools'),
 
     [ValidateNotNullOrEmpty()]
-    [string] $BuildRoot = (Join-Path $env:LOCALAPPDATA 'LibreOfficeMaterialBuild'),
+    [string] $BuildRoot = (Join-Path $env:USERPROFILE 'lo-material'),
 
     [ValidateRange(40, 4096)]
     [int] $MinimumFreeGiB = 80,
@@ -39,9 +39,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$script:RepositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')).TrimEnd('\')
-$script:ToolRoot = [IO.Path]::GetFullPath($ToolRoot).TrimEnd('\')
-$script:BuildRoot = [IO.Path]::GetFullPath($BuildRoot).TrimEnd('\')
+$script:RepositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$script:ToolRoot = [IO.Path]::GetFullPath($ToolRoot)
+$script:BuildRoot = [IO.Path]::GetFullPath($BuildRoot)
 $script:VsInstallPath = Join-Path $script:ToolRoot 'VS2022'
 $script:CygwinRoot = Join-Path $script:ToolRoot 'cygwin64'
 $script:BootstrapDirectory = Join-Path $script:ToolRoot 'bootstrap'
@@ -52,6 +52,7 @@ $script:LogsDirectory = Join-Path $script:BuildRoot 'logs'
 $script:StatePath = Join-Path $script:BuildRoot 'build-state.json'
 $script:BootstrapManifestPath = Join-Path $script:ToolRoot 'bootstrap-manifest.json'
 $script:Git = $null
+$script:InvocationId = (Get-Date -Format 'yyyyMMdd-HHmmss-fffffff') + '-' + [guid]::NewGuid().ToString('N')
 $script:DownloadRecords = New-Object 'System.Collections.Generic.List[object]'
 
 $script:RequiredVsComponents = @(
@@ -103,13 +104,87 @@ function Write-Section {
 function Get-FullPath {
     param([Parameter(Mandatory)][string] $Path)
 
-    [IO.Path]::GetFullPath($Path).TrimEnd('\')
+    $fullPath = [IO.Path]::GetFullPath($Path)
+    $root = [IO.Path]::GetPathRoot($fullPath)
+    if ($fullPath.Length -gt $root.Length) {
+        return $fullPath.TrimEnd('\')
+    }
+    $fullPath
 }
 
 function Test-Administrator {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
     $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Test-PathOverlap {
+    param(
+        [Parameter(Mandatory)][string] $FirstPath,
+        [Parameter(Mandatory)][string] $SecondPath
+    )
+
+    $first = Get-FullPath $FirstPath
+    $second = Get-FullPath $SecondPath
+    $firstPrefix = $first.TrimEnd('\') + '\'
+    $secondPrefix = $second.TrimEnd('\') + '\'
+    ($first -ieq $second) -or
+        $first.StartsWith($secondPrefix, [StringComparison]::OrdinalIgnoreCase) -or
+        $second.StartsWith($firstPrefix, [StringComparison]::OrdinalIgnoreCase)
+}
+
+function Assert-SafeRoots {
+    if ($script:RepositoryRoot -match '\s') {
+        throw ('The repository path contains spaces, which LibreOffice autogen.sh does not support: {0}' -f $script:RepositoryRoot)
+    }
+    foreach ($entry in @(
+        [pscustomobject]@{ Name = 'tool root'; Path = $script:ToolRoot },
+        [pscustomobject]@{ Name = 'build root'; Path = $script:BuildRoot }
+    )) {
+        $path = Get-FullPath $entry.Path
+        if ($path.IndexOfAny([char[]]'*?[]') -ge 0) {
+            throw ('The {0} may not contain wildcard characters: {1}' -f $entry.Name, $path)
+        }
+        $driveRoot = [IO.Path]::GetPathRoot($path)
+        if ($path -ieq $driveRoot) {
+            throw ('Refusing to use a filesystem root as the {0}: {1}' -f $entry.Name, $path)
+        }
+        Assert-NoReparsePointInPath $path $entry.Name
+        if (Test-PathOverlap $path $script:RepositoryRoot) {
+            throw ('The {0} must not overlap the source repository: {1}' -f $entry.Name, $path)
+        }
+    }
+    if (Test-PathOverlap $script:ToolRoot $script:BuildRoot) {
+        throw 'The tool root and build root must not overlap.'
+    }
+    if ($script:BuildRoot.Length -gt 80) {
+        throw ('The build root is {0} characters long. Use a path of 80 characters or fewer, such as C:\lo-material, to avoid Windows/Cygwin MAX_PATH failures.' -f $script:BuildRoot.Length)
+    }
+    if ($script:BuildRoot -match '\s') {
+        throw ('The build root cannot contain spaces because LibreOffice autogen.sh does not support a space-containing source snapshot path: {0}' -f $script:BuildRoot)
+    }
+}
+
+function Assert-NoReparsePointInPath {
+    param(
+        [Parameter(Mandatory)][string] $Path,
+        [Parameter(Mandatory)][string] $Label
+    )
+
+    $current = Get-FullPath $Path
+    while ($true) {
+        if (Test-Path -LiteralPath $current) {
+            $item = Get-Item -LiteralPath $current -Force
+            if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+                throw ('The {0} may not use a junction or symbolic link: {1}' -f $Label, $current)
+            }
+        }
+        $parent = [IO.Directory]::GetParent($current)
+        if ($null -eq $parent -or $parent.FullName -ieq $current) {
+            break
+        }
+        $current = $parent.FullName
+    }
 }
 
 function New-RequiredDirectory {
@@ -123,15 +198,43 @@ function New-RequiredDirectory {
     }
 }
 
-function Get-GitExecutable {
+function New-FreshDirectory {
+    param([Parameter(Mandatory)][string] $Path)
+
+    if (Test-Path -LiteralPath $Path) {
+        throw ('Refusing to overwrite an existing output directory: {0}' -f $Path)
+    }
+    New-Item -ItemType Directory -Path $Path -ErrorAction Stop | Out-Null
+}
+
+function Find-GitExecutable {
     $command = Get-Command git.exe -ErrorAction SilentlyContinue
     if (-not $command) {
         $command = Get-Command git -ErrorAction SilentlyContinue
     }
-    if (-not $command) {
-        throw 'Git for Windows is required to create and verify the isolated LF source snapshot.'
+    if ($command) {
+        return $command.Source
     }
-    $command.Source
+
+    $programFiles = [Environment]::GetFolderPath('ProgramFiles')
+    foreach ($candidate in @(
+        (Join-Path $programFiles 'Git\cmd\git.exe'),
+        (Join-Path $programFiles 'Git\bin\git.exe'),
+        (Join-Path $script:CygwinRoot 'bin\git.exe')
+    )) {
+        if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+            return $candidate
+        }
+    }
+    $null
+}
+
+function Get-GitExecutable {
+    $git = Find-GitExecutable
+    if (-not $git) {
+        throw ('No Git executable is available. Install the isolated Cygwin toolchain with the default bootstrap, or provide Git for Windows before using -NoBootstrap or -Phase Preflight.')
+    }
+    $git
 }
 
 function Invoke-Git {
@@ -362,16 +465,25 @@ function Test-CygwinToolchain {
         }
     }
 
-    $validation = @'
+$validation = @'
 test "$(uname -o)" = Cygwin
 export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-for tool in autoconf automake bison flex gawk gperf nasm ninja patch perl python3 rsync unzip wget zip; do
+for package in \
+  autoconf automake bison cabextract diffutils file flex gawk gettext-devel git \
+  gperf libxml2-devel libxslt make nasm ninja patch perl perl-Archive-Zip \
+  perl-Font-TTF perl-IO-String pkg-config python3 rsync unzip wget which zip
+do
+  awk -v package="$package" '$1 == package { found = 1 } END { exit !found }' /etc/setup/installed.db
+done
+for tool in autoconf automake bison cabextract diff file flex gawk gperf nasm ninja patch perl pkg-config python3 rsync unzip wget which zip git; do
   command -v "$tool"
 done
 perl -MArchive::Zip -e 1
 perl -MFont::TTF::Font -e 1
-/opt/lo/bin/make.exe --version | tee /tmp/libreoffice-material-make-version.txt
-grep -q 'Built for Windows' /tmp/libreoffice-material-make-version.txt
+perl -MIO::String -e 1
+make_version="$(/opt/lo/bin/make.exe --version)"
+printf '%s\n' "$make_version"
+grep -q 'Built for Windows' <<< "$make_version"
 /opt/lo/bin/pkgconf-2.4.3.exe --version
 test "$(command -v nasm)" = /usr/bin/nasm
 nasm_version="$(nasm -v | awk '{ print $3 }')"
@@ -393,6 +505,10 @@ function Test-HostPrerequisites {
     }
     if (Test-PendingReboot) {
         $errors.Add('Windows has a pending reboot. Reboot manually before a native build.')
+    }
+    $git = Find-GitExecutable
+    if (-not $git) {
+        $errors.Add('Git is missing. The default bootstrap provides isolated Cygwin Git; -NoBootstrap requires Git for Windows or an existing isolated Cygwin Git.')
     }
 
     $visualStudio = Get-DedicatedVisualStudio
@@ -418,6 +534,7 @@ function Test-HostPrerequisites {
     [pscustomobject]@{
         Ready = ($errors.Count -eq 0)
         Errors = @($errors)
+        Git = $git
         VisualStudio = $visualStudio
         Sdk = $sdk
         LegacyCli = $legacyCli
@@ -527,6 +644,42 @@ function Get-PinnedDownload {
     $record
 }
 
+function ConvertTo-WindowsCommandLineArgument {
+    param([Parameter(Mandatory)][AllowEmptyString()][string] $Value)
+
+    if ($Value.Length -gt 0 -and $Value -notmatch '[\s"]') {
+        return $Value
+    }
+
+    $quoted = New-Object Text.StringBuilder
+    [void] $quoted.Append('"')
+    $backslashCount = 0
+    foreach ($character in $Value.ToCharArray()) {
+        if ($character -eq '\') {
+            $backslashCount++
+            continue
+        }
+        if ($character -eq '"') {
+            [void] $quoted.Append((('\' * ($backslashCount * 2)) -join ''))
+            [void] $quoted.Append('\"')
+            $backslashCount = 0
+            continue
+        }
+        [void] $quoted.Append((('\' * $backslashCount) -join ''))
+        [void] $quoted.Append($character)
+        $backslashCount = 0
+    }
+    [void] $quoted.Append((('\' * ($backslashCount * 2)) -join ''))
+    [void] $quoted.Append('"')
+    $quoted.ToString()
+}
+
+function Join-WindowsCommandLine {
+    param([Parameter(Mandatory)][string[]] $Arguments)
+
+    (@($Arguments | ForEach-Object { ConvertTo-WindowsCommandLineArgument $_ }) -join ' ')
+}
+
 function Invoke-Installer {
     param(
         [Parameter(Mandatory)][string] $Name,
@@ -535,8 +688,9 @@ function Invoke-Installer {
     )
 
     Write-Host ('Installing or repairing {0}...' -f $Name) -ForegroundColor Yellow
-    & $FilePath @Arguments
-    $exitCode = $LASTEXITCODE
+    $commandLine = Join-WindowsCommandLine $Arguments
+    $process = Start-Process -FilePath $FilePath -ArgumentList $commandLine -WindowStyle Hidden -Wait -PassThru
+    $exitCode = $process.ExitCode
     if ($exitCode -eq 3010) {
         throw ('{0} completed but Windows requires a reboot. Reboot manually, then rerun this script.' -f $Name)
     }
@@ -589,11 +743,13 @@ function Invoke-Bootstrap {
     New-RequiredDirectory $script:ToolRoot
     New-RequiredDirectory $script:BootstrapDirectory
     $transcript = Join-Path $script:BootstrapDirectory 'bootstrap.log'
-    Start-Transcript -Path $transcript -Append | Out-Null
+    $transcriptStarted = $false
     try {
+        Start-Transcript -Path $transcript -Append | Out-Null
+        $transcriptStarted = $true
         Write-Section 'Bootstrap isolated Windows build prerequisites'
-        if (-not (Get-DedicatedVisualStudio)) {
-            $vsBootstrapper = Get-SignedDownload 'Visual Studio 2022 Build Tools bootstrapper' 'https://aka.ms/vs/17/release/vs_buildtools.exe' (Join-Path $script:BootstrapDirectory 'vs_buildtools.exe') 'Microsoft Corporation'
+        if ((-not (Get-DedicatedVisualStudio)) -or (-not (Get-CompleteWindowsSdk))) {
+            $vsBootstrapper = Get-SignedDownload 'Visual Studio 2022 Build Tools bootstrapper' 'https://aka.ms/vs/17/release/vs_buildtools.exe' (Join-Path $script:BootstrapDirectory 'vs_buildtools.exe') '(?i)(?:^|,\s*)CN=Microsoft Corporation(?:,|$)'
             $vsArguments = @('--quiet', '--wait', '--norestart', '--nocache', '--installPath', $script:VsInstallPath)
             foreach ($component in $script:VsBootstrapComponents) {
                 $vsArguments += @('--add', $component)
@@ -602,14 +758,17 @@ function Invoke-Bootstrap {
         }
 
         if (-not (Get-LegacyCliTools)) {
-            $netFx = Get-SignedDownload '.NET Framework 4.8.1 Developer Pack' 'https://go.microsoft.com/fwlink/?linkid=2203306' (Join-Path $script:BootstrapDirectory 'ndp481-devpack-enu.exe') 'Microsoft Corporation'
+            $netFx = Get-SignedDownload '.NET Framework 4.8.1 Developer Pack' 'https://go.microsoft.com/fwlink/?linkid=2203306' (Join-Path $script:BootstrapDirectory 'ndp481-devpack-enu.exe') '(?i)(?:^|,\s*)CN=Microsoft Corporation(?:,|$)'
             Invoke-Installer '.NET Framework 4.8.1 Developer Pack' $netFx.Path @('/q', '/norestart')
         }
 
-        $cygwinSetup = Get-SignedDownload 'Cygwin setup' 'https://cygwin.com/setup-x86_64.exe' (Join-Path $script:BootstrapDirectory 'setup-x86_64.exe') 'Cygwin'
+        $cygwinSetup = Get-SignedDownload 'Cygwin setup' 'https://cygwin.com/setup-x86_64.exe' (Join-Path $script:BootstrapDirectory 'setup-x86_64.exe') '(?i)(?:^|,\s*)CN=Jon Turney(?:,|$)'
+        $cygwinCache = Join-Path $script:BootstrapDirectory 'cygwin-packages'
+        New-RequiredDirectory $cygwinCache
         $cygwinArguments = @(
             '-q', '-n', '-N', '-d',
             '-R', $script:CygwinRoot,
+            '-l', $cygwinCache,
             '-s', 'https://mirrors.kernel.org/sourceware/cygwin/',
             '-P', ($script:CygwinPackages -join ',')
         )
@@ -626,23 +785,28 @@ function Invoke-Bootstrap {
         Write-Host ('Bootstrap manifest: {0}' -f $script:BootstrapManifestPath) -ForegroundColor Green
     }
     finally {
-        Stop-Transcript | Out-Null
+        if ($transcriptStarted) {
+            Stop-Transcript | Out-Null
+        }
     }
 }
 
 function Invoke-ElevatedBootstrap {
+    function ConvertTo-PowerShellSingleQuoted {
+        param([Parameter(Mandatory)][string] $Value)
+
+        "'" + $Value.Replace("'", "''") + "'"
+    }
+
     $powerShell = Join-Path $PSHOME 'powershell.exe'
+    $childCommand = ('& {0} -Phase Bootstrap -Jobs {1} -ToolRoot {2} -BuildRoot {3} -MinimumFreeGiB {4}; exit $LASTEXITCODE' -f (ConvertTo-PowerShellSingleQuoted $PSCommandPath), $Jobs, (ConvertTo-PowerShellSingleQuoted $script:ToolRoot), (ConvertTo-PowerShellSingleQuoted $script:BuildRoot), $MinimumFreeGiB)
+    $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($childCommand))
     $arguments = @(
         '-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden',
-        '-File', $PSCommandPath,
-        '-Phase', 'Bootstrap',
-        '-Jobs', $Jobs,
-        '-ToolRoot', $script:ToolRoot,
-        '-BuildRoot', $script:BuildRoot,
-        '-MinimumFreeGiB', $MinimumFreeGiB
+        '-EncodedCommand', $encodedCommand
     )
     Write-Host 'Requesting one UAC consent prompt for the hidden dependency bootstrap...' -ForegroundColor Yellow
-    $process = Start-Process -FilePath $powerShell -Verb RunAs -WindowStyle Hidden -ArgumentList $arguments -Wait -PassThru
+    $process = Start-Process -FilePath $powerShell -Verb RunAs -WindowStyle Hidden -ArgumentList (Join-WindowsCommandLine $arguments) -Wait -PassThru
     if ($process.ExitCode -ne 0) {
         $log = Join-Path $script:BootstrapDirectory 'bootstrap.log'
         throw ('Elevated bootstrap failed with exit code {0}. See {1}' -f $process.ExitCode, $log)
@@ -650,36 +814,66 @@ function Invoke-ElevatedBootstrap {
 }
 
 function Assert-FreeDiskSpace {
-    $root = [IO.Path]::GetPathRoot($script:BuildRoot)
-    if (-not $root -or $root.Length -lt 2) {
-        throw ('Could not identify the drive for build root: {0}' -f $script:BuildRoot)
+    $checkedDrives = @{}
+    foreach ($entry in @(
+        [pscustomobject]@{ Name = 'tool root'; Path = $script:ToolRoot },
+        [pscustomobject]@{ Name = 'build root'; Path = $script:BuildRoot }
+    )) {
+        $root = [IO.Path]::GetPathRoot($entry.Path)
+        if (-not $root -or $root -notmatch '^[A-Za-z]:\\$') {
+            throw ('The {0} must use a local drive root: {1}' -f $entry.Name, $entry.Path)
+        }
+        $driveName = $root.Substring(0, 1).ToUpperInvariant()
+        if ($checkedDrives.ContainsKey($driveName)) {
+            continue
+        }
+        $drive = Get-PSDrive -Name $driveName -PSProvider FileSystem -ErrorAction Stop
+        $freeGiB = [math]::Floor($drive.Free / 1GB)
+        if ($freeGiB -lt $MinimumFreeGiB) {
+            throw ('{0} drive {1} has {2} GiB free; at least {3} GiB is required before bootstrap or build.' -f $entry.Name, $drive.Root, $freeGiB, $MinimumFreeGiB)
+        }
+        $checkedDrives[$driveName] = $true
+        Write-Host ('{0} drive free space: {1} GiB' -f $entry.Name, $freeGiB) -ForegroundColor DarkGray
     }
-    $drive = Get-PSDrive -Name $root.Substring(0, 1) -PSProvider FileSystem -ErrorAction Stop
-    $freeGiB = [math]::Floor($drive.Free / 1GB)
-    if ($freeGiB -lt $MinimumFreeGiB) {
-        throw ('Build root drive {0} has {1} GiB free; at least {2} GiB is required.' -f $drive.Root, $freeGiB, $MinimumFreeGiB)
+}
+
+function Assert-BuildRootRequest {
+    if (Test-Path -LiteralPath $script:BuildRoot -PathType Leaf) {
+        throw ('Build root is a file: {0}' -f $script:BuildRoot)
     }
-    Write-Host ('Build drive free space: {0} GiB' -f $freeGiB) -ForegroundColor DarkGray
+    if (-not (Test-Path -LiteralPath $script:BuildRoot -PathType Container)) {
+        return
+    }
+
+    $entries = @(Get-ChildItem -LiteralPath $script:BuildRoot -Force)
+    if ($entries.Count -eq 0) {
+        return
+    }
+    if (-not $Resume) {
+        throw ('Build root already contains data: {0}. Nothing was removed. Inspect it, then use -Resume only for this exact source commit.' -f $script:BuildRoot)
+    }
+    if (-not (Test-Path -LiteralPath $script:StatePath -PathType Leaf)) {
+        throw ('Cannot resume without saved build state: {0}' -f $script:StatePath)
+    }
+    $state = Get-Content -LiteralPath $script:StatePath -Raw | ConvertFrom-Json
+    if (-not $state.source_commit -or -not $state.repository_root -or $state.source_commit -notmatch '^[0-9a-f]{40}$') {
+        throw ('Build state is incomplete or invalid: {0}' -f $script:StatePath)
+    }
+    if ((Get-FullPath $state.repository_root) -ine (Get-FullPath $script:RepositoryRoot)) {
+        throw ('Build state belongs to a different repository: {0}' -f $script:StatePath)
+    }
 }
 
 function Initialize-BuildRoot {
     param([Parameter(Mandatory)][string] $SourceCommit)
 
-    if (Test-Path -LiteralPath $script:BuildRoot -PathType Leaf) {
-        throw ('Build root is a file: {0}' -f $script:BuildRoot)
-    }
+    Assert-BuildRootRequest
     $entries = @()
     if (Test-Path -LiteralPath $script:BuildRoot -PathType Container) {
         $entries = @(Get-ChildItem -LiteralPath $script:BuildRoot -Force)
     }
 
     if ($entries.Count -gt 0) {
-        if (-not $Resume) {
-            throw ('Build root already contains data: {0}. Nothing was removed. Inspect it, then use -Resume only for this exact source commit.' -f $script:BuildRoot)
-        }
-        if (-not (Test-Path -LiteralPath $script:StatePath -PathType Leaf)) {
-            throw ('Cannot resume without saved build state: {0}' -f $script:StatePath)
-        }
         $state = Get-Content -LiteralPath $script:StatePath -Raw | ConvertFrom-Json
         if ($state.source_commit -ne $SourceCommit -or (Get-FullPath $state.repository_root) -ine (Get-FullPath $script:RepositoryRoot)) {
             throw 'Refusing to resume a build root belonging to another source commit or repository. Nothing was removed.'
@@ -731,6 +925,27 @@ function Initialize-LfSourceSnapshot {
     $eol | ForEach-Object { Write-Host $_ }
 }
 
+function Remove-LfSourceSnapshot {
+    param([Parameter(Mandatory)][string] $SourceCommit)
+
+    if (-not (Test-Path -LiteralPath $script:SourceSnapshot -PathType Container)) {
+        throw ('The successful build source snapshot is absent: {0}' -f $script:SourceSnapshot)
+    }
+    $snapshotCommit = (Invoke-Git @('-C', $script:SourceSnapshot, 'rev-parse', '--verify', 'HEAD') | Select-Object -First 1).Trim()
+    if ($snapshotCommit -ne $SourceCommit) {
+        throw ('Refusing to remove a source snapshot at {0}; it is at {1}, not {2}.' -f $script:SourceSnapshot, $snapshotCommit, $SourceCommit)
+    }
+    $changes = @(Invoke-Git @('-C', $script:SourceSnapshot, 'status', '--porcelain=v1', '--untracked-files=all'))
+    if ($changes.Count -gt 0) {
+        throw ('Refusing to remove a dirty successful-build source snapshot: {0}' -f $script:SourceSnapshot)
+    }
+    Invoke-Git @('-C', $script:RepositoryRoot, 'worktree', 'remove', $script:SourceSnapshot) | Out-Null
+    if (Test-Path -LiteralPath $script:SourceSnapshot) {
+        throw ('Git reported success but the detached source snapshot remains: {0}' -f $script:SourceSnapshot)
+    }
+    Write-Host 'Removed the clean detached source snapshot after the successful full build.' -ForegroundColor DarkGray
+}
+
 function Invoke-CygwinScript {
     param(
         [Parameter(Mandatory)][string] $Name,
@@ -738,9 +953,11 @@ function Invoke-CygwinScript {
     )
 
     $bash = Join-Path $script:CygwinRoot 'bin\bash.exe'
-    $log = Join-Path $script:LogsDirectory ($Name + '.log')
+    $invocationLogDirectory = Join-Path $script:LogsDirectory $script:InvocationId
+    New-RequiredDirectory $invocationLogDirectory
+    $log = Join-Path $invocationLogDirectory ($Name + '.log')
     Write-Section $Name
-    & $bash --noprofile --norc -o igncr -eo pipefail -c $ScriptText 2>&1 | Tee-Object -FilePath $log
+    & $bash --noprofile --norc -o igncr -eo pipefail -c $ScriptText 2>&1 | Tee-Object -LiteralPath $log
     $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) {
         throw ('{0} failed with exit code {1}. See {2}' -f $Name, $exitCode, $log)
@@ -752,6 +969,17 @@ function Assert-ConfiguredBuild {
     if (-not (Test-Path -LiteralPath $config -PathType Leaf)) {
         throw ('No configured build exists at {0}. Run -Phase Configure or the default All phase first.' -f $script:BuildDirectory)
     }
+    $configuredProfile = @'
+config="$(cygpath -u "$LO_BUILD_DIR")/config_host.mk"
+test -f "$config"
+grep -Eq '^export BUILD_TYPE=.*[[:space:]]DBCONNECTIVITY([[:space:]]|$)' "$config"
+grep -Fxq 'export ENABLE_CLI=TRUE' "$config"
+grep -Fxq 'export OS=WNT' "$config"
+grep -Fxq 'export COM=MSC' "$config"
+grep -Fxq 'export HOST_PLATFORM=x86_64-pc-cygwin' "$config"
+grep -Fxq 'export PKGFORMAT?=msi' "$config"
+'@
+    Invoke-CygwinScript 'assert-configured-profile' $configuredProfile
 }
 
 function Invoke-Configure {
@@ -761,7 +989,9 @@ src_dir="$(cygpath -u "$SOURCE_CHECKOUT")"
 build_dir="$(cygpath -u "$LO_BUILD_DIR")"
 tarball_dir="$(cygpath -u "$LO_TARBALL_DIR")"
 tarball_arg="$(cygpath -m "$tarball_dir")"
-test -n "$HOME"
+build_git_home="$(cygpath -u "$LO_BUILD_ROOT")/.git-home"
+export HOME="$build_git_home"
+export GIT_CONFIG_GLOBAL="$build_git_home/.gitconfig"
 mkdir -p "$HOME" "$build_dir" "$tarball_dir"
 if ! /usr/bin/git config --global --get-all safe.directory | grep -Fx "$src_dir" >/dev/null 2>&1; then
   /usr/bin/git config --global --add safe.directory "$src_dir"
@@ -851,11 +1081,15 @@ function Invoke-MsiPackagingValidation {
         throw ('Expected exactly one final MSI under {0}, found {1}: {2}' -f $finalDirectory, $msis.Count, $candidates)
     }
 
-    $runId = (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + $msis[0].BaseName
-    $stage = Join-Path (Join-Path $script:BuildRoot 'dist-windows') $runId
-    $extract = Join-Path (Join-Path $script:BuildRoot 'msi-check') $runId
-    New-RequiredDirectory $stage
-    New-RequiredDirectory $extract
+    $runId = (Get-Date -Format 'yyyyMMdd-HHmmss-fffffff') + '-' + $msis[0].BaseName + '-' + [guid]::NewGuid().ToString('N')
+    $stagingRoot = Join-Path $script:BuildRoot 'dist-windows'
+    $checkRoot = Join-Path $script:BuildRoot 'msi-check'
+    New-RequiredDirectory $stagingRoot
+    New-RequiredDirectory $checkRoot
+    $stage = Join-Path $stagingRoot $runId
+    $extract = Join-Path $checkRoot $runId
+    New-FreshDirectory $stage
+    New-FreshDirectory $extract
     $extractLog = Join-Path $stage ($msis[0].BaseName + '-admin-extract.log')
     $msiexec = Join-Path $env:SystemRoot 'System32\msiexec.exe'
     & $msiexec /a $msis[0].FullName /qn ('TARGETDIR=' + $extract) /L*V $extractLog
@@ -952,13 +1186,25 @@ try {
     if ($env:OS -ne 'Windows_NT') {
         throw 'This script supports Windows only.'
     }
-    $script:Git = Get-GitExecutable
-
+    Assert-SafeRoots
     if ($Phase -eq 'Preflight') {
         Write-Section 'Read-only Windows build preflight'
-        $commit = Assert-CleanSourceCheckout
-        Assert-FreeDiskSpace
+    }
+    Assert-FreeDiskSpace
+
+    if ($Phase -eq 'Preflight') {
+        Assert-BuildRootRequest
+        $commit = $null
+        $initialPrerequisites = Test-HostPrerequisites
+        if ($initialPrerequisites.Git) {
+            $script:Git = $initialPrerequisites.Git
+            $commit = Assert-CleanSourceCheckout
+        }
         $prerequisites = Assert-HostPrerequisites
+        $script:Git = Get-GitExecutable
+        if (-not $commit) {
+            $commit = Assert-CleanSourceCheckout
+        }
         Write-Host ('Source commit: {0}' -f $commit) -ForegroundColor Green
         Write-Host ('Dedicated Visual Studio: {0}' -f $prerequisites.VisualStudio.InstallationPath) -ForegroundColor Green
         Write-Host ('Windows SDK: {0}' -f $prerequisites.Sdk.Version) -ForegroundColor Green
@@ -966,7 +1212,14 @@ try {
         return
     }
 
+    if ($Phase -ne 'Bootstrap') {
+        Assert-BuildRootRequest
+    }
     $initialPrerequisites = Test-HostPrerequisites
+    if ($Phase -ne 'Bootstrap' -and $initialPrerequisites.Git) {
+        $script:Git = $initialPrerequisites.Git
+        Assert-CleanSourceCheckout | Out-Null
+    }
     if (-not $initialPrerequisites.Ready -and -not $NoBootstrap) {
         if (Test-Administrator) {
             Invoke-WithBuildMutex { Invoke-Bootstrap }
@@ -975,7 +1228,8 @@ try {
             Invoke-ElevatedBootstrap
         }
     }
-    Assert-HostPrerequisites | Out-Null
+    $prerequisites = Assert-HostPrerequisites
+    $script:Git = Get-GitExecutable
 
     if ($Phase -eq 'Bootstrap') {
         Write-Host 'Bootstrap passed. No source snapshot or build output was created.' -ForegroundColor Green
@@ -984,10 +1238,12 @@ try {
 
     Invoke-WithBuildMutex {
         $sourceCommit = Assert-CleanSourceCheckout
-        Assert-FreeDiskSpace
         Initialize-BuildRoot $sourceCommit
         Initialize-LfSourceSnapshot $sourceCommit
         Invoke-BuildPhases
+        if ($Phase -eq 'All') {
+            Remove-LfSourceSnapshot $sourceCommit
+        }
     }
 }
 catch {

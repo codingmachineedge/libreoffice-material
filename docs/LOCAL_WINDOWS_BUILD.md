@@ -12,9 +12,9 @@ stays visible:
 .\Build-Windows.cmd
 ~~~
 
-The first run can take several hours and needs at least 80 GiB free on the
-build-root drive. It asks for one UAC consent prompt only when installation is
-needed. That elevated bootstrap runs hidden and logs to
+The first run can take several hours and needs at least 80 GiB free on each
+tool/build drive (checked before any installer starts). It asks for one UAC
+consent prompt only when installation is needed. That elevated bootstrap runs hidden and logs to
 <code>%ProgramData%\LibreOfficeMaterialTools\bootstrap\bootstrap.log</code>;
 it does not open a separate PowerShell window for each dependency. The regular
 build stays in the invoking terminal.
@@ -30,13 +30,18 @@ repairs an isolated toolchain:
   4.8.1 developer tools;
 - Cygwin at <code>%ProgramData%\LibreOfficeMaterialTools\cygwin64</code>, with
   the exact Autotools, Perl, NASM, Ninja, archive, XML, Git, Python, and
-  packaging packages used by the Windows CI profile;
+  packaging packages used by the Windows CI profile, cached locally below the
+  bootstrap directory;
 - LibreOffice's Windows GNU Make and <code>pkgconf-2.4.3.exe</code> under
   <code>cygwin64\opt\lo\bin</code>.
 
-The Visual Studio, Cygwin, and .NET bootstrap installers must have valid
-expected Authenticode signers. The two LibreOffice-specific executables must
-match source-pinned SHA-256 values:
+The isolated Cygwin <code>git</code> package is also the default snapshot
+provider, so the script does not install a separate system-wide Git client.
+
+The Visual Studio and .NET bootstrap installers must have a valid
+<code>CN=Microsoft Corporation</code> Authenticode signer; Cygwin setup must
+have a valid <code>CN=Jon Turney</code> signer. The two LibreOffice-specific
+executables must match source-pinned SHA-256 values:
 
 | File | SHA-256 |
 | --- | --- |
@@ -45,9 +50,11 @@ match source-pinned SHA-256 values:
 
 After provisioning, it independently verifies the VS 2022 component set,
 ATL and CRT merge modules, a complete Windows SDK including MIDL and x86 MSI
-tools, the legacy CLI .NET Framework tools, Cygwin packages, Perl modules,
-Windows-built Make, pinned <code>pkgconf</code>, and NASM 2.16 or newer. A bootstrap
-manifest records those validated paths, package names, signers, and hashes.
+tools, the legacy CLI .NET Framework tools, every requested Cygwin package,
+the Perl <code>Archive::Zip</code>, <code>Font::TTF</code>, and
+<code>IO::String</code> modules, Windows-built Make, pinned
+<code>pkgconf</code>, and NASM 2.16 or newer. A bootstrap manifest records
+those validated paths, package names, signers, and hashes.
 
 It never substitutes the host's Visual Studio 2026 installation for the
 required VS 2022 profile.
@@ -55,14 +62,20 @@ required VS 2022 profile.
 ## Source and output safety
 
 The script requires a clean active repository. It then creates a detached,
-LF-only worktree at
-<code>%LOCALAPPDATA%\LibreOfficeMaterialBuild\source</code>, so it never
+LF-only worktree at <code>%USERPROFILE%\lo-material\source</code>, so it never
 normalizes or edits the development checkout. The out-of-tree build, external
-tarball cache, logs, MSI extraction, staged installer, checksums, and manifest
-are all below <code>%LOCALAPPDATA%\LibreOfficeMaterialBuild</code> by default.
+tarball cache, isolated Cygwin Git configuration, logs, MSI extraction, staged
+installer, checksums, and manifest are all below
+<code>%USERPROFILE%\lo-material</code> by default.
 
-It never deletes a build root. If a prior build exists, inspect it and resume
-only when its <code>build-state.json</code> names the exact current source commit:
+It refuses filesystem roots, repository-overlapping roots, wildcard or
+symlink/junction roots, roots with spaces or longer than 80 characters, and existing
+non-resumable build roots before it installs dependencies. It never deletes a
+build root. A successful full <code>All</code> run removes only its own clean
+detached source snapshot; an interrupted build retains that snapshot for
+inspection or <code>-Resume</code>. If a prior build exists, inspect it and
+resume only when its <code>build-state.json</code> names the exact current
+source commit:
 
 ~~~powershell
 .\Build-Windows.cmd -Resume
@@ -73,6 +86,11 @@ Choose larger volumes without changing the active checkout:
 ~~~powershell
 .\Build-Windows.cmd -ToolRoot 'G:\LibreOfficeMaterialTools' -BuildRoot 'G:\LibreOfficeMaterialBuild'
 ~~~
+
+Keep an overridden build root short (80 characters or fewer) and free of
+spaces; for example, <code>C:\lo-material</code> is suitable when it is
+user-writable. LibreOffice's <code>autogen.sh</code> has the same no-space
+requirement for the repository path.
 
 The script stops rather than restarting Windows, overwriting a hash-mismatched
 bootstrap tool, deleting a stale output, or force-closing a process. If an
@@ -95,11 +113,13 @@ The <code>All</code> phase uses the same Windows profile as
    administratively extracts it, and requires exactly one <code>soffice.exe</code>.
 
 The canonical staged result, SHA-256 file, MSI manifest, extraction log, and
-administrative extraction stay in a unique
-<code>dist-windows\&lt;timestamp&gt;-&lt;msi-name&gt;</code> directory. The script does not
-install the MSI or launch the application. Use the isolated off-screen harness
-defined in [<code>HEADLESS_UI_EVIDENCE.md</code>](HEADLESS_UI_EVIDENCE.md) for
-runtime verification.
+administrative extraction stay in a collision-resistant unique
+<code>dist-windows\&lt;timestamp&gt;-&lt;msi-name&gt;-&lt;GUID&gt;</code> directory. Cygwin
+phase logs are likewise isolated in a per-invocation directory, so a
+<code>-Resume</code> run does not overwrite prior failure evidence. The script
+does not install the MSI or launch the application. Use the isolated off-screen
+harness defined in [<code>HEADLESS_UI_EVIDENCE.md</code>](HEADLESS_UI_EVIDENCE.md)
+for runtime verification.
 
 For a non-mutating availability check, use:
 
@@ -114,6 +134,7 @@ For a strict existing-toolchain build that may not install anything, use:
 ~~~
 
 The current host preflight is expected to report no dedicated VS 2022/Cygwin
-profile until this bootstrap runs. Adding this script is source automation only:
-no local native build, MSI, LibreOffice launch, or accepted UI evidence is
+profile until this bootstrap runs. It is read-only, including when checking an
+already-installed Cygwin toolchain. Adding this script is source automation
+only: no local native build, MSI, LibreOffice launch, or accepted UI evidence is
 claimed here.

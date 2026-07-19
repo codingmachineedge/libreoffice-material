@@ -876,6 +876,13 @@ runtime interaction are not claimed until the post-repair native runs finish.
   `bin/Build-Windows.ps1`, and `git diff --check` was clean at the script
   validation point. No bootstrap installer, native local build, MSI,
   LibreOffice runtime, or application screenshot ran as part of that check.
+- Hardening review added fail-fast root/reparse/path-length checks, both-drive
+  capacity checks before installers, exact publisher-CN and pinned-hash checks,
+  one encoded hidden UAC child, isolated Cygwin Git/configuration, immutable
+  per-invocation logs and MSI staging, profile revalidation on resume, and
+  non-force cleanup only of a clean successful-run source snapshot. Parser,
+  material validator, 27 Python validator tests, prototype validator, and
+  whitespace checks passed after that revision.
 
 Scope conclusion: the local profile is reproducible source automation, not
 build or runtime evidence.

@@ -61,10 +61,14 @@ directory and still requires exactly one MSI plus administrative extraction and
 there is no installer artifact, application run, accepted screenshot, release,
 or accessibility result yet.
 
-The local script is intentionally non-destructive: it does not normalize the
-development checkout, delete a prior build root, silently use Visual Studio
-2026, reboot Windows, install its MSI, or claim runtime evidence. Its default
-`All` phase remains a build contract until its first local native run.
+The local script is intentionally non-destructive: it checks safe short roots,
+both tool/build-drive free space, and a clean checkout before installing
+dependencies when Git is already available; it uses isolated Cygwin Git rather
+than installing a global Git client. It does not normalize the development
+checkout, delete a prior build root, silently use Visual Studio 2026, reboot
+Windows, install its MSI, or claim runtime evidence. A complete successful
+full run removes only its verified-clean temporary LF worktree. Its default
+phase remains a build contract until its first local native run.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL

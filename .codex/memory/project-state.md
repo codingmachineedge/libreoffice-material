@@ -260,7 +260,9 @@ Public assetless release/tag `e` remains non-evidence.
 - Local build automation: `Build-Windows.cmd` calls `bin/Build-Windows.ps1`.
   It provisions a dedicated VS 2022/Cygwin profile in one hidden UAC bootstrap,
   validates signatures, hashes, and packaging tools, builds from an LF snapshot,
-  and stages only an administratively extractable final MSI. It never changes the
+  and stages only an administratively extractable final MSI. It checks
+  safe/short paths and both drives before bootstrap, keeps Git config isolated
+  below the build root, and preserves unique phase logs. It never changes the
   active checkout, deletes a build root, reboots, installs the MSI, or launches
   a UI. The source script parsed successfully but has not run a local build.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at

@@ -1,4 +1,4 @@
 @echo off
-setlocal
+setlocal DisableDelayedExpansion
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0bin\Build-Windows.ps1" %*
 exit /b %ERRORLEVEL%

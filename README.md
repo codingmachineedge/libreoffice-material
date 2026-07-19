@@ -312,9 +312,13 @@ and the imported build files before configuring a machine.
 > capture is claimed here.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing
-the development checkout. It is intentionally fail-safe: it never deletes a
-previous build root, reboots Windows, installs the output MSI, or substitutes
-Visual Studio 2026 for the required VS 2022 profile.
+the development checkout. It checks root safety, free space, and (when Git is
+available) source cleanliness before dependency installation; its isolated
+Cygwin Git and Git configuration avoid a system-wide Git mutation. It is
+intentionally fail-safe: it never deletes a previous build root, reboots
+Windows, installs the output MSI, or substitutes Visual Studio 2026 for the
+required VS 2022 profile. A full successful run removes only its verified-clean
+temporary source snapshot and preserves build logs and artifacts.
 
 At the imported baseline, the upstream README records these minimum build
 baselines:
