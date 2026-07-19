@@ -72,6 +72,14 @@ constexpr OUStringLiteral PROPERTY_SHOW_BUBBLE = u"BubbleVisible";
 constexpr OUStringLiteral PROPERTY_CLICK_HDL = u"MenuClickHDL";
 constexpr OUString PROPERTY_SHOW_MENUICON = u"MenuIconVisible"_ustr;
 
+WindowsInstallerCommand buildWindowsInstallerCommand(const OUString& rSystemDirectory,
+                                                       const OUString& rInstallerPath)
+{
+    return { rSystemDirectory + u"\\msiexec.exe"_ustr,
+             { u"/i"_ustr, rInstallerPath, u"REINSTALL=ALL"_ustr,
+               u"REINSTALLMODE=vomus"_ustr } };
+}
+
 bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource)
 {
     const OUString aExpectedSuffix = OUString::Concat(u"/") + rSource.FileName;
@@ -1237,11 +1245,12 @@ void UpdateCheck::install()
         return;
     }
 
-    const OUString aMsiexecPath(o3tl::toU(aSystemDirectory),
-                                static_cast<sal_Int32>(nSystemDirectoryLength));
+    const OUString aSystemDirectoryPath(o3tl::toU(aSystemDirectory),
+                                        static_cast<sal_Int32>(nSystemDirectoryLength));
+    const WindowsInstallerCommand aCommand
+        = buildWindowsInstallerCommand(aSystemDirectoryPath, aInstallerPath);
     OUString aMsiexecURL;
-    if (osl::FileBase::getFileURLFromSystemPath(aMsiexecPath + u"\\msiexec.exe"_ustr,
-                                                 aMsiexecURL)
+    if (osl::FileBase::getFileURLFromSystemPath(aCommand.ExecutablePath, aMsiexecURL)
         != osl::FileBase::E_None)
     {
         cleanupStagedWindowsInstaller(pInstallerLock, aStagedInstallerURL,
@@ -1251,8 +1260,10 @@ void UpdateCheck::install()
         return;
     }
 
-    OUString aInstallSwitch(u"/i"_ustr);
-    rtl_uString* aArguments[] = { aInstallSwitch.pData, aInstallerPath.pData };
+    rtl_uString* aArguments[] = {
+        aCommand.Arguments[0].pData, aCommand.Arguments[1].pData,
+        aCommand.Arguments[2].pData, aCommand.Arguments[3].pData
+    };
     oslProcess hProcess = nullptr;
     const oslProcessError eError
         = osl_executeProcess(aMsiexecURL.pData, aArguments,

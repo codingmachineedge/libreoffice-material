@@ -251,6 +251,22 @@ protected:
         CPPUNIT_ASSERT(aRetained.indexOf(u"rejected.msi"_ustr) >= 0);
     }
 
+    void testWindowsInstallerCommand()
+    {
+        const OUString aInstallerPath
+            = u"C:\\Users\\Example User\\AppData\\Local\\LibreOfficeMaterialUpdate-test\\LibreOfficeMaterial-Windows-x64.msi"_ustr;
+        const WindowsInstallerCommand aCommand
+            = buildWindowsInstallerCommand(u"C:\\Windows\\System32"_ustr, aInstallerPath);
+
+        CPPUNIT_ASSERT_EQUAL(u"C:\\Windows\\System32\\msiexec.exe"_ustr,
+                             aCommand.ExecutablePath);
+        CPPUNIT_ASSERT_EQUAL(std::size_t(4), aCommand.Arguments.size());
+        CPPUNIT_ASSERT_EQUAL(u"/i"_ustr, aCommand.Arguments[0]);
+        CPPUNIT_ASSERT_EQUAL(aInstallerPath, aCommand.Arguments[1]);
+        CPPUNIT_ASSERT_EQUAL(u"REINSTALL=ALL"_ustr, aCommand.Arguments[2]);
+        CPPUNIT_ASSERT_EQUAL(u"REINSTALLMODE=vomus"_ustr, aCommand.Arguments[3]);
+    }
+
     CPPUNIT_TEST_SUITE(Test);
     CPPUNIT_TEST(testGetUpdateInformationEnumeration);
     CPPUNIT_TEST(testCheckUpdateAvailable);
@@ -260,6 +276,7 @@ protected:
     CPPUNIT_TEST(testTrustedSourceValidation);
     CPPUNIT_TEST(testVerifiedUpdateFile);
     CPPUNIT_TEST(testRejectedInstallerDisposition);
+    CPPUNIT_TEST(testWindowsInstallerCommand);
     CPPUNIT_TEST_SUITE_END();
 
 private:

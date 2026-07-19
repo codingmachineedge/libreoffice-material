@@ -21,6 +21,7 @@
 
 #include <sal/config.h>
 
+#include <array>
 #include <condition_variable>
 #include <mutex>
 
@@ -42,6 +43,19 @@
 // Verifies the complete local file against immutable GitHub Release metadata.
 // rFileName is a file URL, as used by the update download service.
 bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource);
+
+struct WindowsInstallerCommand
+{
+    OUString ExecutablePath;
+    std::array<OUString, 4> Arguments;
+};
+
+// Builds the interactive Windows Installer command used for an in-place
+// update. The updater runs from an installed product, so the MSI must be
+// explicitly recached and all installed features reinstalled even when the
+// package keeps the same ProductCode and effective ProductVersion.
+WindowsInstallerCommand buildWindowsInstallerCommand(const OUString& rSystemDirectory,
+                                                       const OUString& rInstallerPath);
 
 
 class UpdateCheck;

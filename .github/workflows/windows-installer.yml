@@ -118,9 +118,11 @@ jobs:
           if (-not $atl) {
             throw 'ATL headers are missing.'
           }
-          $msm = Get-ChildItem -Path (Join-Path $vs 'VC\Redist\MSVC') -Recurse -Filter Microsoft_VC143_CRT_x86.msm -ErrorAction SilentlyContinue | Select-Object -First 1
-          if (-not $msm) {
-            throw 'The Visual C++ v143 CRT merge module is missing.'
+          $msmRoot = Join-Path $vs 'VC\Redist\MSVC'
+          $msmX86 = Get-ChildItem -Path $msmRoot -Recurse -Filter Microsoft_VC143_CRT_x86.msm -ErrorAction SilentlyContinue | Select-Object -First 1
+          $msmX64 = Get-ChildItem -Path $msmRoot -Recurse -Filter Microsoft_VC143_CRT_x64.msm -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $msmX86 -or -not $msmX64) {
+            throw 'Both the x86 and x64 Visual C++ v143 CRT merge modules are required.'
           }
 
           $kitsRoot = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows Kits\Installed Roots').KitsRoot10
@@ -152,7 +154,8 @@ jobs:
 
           Write-Host "Windows SDK: $($sdk.Name)"
           Write-Host "ATL: $($atl.FullName)"
-          Write-Host "CRT merge module: $($msm.FullName)"
+          Write-Host "x86 CRT merge module: $($msmX86.FullName)"
+          Write-Host "x64 CRT merge module: $($msmX64.FullName)"
           & $cmake --version
 
       - name: Restore external source tarballs
@@ -297,7 +300,7 @@ jobs:
             /opt/lo/bin/make.exe -j"$BUILD_JOBS" "$target"
           done
 
-      - name: Build LibreOfficeDev and Windows installation set
+      - name: Build LibreOfficeDev and emit Windows installation set
         shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
         run: |
           export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -310,14 +313,7 @@ jobs:
           path: C:\lo\tarballs
           key: windows-external-tarballs-${{ hashFiles('download.lst') }}
 
-      - name: Materialize MSI packages
-        shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
-        run: |
-          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-          cd "$(cygpath -u "$LO_BUILD_DIR")"
-          /opt/lo/bin/make.exe -j"$BUILD_JOBS" CustomTarget_instsetoo_native/install
-
-      - name: Stage and structurally validate MSI artifacts
+      - name: Confirm, stage, and structurally validate emitted MSI artifacts
         id: stage
         shell: pwsh
         run: |
