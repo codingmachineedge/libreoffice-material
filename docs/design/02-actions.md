@@ -473,9 +473,11 @@ face).
 
 Native mapping: a filled push button — `pushbutton`/`Entire` with
 `extra="action"` (§1), hover `@primary-action-hover`, pressed
-`@primary-action-pressed`, focus ring from the `Focus` part. The Start Center
-surface/header treatment is begun in native source; this specific 44 px
-prominence variant is specified here, not yet implemented.
+`@primary-action-pressed`, focus ring from the `Focus` part. `open_all` now
+declares `suggested-action`; `VclBuilder` maps that standard UI class to
+`PushButton::setAction(true)`, selecting the existing action state when
+Material drawing is enabled. This is source-only and uncompiled; the specified
+44 px prominence geometry remains target design.
 
 ### 6.2 Behaviour
 

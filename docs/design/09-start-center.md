@@ -232,7 +232,7 @@ replacing it; the prototype's target anatomy maps onto it as follows.
 | Target element | Native counterpart | Notes |
 | --- | --- | --- |
 | Navigation column | `frame1`/`all_buttons_box`/`buttons_box` in `startcenter.ui` (6 px margins, 8 px spacing; `box1` spacing 16) | background from `GetWorkspaceColor()` → `workspaceColor` → `@surface-container-low`; the prototype uses `@surface-container` — one tonal step to reconcile |
-| Open File pill | `open_all` button (`_Open File`) | draws as `pushbutton`/`Entire`; the `extra="action"` filled-pill states exist in definition.xml (unbuilt). Marking this specific button as the surface's action button is not yet wired |
+| Open File pill | `open_all` button (`_Open File`) | `suggested-action` is mapped by `VclBuilder` to `PushButton::setAction(true)`, selecting the existing `extra="action"` states under the opt-in Material renderer; source-only and unbuilt. The target 44 px geometry remains prototype-only |
 | Remote Files | `open_remote` button | present natively; pill styling prototype-only |
 | View items | `open_recent`, `templates_all` `GtkToggleButton`s | toggle semantics native; pill-with-tonal-selection styling prototype-only |
 | Create list + 28 px chips | `writer_all` … `database_all` buttons with 32 px document icons | chip anatomy prototype-only; per-module `set_sensitive` already native |

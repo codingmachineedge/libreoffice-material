@@ -45,13 +45,13 @@ document engine, file-format support, and accessibility foundations.
 | --- | --- | --- |
 | LibreOffice source baseline | Imported | This repository's initial tree matches upstream commit `63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21` |
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
-| Material VCL implementation | Tenth source milestone, unbuilt | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present; build and runtime gates remain open |
+| Material VCL implementation | Tenth milestone plus a source-only Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class now reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states; build and runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
 | Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
 | Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
 | Windows updater | Source implemented; native validation pending | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; see [Privacy](PRIVACY.md) |
-| Installer / release | Draft-first Windows MSI workflow added; no genuine artifact yet | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, runs the required native targets, validates a draft's exact target/assets/digests, and only then promotes it to a normal public non-prerelease Latest release; baseline run `29670528974` and final current-source Linux validation remain pending, and assetless release/tag `e` is not evidence |
+| Installer / release | Draft-first Windows MSI workflow repaired; no genuine artifact yet | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, retains the legacy CLI bridge payload required by the MSI, asserts `ENABLE_CLI`, runs the required native targets, validates a draft's exact target/assets/digests, and only then promotes it to a normal public non-prerelease Latest release. The preceding Windows run reached MSI packaging but lacked that payload; this repair has not yet produced a package, and assetless release/tag `e` is not evidence |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -134,7 +134,9 @@ source includes:
   WCAG contrast pairs—including list selection and warning/error feedback—plus
   reader, XML-walker, and headless draw C++ coverage with negative XML fixtures;
 - Start Center spacing, a Home header/subtitle, surface roles, and recent/template
-  text and fill colors derived from VCL style settings.
+  text and fill colors derived from VCL style settings; `open_all` now uses the
+  standard `suggested-action` class, which VCL preserves as the push-button
+  action state used by the existing Material `extra="action"` definitions.
 
 The local static validator passes with 2 schemes, 23 semantic color tokens per
 scheme, 3 semantic typography roles, 8 semantic shape tokens, 15 semantic

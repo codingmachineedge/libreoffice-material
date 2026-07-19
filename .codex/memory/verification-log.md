@@ -800,3 +800,32 @@ headless application run, or accepted capture exists at this inventory point.
 Scope conclusion: the exact native regression gates are proved for this failed
 attempt, but no MSI, release, LibreOffice runtime smoke, or accepted screenshot
 is claimed until the repaired exact-source rerun completes.
+
+## 2026-07-19 — Start Center action and MSI CLI source repair
+
+- The standard GTK `suggested-action` class is now retained by the generic UI
+  builder until the leaf widget exists, then mapped by `VclBuilder` to
+  `PushButton::setAction(true)`. `startcenter.ui` applies it to `open_all`, so
+  the existing Material `pushbutton`/`Entire` `extra="action"` states become
+  selectable under the opt-in renderer. A focused `VclBuilder` CppUnit fixture
+  covers a leaf suggested button and a plain control; both focused native
+  workflows now include `CppunitTest_vcl_treeview`.
+- Windows Actions run `29678095646` at
+  `937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
+  and the prior four required native C++ targets, then failed only in MSI
+  packaging because `--disable-cli` omitted legacy CLI bridge payloads that the
+  MSVC MSI manifests require. The workflow repair removes that contradictory
+  switch, asserts `ENABLE_CLI=TRUE`, builds `cli_ure` and `unoil`, and verifies
+  the required DLL, policy-DLL, and configuration payload before `make build`.
+  `--without-dotnet` remains because the modern .NET feature is independent of
+  the legacy CLI bridge.
+- Local source checks passed: `python bin/check-material-theme.py` reported
+  `2/23/3/8/15/72/79/205`; `python -m unittest
+  bin/test_material_theme_validator.py` ran 27 tests; `python
+  bin/lint-ui.py` accepted both `startcenter.ui` and the new fixture; `node
+  bin/validate-prototype.mjs` passed all 7 checks; Python parsed the three
+  changed workflow files and both UI XML files; and `git diff --check` passed.
+
+Scope conclusion: this is a source/configuration repair only. The new CppUnit
+test, repaired Windows package, MSI extraction, and off-screen LibreOffice
+runtime interaction are not claimed until the post-repair native runs finish.

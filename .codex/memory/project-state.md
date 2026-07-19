@@ -57,6 +57,14 @@ disabled-affordance gaps: a dimmed disabled `SubmenuArrow`, a disabled-but-check
 scrollbar-trough feedback) are deferred as design decisions (D-020). The Material
 definition now has 79 parts, 205 states, 159 rounded rectangles, and 346 metric
 references; these changes remain uncompiled and unexecuted.
+The post-tenth source slice routes the Start Center's `open_all` standard
+`suggested-action` class through `VclBuilder` to `PushButton::setAction(true)`,
+selecting the existing Material `extra="action"` pushbutton states. Its focused
+leaf-button CppUnit regression is included in the native workflow target list.
+The same slice removes the Windows MSI workflow's contradictory `--disable-cli`
+switch, asserts `ENABLE_CLI=TRUE`, and prebuilds the CLI payload that MSI
+manifests require. These are source/configuration changes only; no new native
+build, package, or runtime evidence is claimed here.
 The Windows-only updater source reads the exact GitHub Latest XML release asset
 and accepts one canonical MSI only after strict safe-tag, tag-derived URL,
 filename, `application/x-msi` MIME, positive-size, and lowercase SHA-256 checks.

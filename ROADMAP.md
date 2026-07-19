@@ -198,7 +198,10 @@ Exit gate:
 
 The Start Center source slice adds spacing, a Home header/subtitle, distinct
 navigation/content/container surfaces, and VCL-derived recent/template colors.
-It has not been built, displayed, or captured.
+Its `open_all` button now uses the standard `suggested-action` semantic, which
+`VclBuilder` preserves as the push-button action state selecting the existing
+Material `extra="action"` styling. It has not been built, displayed, or
+captured.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

@@ -24,10 +24,14 @@ LibreOffice, and it is not build or accessibility evidence.
 
 ## Current implementation status
 
-Ten native source milestones now exist. They package an opt-in Material
+Ten native source milestones now exist, followed by a source-only Start Center
+action and Windows MSI configuration follow-up. They package an opt-in Material
 file-widget definition, add safe keyed theme selection and definition-aware
 fallback in VCL, begin the Start Center surface/header treatment, and implement
-matched light and dark palettes of 23 semantic roles each. The reader resolves
+matched light and dark palettes of 23 semantic roles each. `open_all` declares
+the standard `suggested-action` class, which `VclBuilder` maps to
+`PushButton::setAction(true)` so the existing Material `extra="action"` states
+can be selected. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates
