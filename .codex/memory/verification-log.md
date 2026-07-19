@@ -830,3 +830,15 @@ is claimed until the repaired exact-source rerun completes.
 Scope conclusion: this is a source/configuration repair only. The new CppUnit
 test, repaired Windows package, MSI extraction, and off-screen LibreOffice
 runtime interaction are not claimed until the post-repair native runs finish.
+
+## 2026-07-19 — vcl_treeview fixture compile follow-up
+
+- The first current-source Linux native run, `29695337988` at
+  `1e97d960be2b4d736dc00ec6a4d76fb4cf5dc905`, failed while compiling
+  `vcl/qa/cppunit/treeviewtest.cxx`: the new focused fixture includes the
+  internal `PushButton` declaration, but the `vcl_treeview` CppUnit target did
+  not declare `VCL_INTERNALS`. No test body, package, or application runtime
+  ran in that attempt.
+- The target-specific follow-up declares `VCL_INTERNALS`, matching the existing
+  `vcl_lifecycle` CppUnit target that tests the same VCL control API. Its native
+  rerun remains required before any build or runtime result is recorded.

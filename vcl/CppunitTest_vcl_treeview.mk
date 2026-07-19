@@ -18,6 +18,10 @@ $(eval $(call gb_CppunitTest_add_exception_objects,vcl_treeview, \
 	vcl/qa/cppunit/treeviewtest \
 ))
 
+$(eval $(call gb_CppunitTest_add_defs,vcl_treeview, \
+	-DVCL_INTERNALS \
+))
+
 $(eval $(call gb_CppunitTest_use_externals,vcl_treeview, \
 	boost_headers \
 	harfbuzz \

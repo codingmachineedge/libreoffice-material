@@ -91,11 +91,13 @@ Preceding Windows Actions run `29678095646` at
 `937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
 and its four then-required native C++ targets, then failed only in MSI packaging
 because `--disable-cli` suppressed legacy CLI payloads required by the manifest.
-The post-tenth repair at `1e97d960b` is not yet native-verified. Final Linux
-validation of the current source is pending. No current-source native CI/build,
-runtime, installer, normal release, headless UI smoke, accessibility smoke, or
-accepted capture has completed. Public assetless release/tag `e` remains
-non-evidence.
+The first post-tenth Linux native run, `29695337988`, stopped while compiling
+the new `vcl_treeview` fixture because that target did not opt in to the
+internal PushButton header required by the focused VCL test. The target now
+declares `VCL_INTERNALS`, matching the existing lifecycle test; its rerun is
+pending. No current-source native CI/build, runtime, installer, normal release,
+headless UI smoke, accessibility smoke, or accepted capture has completed.
+Public assetless release/tag `e` remains non-evidence.
 
 ## Recorded facts
 
