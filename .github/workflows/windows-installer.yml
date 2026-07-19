@@ -270,7 +270,6 @@ jobs:
             --with-galleries=no \
             --disable-odk \
             --disable-ccache \
-            --disable-skia \
             --disable-pdfium \
             --disable-database-connectivity \
             --disable-cairo-canvas
