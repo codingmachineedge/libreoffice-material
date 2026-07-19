@@ -1418,6 +1418,15 @@ bool FileDefinitionWidgetDraw::updateSettings(AllSettings& rSettings, bool bUseD
         return false;
     }
 
+    {
+        std::scoped_lock aGuard(m_pThemeState->maMutex);
+        // Window::ImplUpdateAllSettings normally captures the platform style
+        // before this overlay runs. Keep direct graphics callers deterministic
+        // too without exposing that capture hook outside VCL's private ABI.
+        if (!m_pThemeState->moNativeStyle)
+            m_pThemeState->moNativeStyle = rSettings.GetStyleSettings();
+    }
+
     const OString aColorScheme = bUseDarkMode ? "dark"_ostr : OString();
     OUString aRequestedTheme;
     {
@@ -1541,8 +1550,7 @@ bool FileDefinitionWidgetDraw::updateSettings(AllSettings& rSettings, bool bUseD
     StyleSettings aNativeStyleSet = aStyleSet;
     {
         std::scoped_lock aGuard(m_pThemeState->maMutex);
-        if (m_pThemeState->moNativeStyle)
-            aNativeStyleSet = *m_pThemeState->moNativeStyle;
+        aNativeStyleSet = *m_pThemeState->moNativeStyle;
     }
 
     if (pWidgetDefinition->mpTypography)
