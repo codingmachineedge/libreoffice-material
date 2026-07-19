@@ -83,6 +83,9 @@ CPPUNIT_TEST_FIXTURE(FileDefinitionWidgetDrawTest, testMaterialStyleSettingsColo
     aSeededStyle.SetErrorTextColor(aSentinel);
     aSettings.SetStyleSettings(aSeededStyle);
 
+    // Mirror Window::ImplUpdateAllSettings(): file-defined widgets always
+    // retain the platform style as their typography and metric baseline.
+    pGraphics->CaptureFileDefinitionNativeSettings(aSettings);
     CPPUNIT_ASSERT(pGraphics->UpdateSettings(aSettings));
     const StyleSettings& rMaterialStyle = aSettings.GetStyleSettings();
     const bool bDark = MiscSettings::GetUseDarkMode();
