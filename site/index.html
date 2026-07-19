@@ -60,16 +60,15 @@
           </div>
           <p class="truth-note">
             Native Material, Start Center, and consent-based Windows updater
-            changes are present in source, but the current source has not
-            completed native CI or run as LibreOffice. The whole GUI is
-            incomplete, and verified application screenshots remain at zero.
-            The public assetless release/tag <code>e</code> contains no build
-            and is not an installer or accepted evidence. A genuine Windows MSI
-            workflow now exists. The preceding Windows run
-            <code>29678095646</code> reached MSI packaging after its native
-            targets, but lacked the legacy CLI payload; the repair and final
-            current-source Linux validation remain unverified. There is still
-            no downloadable build.
+            changes are present in source. Current-source Linux run
+            <code>29695793821</code> and Windows run <code>29695815101</code>
+            passed all five required native C++ targets; the Windows run also
+            built the full LibreOfficeDev installation set and checked the
+            legacy CLI payload. The whole GUI is incomplete, and verified
+            application screenshots remain at zero. MSI staging then stopped
+            because a recursive rule included two intermediate databases with
+            the final package. The workflow now selects only the final package,
+            but the rerun has not produced a downloadable artifact yet.
           </p>
         </div>
 
@@ -100,7 +99,7 @@
             </div>
             <div>
               <dt>Build / installer</dt>
-              <dd><span class="state state-progress">MSI build pending</span></dd>
+              <dd><span class="state state-progress">Set built; MSI staging rerun</span></dd>
             </div>
             <div>
               <dt>Windows updater</dt>
@@ -219,10 +218,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
             </p>
           </div>
           <p class="truth-note">
-            Source only: native CI/build, runtime, a normal release, headless UI
-            smoke, and accessibility smoke are still pending. The stable
-            workflow validates an exact draft before promoting it to a normal
-            public non-prerelease Latest release; that path has not completed.
+            Native targets and the Windows installation-set build have completed,
+            but runtime, a normal release, headless UI smoke, and accessibility
+            smoke are still pending. The stable workflow validates an exact draft
+            before promoting it to a normal public non-prerelease Latest release;
+            that path has not completed.
           </p>
         </div>
         <p class="blocker-note">
@@ -231,13 +231,13 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           ATL and the CRT merge modules required for packaging; installed SDK
           26100 is complete, but there is no supported local Cygwin or WSL helper.
           The hosted Windows workflow supplies and validates those prerequisites.
-          The preceding Windows run <code>29678095646</code> at
-          <code>937b61fd3</code> passed configure, <code>Library_svxcore</code>,
-          and its four former required native C++ targets, then failed MSI
-          packaging because the legacy CLI payload was disabled. The current
-          repair and final Linux validation remain unverified. No accepted
-          current-source build, installer,
-          release, real app run, headless smoke, or accessibility smoke exists.
+          Current-source Linux run <code>29695793821</code> and Windows run
+          <code>29695815101</code> passed all five required native C++ targets;
+          the latter also built the full installation set. Its staging rule
+          recursively found two intermediate MSI databases alongside the final
+          installer, so no artifact was uploaded. The corrected final-directory
+          rule awaits a rerun. No staged installer, release, real app run,
+          headless smoke, or accessibility smoke exists.
         </p>
       </section>
 

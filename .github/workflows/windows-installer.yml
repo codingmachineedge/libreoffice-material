@@ -427,9 +427,20 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $installation = Join-Path $env:LO_BUILD_DIR 'workdir\installation'
-          $msis = @(Get-ChildItem -LiteralPath $installation -Recurse -Filter '*.msi' -File -ErrorAction SilentlyContinue)
+          # LibreOffice retains intermediate MSI databases under idt_files. The
+          # final installer appears in install\en-US only after packaging succeeds.
+          $finalMsiDirectory = Join-Path $installation 'LibreOfficeDev\msi\install\en-US'
+          if (-not (Test-Path -LiteralPath $finalMsiDirectory -PathType Container)) {
+            throw "Expected final MSI directory $finalMsiDirectory was not produced."
+          }
+          $msis = @(Get-ChildItem -LiteralPath $finalMsiDirectory -Filter '*.msi' -File -ErrorAction Stop)
           if ($msis.Count -ne 1) {
-            throw "Expected exactly one MSI under $installation, found $($msis.Count)."
+            $candidates = if ($msis.Count -gt 0) {
+              ($msis | ForEach-Object FullName) -join '; '
+            } else {
+              '(none)'
+            }
+            throw "Expected exactly one final MSI under $finalMsiDirectory, found $($msis.Count): $candidates"
           }
 
           $dist = Join-Path $env:GITHUB_WORKSPACE 'dist-windows'

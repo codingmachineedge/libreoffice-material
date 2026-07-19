@@ -74,18 +74,18 @@ SDK 26100 is complete, but no supported Cygwin or WSL helper environment is
 installed. The manually dispatched hosted Windows workflow supplies and
 validates those missing prerequisites against a clean LF checkout.
 
-The latest completed Linux attempt, commit `542e4077b` in Actions run
-`29665678719`, installed Perl `Archive::Zip` but stopped during prerequisite
-validation because `nasm` was absent. Configure, the required native regression
-targets, build, packaging, and artifact staging therefore did not run. The
-dependency list has since been corrected, but that failed run produced no
-installer, `soffice` process, or real LibreOffice capture.
+Current-source Linux Actions run `29695793821` and Windows Actions run
+`29695815101` at `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed the five
+required native C++ targets. The Windows run also passed the legacy CLI payload
+check and completed the full LibreOfficeDev installation-set build.
 
-The preceding Windows run, `29678095646` at `937b61fd3`, passed configure,
-`Library_svxcore`, and its four then-required native C++ targets before MSI
-packaging failed because `--disable-cli` suppressed the legacy CLI payload the
-manifest requires. The current source removes that switch and adds payload
-checks, but no post-repair MSI or off-screen LibreOffice run is claimed here.
+That Windows run did not produce a downloadable artifact: the staging script
+recursively collected three MSI files, two of which were LibreOffice working
+databases under `idt_files`; its exact-one safety check stopped before upload.
+The workflow now scopes collection to the success-only final
+`LibreOfficeDev\msi\install\en-US` directory and retains exact-one,
+administrative-extraction, and `soffice.exe` checks. A hosted rerun is required
+before this plan can claim an MSI or an off-screen LibreOffice scenario.
 
 ## Evidence principles
 

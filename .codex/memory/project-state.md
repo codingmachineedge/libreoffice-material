@@ -248,11 +248,13 @@ Public assetless release/tag `e` remains non-evidence.
 - Stable Windows publication is draft-first on `main`; an exact verified draft
   is promoted to a normal public non-prerelease Latest release only after its
   target and assets pass, with failed-draft cleanup.
-- Preceding Windows run `29678095646` at `937b61fd3` passed configure,
-  `Library_svxcore`, and its four former required native C++ targets, then
-  failed MSI packaging because the legacy CLI payload was disabled. The
-  `1e97d960b` repair and final Linux validation of the current source are
-  pending; neither is accepted build or release evidence.
+- Current-source Linux run `29695793821` and Windows run `29695815101` at
+  `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed all five required native
+  C++ targets. The Windows run also passed the legacy CLI payload check and
+  completed the LibreOfficeDev installation-set build, but did not upload an
+  MSI because recursive staging included two LibreOffice intermediate databases
+  alongside the final package. The workflow now restricts collection to the
+  final `LibreOfficeDev\msi\install\en-US` directory; its rerun is pending.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
@@ -332,21 +334,17 @@ Public assetless release/tag `e` remains non-evidence.
 
 ## Required next gates
 
-1. complete final current-source Linux validation and the hosted clean-LF
-   Windows native build, recording the exact commit and configuration;
-2. run `tools_test`, `extensions_test_update`,
-   `vcl_widget_definition_reader_test`, and
-   `vcl_file_definition_widget_draw_test`, and `vcl_treeview` against the
-   current source;
-3. launch the built start center with the two opt-in variables and an isolated
+1. rerun the hosted clean-LF Windows staging rule, validate the emitted MSI, and
+   record its exact commit, hash, and configuration;
+2. launch the staged built start center with the two opt-in variables and an isolated
    profile on the proven headless desktop;
-4. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
+3. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
    screenshot;
-5. build/runtime-verify light/dark, focus, shape and metric geometry, and
+4. build/runtime-verify light/dark, focus, shape and metric geometry, and
    high-contrast routing; complete forced-color/platform signal coverage; and
    implement density-aware metric resolution plus the remaining token families
    and VCL primitives;
-6. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
+5. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
 
 ## Known evidence gaps
 
@@ -359,12 +357,11 @@ Public assetless release/tag `e` remains non-evidence.
 - no complete supported local LibreOffice build profile exists: local VS 2022
   Build Tools has MSVC and CMake but lacks ATL and CRT merge modules; SDK 26100
   is complete; and no supported Cygwin or WSL helper is installed. The hosted
-  Windows workflow supplies those prerequisites. Preceding Windows run
-  `29678095646` passed its former native test set but failed MSI packaging for
-  the missing legacy CLI payload; the `1e97d960b` repair and final Linux
-  validation remain pending. The current-source native targets,
-  installer/release, real application capture, headless smoke, and accessibility
-  smoke have not completed.
+  Windows workflow supplies those prerequisites. Current-source Linux and
+  Windows native targets passed, and the latter built its full installation set,
+  but MSI staging selected two intermediate databases as well as the final
+  package. The corrected staging rule, installer/release, real application
+  capture, headless smoke, and accessibility smoke remain pending.
 
 ## Multi-repository boundary
 

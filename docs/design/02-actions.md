@@ -476,8 +476,9 @@ Native mapping: a filled push button — `pushbutton`/`Entire` with
 `@primary-action-pressed`, focus ring from the `Focus` part. `open_all` now
 declares `suggested-action`; `VclBuilder` maps that standard UI class to
 `PushButton::setAction(true)`, selecting the existing action state when
-Material drawing is enabled. This is source-only and uncompiled; the specified
-44 px prominence geometry remains target design.
+Material drawing is enabled. The focused builder mapping passes in current Linux
+and Windows native runs; the specified 44 px prominence geometry and visual
+states remain target design until an application scenario is captured.
 
 ### 6.2 Behaviour
 

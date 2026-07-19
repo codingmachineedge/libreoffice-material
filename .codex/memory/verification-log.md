@@ -842,3 +842,22 @@ runtime interaction are not claimed until the post-repair native runs finish.
 - The target-specific follow-up declares `VCL_INTERNALS`, matching the existing
   `vcl_lifecycle` CppUnit target that tests the same VCL control API. Its native
   rerun remains required before any build or runtime result is recorded.
+
+## 2026-07-19 — current-source native reruns and MSI staging follow-up
+
+- Linux Actions run `29695793821` at
+  `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed `tools_test`,
+  `extensions_test_update`, `vcl_widget_definition_reader_test`,
+  `vcl_file_definition_widget_draw_test`, and `vcl_treeview`, including the new
+  `suggested-action` builder fixture.
+- Windows Actions run `29695815101` at the same commit passed configure,
+  `Library_svxcore`, those five required native targets, the `ENABLE_CLI` legacy
+  payload assertions, and the full LibreOfficeDev installation-set build. Its
+  staging step stopped before upload because a recursive MSI search found three
+  files: two retained `idt_files` working databases and the final
+  `LibreOfficeDev\msi\install\en-US\libreofficedev272.msi` package.
+- The workflow now scopes MSI discovery to that final success-only directory,
+  retains exact-one candidate enforcement, and reports candidate paths on any
+  mismatch. This is a staging-rule repair, not an accepted artifact, release, or
+  runtime result; a non-main hosted rerun is required before the low-level
+  off-screen desktop scenario can start.

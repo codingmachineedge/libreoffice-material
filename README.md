@@ -10,11 +10,20 @@ document engine, file-format support, and accessibility foundations.
 > widget tokens, full-track progress indicators, value-sensitive level
 > indicators, native outlined frames, net-less tree connectors, stricter VCL
 > definition parsing, broader state coverage, Start Center changes, and a
-> consent-based Windows updater are present in source, but the current source
-> has **not** completed native CI or run as LibreOffice.
+> consent-based Windows updater are present in source, and the current source
+> has passed its five required native C++ targets in Linux Actions run
+> [`29695793821`](https://github.com/codingmachineedge/libreoffice-material/actions/runs/29695793821)
+> and in Windows Actions run
+> [`29695815101`](https://github.com/codingmachineedge/libreoffice-material/actions/runs/29695815101).
+> That Windows run also completed the full LibreOfficeDev installation-set build
+> and the legacy CLI payload check; it did not stage an MSI artifact.
 > The whole GUI has not been rewritten, and no application surface is
-> Material-complete. **There is no installer or downloadable build yet** —
-> nothing runnable has been produced, only source milestones and the interactive
+> Material-complete. **There is no verified installer or downloadable build
+> yet** — the Windows run found a staging-rule defect after building the MSI:
+> recursive discovery included two retained intermediate MSI databases alongside
+> the final package. The workflow now scopes discovery to the final success-only
+> `install\en-US` directory, and a rerun is required before an artifact exists.
+> No LibreOffice application run has been accepted; the interactive
 > [design reference](https://codingmachineedge.github.io/libreoffice-material/prototype.html)
 > (a mockup, not the app). To run the actual editor, install upstream LibreOffice
 > from [libreoffice.org](https://www.libreoffice.org/download/), which does not
@@ -23,13 +32,10 @@ document engine, file-format support, and accessibility foundations.
 > Linux build, while [`windows-installer.yml`](.github/workflows/windows-installer.yml)
 > now provides a manually dispatched Visual Studio 2022/Cygwin path for a real
 > Windows x64 MSI. Both publish **only** after genuine packages pass structural
-> validation. The preceding Windows run
-> [`29678095646`](https://github.com/codingmachineedge/libreoffice-material/actions/runs/29678095646)
-> at `937b61fd3` passed configure, `Library_svxcore`, and its four required
-> native C++ targets, then failed MSI packaging because the legacy CLI payload
-> was disabled. The current CLI repair and final Linux validation remain
-> unverified. No native build, runtime, release, headless UI, or accessibility
-> result is accepted yet, so there is still no MSI to download. A public
+> validation. Run `29695815101` at
+> `e4dc8a850c982f33d8722fc203f86591b2993e8b` proves the repaired CLI payload,
+> required native targets, and full installation-set build, but no staged MSI,
+> runtime, release, headless UI, or accessibility result is accepted yet. A public
 > assetless release/tag named `e` exists, but it contains no build and does not
 > satisfy the project's gates.
 
@@ -47,13 +53,13 @@ document engine, file-format support, and accessibility foundations.
 | --- | --- | --- |
 | LibreOffice source baseline | Imported | This repository's initial tree matches upstream commit `63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21` |
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
-| Material VCL implementation | Tenth milestone plus a source-only Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class now reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states; build and runtime gates remain open |
+| Material VCL implementation | Tenth milestone plus a native-test-backed Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states; `CppunitTest_vcl_treeview` passed in current Linux and Windows runs, while runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
 | Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
 | Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
-| Windows updater | Source implemented; native validation pending | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; see [Privacy](PRIVACY.md) |
-| Installer / release | Draft-first Windows MSI workflow repaired; no genuine artifact yet | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, retains the legacy CLI bridge payload required by the MSI, asserts `ENABLE_CLI`, runs the required native targets, validates a draft's exact target/assets/digests, and only then promotes it to a normal public non-prerelease Latest release. The preceding Windows run reached MSI packaging but lacked that payload; this repair has not yet produced a package, and assetless release/tag `e` is not evidence |
+| Windows updater | Source implemented; native test/build evidence, no runtime evidence | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; an installer artifact, updater exercise, and release remain pending; see [Privacy](PRIVACY.md) |
+| Installer / release | Full Windows install set built; MSI staging rerun pending | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, retains and checks the legacy CLI bridge payload, runs the required native targets, and now selects only the final `install\en-US` MSI rather than LibreOffice's retained intermediate databases. Run `29695815101` built the set but stopped before upload at the old selection rule; no artifact or release is claimed |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -143,10 +149,12 @@ source includes:
 The local static validator passes with 2 schemes, 23 semantic color tokens per
 scheme, 3 semantic typography roles, 8 semantic shape tokens, 15 semantic
 metric roles, 72 style slots, 79 parts, and 205 states.
-This is source validation only: no affected C++ test target or `soffice` has
-run, no application surface is verified Material-complete, and the screenshot
-count remains 0. Controls whose current file-widget geometry cannot preserve
-native semantics continue through LibreOffice's existing fallback.
+The static validator remains source validation, but the current five required
+native C++ targets—including the focused `vcl_treeview` builder fixture—passed
+in Linux and Windows Actions. No `soffice` application scenario has run, no
+surface is verified Material-complete, and the screenshot count remains 0.
+Controls whose current file-widget geometry cannot preserve native semantics
+continue through LibreOffice's existing fallback.
 
 The metric roles preserve the current integer values and existing downstream
 native conversions exactly. This token layer adds **no** density profile or new
@@ -163,8 +171,9 @@ $env:VCL_FILE_WIDGET_THEME = "material"
 
 These variables describe the source path; they are not a successful-run claim.
 The `vcl_widget_definition_reader_test` and
-`vcl_file_definition_widget_draw_test` targets and a real `soffice` launch have
-not run on this worktree.
+`vcl_file_definition_widget_draw_test` targets have passed in the hosted current
+source runs, while a real `soffice` launch remains pending a successfully staged
+MSI artifact.
 
 ## Windows updater source milestone
 
@@ -188,9 +197,10 @@ is no silent install path.
 Automatic update checking is enabled by default on a weekly interval. Automatic
 download is disabled by default, and download and installation remain user
 opt-in. Network and data-handling details are in [`PRIVACY.md`](PRIVACY.md).
-This describes implemented source, not runtime proof: the updater's final Linux
-validation, Windows native build, published release, installer exercise,
-headless UI smoke test, and accessibility smoke test are still pending.
+This describes implemented source, not runtime proof: Linux and Windows native
+tests plus the Windows installation-set build have completed, but the updater's
+published-release path, installer exercise, headless UI smoke test, and
+accessibility smoke test are still pending.
 
 The stable release workflow is likewise source-only at this point. On `main` it
 creates a draft release, validates the exact target, asset names, upload states,
@@ -291,14 +301,14 @@ and the imported build files before configuring a machine.
 > and CMake but lacks ATL and the CRT merge modules required for packaging; the
 > installed Windows SDK 26100 is complete, but no supported Cygwin or WSL helper
 > environment is installed. The manually dispatched hosted Windows workflow
-> supplies and validates those prerequisites against a clean LF checkout. The
-> preceding Windows run `29678095646` at `937b61fd3` passed configure,
-> `Library_svxcore`, and its four former required native C++ targets, then
-> failed MSI packaging because `--disable-cli` omitted the payload. The current
-> CLI repair and final Linux validation remain unverified. No completed
-> current-source native C++ test,
-> LibreOffice application run, installer, normal release, headless UI smoke,
-> accessibility smoke, or accepted capture has occurred yet.
+> supplies and validates those prerequisites against a clean LF checkout.
+> Current-source Linux run `29695793821` and Windows run `29695815101` passed
+> all five required native C++ targets; the latter also built the full Windows
+> installation set. It stopped at MSI staging because recursive discovery saw
+> two intermediate databases as well as the final package. The corrected final
+> directory rule awaits a rerun. No staged installer, LibreOffice application
+> run, normal release, headless UI smoke, accessibility smoke, or accepted
+> capture has occurred yet.
 
 The imported checkout was also materialized mostly with CRLF worktree endings.
 Use a fresh detached worktree created with `core.autocrlf=false` for any native

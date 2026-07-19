@@ -117,6 +117,6 @@ Components in both surfaces should refer to these semantic names. Literal palett
 
 ## Honesty and verification status
 
-This page documents the token contract present in source. It does not establish build or runtime behavior. The native LibreOffice suite is unbuilt and unverified, with a verified-capture count of **0**. The interactive surface in `site/prototype.html` is a hand-built HTML mockup, not a screenshot of a compiled LibreOffice build.
+This page documents the token contract present in source. It does not establish application runtime behavior. Required current-source native C++ targets and the Windows installation-set build have completed, while the verified-capture count remains **0**. The interactive surface in `site/prototype.html` is a hand-built HTML mockup, not a screenshot of a compiled LibreOffice build.
 
-Those limits match the implementation status recorded in `MATERIAL_DESIGN.md`: source validators and tests may describe intended invariants, but no native build, execution, screenshot, accessibility result, or runtime capture is claimed here.
+Those limits match the implementation status recorded in `MATERIAL_DESIGN.md`: validators and focused native tests describe invariants, but no application execution, screenshot, accessibility result, or runtime capture is claimed here.

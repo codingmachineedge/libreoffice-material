@@ -39,24 +39,24 @@ No phase is currently marked verified.
 - establish a repository-memory ledger for decisions, evidence, and progress.
 
 Current evidence: the Windows harness preflight passed on 2026-07-16 using a
-temporary Notepad process, but no LibreOffice build or window was involved. A
-2026-07-18 refresh found that the local Windows SDK 26100 is complete, but the
-local Visual Studio Build Tools instance still lacks ATL and CRT merge modules,
-and no supported Cygwin or WSL helper environment is installed. The hosted
-Windows workflow uses a clean LF checkout and a pinned runner that declares
-those components. The preceding Windows run `29678095646` at `937b61fd3`
-passed configure, `Library_svxcore`, and its four former required native C++
-targets, then failed MSI packaging because `--disable-cli` omitted a legacy CLI
-payload that the manifest requires. The current CLI repair and final Linux
-validation remain unverified.
+temporary Notepad process, but no LibreOffice window was involved. A 2026-07-18
+refresh found that the local Windows SDK 26100 is complete, but local Visual
+Studio Build Tools still lacks ATL and CRT merge modules and no supported Cygwin
+or WSL helper environment is installed. The hosted Windows workflow uses a
+clean LF checkout and a pinned runner that supplies those components. Current
+source Linux run `29695793821` and Windows run `29695815101` both passed
+`tools_test`, `extensions_test_update`, `vcl_widget_definition_reader_test`,
+`vcl_file_definition_widget_draw_test`, and `vcl_treeview`; the Windows run also
+passed the legacy CLI payload check and built the full LibreOfficeDev
+installation set.
 
-Earlier Linux run `29665678719` at commit `542e4077b` installed the previous
-missing Perl module but stopped during prerequisite validation because `nasm`
-was absent. The current final Linux validation is pending. The native workflows
-gate packaging on `tools_test`, `extensions_test_update`,
-`vcl_widget_definition_reader_test`, and
-`vcl_file_definition_widget_draw_test`, and `vcl_treeview`; none is yet accepted as final
-current-source build evidence.
+Run `29695815101` did not upload an MSI: its staging script recursively matched
+two retained LibreOffice working databases as well as the final installer. The
+workflow now inspects only the success-only final `LibreOfficeDev\msi\install\en-US`
+directory and still requires exactly one MSI plus administrative extraction and
+`soffice.exe` validation. That corrected staging rule needs a hosted rerun;
+there is no installer artifact, application run, accepted screenshot, release,
+or accessibility result yet.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL
@@ -68,8 +68,9 @@ re-verifies it, and retains a final read lock against write/delete replacement.
 The visible MSI launch requires explicit default-No consent; silent install is
 not implemented. Automatic checks default on weekly, while automatic download
 is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
-Native CI, build, runtime, public release, headless smoke, and accessibility
-smoke are all still pending for this source.
+The required native CI targets and Windows installation-set build have completed
+for this source. Runtime, public release, headless smoke, accessibility smoke,
+and an installer artifact remain pending.
 
 An interactive, dependency-free Material design reference for the whole suite is
 published at [`site/prototype.html`](site/prototype.html): a hand-built HTML
@@ -82,8 +83,9 @@ every search bar, and a Find & Replace dialog. Its tokens mirror
 [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) guards its invariants
 (7/7). It specifies the design the native work targets and is **not** a capture
 of a compiled build, so it does not advance any acceptance gate or the
-verified-capture count. No genuine build or installer release exists; the
-public assetless release/tag `e` contains no build and does not satisfy any
+verified-capture count. The Windows installation set has built, but no staged
+installer artifact or release exists; the public assetless release/tag `e`
+contains no build and does not satisfy any
 release or evidence gate. Neither package workflow publishes unless a real
 package is produced and validated.
 
@@ -96,7 +98,7 @@ Exit gate:
 
 ## Phase 1 — Material foundations in VCL
 
-**Status: in progress — source only; build and runtime verification pending**
+**Status: in progress — native C++ targets passed; runtime verification pending**
 
 Implemented source milestones:
 
@@ -169,8 +171,9 @@ Implemented source milestones:
 
 The standalone validator passes with 2 schemes, 23 color tokens each, 3
 typography roles, 8 shape tokens, 15 metric roles, 72 style slots, 79 parts, and
-205 states. No affected C++ target has been compiled or executed, and none of
-this source has run in LibreOffice yet. The metric roles preserve the current
+205 states. The five required native C++ targets have compiled and executed in
+current Linux and Windows runs, while none of this source has run in a
+LibreOffice application scenario yet. The metric roles preserve the current
 integers and existing downstream native conversions; they add no density
 profile or new DPI-aware, `dp`, fractional-scale, or touch-sizing policy.
 
@@ -195,14 +198,15 @@ Exit gate:
 
 ## Phase 2 — shared shell and common surfaces
 
-**Status: in progress — initial Start Center source only; runtime pending**
+**Status: in progress — initial Start Center source with native builder coverage; runtime pending**
 
 The Start Center source slice adds spacing, a Home header/subtitle, distinct
 navigation/content/container surfaces, and VCL-derived recent/template colors.
 Its `open_all` button now uses the standard `suggested-action` semantic, which
 `VclBuilder` preserves as the push-button action state selecting the existing
-Material `extra="action"` styling. It has not been built, displayed, or
-captured.
+Material `extra="action"` styling. Its focused `VclBuilder` fixture passed in
+the current Linux and Windows native runs; it has not yet been displayed or
+captured in a LibreOffice application scenario.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

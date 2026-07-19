@@ -24,16 +24,18 @@ LibreOffice, and it is not build or accessibility evidence.
 
 ## Current implementation status
 
-Ten native source milestones now exist, followed by a source-only Start Center
-action and Windows MSI configuration follow-up. They package an opt-in Material
+Ten native source milestones now exist, followed by a native-test-backed Start
+Center action and Windows MSI configuration follow-up. They package an opt-in Material
 file-widget definition, add safe keyed theme selection and definition-aware
 fallback in VCL, begin the Start Center surface/header treatment, and implement
 matched light and dark palettes of 23 semantic roles each. `open_all` declares
 the standard `suggested-action` class, which `VclBuilder` maps to
 `PushButton::setAction(true)` so the existing Material `extra="action"` states
 can be selected under the opt-in Material renderer. The accompanying Windows
-MSI workflow repair restores the legacy CLI payload that its manifests require;
-neither follow-up has native build or runtime proof yet. The reader resolves
+MSI workflow repair restores the legacy CLI payload that its manifests require.
+Current Linux and Windows runs passed the five required native C++ targets and
+the Windows installation-set build, but no LibreOffice runtime scenario or MSI
+artifact is accepted yet. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates
@@ -140,13 +142,14 @@ and native line/fill cache invalidation. A standalone validator checks token
 discipline, the exact shape, metric, and 72-slot style schemas, light/dark
 schema parity, unused roles, required control/state coverage,
 list/selection/feedback contrast pairs, and native font/geometry-preservation
-invariants;
-dedicated XML-walker, reader, and headless draw C++ coverage plus negative
-fixtures are present but have not executed.
+invariants; dedicated XML-walker, reader, and headless draw C++ coverage plus
+negative fixtures are present. The focused required native targets now pass in
+Linux and Windows Actions, but broader renderer coverage remains unverified.
 
-This slice is **implemented source, not verified behavior**: it has not been
-compiled or run as LibreOffice. Once a compatible build exists, it is intended
-to be explicitly enabled with both `VCL_DRAW_WIDGETS_FROM_FILE=1` and
+This slice is **implemented source, not verified behavior**: required native
+targets have compiled and run, but it has not run as a LibreOffice application.
+Once a staged compatible build exists, it is intended to be explicitly enabled
+with both `VCL_DRAW_WIDGETS_FROM_FILE=1` and
 `VCL_FILE_WIDGET_THEME=material`. Windows printer graphics are excluded from
 the new initialization path, and unsupported file-theme parts retain existing
 fallback drawing.
@@ -211,7 +214,7 @@ bypasses Material drawing for native or generic fallback. Controls refresh
 native-focus suppression when the profile changes so generic fallback can
 retain a visible VCL focus indicator. Headless VCL maps an explicit dark
 preference because it has no operating-system appearance signal. This routing
-is unbuilt and unverified. The metric layer preserves the existing integer
+has only narrow native-target coverage and no application-runtime proof. The metric layer preserves the existing integer
 values and downstream native unit conversions; it does not add density
 selection or a new DPI-aware, `dp`, fractional-scale, or comfortable/touch
 sizing policy.
