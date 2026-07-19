@@ -237,7 +237,7 @@ jobs:
             --with-external-tar=C:/lo/tarballs \
             --with-lang=en-US \
             --disable-online-update \
-            --disable-python \
+            --enable-python=fully-internal \
             --without-java \
             --without-junit \
             --without-dotnet \
