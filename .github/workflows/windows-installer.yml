@@ -159,6 +159,7 @@ jobs:
           & $cmake --version
 
       - name: Restore external source tarballs
+        id: external-cache
         uses: actions/cache/restore@v6
         with:
           path: C:\lo\tarballs
@@ -290,6 +291,17 @@ jobs:
           # targets if configure ever drops it.
           grep -Eq '^export BUILD_TYPE=.*[[:space:]]DBCONNECTIVITY([[:space:]]|$)' config_host.mk
 
+      - name: Link critical Windows desktop library
+        shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
+        run: |
+          export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+          cd "$(cygpath -u "$LO_BUILD_DIR")"
+          # This library contains the desktop form objects whose supported
+          # dependency graph requires dbtools. Build it before the longer test
+          # sequence so a future feature-configuration regression fails fast;
+          # all outputs are reused by the tests and final product build.
+          /opt/lo/bin/make.exe -j"$BUILD_JOBS" Library_svxcore
+
       - name: Run required native C++ regression tests
         shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
         run: |
@@ -316,6 +328,7 @@ jobs:
           /opt/lo/bin/make.exe -j"$BUILD_JOBS" build
 
       - name: Save external source tarballs
+        if: always() && steps.external-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6
         with:
           path: C:\lo\tarballs
