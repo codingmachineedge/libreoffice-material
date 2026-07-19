@@ -471,6 +471,7 @@ jobs:
 
           Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           "@
+          $releaseTitle = "LibreOffice Material Windows x64 — $short"
           $installerPath = Join-Path 'dist-windows' $installerName
           $assets = @(
             (Resolve-Path -LiteralPath $installerPath).Path
@@ -517,7 +518,7 @@ jobs:
             return $true
           }
           function Get-ReleaseForExactTag {
-            $releaseJson = gh release view $tag --repo $repository --json tagName,isDraft,isPrerelease,publishedAt,targetCommitish,url,assets 2>$null
+            $releaseJson = gh release view $tag --repo $repository --json tagName,name,isDraft,isPrerelease,publishedAt,targetCommitish,url,assets 2>$null
             if ($LASTEXITCODE -ne 0) {
               return $null
             }
@@ -564,10 +565,12 @@ jobs:
           }
 
           $createdMarker = Join-Path $env:RUNNER_TEMP "windows-msi-release-created-${{ github.run_id }}-${{ github.run_attempt }}.json"
-          Remove-Item -LiteralPath $createdMarker -Force -ErrorAction SilentlyContinue
+          $promotionMarker = Join-Path $env:RUNNER_TEMP "windows-msi-release-promotion-${{ github.run_id }}-${{ github.run_attempt }}.txt"
+          Remove-Item -LiteralPath $createdMarker, $promotionMarker -Force -ErrorAction SilentlyContinue
           $release = Get-ReleaseForExactTag
           if ($release) {
             if ($release.tagName -ne $tag `
+                -or $release.name -ne $releaseTitle `
                 -or $release.targetCommitish -ne '${{ github.sha }}' `
                 -or $release.url -ne $releaseUrl `
                 -or $release.isPrerelease `
@@ -611,7 +614,7 @@ jobs:
             } | ConvertTo-Json | Set-Content -LiteralPath $createdMarker -Encoding utf8
 
             gh release create $tag @assets `
-              --title "LibreOffice Material Windows x64 — $short" `
+              --title $releaseTitle `
               --target '${{ github.sha }}' `
               --draft `
               --prerelease=false `
@@ -632,6 +635,7 @@ jobs:
                   -or (-not $candidate.isDraft -and $candidate.publishedAt))
               $candidateTagCommit = Resolve-ExactTagCommit
               if ($candidate.tagName -eq $tag `
+                  -and $candidate.name -eq $releaseTitle `
                   -and $candidate.targetCommitish -eq '${{ github.sha }}' `
                   -and $candidate.url -eq $releaseUrl `
                   -and $candidateIsNormalState `
@@ -656,6 +660,7 @@ jobs:
           if ($promotionTagCommit -ne '${{ github.sha }}') {
             throw "Release tag $tag no longer peels to this workflow commit; refusing promotion."
           }
+          $tag | Set-Content -LiteralPath $promotionMarker -Encoding ascii
           gh release edit $tag --draft=false --prerelease=false --latest --repo $repository
           if ($LASTEXITCODE -ne 0) {
             throw "Publishing or recovering verified release $tag failed with exit code $LASTEXITCODE."
@@ -667,6 +672,7 @@ jobs:
             $candidateTagCommit = if ($candidate) { Resolve-ExactTagCommit } else { $null }
             if ($candidate `
                 -and $candidate.tagName -eq $tag -and -not $candidate.isDraft `
+                -and $candidate.name -eq $releaseTitle `
                 -and -not $candidate.isPrerelease -and $candidate.publishedAt `
                 -and $candidate.targetCommitish -eq '${{ github.sha }}' `
                 -and $candidate.url -eq $releaseUrl `
@@ -690,10 +696,17 @@ jobs:
             if ($LASTEXITCODE -eq 0) {
               $latest = ($latestJson -join [Environment]::NewLine) | ConvertFrom-Json
               if ($latest.tag_name -eq $tag -and -not $latest.draft -and -not $latest.prerelease `
+                  -and $latest.name -eq $releaseTitle `
                   -and $latest.target_commitish -eq '${{ github.sha }}' `
                   -and (Test-ExactReleaseAssets $latest)) {
                 $allPublicAssetsMatch = $true
-                foreach ($assetName in @($expectedAssetMetadata.Keys | Sort-Object)) {
+                $publicVerificationOrder = @(
+                  'windows-update-manifest.xml'
+                  'windows-msi-manifest.json'
+                  "$installerName.sha256"
+                  $installerName
+                )
+                foreach ($assetName in $publicVerificationOrder) {
                   $cacheBuster = "${{ github.run_id }}-${{ github.run_attempt }}-$attempt-$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
                   $encodedAssetName = [uri]::EscapeDataString($assetName)
                   $publicAssetUrl = "https://github.com/$repository/releases/latest/download/${encodedAssetName}?cachebust=$cacheBuster"
@@ -705,6 +718,8 @@ jobs:
                     $publicAssetUrl -o $publicAssetPath
                   if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $publicAssetPath -PathType Leaf)) {
                     $allPublicAssetsMatch = $false
+                    Remove-Item -LiteralPath $publicAssetPath -Force -ErrorAction SilentlyContinue
+                    Write-Warning "Public Latest download failed for $assetName on polling attempt $attempt."
                     break
                   }
                   $expectedPublicAsset = $expectedAssetMetadata[$assetName]
@@ -713,6 +728,8 @@ jobs:
                   if ([long]$publicAsset.Length -ne $expectedPublicAsset.size `
                       -or $publicAssetDigest -ne $expectedPublicAsset.digest) {
                     $allPublicAssetsMatch = $false
+                    Remove-Item -LiteralPath $publicAssetPath -Force -ErrorAction SilentlyContinue
+                    Write-Warning "Public Latest bytes did not match staged asset $assetName on polling attempt $attempt."
                     break
                   }
                   Remove-Item -LiteralPath $publicAssetPath -Force
@@ -743,6 +760,7 @@ jobs:
           $tag = "windows-msi-${{ github.run_number }}-${{ github.run_attempt }}-$short"
           $repository = '${{ github.repository }}'
           $createdMarker = Join-Path $env:RUNNER_TEMP "windows-msi-release-created-${{ github.run_id }}-${{ github.run_attempt }}.json"
+          $promotionMarker = Join-Path $env:RUNNER_TEMP "windows-msi-release-promotion-${{ github.run_id }}-${{ github.run_attempt }}.txt"
           if (-not (Test-Path -LiteralPath $createdMarker -PathType Leaf)) {
             Write-Host "This job did not record creating release $tag; preserving any existing release and tag."
             exit 0
@@ -750,6 +768,10 @@ jobs:
           $creationRecord = Get-Content -LiteralPath $createdMarker -Raw | ConvertFrom-Json
           if ($creationRecord.tag -ne $tag -or $creationRecord.source_commit -ne '${{ github.sha }}') {
             Write-Warning 'The release-creation marker does not match this run; refusing cleanup.'
+            exit 0
+          }
+          if (Test-Path -LiteralPath $promotionMarker -PathType Leaf) {
+            Write-Host "Promotion of $tag was attempted; preserving the release and tag regardless of later verification failures."
             exit 0
           }
           $tagRefsJson = gh api -H 'Cache-Control: no-cache' "repos/$repository/git/matching-refs/tags/$tag"
@@ -767,7 +789,21 @@ jobs:
           }
           $releaseJson = gh release view $tag --repo $repository --json tagName,isDraft,targetCommitish
           if ($LASTEXITCODE -ne 0) {
-            Write-Warning "The exact tag exists but no failed draft could be verified; preserving the tag."
+            $tagFilter = '.[] | select(.tag_name == "{0}") | .id' -f $tag
+            $matchingReleaseIds = @(gh api --paginate "repos/$repository/releases?per_page=100" --jq $tagFilter)
+            if ($LASTEXITCODE -ne 0) {
+              Write-Warning 'Could not exhaustively verify release absence; preserving the exact owned tag.'
+              exit 0
+            }
+            if ($matchingReleaseIds.Count -ne 0) {
+              Write-Warning 'An exact-tag release exists but could not be safely classified; preserving it and the tag.'
+              exit 0
+            }
+            gh api --method DELETE "repos/$repository/git/refs/tags/$tag"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Deleting exact orphan tag $tag failed with exit code $LASTEXITCODE."
+            }
+            Write-Host "Deleted exact owned orphan tag $tag after draft creation failed."
             exit 0
           }
           $failedRelease = ($releaseJson -join [Environment]::NewLine) | ConvertFrom-Json
