@@ -273,10 +273,17 @@ jobs:
         run: |
           export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
           cd "$(cygpath -u "$LO_BUILD_DIR")"
-          /opt/lo/bin/make.exe -j"$BUILD_JOBS" \
+          # Each top-level convenience target starts its own nested gbuild.
+          # Run them serially so those nested builds cannot unpack, patch, or
+          # compile the same external dependency concurrently. Each target's
+          # internal dependency graph still uses BUILD_JOBS in parallel.
+          for target in \
             CppunitTest_tools_test \
             CppunitTest_vcl_widget_definition_reader_test \
             CppunitTest_vcl_file_definition_widget_draw_test
+          do
+            /opt/lo/bin/make.exe -j"$BUILD_JOBS" "$target"
+          done
 
       - name: Build LibreOfficeDev and Windows installation set
         shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
@@ -390,20 +397,65 @@ jobs:
             throw "Creating release $tag failed with exit code $LASTEXITCODE."
           }
 
+      - name: Stage Windows build diagnostics
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $destinationRoot = Join-Path $env:GITHUB_WORKSPACE 'windows-build-diagnostics'
+          New-Item -ItemType Directory -Force -Path $destinationRoot | Out-Null
+
+          $files = [System.Collections.Generic.List[System.IO.FileInfo]]::new()
+          foreach ($name in @('config.log', 'autogen.input', 'autogen.lastrun', 'config_host.mk')) {
+            $path = Join-Path $env:LO_BUILD_DIR $name
+            if (Test-Path -LiteralPath $path -PathType Leaf) {
+              $files.Add((Get-Item -LiteralPath $path))
+            }
+          }
+
+          foreach ($relativeDirectory in @(
+            'workdir\CppunitTest',
+            'workdir\CustomTarget\instsetoo_native\install',
+            'workdir\installation'
+          )) {
+            $directory = Join-Path $env:LO_BUILD_DIR $relativeDirectory
+            if (Test-Path -LiteralPath $directory -PathType Container) {
+              Get-ChildItem -LiteralPath $directory -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Extension -in @('.log', '.core') } |
+                ForEach-Object { $files.Add($_) }
+            }
+          }
+
+          foreach ($file in $files) {
+            $relative = [System.IO.Path]::GetRelativePath($env:LO_BUILD_DIR, $file.FullName)
+            $destination = Join-Path (Join-Path $destinationRoot 'build') $relative
+            New-Item -ItemType Directory -Force -Path (Split-Path -Parent $destination) | Out-Null
+            Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
+          }
+
+          $fetchLog = Join-Path $env:LO_TARBALL_DIR 'fetch.log'
+          if (Test-Path -LiteralPath $fetchLog -PathType Leaf) {
+            $tarballLogs = Join-Path $destinationRoot 'tarballs'
+            New-Item -ItemType Directory -Force -Path $tarballLogs | Out-Null
+            Copy-Item -LiteralPath $fetchLog -Destination $tarballLogs -Force
+          }
+
+          $distribution = Join-Path $env:GITHUB_WORKSPACE 'dist-windows'
+          if (Test-Path -LiteralPath $distribution -PathType Container) {
+            $distributionLogs = Join-Path $destinationRoot 'distribution'
+            New-Item -ItemType Directory -Force -Path $distributionLogs | Out-Null
+            Get-ChildItem -LiteralPath $distribution -File -Filter '*.log' |
+              Copy-Item -Destination $distributionLogs -Force
+          }
+
+          Get-ChildItem -LiteralPath $destinationRoot -Recurse -File |
+            Select-Object FullName, Length | Format-Table -AutoSize
+
       - name: Preserve Windows build diagnostics
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: windows-build-diagnostics-${{ github.run_id }}
-          path: |
-            C:\lo\build\config.log
-            C:\lo\build\autogen.input
-            C:\lo\build\autogen.lastrun
-            C:\lo\build\config_host.mk
-            C:\lo\build\workdir\CppunitTest\*.test.log
-            C:\lo\build\workdir\CppunitTest\*.core
-            C:\lo\build\workdir\CustomTarget\instsetoo_native\install\*.log
-            C:\lo\build\workdir\installation\**\*.log
-            dist-windows\
+          path: windows-build-diagnostics/
           if-no-files-found: ignore
           retention-days: 14
