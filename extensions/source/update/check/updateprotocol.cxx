@@ -33,11 +33,64 @@
 #include <rtl/bootstrap.hxx>
 #include <osl/diagnose.h>
 
+#include <algorithm>
+
 namespace container = css::container ;
 namespace deployment = css::deployment ;
 namespace uno = css::uno ;
 namespace task = css::task ;
 namespace xml = css::xml ;
+
+namespace
+{
+constexpr OUStringLiteral MATERIAL_RELEASE_PREFIX
+    = u"https://github.com/codingmachineedge/libreoffice-material/releases/download/";
+constexpr OUStringLiteral MATERIAL_MSI_FILE = u"LibreOfficeMaterial-Windows-x64.msi";
+
+bool isSafeReleaseTag(std::u16string_view rTag)
+{
+    return !rTag.empty()
+           && std::all_of(rTag.begin(), rTag.end(), [](sal_Unicode c) {
+                  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                         || (c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-';
+              });
+}
+
+bool isLowerSha256(std::u16string_view rSha256)
+{
+    return rSha256.size() == 64
+           && std::all_of(rSha256.begin(), rSha256.end(), [](sal_Unicode c) {
+                  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
+              });
+}
+
+bool readVerifiedMaterialSource(const uno::Reference<xml::dom::XElement>& xUpdate,
+                                DownloadSource& rSource)
+{
+    const OUString aType = xUpdate->getAttribute(u"type"_ustr);
+    const OUString aURL = xUpdate->getAttribute(u"src"_ustr);
+    const OUString aSha256 = xUpdate->getAttribute(u"sha256"_ustr);
+    const OUString aSizeText = xUpdate->getAttribute(u"size"_ustr);
+    const OUString aReleaseTag = xUpdate->getAttribute(u"release-tag"_ustr);
+    const OUString aFileName = xUpdate->getAttribute(u"file-name"_ustr);
+    const sal_Int64 nSize = aSizeText.toInt64();
+
+    if (aType.equalsIgnoreAsciiCase("text/html") || !isSafeReleaseTag(aReleaseTag)
+        || !isLowerSha256(aSha256) || nSize <= 0 || aSizeText != OUString::number(nSize)
+        || aFileName != MATERIAL_MSI_FILE)
+    {
+        return false;
+    }
+
+    const OUString aExpectedURL
+        = OUString::Concat(MATERIAL_RELEASE_PREFIX) + aReleaseTag + "/" + aFileName;
+    if (aURL != aExpectedURL)
+        return false;
+
+    rSource = DownloadSource(true, aURL, aSha256, nSize, aReleaseTag, aFileName);
+    return true;
+}
+}
 
 
 static bool
@@ -160,10 +213,12 @@ checkForUpdates(
                     if( xNode2.is() )
                     {
                         uno::Reference< xml::dom::XElement > xParent(xNode2->getParentNode(), uno::UNO_QUERY_THROW);
-                        OUString aType = xParent->getAttribute(u"type"_ustr);
-                        bool bIsDirect = !aType.equalsIgnoreAsciiCase("text/html");
-
-                        o_rUpdateInfo.Sources.emplace_back(bIsDirect, xNode2->getNodeValue());
+                        DownloadSource aSource(false, OUString());
+                        if (readVerifiedMaterialSource(xParent, aSource)
+                            && aSource.URL == xNode2->getNodeValue())
+                        {
+                            o_rUpdateInfo.Sources.push_back(aSource);
+                        }
                     }
                 }
 

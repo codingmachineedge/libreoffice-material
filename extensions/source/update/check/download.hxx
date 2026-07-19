@@ -62,7 +62,8 @@ public:
         , m_aHandler(rHandler){};
 
     // returns true when the content of rURL was successfully written to rLocalFile
-    bool start(const OUString& rURL, const OUString& rFile, const OUString& rDestinationDir);
+    bool start(const OUString& rURL, const OUString& rFile, const OUString& rDestinationDir,
+               const OUString& rCanonicalFileName);
 
     // stops the download after the next write operation
     void stop();

@@ -26,11 +26,42 @@ struct DownloadSource
 {
     bool IsDirect;
     OUString URL;
+    OUString Sha256;
+    sal_Int64 Size;
+    OUString ReleaseTag;
+    OUString FileName;
 
-    DownloadSource(bool bIsDirect, const OUString& aURL) : IsDirect(bIsDirect), URL(aURL) {};
-    DownloadSource(const DownloadSource& ds) : IsDirect(ds.IsDirect), URL(ds.URL) {};
+    DownloadSource(bool bIsDirect, const OUString& aURL, const OUString& aSha256 = OUString(),
+                   sal_Int64 nSize = -1, const OUString& aReleaseTag = OUString(),
+                   const OUString& aFileName = OUString())
+        : IsDirect(bIsDirect)
+        , URL(aURL)
+        , Sha256(aSha256)
+        , Size(nSize)
+        , ReleaseTag(aReleaseTag)
+        , FileName(aFileName)
+    {
+    }
+    DownloadSource(const DownloadSource& ds)
+        : IsDirect(ds.IsDirect)
+        , URL(ds.URL)
+        , Sha256(ds.Sha256)
+        , Size(ds.Size)
+        , ReleaseTag(ds.ReleaseTag)
+        , FileName(ds.FileName)
+    {
+    }
 
-    DownloadSource & operator=( const DownloadSource & ds ) { IsDirect = ds.IsDirect; URL = ds.URL; return *this; };
+    DownloadSource& operator=(const DownloadSource& ds)
+    {
+        IsDirect = ds.IsDirect;
+        URL = ds.URL;
+        Sha256 = ds.Sha256;
+        Size = ds.Size;
+        ReleaseTag = ds.ReleaseTag;
+        FileName = ds.FileName;
+        return *this;
+    }
 };
 
 struct ReleaseNote

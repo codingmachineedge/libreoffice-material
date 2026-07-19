@@ -48,6 +48,10 @@ namespace uno = css::uno ;
 #define UPDATE_BUILDID          "UpdateBuildId"
 #define UPDATE_DESCRIPTION      "UpdateDescription"
 #define DOWNLOAD_URL            "DownloadURL"
+#define DOWNLOAD_SHA256         "DownloadSha256"
+#define DOWNLOAD_EXPECTED_SIZE  "DownloadExpectedSize"
+#define DOWNLOAD_RELEASE_TAG    "DownloadReleaseTag"
+#define DOWNLOAD_FILE_NAME      "DownloadFileName"
 #define IS_DIRECT_DOWNLOAD      "IsDirectDownload"
 #define OLD_VERSION             "UpdateFoundFor"
 #define AUTOCHECK_ENABLED       "AutoCheckEnabled"
@@ -66,6 +70,10 @@ const char * const aUpdateEntryProperties[] = {
     UPDATE_BUILDID,
     UPDATE_DESCRIPTION,
     DOWNLOAD_URL,
+    DOWNLOAD_SHA256,
+    DOWNLOAD_EXPECTED_SIZE,
+    DOWNLOAD_RELEASE_TAG,
+    DOWNLOAD_FILE_NAME,
     IS_DIRECT_DOWNLOAD,
     RELEASE_NOTE"1",
     RELEASE_NOTE"2",
@@ -141,7 +149,13 @@ UpdateCheckROModel::getUpdateEntry(UpdateInfo& rInfo) const
     bool isDirectDownload = false;
     m_aNameAccess.getValue(IS_DIRECT_DOWNLOAD) >>= isDirectDownload;
 
-    rInfo.Sources.emplace_back(isDirectDownload, getStringValue(DOWNLOAD_URL));
+    sal_Int64 nExpectedSize = -1;
+    m_aNameAccess.getValue(DOWNLOAD_EXPECTED_SIZE) >>= nExpectedSize;
+
+    rInfo.Sources.emplace_back(isDirectDownload, getStringValue(DOWNLOAD_URL),
+                               getStringValue(DOWNLOAD_SHA256), nExpectedSize,
+                               getStringValue(DOWNLOAD_RELEASE_TAG),
+                               getStringValue(DOWNLOAD_FILE_NAME));
 
     for(sal_Int32 n=1; n < 6; ++n )
     {
@@ -376,6 +390,10 @@ UpdateCheckConfig::storeUpdateFound( const UpdateInfo& rInfo, const OUString& aC
         uno::Any(rInfo.BuildId),
         uno::Any(rInfo.Description),
         uno::Any(rInfo.Sources[0].URL),
+        uno::Any(rInfo.Sources[0].Sha256),
+        uno::Any(rInfo.Sources[0].Size),
+        uno::Any(rInfo.Sources[0].ReleaseTag),
+        uno::Any(rInfo.Sources[0].FileName),
         uno::Any(rInfo.Sources[0].IsDirect),
         uno::Any(getReleaseNote(rInfo, 1, autoDownloadEnabled) ),
         uno::Any(getReleaseNote(rInfo, 2, autoDownloadEnabled) ),

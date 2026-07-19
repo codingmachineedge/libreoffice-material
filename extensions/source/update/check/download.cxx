@@ -46,38 +46,34 @@ struct OutData
 {
     rtl::Reference< DownloadInteractionHandler >Handler;
     OUString   File;
+    OUString   CanonicalFileName;
     OUString   DestinationDir;
     oslFileHandle   FileHandle;
     sal_uInt64      Offset;
     osl::Condition& StopCondition;
     CURL *curl;
+    bool Complete;
 
-    explicit OutData(osl::Condition& rCondition) : FileHandle(nullptr), Offset(0), StopCondition(rCondition), curl(nullptr) {};
+    explicit OutData(osl::Condition& rCondition)
+        : FileHandle(nullptr)
+        , Offset(0)
+        , StopCondition(rCondition)
+        , curl(nullptr)
+        , Complete(false)
+    {
+    }
 };
 
 }
 
 static void openFile( OutData& out )
 {
-    char * effective_url;
-    curl_easy_getinfo(out.curl, CURLINFO_EFFECTIVE_URL, &effective_url);
-
     curl_off_t nDownloadSize;
     curl_easy_getinfo(out.curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &nDownloadSize);
 
-    OString aURL(effective_url);
-
-    // ensure no trailing '/'
-    sal_Int32 nLen = aURL.getLength();
-    while( (nLen > 0) && ('/' == aURL[nLen-1]) )
-        aURL = aURL.copy(0, --nLen);
-
-    // extract file name last '/'
-    sal_Int32 nIndex = aURL.lastIndexOf('/');
-    if( nIndex > 0 )
+    if (!out.CanonicalFileName.isEmpty())
     {
-        out.File = out.DestinationDir
-            + OStringToOUString(aURL.subView(nIndex), RTL_TEXTENCODING_UTF8);
+        out.File = out.DestinationDir + "/" + out.CanonicalFileName;
 
         oslFileError rc;
 
@@ -269,7 +265,7 @@ static bool curl_run(std::u16string_view rURL, OutData& out, const OString& aPro
 
         if( CURLE_OK == cc )
         {
-            out.Handler->downloadFinished(out.File);
+            out.Complete = true;
             ret = true;
         }
 
@@ -281,7 +277,7 @@ static bool curl_run(std::u16string_view rURL, OutData& out, const OString& aPro
             curl_easy_getinfo( pCURL, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &nDownloadSize );
             if ( -1 == nDownloadSize )
             {
-                out.Handler->downloadFinished(out.File);
+                out.Complete = true;
                 ret = true;
             }
         }
@@ -311,7 +307,7 @@ static bool curl_run(std::u16string_view rURL, OutData& out, const OString& aPro
                 else if ( 416 == nError )
                 {
                     // we got this error probably, because we already downloaded the file
-                    out.Handler->downloadFinished(out.File);
+                    out.Complete = true;
                     ret = true;
                 }
                 else
@@ -331,7 +327,8 @@ static bool curl_run(std::u16string_view rURL, OutData& out, const OString& aPro
 
 
 bool
-Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDestinationDir)
+Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDestinationDir,
+                const OUString& rCanonicalFileName)
 {
     OSL_ASSERT( m_aHandler.is() );
 
@@ -342,16 +339,7 @@ Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDe
     // same name ask the user if she wants to resume a download or restart the download
     if ( aFile.isEmpty() )
     {
-        // GetFileName()
-        OUString aURL( rURL );
-        // ensure no trailing '/'
-        sal_Int32 nLen = aURL.getLength();
-        while( (nLen > 0) && ('/' == aURL[ nLen-1 ]) )
-            aURL = aURL.copy( 0, --nLen );
-
-        // extract file name last '/'
-        sal_Int32 nIndex = aURL.lastIndexOf('/');
-        aFile = rDestinationDir + aURL.subView( nIndex );
+        aFile = rDestinationDir + "/" + rCanonicalFileName;
 
         // check for existing file
         oslFileError rc = osl_openFile( aFile.pData, &out.FileHandle, osl_File_OpenFlag_Write | osl_File_OpenFlag_Create );
@@ -360,7 +348,7 @@ Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDe
 
         if( osl_File_E_EXIST == rc )
         {
-            if ( m_aHandler->checkDownloadDestination( aURL.copy( nIndex+1 ) ) )
+            if ( m_aHandler->checkDownloadDestination(rCanonicalFileName) )
             {
                 osl_removeFile( aFile.pData );
                 aFile.clear();
@@ -376,6 +364,7 @@ Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDe
     }
 
     out.File = aFile;
+    out.CanonicalFileName = rCanonicalFileName;
     out.DestinationDir = rDestinationDir;
     out.Handler = m_aHandler;
 
@@ -411,6 +400,12 @@ Download::start(const OUString& rURL, const OUString& rFile, const OUString& rDe
 //        if( ! ret )
 //            osl_removeFile(out.File.pData);
     }
+
+    // The completion callback must run only after all bytes have been flushed and
+    // the handle has been closed, because it performs whole-file size and SHA-256
+    // verification (including any bytes resumed from an earlier session).
+    if (out.Complete)
+        m_aHandler->downloadFinished(out.File);
 
     m_aCondition.reset();
     return ret;

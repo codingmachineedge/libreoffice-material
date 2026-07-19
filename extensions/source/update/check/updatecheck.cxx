@@ -296,7 +296,8 @@ public:
         osl::Condition& rCondition,
         const uno::Reference<uno::XComponentContext>& xContext,
         const rtl::Reference< DownloadInteractionHandler >& rHandler,
-        const OUString& rURL );
+        const OUString& rURL,
+        const OUString& rCanonicalFileName );
 
     virtual void SAL_CALL run() override;
     virtual void cancel() override;
@@ -310,6 +311,7 @@ private:
     osl::Condition& m_aCondition;
     const uno::Reference<uno::XComponentContext> m_xContext;
     const OUString m_aURL;
+    const OUString m_aCanonicalFileName;
     Download m_aDownload;
 };
 
@@ -583,10 +585,12 @@ MenuBarButtonJob::execute(const uno::Sequence<beans::NamedValue>& )
 DownloadThread::DownloadThread(osl::Condition& rCondition,
                                const uno::Reference<uno::XComponentContext>& xContext,
                                const rtl::Reference< DownloadInteractionHandler >& rHandler,
-                               const OUString& rURL) :
+                               const OUString& rURL,
+                               const OUString& rCanonicalFileName) :
     m_aCondition(rCondition),
     m_xContext(xContext),
     m_aURL(rURL),
+    m_aCanonicalFileName(rCanonicalFileName),
     m_aDownload(xContext, rHandler)
 {
     createSuspended();
@@ -620,7 +624,7 @@ DownloadThread::run()
         rModel.clear();
 
         static sal_uInt8 n = 0;
-        if( ! m_aDownload.start(m_aURL, aLocalFile, aDownloadDest ) )
+        if (!m_aDownload.start(m_aURL, aLocalFile, aDownloadDest, m_aCanonicalFileName))
         {
             // retry every 15s unless the dialog is not visible
             TimeValue tv(15, 0);
@@ -953,7 +957,9 @@ UpdateCheck::enableDownload(bool enable, bool paused)
 
     if( enable )
     {
-        m_pThread = new DownloadThread(m_aCondition, m_xContext, this, m_aUpdateInfo.Sources[0].URL );
+        m_pThread = new DownloadThread(m_aCondition, m_xContext, this,
+                                       m_aUpdateInfo.Sources[0].URL,
+                                       m_aUpdateInfo.Sources[0].FileName);
         State eState = DISABLED;
         if( !paused )
         {
