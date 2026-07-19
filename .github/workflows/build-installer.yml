@@ -1,61 +1,52 @@
-# Build installer and publish release
+# Validate focused native LibreOffice sources on Linux.
 #
-# HONESTY NOTE (read before trusting a green check):
-# This workflow ATTEMPTS a full from-source LibreOffice build and, only if that
-# build actually emits installer artifacts, publishes them as a GitHub Release.
-# It never fabricates a release: the publish step is gated on real artifacts, so
-# a failed or artifact-less build produces NO release.
-#
-# A complete LibreOffice build is enormous — many hours of CPU and tens of GB of
-# disk and downloads. The pinned hosted runner may still hit its time or resource
-# limits, but dependency, configure, focused C++ test, build, and package errors
-# are treated as real failures and their diagnostics are preserved. No successful
-# build or installer has been produced by this project yet; the verified-capture
-# count remains 0. This pipeline publishes only packages from a successful build.
+# Windows MSI publication is owned exclusively by windows-installer.yml. This
+# workflow deliberately creates no tag or release, so a Linux validation run
+# can never replace the stable Windows Latest release or publish a prerelease.
 
-name: Build installer and publish release
+name: Validate Linux native sources
 
 on:
   push:
     branches: [main]
-    # Skip doc/site/mockup-only pushes — they cannot change the build output.
     paths-ignore:
       - "site/**"
       - "docs/**"
       - "**/*.md"
-      - ".github/**"
       - "bin/validate-prototype.mjs"
   workflow_dispatch:
     inputs:
       reason:
-        description: "Why are you running the build?"
+        description: "Why are you running the native source validation?"
         required: false
-        default: "manual dispatch"
+        default: "manual native source validation"
 
 permissions:
-  contents: write # required to create tags/releases
+  contents: read
 
 concurrency:
-  group: build-installer
-  cancel-in-progress: false
+  group: linux-native-source-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-linux-installer:
-    name: Linux focused tests + build + package
+  native-tests:
+    name: Linux focused native C++ tests
     runs-on: ubuntu-24.04
-    timeout-minutes: 350
+    timeout-minutes: 180
+    env:
+      CCACHE_DIR: /home/runner/.ccache
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
 
       - name: Free disk space
         run: |
-          echo "Before cleanup:"; df -h /
+          df -h /
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
                       /opt/hostedtoolcache/CodeQL /usr/local/share/boost || true
           sudo docker image prune -a -f || true
           sudo apt-get clean || true
-          echo "After cleanup:"; df -h /
+          df -h /
 
       - name: Install build dependencies
         run: |
@@ -67,13 +58,13 @@ jobs:
           sudo apt-get update
           sudo apt-get build-dep -y libreoffice
           sudo apt-get install -y --no-install-recommends \
-            ccache fakeroot libarchive-zip-perl nasm unzip xsltproc zip
+            ccache libarchive-zip-perl nasm unzip xsltproc zip
 
       - name: Validate build prerequisites
         run: |
           for tool in \
             gcc g++ make gawk autoconf pkg-config bison flex gperf nasm \
-            ccache perl python3 zip unzip xsltproc fakeroot dpkg dpkg-deb; do
+            ccache perl python3 zip unzip xsltproc; do
             command -v "$tool"
           done
           perl -MArchive::Zip -e 1
@@ -81,9 +72,7 @@ jobs:
           test "$(gcc -dumpfullversion | cut -d. -f1)" -ge 13
 
       - name: Configure ccache
-        run: |
-          ccache --max-size=5G
-          echo "CCACHE_DIR=$HOME/.ccache" >> "$GITHUB_ENV"
+        run: ccache --max-size=5G
 
       - name: Restore ccache
         uses: actions/cache/restore@v6
@@ -93,12 +82,17 @@ jobs:
           restore-keys: |
             lo-ccache-${{ runner.os }}-
 
-      - name: Configure (lean release build)
+      - name: Restore external source tarballs
+        uses: actions/cache/restore@v6
+        with:
+          path: external/tarballs
+          key: linux-external-tarballs-${{ hashFiles('download.lst') }}
+
+      - name: Configure lean native test build
         run: |
           ./autogen.sh \
-            --enable-release-build \
-            --enable-epm \
-            --disable-online-update \
+            --enable-online-update \
+            --with-privacy-policy-url=https://github.com/codingmachineedge/libreoffice-material/blob/main/PRIVACY.md \
             --without-java \
             --without-dotnet \
             --without-help \
@@ -106,84 +100,40 @@ jobs:
             --without-myspell-dicts \
             --without-doxygen \
             --disable-odk \
-            --with-epm=internal \
-            --with-package-format=deb
+            --disable-pdfium \
+            --disable-database-connectivity
 
-      - name: Run required native C++ tests
-        run: |
-          make -j"$(nproc)" \
-            CppunitTest_tools_test \
-            CppunitTest_vcl_widget_definition_reader_test \
-            CppunitTest_vcl_file_definition_widget_draw_test
-
-      - name: Build application and Debian installation set
-        run: make -j"$(nproc)" build
-
-      - name: Materialize Debian packages
-        run: make -j"$(nproc)" CustomTarget_instsetoo_native/install
-
-      - name: Stage installer artifacts
-        id: stage
+      - name: Run required native C++ tests serially
         run: |
           set -euo pipefail
-          mkdir -p dist
-          packages=()
-          if [[ -d workdir/installation ]]; then
-            mapfile -d '' packages < <(
-              find workdir/installation \
-                -type f \
-                -path '*/deb/install/*' \
-                -name '*.deb' \
-                -print0
-            )
-          fi
-
-          for package in "${packages[@]}"; do
-            dpkg-deb --info "$package" >/dev/null
-            install -m 0644 "$package" dist/
+          for target in \
+            CppunitTest_tools_test \
+            CppunitTest_extensions_test_update \
+            CppunitTest_vcl_widget_definition_reader_test \
+            CppunitTest_vcl_file_definition_widget_draw_test
+          do
+            make -j"$(nproc)" "$target"
           done
 
-          if (( ${#packages[@]} )); then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-          fi
-          echo "Staged files:"
-          ls -la dist
+      - name: Save external source tarballs
+        if: always()
+        uses: actions/cache/save@v6
+        with:
+          path: external/tarballs
+          key: linux-external-tarballs-${{ hashFiles('download.lst') }}
 
-      - name: Publish release (only when real artifacts exist)
-        if: steps.stage.outputs.found == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="build-${{ github.run_number }}-$(git rev-parse --short HEAD)"
-          gh release create "$tag" dist/* \
-            --title "LibreOffice Material — automated build ${{ github.run_number }}" \
-            --prerelease \
-            --notes "Unofficial, unsigned, EXPERIMENTAL from-source build of commit ${{ github.sha }}. Not verified for correctness, security, or document compatibility. Produced automatically by build-installer.yml; use at your own risk."
-
-      - name: No artifacts — nothing to publish (honest)
-        if: steps.stage.outputs.found != 'true'
-        run: |
-          echo "::notice::The build did not produce installer artifacts, so no release was created."
-          echo "This is expected until the build runs on infrastructure large enough for a full LibreOffice build."
-          # Fail the job so the absence of a real installer is visible, never silently green.
-          exit 1
-
-      - name: Preserve native build diagnostics
+      - name: Preserve native test diagnostics
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: native-build-diagnostics-${{ github.run_id }}
+          name: native-test-diagnostics-${{ github.run_id }}
           path: |
             config.log
             autogen.input
             config_host.mk
-            dist/
+            external/tarballs/fetch.log
             workdir/CppunitTest/*.test.log
             workdir/CppunitTest/*.core
-            workdir/CustomTarget/instsetoo_native/install/*.log
-            workdir/installation/**/*.log
           if-no-files-found: ignore
           retention-days: 14
 
