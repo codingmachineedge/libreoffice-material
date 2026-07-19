@@ -40,6 +40,9 @@ jobs:
       LO_BUILD_DIR: C:\lo\build
       LO_TARBALL_DIR: C:\lo\tarballs
       BUILD_JOBS: ${{ inputs.jobs }}
+      # Serialize concurrent MSVC writes to shared compiler PDBs in bundled
+      # Visual Studio projects such as cppunit.
+      CL: /FS
 
     steps:
       - name: Force an LF checkout
