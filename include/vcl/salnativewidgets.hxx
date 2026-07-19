@@ -299,8 +299,8 @@ class SAL_DLLPUBLIC_RTTI SliderValue final : public ImplControlValue
         : ImplControlValue( ControlType::Slider, 0 )
         , mnMin( 0 ), mnMax( 0 ), mnCur( 0 ), mnThumbState( ControlState::NONE )
         {}
-        virtual ~SliderValue() override;
-        virtual SliderValue* clone() const override;
+        VCL_DLLPUBLIC virtual ~SliderValue() override;
+        VCL_DLLPUBLIC virtual SliderValue* clone() const override;
 
         SliderValue(SliderValue const &) = default;
         SliderValue(SliderValue &&) = default;
@@ -373,8 +373,8 @@ class SAL_DLLPUBLIC_RTTI TabitemValue final : public ImplControlValue
             , meTabBarPosition(eTabBarPosition)
         {
         }
-        virtual ~TabitemValue() override;
-        virtual TabitemValue* clone() const override;
+        VCL_DLLPUBLIC virtual ~TabitemValue() override;
+        VCL_DLLPUBLIC virtual TabitemValue* clone() const override;
 
         TabitemValue(TabitemValue const &) = default;
         TabitemValue(TabitemValue &&) = default;
