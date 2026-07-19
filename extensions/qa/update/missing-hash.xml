@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inst:description xmlns:inst="http://update.libreoffice.org/description">
+  <inst:id>LibreOffice Material missing hash test</inst:id>
+  <inst:version>Missing hash test</inst:version>
+  <inst:buildid>cccccccccccccccccccccccccccccccccccccccc</inst:buildid>
+  <inst:gitid>missing-hash-feed</inst:gitid>
+  <inst:os>Windows</inst:os>
+  <inst:arch>X86_64</inst:arch>
+  <inst:update type="application/x-msi"
+               src="https://github.com/codingmachineedge/libreoffice-material/releases/download/windows-msi-test/LibreOfficeMaterial-Windows-x64.msi"
+               size="50"
+               release-tag="windows-msi-test"
+               file-name="LibreOfficeMaterial-Windows-x64.msi" />
+</inst:description>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inst:description xmlns:inst="http://update.libreoffice.org/description">
+  <inst:id>LibreOffice Material invalid MIME test</inst:id>
+  <inst:version>Invalid MIME test</inst:version>
+  <inst:buildid>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</inst:buildid>
+  <inst:gitid>wrong-mime-feed</inst:gitid>
+  <inst:os>Windows</inst:os>
+  <inst:arch>X86_64</inst:arch>
+  <inst:update type="application/octet-stream"
+               src="https://github.com/codingmachineedge/libreoffice-material/releases/download/windows-msi-test/LibreOfficeMaterial-Windows-x64.msi"
+               sha256="1b8743c701ccbb5839b6cc8dd25eec1ac4a6ca4c3094fd6a5b2a8a49e69e058e"
+               size="50"
+               release-tag="windows-msi-test"
+               file-name="LibreOfficeMaterial-Windows-x64.msi" />
+</inst:description>

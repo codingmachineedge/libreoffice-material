@@ -9,6 +9,7 @@
 #include <sal/config.h>
 
 #include <cstddef>
+#include <string_view>
 
 #include <test/bootstrapfixture.hxx>
 
@@ -141,6 +142,33 @@ protected:
             CPPUNIT_FAIL( "Calling checkForUpdates() failed." );
     }
 
+    void assertInvalidFeedIsIgnored(std::u16string_view rSourcePath)
+    {
+        UpdateInfo aInfo;
+        aInfo.BuildId = u"stale-state-must-be-cleared"_ustr;
+        aInfo.Sources.emplace_back(false, u"https://example.com/stale.msi"_ustr);
+
+        const uno::Sequence<OUString> aRepositories
+            = { m_directories.getURLFromSrc(rSourcePath) };
+        rtl::Reference<UpdateCheck> aController(UpdateCheck::get());
+        CPPUNIT_ASSERT(checkForUpdates(aInfo, m_xContext, aController->getInteractionHandler(),
+                                       m_xProvider, u"Windows", u"X86_64", aRepositories,
+                                       u"installed-build"_ustr, u"InstallSetID"_ustr));
+        CPPUNIT_ASSERT(aInfo.BuildId.isEmpty());
+        CPPUNIT_ASSERT(aInfo.Sources.empty());
+        CPPUNIT_ASSERT_EQUAL(UPDATESTATE_NO_UPDATE_AVAIL, UpdateCheck::getUIState(aInfo));
+    }
+
+    void testWrongMimeIsIgnored()
+    {
+        assertInvalidFeedIsIgnored(u"/extensions/qa/update/wrong-mime.xml");
+    }
+
+    void testMissingHashIsIgnored()
+    {
+        assertInvalidFeedIsIgnored(u"/extensions/qa/update/missing-hash.xml");
+    }
+
     void testTrustedSourceValidation()
     {
         DownloadSource aSource(
@@ -195,6 +223,8 @@ protected:
     CPPUNIT_TEST(testGetUpdateInformationEnumeration);
     CPPUNIT_TEST(testCheckUpdateAvailable);
     CPPUNIT_TEST(testCheckUpToDate);
+    CPPUNIT_TEST(testWrongMimeIsIgnored);
+    CPPUNIT_TEST(testMissingHashIsIgnored);
     CPPUNIT_TEST(testTrustedSourceValidation);
     CPPUNIT_TEST(testVerifiedUpdateFile);
     CPPUNIT_TEST_SUITE_END();

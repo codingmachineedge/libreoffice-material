@@ -36,6 +36,7 @@ $(eval $(call gb_CppunitTest_use_library_objects,extensions_test_update, \
 
 ifeq ($(OS),WNT)
 $(eval $(call gb_CppunitTest_use_system_win32_libs,extensions_test_update,\
+	advapi32 \
 	shell32 \
 	ole32 \
 	wininet \

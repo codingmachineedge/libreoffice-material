@@ -172,6 +172,13 @@ private:
 
     UpdateInfo m_aUpdateInfo;
     OUString m_aImageName;
+#ifdef _WIN32
+    // The staged MSI remains open without write/delete sharing after launch,
+    // so its pathname cannot be replaced while Windows Installer consumes it.
+    void* m_pInstallerLock;
+    OUString m_aStagedInstallerURL;
+    OUString m_aStagedInstallerDirectoryURL;
+#endif
     bool m_bHasExtensionUpdate;
     bool m_bShowExtUpdDlg;
 

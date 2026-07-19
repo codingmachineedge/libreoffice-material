@@ -29,6 +29,7 @@
 #include <osl/diagnose.h>
 #include <osl/file.hxx>
 #include <iterator>
+#include <sal/log.hxx>
 #include <sal/macros.h>
 #include <o3tl/char16_t2wchar_t.hxx>
 
@@ -382,6 +383,12 @@ void
 UpdateCheckConfig::storeUpdateFound( const UpdateInfo& rInfo, const OUString& aCurrentBuild)
 
 {
+    if (rInfo.Sources.empty())
+    {
+        SAL_WARN("extensions.update", "Refusing to persist update metadata without a source");
+        return;
+    }
+
     bool autoDownloadEnabled = isAutoDownloadEnabled();
 
     uno::Any aValues[nUpdateEntryProperties] =

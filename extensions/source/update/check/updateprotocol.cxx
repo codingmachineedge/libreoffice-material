@@ -75,7 +75,7 @@ bool readVerifiedMaterialSource(const uno::Reference<xml::dom::XElement>& xUpdat
     const OUString aFileName = xUpdate->getAttribute(u"file-name"_ustr);
     const sal_Int64 nSize = aSizeText.toInt64();
 
-    if (aType.equalsIgnoreAsciiCase("text/html") || aSizeText != OUString::number(nSize))
+    if (aType != u"application/x-msi"_ustr || aSizeText != OUString::number(nSize))
     {
         return false;
     }
@@ -166,6 +166,8 @@ checkForUpdates(
     std::u16string_view rGitID,
     const OUString &rInstallSetID )
 {
+    o_rUpdateInfo = UpdateInfo();
+
     if( !rxContext.is() )
         throw uno::RuntimeException( u"checkForUpdates: empty component context"_ustr );
 
@@ -203,6 +205,7 @@ checkForUpdates(
 
             if( aUpdateInfoEnumeration->nextElement() >>= aEntry )
             {
+                UpdateInfo aCandidate;
                 uno::Reference< xml::dom::XNode > xNode( aEntry.UpdateDocument );
                 uno::Reference< xml::dom::XNodeList > xNodeList;
                 try {
@@ -212,7 +215,7 @@ checkForUpdates(
                     // ignore
                 }
 
-                sal_Int32 i, imax = xNodeList->getLength();
+                sal_Int32 i, imax = xNodeList.is() ? xNodeList->getLength() : 0;
                 for( i = 0; i < imax; ++i )
                 {
                     uno::Reference< xml::dom::XNode > xNode2( xNodeList->item(i) );
@@ -224,7 +227,7 @@ checkForUpdates(
                         if (readVerifiedMaterialSource(xParent, aSource)
                             && aSource.URL == xNode2->getNodeValue())
                         {
-                            o_rUpdateInfo.Sources.push_back(aSource);
+                            aCandidate.Sources.push_back(aSource);
                         }
                     }
                 }
@@ -238,7 +241,7 @@ checkForUpdates(
                 }
 
                 if( xNode2.is() )
-                    o_rUpdateInfo.Version = xNode2->getNodeValue();
+                    aCandidate.Version = xNode2->getNodeValue();
 
                 try {
                     xNode2 = xXPath->selectSingleNode(xNode, aXPathExpression
@@ -248,9 +251,9 @@ checkForUpdates(
                 }
 
                 if( xNode2.is() )
-                    o_rUpdateInfo.BuildId = xNode2->getNodeValue();
+                    aCandidate.BuildId = xNode2->getNodeValue();
 
-                o_rUpdateInfo.Description = aEntry.Description;
+                aCandidate.Description = aEntry.Description;
 
                 // Release Notes
                 try {
@@ -259,7 +262,7 @@ checkForUpdates(
                 } catch (const css::xml::xpath::XPathException &) {
                     // ignore
                 }
-                imax = xNodeList->getLength();
+                imax = xNodeList.is() ? xNodeList->getLength() : 0;
                 for( i = 0; i < imax; ++i )
                 {
                     uno::Reference< xml::dom::XElement > xRelNote(xNodeList->item(i), uno::UNO_QUERY);
@@ -276,13 +279,15 @@ checkForUpdates(
                             aRelNote.URL2 = xRelNote->getAttribute(u"src2"_ustr);
                         }
 
-                        o_rUpdateInfo.ReleaseNotes.push_back(aRelNote);
+                        aCandidate.ReleaseNotes.push_back(aRelNote);
                     }
                 }
 
-                if (o_rUpdateInfo.Sources.size() == 1)
+                if (aCandidate.Sources.size() == 1)
+                {
+                    o_rUpdateInfo = std::move(aCandidate);
                     return true;
-                o_rUpdateInfo.Sources.clear();
+                }
             }
         }
     }

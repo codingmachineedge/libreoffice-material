@@ -19,6 +19,7 @@
 
 #include <sal/config.h>
 
+#include <iterator>
 #include <string_view>
 
 #include <comphelper/hash.hxx>
@@ -49,6 +50,8 @@
 #include <o3tl/safeCoInitUninit.hxx>
 #include <o3tl/char16_t2wchar_t.hxx>
 #include <objbase.h>
+#include <sddl.h>
+#include <shlobj.h>
 #include <windows.h>
 #endif
 
@@ -105,6 +108,169 @@ bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource)
     const OString aActualHash(comphelper::hashToString(aHash.finalize()));
     return OStringToOUString(aActualHash, RTL_TEXTENCODING_ASCII_US) == rSource.Sha256;
 }
+
+#ifdef _WIN32
+namespace
+{
+void cleanupStagedWindowsInstaller(void* pInstallerLock, const OUString& rInstallerURL,
+                                   const OUString& rDirectoryURL)
+{
+    if (pInstallerLock)
+        CloseHandle(static_cast<HANDLE>(pInstallerLock));
+    if (!rInstallerURL.isEmpty())
+        osl_removeFile(rInstallerURL.pData);
+    if (!rDirectoryURL.isEmpty())
+        osl_removeDirectory(rDirectoryURL.pData);
+}
+
+bool stageVerifiedWindowsInstaller(const OUString& rSourceURL, const DownloadSource& rSource,
+                                   OUString& rInstallerSystemPath, OUString& rInstallerURL,
+                                   OUString& rDirectoryURL, void*& rInstallerLock)
+{
+    rInstallerSystemPath.clear();
+    rInstallerURL.clear();
+    rDirectoryURL.clear();
+    rInstallerLock = nullptr;
+
+    if (!isTrustedMaterialUpdateSource(rSource) || rSourceURL.isEmpty()
+        || !rSourceURL.endsWith(OUString::Concat(u"/") + rSource.FileName))
+    {
+        return false;
+    }
+
+    OUString aSourceSystemPath;
+    if (osl::FileBase::getSystemPathFromFileURL(rSourceURL, aSourceSystemPath)
+        != osl::FileBase::E_None)
+    {
+        return false;
+    }
+
+    PWSTR pLocalAppData = nullptr;
+    if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, nullptr,
+                                    &pLocalAppData)))
+    {
+        return false;
+    }
+    const OUString aLocalAppData(o3tl::toU(pLocalAppData));
+    CoTaskMemFree(pLocalAppData);
+
+    GUID aGuid;
+    wchar_t aGuidBuffer[40] = {};
+    if (FAILED(CoCreateGuid(&aGuid)) || StringFromGUID2(aGuid, aGuidBuffer, std::size(aGuidBuffer)) == 0)
+        return false;
+
+    const OUString aDirectorySystemPath
+        = aLocalAppData + u"\\LibreOfficeMaterialUpdate-"_ustr + o3tl::toU(aGuidBuffer);
+    const OUString aInstallerSystemPath
+        = aDirectorySystemPath + u"\\"_ustr + rSource.FileName;
+
+    PSECURITY_DESCRIPTOR pSecurityDescriptor = nullptr;
+    if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(
+            L"D:P(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;OW)", SDDL_REVISION_1,
+            &pSecurityDescriptor, nullptr))
+    {
+        return false;
+    }
+    comphelper::ScopeGuard aSecurityGuard([&]() { LocalFree(pSecurityDescriptor); });
+    SECURITY_ATTRIBUTES aSecurityAttributes
+        = { static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES)), pSecurityDescriptor, FALSE };
+
+    if (!CreateDirectoryW(o3tl::toW(aDirectorySystemPath.getStr()), &aSecurityAttributes))
+        return false;
+
+    HANDLE hSource = INVALID_HANDLE_VALUE;
+    HANDLE hDestination = INVALID_HANDLE_VALUE;
+    comphelper::ScopeGuard aCleanup([&]() {
+        if (hSource != INVALID_HANDLE_VALUE)
+            CloseHandle(hSource);
+        if (hDestination != INVALID_HANDLE_VALUE)
+            CloseHandle(hDestination);
+        DeleteFileW(o3tl::toW(aInstallerSystemPath.getStr()));
+        RemoveDirectoryW(o3tl::toW(aDirectorySystemPath.getStr()));
+    });
+
+    const DWORD nDirectoryAttributes
+        = GetFileAttributesW(o3tl::toW(aDirectorySystemPath.getStr()));
+    if (nDirectoryAttributes == INVALID_FILE_ATTRIBUTES
+        || (nDirectoryAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0)
+    {
+        return false;
+    }
+
+    hSource = CreateFileW(o3tl::toW(aSourceSystemPath.getStr()), GENERIC_READ, FILE_SHARE_READ,
+                          nullptr, OPEN_EXISTING,
+                          FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
+    if (hSource == INVALID_HANDLE_VALUE)
+        return false;
+
+    hDestination = CreateFileW(o3tl::toW(aInstallerSystemPath.getStr()),
+                               GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ,
+                               &aSecurityAttributes, CREATE_NEW,
+                               FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
+    if (hDestination == INVALID_HANDLE_VALUE)
+        return false;
+
+    LARGE_INTEGER aSourceSize;
+    if (!GetFileSizeEx(hSource, &aSourceSize) || aSourceSize.QuadPart != rSource.Size)
+        return false;
+
+    comphelper::Hash aHash(comphelper::HashType::SHA256);
+    sal_Int64 nTotalBytes = 0;
+    for (;;)
+    {
+        sal_uInt8 aBuffer[64 * 1024];
+        DWORD nRead = 0;
+        if (!ReadFile(hSource, aBuffer, static_cast<DWORD>(sizeof(aBuffer)), &nRead, nullptr))
+            return false;
+        if (nRead == 0)
+            break;
+
+        DWORD nOffset = 0;
+        while (nOffset < nRead)
+        {
+            DWORD nWritten = 0;
+            if (!WriteFile(hDestination, aBuffer + nOffset, nRead - nOffset, &nWritten, nullptr)
+                || nWritten == 0)
+            {
+                return false;
+            }
+            nOffset += nWritten;
+        }
+        aHash.update(aBuffer, nRead);
+        nTotalBytes += nRead;
+        if (nTotalBytes > rSource.Size)
+            return false;
+    }
+
+    const OUString aActualHash
+        = OStringToOUString(comphelper::hashToString(aHash.finalize()),
+                            RTL_TEXTENCODING_ASCII_US);
+    LARGE_INTEGER aBeginning = {};
+    if (nTotalBytes != rSource.Size || aActualHash != rSource.Sha256
+        || !FlushFileBuffers(hDestination)
+        || !SetFilePointerEx(hDestination, aBeginning, nullptr, FILE_BEGIN))
+    {
+        return false;
+    }
+
+    if (osl::FileBase::getFileURLFromSystemPath(aDirectorySystemPath, rDirectoryURL)
+            != osl::FileBase::E_None
+        || osl::FileBase::getFileURLFromSystemPath(aInstallerSystemPath, rInstallerURL)
+               != osl::FileBase::E_None)
+    {
+        return false;
+    }
+
+    CloseHandle(hSource);
+    hSource = INVALID_HANDLE_VALUE;
+    rInstallerSystemPath = aInstallerSystemPath;
+    rInstallerLock = hDestination;
+    hDestination = INVALID_HANDLE_VALUE;
+    aCleanup.dismiss();
+    return true;
+}
+}
+#endif
 
 // Returns the URL of the release note for the given position
 OUString getReleaseNote(const UpdateInfo& rInfo, sal_uInt8 pos, bool autoDownloadEnabled)
@@ -722,13 +888,22 @@ UpdateCheck::UpdateCheck()
     : m_eState(NOT_INITIALIZED)
     , m_eUpdateState(UPDATESTATES_COUNT)
     , m_pThread(nullptr)
+#ifdef _WIN32
+    , m_pInstallerLock(nullptr)
+#endif
     , m_bHasExtensionUpdate(false)
     , m_bShowExtUpdDlg(false)
     , m_updateCheckRunning(false)
 {
 }
 
-UpdateCheck::~UpdateCheck() {}
+UpdateCheck::~UpdateCheck()
+{
+#ifdef _WIN32
+    cleanupStagedWindowsInstaller(m_pInstallerLock, m_aStagedInstallerURL,
+                                  m_aStagedInstallerDirectoryURL);
+#endif
+}
 
 void
 UpdateCheck::initialize(const uno::Sequence< beans::NamedValue >& rValues,
@@ -754,6 +929,29 @@ UpdateCheck::initialize(const uno::Sequence< beans::NamedValue >& rValues,
         m_bShowExtUpdDlg = false;
 
         OUString aLocalFileName = aModel.getLocalFileName();
+        const bool bStoredUpdateTrusted
+            = !m_aUpdateInfo.BuildId.isEmpty() && m_aUpdateInfo.Sources.size() == 1
+              && isTrustedMaterialUpdateSource(m_aUpdateInfo.Sources[0]);
+        if ((!m_aUpdateInfo.BuildId.isEmpty() || !aLocalFileName.isEmpty())
+            && !bStoredUpdateTrusted)
+        {
+            SAL_WARN("extensions.update",
+                     "Discarding legacy or malformed persisted update state before resume");
+            if (!aLocalFileName.isEmpty())
+                osl_removeFile(aLocalFileName.pData);
+            rtl::Reference<UpdateCheckConfig> aConfig = UpdateCheckConfig::get(xContext, *this);
+            aConfig->clearUpdateFound();
+            aConfig->clearLocalFileName();
+            aConfig->storeDownloadPaused(false);
+            m_aUpdateInfo = UpdateInfo();
+            aLocalFileName.clear();
+        }
+        else if (!bStoredUpdateTrusted)
+        {
+            // getUpdateEntry historically synthesized an empty source even when
+            // no update was stored. Do not expose that sentinel to UI code.
+            m_aUpdateInfo = UpdateInfo();
+        }
 
         if( !aLocalFileName.isEmpty() )
         {
@@ -870,7 +1068,7 @@ UpdateCheck::download()
     State eState = m_eState;
     aGuard.unlock();
 
-    if (aInfo.Sources.empty())
+    if (aInfo.Sources.size() != 1 || !isTrustedMaterialUpdateSource(aInfo.Sources[0]))
     {
         SAL_WARN("extensions.update", "download called without source");
         return;
@@ -905,10 +1103,18 @@ void UpdateCheck::install()
         aInstallerURL = m_aImageName;
         if (!m_aUpdateInfo.Sources.empty())
             aSource = m_aUpdateInfo.Sources[0];
+#ifdef _WIN32
+        if (m_pInstallerLock)
+        {
+            SAL_WARN("extensions.update", "The verified installer has already been started");
+            return;
+        }
+#endif
     }
 
-    // Recheck immediately after the user's approval. This closes the window
-    // between download completion and installer launch.
+    // Recheck immediately after the user's approval. Windows then copies the
+    // bytes into a protected, non-overwriting staging path and verifies that
+    // exact copy while retaining a write/delete-excluding handle across launch.
     if (!verifyUpdateFile(aInstallerURL, aSource))
     {
         osl_removeFile(aInstallerURL.pData);
@@ -926,16 +1132,29 @@ void UpdateCheck::install()
     }
 
 #ifdef _WIN32
+    OUString aInstallerPath;
+    OUString aStagedInstallerURL;
+    OUString aStagedInstallerDirectoryURL;
+    void* pInstallerLock = nullptr;
+    if (!stageVerifiedWindowsInstaller(aInstallerURL, aSource, aInstallerPath,
+                                       aStagedInstallerURL, aStagedInstallerDirectoryURL,
+                                       pInstallerLock))
+    {
+        downloadStalled(
+            u"The verified installer could not be copied into a protected Windows staging directory. No installation was started."_ustr);
+        getUpdateHandler()->setVisible(true);
+        return;
+    }
+
     wchar_t aSystemDirectory[MAX_PATH + 1] = {};
     const UINT nSystemDirectoryLength
         = GetSystemDirectoryW(aSystemDirectory,
                               static_cast<UINT>(std::size(aSystemDirectory)));
-    OUString aInstallerPath;
     if (nSystemDirectoryLength == 0
-        || nSystemDirectoryLength >= static_cast<UINT>(std::size(aSystemDirectory))
-        || osl::FileBase::getSystemPathFromFileURL(aInstallerURL, aInstallerPath)
-               != osl::FileBase::E_None)
+        || nSystemDirectoryLength >= static_cast<UINT>(std::size(aSystemDirectory)))
     {
+        cleanupStagedWindowsInstaller(pInstallerLock, aStagedInstallerURL,
+                                      aStagedInstallerDirectoryURL);
         downloadStalled(u"The trusted Windows Installer path could not be resolved."_ustr);
         getUpdateHandler()->setVisible(true);
         return;
@@ -945,9 +1164,11 @@ void UpdateCheck::install()
                                 static_cast<sal_Int32>(nSystemDirectoryLength));
     OUString aMsiexecURL;
     if (osl::FileBase::getFileURLFromSystemPath(aMsiexecPath + u"\\msiexec.exe"_ustr,
-                                                aMsiexecURL)
+                                                 aMsiexecURL)
         != osl::FileBase::E_None)
     {
+        cleanupStagedWindowsInstaller(pInstallerLock, aStagedInstallerURL,
+                                      aStagedInstallerDirectoryURL);
         downloadStalled(u"The trusted Windows Installer executable could not be resolved."_ustr);
         getUpdateHandler()->setVisible(true);
         return;
@@ -963,8 +1184,14 @@ void UpdateCheck::install()
     if (eError == osl_Process_E_None)
     {
         osl_freeProcessHandle(hProcess);
+        std::scoped_lock aGuard(m_aMutex);
+        m_pInstallerLock = pInstallerLock;
+        m_aStagedInstallerURL = aStagedInstallerURL;
+        m_aStagedInstallerDirectoryURL = aStagedInstallerDirectoryURL;
         return;
     }
+    cleanupStagedWindowsInstaller(pInstallerLock, aStagedInstallerURL,
+                                  aStagedInstallerDirectoryURL);
 #endif
 
     downloadStalled(
@@ -1084,6 +1311,14 @@ void
 UpdateCheck::enableDownload(bool enable, bool paused)
 {
     OSL_ASSERT(nullptr == m_pThread);
+
+    if (enable
+        && (m_aUpdateInfo.Sources.size() != 1
+            || !isTrustedMaterialUpdateSource(m_aUpdateInfo.Sources[0])))
+    {
+        SAL_WARN("extensions.update", "Refusing to start a download without one trusted source");
+        enable = false;
+    }
 
     if( enable )
     {
@@ -1304,7 +1539,8 @@ UpdateCheck::showDialog(bool forceCheck)
 {
     std::unique_lock aGuard(m_aMutex);
 
-    bool update_found = !m_aUpdateInfo.BuildId.isEmpty();
+    bool update_found = !m_aUpdateInfo.BuildId.isEmpty() && m_aUpdateInfo.Sources.size() == 1
+                        && isTrustedMaterialUpdateSource(m_aUpdateInfo.Sources[0]);
     bool bSetUIState = ! m_aUpdateHandler.is();
 
     UpdateState eDialogState = UPDATESTATES_COUNT;
@@ -1368,6 +1604,13 @@ UpdateCheck::setUpdateInfo(const UpdateInfo& aInfo)
 
     bool bSuppressBubble = aInfo.BuildId == m_aUpdateInfo.BuildId;
     m_aUpdateInfo = aInfo;
+    if (!m_aUpdateInfo.BuildId.isEmpty()
+        && (m_aUpdateInfo.Sources.size() != 1
+            || !isTrustedMaterialUpdateSource(m_aUpdateInfo.Sources[0])))
+    {
+        SAL_WARN("extensions.update", "Ignoring update metadata without one trusted source");
+        m_aUpdateInfo = UpdateInfo();
+    }
 
     OSL_ASSERT(DISABLED == m_eState || CHECK_SCHEDULED == m_eState);
 
@@ -1434,7 +1677,8 @@ UpdateCheck::setUpdateInfo(const UpdateInfo& aInfo)
 bool UpdateCheck::hasOfficeUpdate() const
 {
     std::unique_lock aGuard(m_aMutex);
-    return m_aUpdateInfo.BuildId.getLength() > 0;
+    return !m_aUpdateInfo.BuildId.isEmpty() && m_aUpdateInfo.Sources.size() == 1
+           && isTrustedMaterialUpdateSource(m_aUpdateInfo.Sources[0]);
 }
 
 void
@@ -1538,7 +1782,8 @@ UpdateCheck::getUIState(const UpdateInfo& rInfo)
 {
     UpdateState eUIState = UPDATESTATE_NO_UPDATE_AVAIL;
 
-    if( !rInfo.BuildId.isEmpty() )
+    if (!rInfo.BuildId.isEmpty() && rInfo.Sources.size() == 1
+        && isTrustedMaterialUpdateSource(rInfo.Sources[0]))
     {
         if( rInfo.Sources[0].IsDirect )
             eUIState = UPDATESTATE_UPDATE_AVAIL;
