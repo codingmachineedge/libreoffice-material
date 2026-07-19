@@ -193,6 +193,18 @@ protected:
         aWrongTag.ReleaseTag = u"../latest"_ustr;
         CPPUNIT_ASSERT(!isTrustedMaterialUpdateSource(aWrongTag));
 
+        DownloadSource aDotTag(aSource);
+        aDotTag.ReleaseTag = u".."_ustr;
+        aDotTag.URL
+            = u"https://github.com/codingmachineedge/libreoffice-material/releases/download/../LibreOfficeMaterial-Windows-x64.msi"_ustr;
+        CPPUNIT_ASSERT(!isTrustedMaterialUpdateSource(aDotTag));
+
+        DownloadSource aHiddenTag(aSource);
+        aHiddenTag.ReleaseTag = u".hidden"_ustr;
+        aHiddenTag.URL
+            = u"https://github.com/codingmachineedge/libreoffice-material/releases/download/.hidden/LibreOfficeMaterial-Windows-x64.msi"_ustr;
+        CPPUNIT_ASSERT(!isTrustedMaterialUpdateSource(aHiddenTag));
+
         DownloadSource aWrongName(aSource);
         aWrongName.FileName = u"other.msi"_ustr;
         CPPUNIT_ASSERT(!isTrustedMaterialUpdateSource(aWrongName));

@@ -50,11 +50,16 @@ constexpr OUStringLiteral MATERIAL_MSI_FILE = u"LibreOfficeMaterial-Windows-x64.
 
 bool isSafeReleaseTag(std::u16string_view rTag)
 {
-    return !rTag.empty()
-           && std::all_of(rTag.begin(), rTag.end(), [](sal_Unicode c) {
-                  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-                         || (c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-';
-              });
+    if (rTag.empty() || rTag.size() > 128 || rTag.front() == '.' || rTag.back() == '.'
+        || rTag.find(u"..") != std::u16string_view::npos)
+    {
+        return false;
+    }
+
+    return std::all_of(rTag.begin(), rTag.end(), [](sal_Unicode c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+               || (c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-';
+    });
 }
 
 bool isLowerSha256(std::u16string_view rSha256)
