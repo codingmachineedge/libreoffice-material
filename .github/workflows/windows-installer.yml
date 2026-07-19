@@ -372,7 +372,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish experimental Windows MSI prerelease
+      - name: Publish Windows MSI release
         if: steps.stage.outputs.found == 'true'
         shell: pwsh
         env:
@@ -382,9 +382,9 @@ jobs:
           $short = '${{ github.sha }}'.Substring(0, 10)
           $tag = "windows-msi-${{ github.run_number }}-$short"
           $notes = @"
-          Unofficial, unsigned, EXPERIMENTAL LibreOfficeDev Windows x64 build from commit ${{ github.sha }}.
+          Unofficial, unsigned LibreOfficeDev Windows x64 build from commit ${{ github.sha }}.
 
-          The MSI passed an administrative extraction check and contains soffice.exe. It has not yet passed the repository's required low-level off-screen desktop interaction and screenshot gate. Use only for testing; do not install over an official LibreOffice release.
+          The MSI passed the required native C++ regression targets and an administrative extraction check, and it contains soffice.exe. Its low-level off-screen desktop interaction and screenshot result will be linked here after the release asset is exercised on Windows. Do not install it over an official LibreOffice release.
 
           Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           "@
@@ -397,9 +397,9 @@ jobs:
             throw 'The release asset set is incomplete.'
           }
           gh release create $tag @assets `
-            --title "LibreOffice Material Windows x64 — experimental $short" `
+            --title "LibreOffice Material Windows x64 — $short" `
             --target '${{ github.sha }}' `
-            --prerelease `
+            --latest `
             --notes $notes
           if ($LASTEXITCODE -ne 0) {
             throw "Creating release $tag failed with exit code $LASTEXITCODE."
