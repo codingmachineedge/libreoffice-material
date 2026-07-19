@@ -29,6 +29,9 @@
 
 #include "updateinfo.hxx"
 
+// Applies the fork's immutable GitHub Release allowlist and metadata rules.
+bool isTrustedMaterialUpdateSource(const DownloadSource& rSource);
+
 // Returns 'true' if successfully connected to the update server
 bool checkForUpdates(
     UpdateInfo& o_rUpdateInfo,

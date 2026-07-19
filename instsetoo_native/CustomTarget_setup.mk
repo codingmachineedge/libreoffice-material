@@ -186,7 +186,7 @@ ExtensionUpdateURL=https://updateexte.libreoffice.org/ExtensionUpdateService/che
 UpdateChannel=$(if $(ENABLE_ONLINE_UPDATE_MAR),LOOnlineUpdater)
 ReferenceOOoMajorMinor=4.1
 UpdateID=$(PRODUCTNAME)_$(LIBO_VERSION_MAJOR)_en-US
-UpdateURL=$(if $(ENABLE_ONLINE_UPDATE),https://update.libreoffice.org/check.php$(if $(filter-out WNT,$(OS)),?pkgfmt=$(PKGFORMAT)))
+UpdateURL=$(if $(ENABLE_ONLINE_UPDATE),https://github.com/codingmachineedge/libreoffice-material/releases/latest/download/windows-update-manifest.xml)
 UpdateUserAgent=<PRODUCT> ($${buildid}; $${_OS}; $${_ARCH}; <OPTIONAL_OS_HW_DATA>)
 Vendor=$(OOO_VENDOR)
 endef

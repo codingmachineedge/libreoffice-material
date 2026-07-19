@@ -75,21 +75,28 @@ bool readVerifiedMaterialSource(const uno::Reference<xml::dom::XElement>& xUpdat
     const OUString aFileName = xUpdate->getAttribute(u"file-name"_ustr);
     const sal_Int64 nSize = aSizeText.toInt64();
 
-    if (aType.equalsIgnoreAsciiCase("text/html") || !isSafeReleaseTag(aReleaseTag)
-        || !isLowerSha256(aSha256) || nSize <= 0 || aSizeText != OUString::number(nSize)
-        || aFileName != MATERIAL_MSI_FILE)
+    if (aType.equalsIgnoreAsciiCase("text/html") || aSizeText != OUString::number(nSize))
     {
         return false;
     }
 
-    const OUString aExpectedURL
-        = OUString::Concat(MATERIAL_RELEASE_PREFIX) + aReleaseTag + "/" + aFileName;
-    if (aURL != aExpectedURL)
-        return false;
-
     rSource = DownloadSource(true, aURL, aSha256, nSize, aReleaseTag, aFileName);
-    return true;
+    return isTrustedMaterialUpdateSource(rSource);
 }
+}
+
+bool isTrustedMaterialUpdateSource(const DownloadSource& rSource)
+{
+    if (!rSource.IsDirect || !isSafeReleaseTag(rSource.ReleaseTag)
+        || !isLowerSha256(rSource.Sha256) || rSource.Size <= 0
+        || rSource.FileName != MATERIAL_MSI_FILE)
+    {
+        return false;
+    }
+
+    const OUString aExpectedURL = OUString::Concat(MATERIAL_RELEASE_PREFIX)
+                                  + rSource.ReleaseTag + "/" + rSource.FileName;
+    return rSource.URL == aExpectedURL;
 }
 
 
@@ -273,8 +280,9 @@ checkForUpdates(
                     }
                 }
 
-                if( !o_rUpdateInfo.Sources.empty() )
+                if (o_rUpdateInfo.Sources.size() == 1)
                     return true;
+                o_rUpdateInfo.Sources.clear();
             }
         }
     }

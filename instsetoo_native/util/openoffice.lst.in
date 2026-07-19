@@ -51,7 +51,7 @@ LibreOffice
             BRANDPACKAGEVERSION @LIBO_VERSION_MAJOR@.@LIBO_VERSION_MINOR@
             USERDIRPRODUCTVERSION 4
             BASEPRODUCTVERSION @LIBO_VERSION_MAJOR@.@LIBO_VERSION_MINOR@
-            UPDATEURL https://update.libreoffice.org/check.php
+            UPDATEURL https://github.com/codingmachineedge/libreoffice-material/releases/latest/download/windows-update-manifest.xml
             ADD_INCLUDE_FILES cli_ure/version/version.txt,unoil/climaker/version.txt
             ADDSYSTEMINTEGRATION 1
             PACKAGEVERSION @LIBO_VERSION_MAJOR@.@LIBO_VERSION_MINOR@.@LIBO_VERSION_MICRO@.@LIBO_VERSION_PATCH@@LIBO_VERSION_SUFFIX@
@@ -94,7 +94,7 @@ LibreOfficeDev
             UREPACKAGEPREFIX libreofficedev
             SOLSUREPACKAGEPREFIX libreofficedev
             REGISTRYLAYERNAME LayerDev
-            UPDATEURL https://update.libreoffice.org/check.php
+            UPDATEURL https://github.com/codingmachineedge/libreoffice-material/releases/latest/download/windows-update-manifest.xml
             ADD_INCLUDE_FILES cli_ure/version/version.txt,unoil/climaker/version.txt
             ADDSYSTEMINTEGRATION 1
             PACKAGEVERSION @LIBO_VERSION_MAJOR@.@LIBO_VERSION_MINOR@.@LIBO_VERSION_MICRO@.@LIBO_VERSION_PATCH@@LIBO_VERSION_SUFFIX@

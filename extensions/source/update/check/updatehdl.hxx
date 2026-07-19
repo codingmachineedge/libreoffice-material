@@ -96,6 +96,7 @@ private:
     sal_Int32               mnPercent;
     short                   mnLastCtrlState;
     bool                    mbDownloadBtnHasDots;
+    bool                    mbInstallBtn;
     bool                    mbVisible;
     bool                    mbStringsLoaded;
     bool                    mbMinimized;
@@ -130,6 +131,8 @@ private:
     OUString           msDescription;      // RID_UPDATE_FT_DESCRIPTION
     OUString           msClose;            // RID_UPDATE_BTN_CLOSE
     OUString           msDownload;         // RID_UPDATE_BTN_DOWNLOAD
+    OUString           msInstall;          // RID_UPDATE_BTN_INSTALL
+    OUString           msInstallConfirm;   // RID_UPDATE_STR_INSTALL_CONFIRM
     OUString           msPauseBtn;         // RID_UPDATE_BTN_PAUSE
     OUString           msResumeBtn;        // RID_UPDATE_BTN_RESUME
     OUString           msCancelBtn;        // RID_UPDATE_BTN_CANCEL
@@ -145,7 +148,7 @@ private:
     void                    showControls( short nControls );
     void                    focusControl( DialogControls eID );
     void                    enableControls( short nCtrlState );
-    void                    setDownloadBtnLabel( bool bAppendDots );
+    void                    setDownloadBtnLabel( bool bAppendDots, bool bInstall = false );
     void                    loadStrings();
     static OUString         loadString(const std::locale& rLocale,
                                        TranslateId pResourceId);

@@ -314,6 +314,8 @@
 #define RID_UPDATE_FT_DESCRIPTION               NC_("RID_UPDATE_FT_DESCRIPTION", "Description")
 #define RID_UPDATE_BTN_CLOSE                    NC_("RID_UPDATE_BTN_CLOSE", "Close")
 #define RID_UPDATE_BTN_DOWNLOAD                 NC_("RID_UPDATE_BTN_DOWNLOAD", "~Download")
+#define RID_UPDATE_BTN_INSTALL                  NC_("RID_UPDATE_BTN_INSTALL", "~Install...")
+#define RID_UPDATE_STR_INSTALL_CONFIRM          NC_("RID_UPDATE_STR_INSTALL_CONFIRM", "The downloaded installer passed its size and SHA-256 checks. Start the interactive installer for %PRODUCTNAME %NEXTVERSION now?")
 #define RID_UPDATE_BTN_PAUSE                    NC_("RID_UPDATE_BTN_PAUSE", "~Pause")
 #define RID_UPDATE_BTN_RESUME                   NC_("RID_UPDATE_BTN_RESUME", "~Resume")
 #define RID_UPDATE_BTN_CANCEL                   NC_("RID_UPDATE_BTN_CANCEL", "Cancel")

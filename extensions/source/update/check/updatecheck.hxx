@@ -39,6 +39,10 @@
 #include "updatehdl.hxx"
 #include "download.hxx"
 
+// Verifies the complete local file against immutable GitHub Release metadata.
+// rFileName is a file URL, as used by the update download service.
+bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource);
+
 
 class UpdateCheck;
 
@@ -117,6 +121,7 @@ public:
     // IActionListener
     void cancel() override;
     void download() override;
+    void install() override;
     void pause() override;
     void resume() override;
     void closeAfterFailure() override;

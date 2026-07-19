@@ -21,6 +21,7 @@
 
 #include <string_view>
 
+#include <comphelper/hash.hxx>
 #include <comphelper/scopeguard.hxx>
 #include <config_folders.h>
 
@@ -46,7 +47,9 @@
 
 #ifdef _WIN32
 #include <o3tl/safeCoInitUninit.hxx>
+#include <o3tl/char16_t2wchar_t.hxx>
 #include <objbase.h>
+#include <windows.h>
 #endif
 
 #include "onlinecheck.hxx"
@@ -65,6 +68,43 @@ constexpr OUStringLiteral PROPERTY_TEXT = u"BubbleText";
 constexpr OUStringLiteral PROPERTY_SHOW_BUBBLE = u"BubbleVisible";
 constexpr OUStringLiteral PROPERTY_CLICK_HDL = u"MenuClickHDL";
 constexpr OUString PROPERTY_SHOW_MENUICON = u"MenuIconVisible"_ustr;
+
+bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource)
+{
+    if (!isTrustedMaterialUpdateSource(rSource) || rFileName.isEmpty()
+        || !rFileName.endsWith(OUString::Concat("/") + rSource.FileName))
+        return false;
+
+    osl::DirectoryItem aItem;
+    if (osl::DirectoryItem::get(rFileName, aItem) != osl::FileBase::E_None)
+        return false;
+
+    osl::FileStatus aStatus(osl_FileStatus_Mask_FileSize);
+    if (aItem.getFileStatus(aStatus) != osl::FileBase::E_None
+        || static_cast<sal_Int64>(aStatus.getFileSize()) != rSource.Size)
+    {
+        return false;
+    }
+
+    osl::File aFile(rFileName);
+    if (aFile.open(osl_File_OpenFlag_Read) != osl::FileBase::E_None)
+        return false;
+
+    comphelper::Hash aHash(comphelper::HashType::SHA256);
+    for (;;)
+    {
+        sal_uInt8 aBuffer[64 * 1024];
+        sal_uInt64 nRead = 0;
+        if (aFile.read(aBuffer, sizeof(aBuffer), nRead) != osl::FileBase::E_None)
+            return false;
+        if (nRead == 0)
+            break;
+        aHash.update(aBuffer, nRead);
+    }
+
+    const OString aActualHash(comphelper::hashToString(aHash.finalize()));
+    return OStringToOUString(aActualHash, RTL_TEXTENCODING_ASCII_US) == rSource.Sha256;
+}
 
 // Returns the URL of the release note for the given position
 OUString getReleaseNote(const UpdateInfo& rInfo, sal_uInt8 pos, bool autoDownloadEnabled)
@@ -731,11 +771,25 @@ UpdateCheck::initialize(const uno::Sequence< beans::NamedValue >& rValues,
 
                     if( nDownloadSize > 0 )
                     {
-                        if ( nDownloadSize <= nFileSize ) // we have already downloaded everything
+                        if ( nDownloadSize <= nFileSize ) // we may have already downloaded everything
                         {
                             bContinueDownload = false;
-                            bDownloadAvailable = true;
-                            m_aImageName = getImageFromFileName( aLocalFileName );
+                            if (!m_aUpdateInfo.Sources.empty()
+                                && verifyUpdateFile(aLocalFileName, m_aUpdateInfo.Sources[0]))
+                            {
+                                bDownloadAvailable = true;
+                                m_aImageName = getImageFromFileName(aLocalFileName);
+                            }
+                            else
+                            {
+                                SAL_WARN("extensions.update",
+                                         "Discarding a completed update that failed release verification");
+                                osl_removeFile(aLocalFileName.pData);
+                                rtl::Reference<UpdateCheckConfig> aConfig
+                                    = UpdateCheckConfig::get(xContext, *this);
+                                aConfig->clearLocalFileName();
+                                aConfig->storeDownloadPaused(false);
+                            }
                         }
                         else // Calculate initial percent value.
                         {
@@ -840,6 +894,78 @@ UpdateCheck::download()
     {
         showReleaseNote(aInfo.Sources[0].URL); // Display in browser
     }
+}
+
+void UpdateCheck::install()
+{
+    OUString aInstallerURL;
+    DownloadSource aSource(false, OUString());
+    {
+        std::scoped_lock aGuard(m_aMutex);
+        aInstallerURL = m_aImageName;
+        if (!m_aUpdateInfo.Sources.empty())
+            aSource = m_aUpdateInfo.Sources[0];
+    }
+
+    // Recheck immediately after the user's approval. This closes the window
+    // between download completion and installer launch.
+    if (!verifyUpdateFile(aInstallerURL, aSource))
+    {
+        osl_removeFile(aInstallerURL.pData);
+        rtl::Reference<UpdateCheckConfig> rModel = UpdateCheckConfig::get(m_xContext);
+        rModel->clearLocalFileName();
+        rModel->storeDownloadPaused(false);
+        {
+            std::scoped_lock aGuard(m_aMutex);
+            m_aImageName.clear();
+        }
+        downloadStalled(
+            u"Security verification failed immediately before installation. The installer was deleted and was not opened."_ustr);
+        getUpdateHandler()->setVisible(true);
+        return;
+    }
+
+#ifdef _WIN32
+    wchar_t aSystemDirectory[MAX_PATH + 1] = {};
+    const UINT nSystemDirectoryLength
+        = GetSystemDirectoryW(aSystemDirectory, std::size(aSystemDirectory));
+    OUString aInstallerPath;
+    if (nSystemDirectoryLength == 0
+        || nSystemDirectoryLength >= std::size(aSystemDirectory)
+        || osl::FileBase::getSystemPathFromFileURL(aInstallerURL, aInstallerPath)
+               != osl::FileBase::E_None)
+    {
+        downloadStalled(u"The trusted Windows Installer path could not be resolved."_ustr);
+        getUpdateHandler()->setVisible(true);
+        return;
+    }
+
+    const OUString aMsiexecPath(o3tl::toU(aSystemDirectory), nSystemDirectoryLength);
+    OUString aMsiexecURL;
+    if (osl::FileBase::getFileURLFromSystemPath(aMsiexecPath + "\\msiexec.exe", aMsiexecURL)
+        != osl::FileBase::E_None)
+    {
+        downloadStalled(u"The trusted Windows Installer executable could not be resolved."_ustr);
+        getUpdateHandler()->setVisible(true);
+        return;
+    }
+
+    OUString aInstallSwitch(u"/i"_ustr);
+    rtl_uString* aArguments[] = { aInstallSwitch.pData, aInstallerPath.pData };
+    oslProcess hProcess = nullptr;
+    const oslProcessError eError
+        = osl_executeProcess(aMsiexecURL.pData, aArguments, std::size(aArguments),
+                             osl_Process_DETACHED, nullptr, nullptr, nullptr, 0, &hProcess);
+    if (eError == osl_Process_E_None)
+    {
+        osl_freeProcessHandle(hProcess);
+        return;
+    }
+#endif
+
+    downloadStalled(
+        u"The verified installer could not be started. No silent installation was attempted."_ustr);
+    getUpdateHandler()->setVisible(true);
 }
 
 
@@ -1004,8 +1130,22 @@ UpdateCheck::downloadTargetExists(const OUString& rFileName)
     }
     else
     {
-        m_aImageName = getImageFromFileName(rFileName);
-        eUIState = UPDATESTATE_DOWNLOAD_AVAIL;
+        const bool bVerified = !m_aUpdateInfo.Sources.empty()
+                               && verifyUpdateFile(rFileName, m_aUpdateInfo.Sources[0]);
+        if (bVerified)
+        {
+            m_aImageName = getImageFromFileName(rFileName);
+            eUIState = UPDATESTATE_DOWNLOAD_AVAIL;
+        }
+        else
+        {
+            SAL_WARN("extensions.update",
+                     "Replacing an existing update file that failed release verification");
+            cont = osl_removeFile(rFileName.pData) == osl_File_E_None;
+            rtl::Reference<UpdateCheckConfig> rModel = UpdateCheckConfig::get(m_xContext);
+            rModel->clearLocalFileName();
+            rModel->storeDownloadPaused(false);
+        }
     }
 
     if( !cont )
@@ -1084,14 +1224,37 @@ void
 UpdateCheck::downloadFinished(const OUString& rLocalFileName)
 {
     std::unique_lock aGuard(m_aMutex);
-
-    // no more retries
-    m_pThread->terminate();
-
-    m_aImageName = getImageFromFileName(rLocalFileName);
     UpdateInfo aUpdateInfo(m_aUpdateInfo);
-
     aGuard.unlock();
+
+    // No more retries, and do not retain a pointer to a worker that deletes
+    // itself in onTerminated(). The downloader has already flushed and closed
+    // the file before this callback.
+    shutdownThread(false);
+
+    if (aUpdateInfo.Sources.empty()
+        || !verifyUpdateFile(rLocalFileName, aUpdateInfo.Sources[0]))
+    {
+        SAL_WARN("extensions.update", "Downloaded installer failed size or SHA-256 verification");
+        osl_removeFile(rLocalFileName.pData);
+        rtl::Reference<UpdateCheckConfig> rModel = UpdateCheckConfig::get(m_xContext);
+        rModel->clearLocalFileName();
+        rModel->storeDownloadPaused(false);
+        {
+            std::scoped_lock aStateGuard(m_aMutex);
+            m_aImageName.clear();
+            m_eState = DISABLED;
+        }
+        downloadStalled(
+            u"Security verification failed: the downloaded installer did not match the release size and SHA-256. The file was deleted and was not opened."_ustr);
+        return;
+    }
+
+    {
+        std::scoped_lock aStateGuard(m_aMutex);
+        m_aImageName = getImageFromFileName(rLocalFileName);
+        m_eState = DISABLED;
+    }
     setUIState(UPDATESTATE_DOWNLOAD_AVAIL);
 
     // Bring-up release note for position 2 ..
@@ -1142,7 +1305,9 @@ UpdateCheck::showDialog(bool forceCheck)
     {
     case DISABLED:
     case CHECK_SCHEDULED:
-        if( forceCheck || ! update_found ) // Run check when forced or if we did not find an update yet
+        if (!forceCheck && !m_aImageName.isEmpty())
+            eDialogState = UPDATESTATE_DOWNLOAD_AVAIL;
+        else if( forceCheck || ! update_found ) // Run check when forced or if we did not find an update yet
         {
             eDialogState = UPDATESTATE_CHECKING;
             bSetUIState = true;

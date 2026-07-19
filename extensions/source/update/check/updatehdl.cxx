@@ -98,6 +98,7 @@ UpdateHandler::UpdateHandler( const uno::Reference< uno::XComponentContext > & r
     mnPercent( 0 ),
     mnLastCtrlState( -1 ),
     mbDownloadBtnHasDots( false ),
+    mbInstallBtn( false ),
     mbVisible( false ),
     mbStringsLoaded( false ),
     mbMinimized( false ),
@@ -141,15 +142,15 @@ void UpdateHandler::enableControls( short nCtrlState )
 }
 
 
-void UpdateHandler::setDownloadBtnLabel( bool bAppendDots )
+void UpdateHandler::setDownloadBtnLabel( bool bAppendDots, bool bInstall )
 {
     osl::MutexGuard aGuard( maMutex );
 
-    if ( mbDownloadBtnHasDots != bAppendDots )
+    if (mbDownloadBtnHasDots != bAppendDots || mbInstallBtn != bInstall)
     {
-        OUString aLabel( msDownload );
+        OUString aLabel(bInstall ? msInstall : msDownload);
 
-        if ( bAppendDots )
+        if (bAppendDots && !bInstall)
             aLabel += "...";
 
         vcl::Window* pButton = getWindow(msButtonIDs[DOWNLOAD_BUTTON]);
@@ -158,6 +159,7 @@ void UpdateHandler::setDownloadBtnLabel( bool bAppendDots )
         pButton->SetHelpId(OUString(INET_HID_SCHEME + HID_CHECK_FOR_UPD_DOWNLOAD2));
 
         mbDownloadBtnHasDots = bAppendDots;
+        mbInstallBtn = bInstall;
     }
 }
 
@@ -349,7 +351,16 @@ void SAL_CALL UpdateHandler::actionPerformed( awt::ActionEvent const & rEvent )
                 mxActionListener->closeAfterFailure();
             break;
         case DOWNLOAD_BUTTON:
-            mxActionListener->download();
+            if (meCurState == UPDATESTATE_DOWNLOAD_AVAIL)
+            {
+                if (showWarning(substVariables(msInstallConfirm)))
+                {
+                    setVisible(false);
+                    mxActionListener->install();
+                }
+            }
+            else
+                mxActionListener->download();
             break;
         case PAUSE_BUTTON:
             mxActionListener->pause();
@@ -572,8 +583,11 @@ void UpdateHandler::updateState( UpdateState eState )
             break;
         case UPDATESTATE_DOWNLOAD_AVAIL:
             showControls( 0 );
+            enableControls((1 << CLOSE_BUTTON) + (1 << DOWNLOAD_BUTTON));
             m_pStatusEdit->SetText(substVariables(msReady2Install));
             m_pDescriptionEdit->SetText(substVariables(msDownloadDescr));
+            setDownloadBtnLabel(false, true);
+            focusControl(DOWNLOAD_BUTTON);
             break;
         case UPDATESTATE_AUTO_START:
         case UPDATESTATES_COUNT:
@@ -635,6 +649,8 @@ void UpdateHandler::loadStrings()
 
     msClose         = loadString( loc, RID_UPDATE_BTN_CLOSE );
     msDownload      = loadString( loc, RID_UPDATE_BTN_DOWNLOAD );
+    msInstall       = loadString( loc, RID_UPDATE_BTN_INSTALL );
+    msInstallConfirm = loadString( loc, RID_UPDATE_STR_INSTALL_CONFIRM );
     msPauseBtn      = loadString( loc, RID_UPDATE_BTN_PAUSE );
     msResumeBtn     = loadString( loc, RID_UPDATE_BTN_RESUME );
     msCancelBtn     = loadString( loc, RID_UPDATE_BTN_CANCEL );
