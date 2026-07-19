@@ -247,6 +247,8 @@ jobs:
           tarball_dir="$(cygpath -u "$LO_TARBALL_DIR")"
           # actions/checkout registers the Win32 spelling for Git for Windows;
           # Cygwin Git needs the equivalent POSIX spelling as its own safe path.
+          test -n "$HOME"
+          mkdir -p "$HOME"
           /usr/bin/git config --global --add safe.directory "$src_dir"
           /usr/bin/git -C "$src_dir" rev-parse --verify HEAD
           mkdir -p "$build_dir" "$tarball_dir"
