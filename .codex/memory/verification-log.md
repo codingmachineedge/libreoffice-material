@@ -775,3 +775,28 @@ binary ran, and accepted application screenshots remain **0**.
 
 Scope conclusion: no native LibreOffice build, installer, C++ test result,
 headless application run, or accepted capture exists at this inventory point.
+
+## 2026-07-19 — first full Windows build reached; dbtools link blocker isolated
+
+- Exact-source Windows Actions run `29674799914` at
+  `b010f8a655267c502ee8d739a0c0904049a8e63d` passed all four required native
+  targets: `CppunitTest_tools_test`, `CppunitTest_extensions_test_update`,
+  `CppunitTest_vcl_widget_definition_reader_test`, and
+  `CppunitTest_vcl_file_definition_widget_draw_test`.
+- The first workflow attempt to reach the full `make build` gate then failed
+  linking `svxcorelo.dll` with 29 unresolved `dbtools::*` and
+  `connectivity::*` externals. The workflow had explicitly selected the
+  upstream work-in-progress `--disable-database-connectivity` mode, while the
+  desktop svx form objects still import those APIs and svxcore links dbtools
+  only when `DBCONNECTIVITY` is present in `BUILD_TYPE`.
+- The repair explicitly enables database connectivity and asserts the
+  generated `config_host.mk` contains `DBCONNECTIVITY` before any long native
+  target starts. It does not add ad-hoc exports or bypass the supported
+  dependency graph.
+- MSI staging, upload, and release publication were skipped. The expected tag
+  `windows-msi-19-1-b010f8a655` was not created; the diagnostic artifact is
+  `windows-build-diagnostics-29674799914`.
+
+Scope conclusion: the exact native regression gates are proved for this failed
+attempt, but no MSI, release, LibreOffice runtime smoke, or accepted screenshot
+is claimed until the repaired exact-source rerun completes.

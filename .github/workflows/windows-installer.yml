@@ -279,8 +279,16 @@ jobs:
             --disable-odk \
             --disable-ccache \
             --disable-pdfium \
-            --disable-database-connectivity \
+            --enable-database-connectivity \
             --disable-cairo-canvas
+
+          # svxcore always compiles desktop form objects that import dbtools
+          # symbols. The database-connectivity switch is documented upstream
+          # as work in progress; disabling it omits dbtools from svxcore's
+          # link dependencies and fails the full Windows build. Keep the
+          # supported desktop feature explicit and fail before the long native
+          # targets if configure ever drops it.
+          grep -Eq '^export BUILD_TYPE=.*[[:space:]]DBCONNECTIVITY([[:space:]]|$)' config_host.mk
 
       - name: Run required native C++ regression tests
         shell: cygbash --noprofile --norc -o igncr -eo pipefail {0}
