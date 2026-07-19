@@ -861,3 +861,21 @@ runtime interaction are not claimed until the post-repair native runs finish.
   mismatch. This is a staging-rule repair, not an accepted artifact, release, or
   runtime result; a non-main hosted rerun is required before the low-level
   off-screen desktop scenario can start.
+
+## 2026-07-19 — local one-click Windows bootstrap source validation
+
+- Added `Build-Windows.cmd`, `bin/Build-Windows.ps1`, and
+  `docs/LOCAL_WINDOWS_BUILD.md`. The default script contract is a dedicated
+  VS 2022 Build Tools/Cygwin bootstrap, an LF detached snapshot, the hosted
+  configure/test/build order, and exact-final-MSI administrative extraction.
+- The bootstrap uses one hidden elevated PowerShell child only when prerequisites
+  are missing; it requests one UAC consent, writes a bootstrap transcript, and
+  does not open a PowerShell window per installer. The ordinary build runs in
+  the caller's terminal.
+- Static validation only: the PowerShell parser accepted
+  `bin/Build-Windows.ps1`, and `git diff --check` was clean at the script
+  validation point. No bootstrap installer, native local build, MSI,
+  LibreOffice runtime, or application screenshot ran as part of that check.
+
+Scope conclusion: the local profile is reproducible source automation, not
+build or runtime evidence.

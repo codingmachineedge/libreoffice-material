@@ -33,17 +33,20 @@ No phase is currently marked verified.
   pins Visual Studio 2022, provisions Cygwin, runs the required native tests,
   validates an exact draft release, and only then publishes a normal public,
   non-prerelease Latest Windows x64 MSI release;
-- define native build profiles and artifact retention rules;
+- define native build profiles and artifact retention rules, including a
+  source-controlled local Windows bootstrap/build entry point;
 - preflight the low-level computer-use driver and an off-screen desktop;
 - connect that proven harness to a built LibreOffice binary and isolated profile;
 - establish a repository-memory ledger for decisions, evidence, and progress.
 
 Current evidence: the Windows harness preflight passed on 2026-07-16 using a
-temporary Notepad process, but no LibreOffice window was involved. A 2026-07-18
-refresh found that the local Windows SDK 26100 is complete, but local Visual
-Studio Build Tools still lacks ATL and CRT merge modules and no supported Cygwin
-or WSL helper environment is installed. The hosted Windows workflow uses a
-clean LF checkout and a pinned runner that supplies those components. Current
+temporary Notepad process, but no LibreOffice window was involved. The local
+[one-click Windows script](docs/LOCAL_WINDOWS_BUILD.md) now provisions an
+isolated VS 2022/Cygwin profile, validates it, and creates a clean LF source
+snapshot; it has not yet been run. This host currently has Visual Studio 2026
+rather than that dedicated VS 2022 profile and no isolated Cygwin environment.
+The hosted Windows workflow uses a clean LF checkout and a pinned runner that
+supplies its prerequisites. Current
 source Linux run `29695793821` and Windows run `29695815101` both passed
 `tools_test`, `extensions_test_update`, `vcl_widget_definition_reader_test`,
 `vcl_file_definition_widget_draw_test`, and `vcl_treeview`; the Windows run also
@@ -57,6 +60,11 @@ directory and still requires exactly one MSI plus administrative extraction and
 `soffice.exe` validation. That corrected staging rule needs a hosted rerun;
 there is no installer artifact, application run, accepted screenshot, release,
 or accessibility result yet.
+
+The local script is intentionally non-destructive: it does not normalize the
+development checkout, delete a prior build root, silently use Visual Studio
+2026, reboot Windows, install its MSI, or claim runtime evidence. Its default
+`All` phase remains a build contract until its first local native run.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL

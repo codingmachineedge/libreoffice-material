@@ -257,6 +257,12 @@ Public assetless release/tag `e` remains non-evidence.
   final `LibreOfficeDev\msi\install\en-US` directory; its rerun is pending.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
+- Local build automation: `Build-Windows.cmd` calls `bin/Build-Windows.ps1`.
+  It provisions a dedicated VS 2022/Cygwin profile in one hidden UAC bootstrap,
+  validates signatures, hashes, and packaging tools, builds from an LF snapshot,
+  and stages only an administratively extractable final MSI. It never changes the
+  active checkout, deletes a build root, reboots, installs the MSI, or launches
+  a UI. The source script parsed successfully but has not run a local build.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
   commit `806d9ba85e4afbc2af58d7499496babfa7c68891`.
 - A read-only driver audit found the same clean commit serving MCP on
@@ -354,14 +360,14 @@ Public assetless release/tag `e` remains non-evidence.
 - no application surface is verified Material-complete;
 - no updater download, protected-stage, consent, or MSI-launch flow has been
   runtime-verified;
-- no complete supported local LibreOffice build profile exists: local VS 2022
-  Build Tools has MSVC and CMake but lacks ATL and CRT merge modules; SDK 26100
-  is complete; and no supported Cygwin or WSL helper is installed. The hosted
-  Windows workflow supplies those prerequisites. Current-source Linux and
-  Windows native targets passed, and the latter built its full installation set,
-  but MSI staging selected two intermediate databases as well as the final
-  package. The corrected staging rule, installer/release, real application
-  capture, headless smoke, and accessibility smoke remain pending.
+- no local native build is registered. A one-click source bootstrap now exists,
+  but this host has Visual Studio 2026 rather than its dedicated VS 2022
+  instance and no isolated Cygwin profile until the bootstrap is run. The hosted
+  Windows workflow supplies its prerequisites. Current-source Linux and Windows
+  native targets passed, and the latter built its full installation set, but MSI
+  staging selected two intermediate databases as well as the final package. The
+  corrected staging rule, installer/release, real application capture, headless
+  smoke, and accessibility smoke remain pending.
 
 ## Multi-repository boundary
 

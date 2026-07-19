@@ -296,23 +296,25 @@ cross-platform native project; consult The Document Foundation's current
 [platform build instructions](https://wiki.documentfoundation.org/Development/How_to_build)
 and the imported build files before configuring a machine.
 
-> **Current build gate:** no complete supported *local* LibreOffice build
-> profile exists. The local Visual Studio 2022 Build Tools instance has MSVC
-> and CMake but lacks ATL and the CRT merge modules required for packaging; the
-> installed Windows SDK 26100 is complete, but no supported Cygwin or WSL helper
-> environment is installed. The manually dispatched hosted Windows workflow
-> supplies and validates those prerequisites against a clean LF checkout.
-> Current-source Linux run `29695793821` and Windows run `29695815101` passed
-> all five required native C++ targets; the latter also built the full Windows
-> installation set. It stopped at MSI staging because recursive discovery saw
-> two intermediate databases as well as the final package. The corrected final
-> directory rule awaits a rerun. No staged installer, LibreOffice application
+> **Local one-click build:** [`Build-Windows.cmd`](Build-Windows.cmd) now calls
+> the source-controlled bootstrapper described in
+> [`docs/LOCAL_WINDOWS_BUILD.md`](docs/LOCAL_WINDOWS_BUILD.md). It provisions
+> an isolated Visual Studio 2022 Build Tools/Cygwin profile when needed,
+> verifies it, and builds from an LF snapshot without touching this checkout.
+> This host currently has Visual Studio 2026 rather than the required dedicated
+> VS 2022 instance and no isolated Cygwin profile; the new bootstrap has not
+> been run locally yet. It does not change the separate hosted result:
+> current-source Linux run `29695793821` and Windows run `29695815101` passed
+> all five required native C++ targets, and the Windows run built the full
+> installation set but stopped at MSI staging. The corrected final-directory
+> rule awaits its hosted rerun. No staged installer, LibreOffice application
 > run, normal release, headless UI smoke, accessibility smoke, or accepted
-> capture has occurred yet.
+> capture is claimed here.
 
-The imported checkout was also materialized mostly with CRLF worktree endings.
-Use a fresh detached worktree created with `core.autocrlf=false` for any native
-configure/build attempt rather than normalizing the development worktree.
+The bootstrapper creates a clean detached LF worktree rather than normalizing
+the development checkout. It is intentionally fail-safe: it never deletes a
+previous build root, reboots Windows, installs the output MSI, or substitutes
+Visual Studio 2026 for the required VS 2022 profile.
 
 At the imported baseline, the upstream README records these minimum build
 baselines:

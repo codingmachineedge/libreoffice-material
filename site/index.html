@@ -99,7 +99,7 @@
             </div>
             <div>
               <dt>Build / installer</dt>
-              <dd><span class="state state-progress">Set built; MSI staging rerun</span></dd>
+              <dd><span class="state state-progress">Set built; bootstrap + MSI rerun</span></dd>
             </div>
             <div>
               <dt>Windows updater</dt>
@@ -226,11 +226,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </p>
         </div>
         <p class="blocker-note">
-          <strong>Current build gate:</strong> no complete supported local
-          profile exists. Local VS 2022 Build Tools has MSVC and CMake but lacks
-          ATL and the CRT merge modules required for packaging; installed SDK
-          26100 is complete, but there is no supported local Cygwin or WSL helper.
-          The hosted Windows workflow supplies and validates those prerequisites.
+          <strong>Current build gate:</strong> a one-click local bootstrap now
+          provisions and verifies an isolated Visual Studio 2022/Cygwin profile
+          and builds from a clean LF snapshot without touching this checkout. It
+          has not run locally: this host currently has Visual Studio 2026 rather
+          than that dedicated VS 2022 profile and no isolated Cygwin environment.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule

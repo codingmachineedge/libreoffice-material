@@ -67,12 +67,13 @@ These are audited capabilities and constraints, not a LibreOffice run result.
 
 ## Current LibreOffice build blocker
 
-No complete supported *local* LibreOffice build profile or fork executable
-exists. The local Visual Studio 2022 Build Tools instance has MSVC and CMake but
-lacks ATL and the CRT merge modules required for packaging. Installed Windows
-SDK 26100 is complete, but no supported Cygwin or WSL helper environment is
-installed. The manually dispatched hosted Windows workflow supplies and
-validates those missing prerequisites against a clean LF checkout.
+No local fork executable exists. [`LOCAL_WINDOWS_BUILD.md`](LOCAL_WINDOWS_BUILD.md)
+now defines a source-controlled one-click bootstrap that installs a dedicated
+VS 2022/Cygwin profile, verifies it, and builds from an LF source snapshot.
+It has not been executed locally yet. This host currently has Visual Studio
+2026 rather than the required dedicated VS 2022 instance and no isolated
+Cygwin profile. The manually dispatched hosted Windows workflow still supplies
+and validates its prerequisites against a clean LF checkout.
 
 Current-source Linux Actions run `29695793821` and Windows Actions run
 `29695815101` at `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed the five
