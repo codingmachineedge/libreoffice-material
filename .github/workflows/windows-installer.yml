@@ -152,6 +152,12 @@ jobs:
           Write-Host "CRT merge module: $($msm.FullName)"
           & $cmake --version
 
+      - name: Restore external source tarballs
+        uses: actions/cache/restore@v6
+        with:
+          path: C:\lo\tarballs
+          key: windows-external-tarballs-${{ hashFiles('download.lst') }}
+
       - name: Install Cygwin build prerequisites
         shell: pwsh
         run: |
@@ -208,7 +214,7 @@ jobs:
         run: |
           test "$(uname -o)" = Cygwin
           export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-          for tool in autoconf automake bison flex gawk gperf patch perl python3 rsync unzip wget zip; do
+          for tool in autoconf automake bison flex gawk gperf ninja patch perl python3 rsync unzip wget zip; do
             command -v "$tool"
           done
           perl -MArchive::Zip -e 1
@@ -241,6 +247,7 @@ jobs:
             --without-java \
             --without-junit \
             --without-dotnet \
+            --disable-cli \
             --without-help \
             --without-helppack-integration \
             --without-myspell-dicts \
@@ -353,10 +360,22 @@ jobs:
 
           Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           "@
-          gh release create $tag dist-windows/*.msi dist-windows/*.sha256 dist-windows/windows-msi-manifest.json `
+          $assets = @(
+            Get-ChildItem -LiteralPath dist-windows -Filter '*.msi' -File | ForEach-Object FullName
+            Get-ChildItem -LiteralPath dist-windows -Filter '*.sha256' -File | ForEach-Object FullName
+            (Resolve-Path -LiteralPath 'dist-windows\windows-msi-manifest.json').Path
+          )
+          if ($assets.Count -lt 3) {
+            throw 'The release asset set is incomplete.'
+          }
+          gh release create $tag @assets `
             --title "LibreOffice Material Windows x64 — experimental $short" `
+            --target '${{ github.sha }}' `
             --prerelease `
             --notes $notes
+          if ($LASTEXITCODE -ne 0) {
+            throw "Creating release $tag failed with exit code $LASTEXITCODE."
+          }
 
       - name: Preserve Windows build diagnostics
         if: always()
@@ -375,3 +394,10 @@ jobs:
             dist-windows\
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Save external source tarballs
+        if: always()
+        uses: actions/cache/save@v6
+        with:
+          path: C:\lo\tarballs
+          key: windows-external-tarballs-${{ hashFiles('download.lst') }}
