@@ -377,15 +377,20 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Reject stable publication outside main
+        if: steps.stage.outputs.found == 'true' && github.ref != 'refs/heads/main'
+        shell: pwsh
+        run: throw 'Stable Windows releases may be published only from refs/heads/main.'
+
       - name: Publish Windows MSI release
-        if: steps.stage.outputs.found == 'true'
+        if: steps.stage.outputs.found == 'true' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
           $short = '${{ github.sha }}'.Substring(0, 10)
-          $tag = "windows-msi-${{ github.run_number }}-$short"
+          $tag = "windows-msi-${{ github.run_number }}-${{ github.run_attempt }}-$short"
           $repository = '${{ github.repository }}'
           $releaseUrl = "https://github.com/$repository/releases/tag/$tag"
           $installerName = 'LibreOfficeMaterial-Windows-x64.msi'
@@ -412,12 +417,61 @@ jobs:
             <inst:relnote pos="1" src="$releaseUrl" />
           </inst:description>
           "@
+          $updateNamespace = 'http://update.libreoffice.org/description'
+          [xml]$updateFeedDocument = $updateFeed
+          if ($updateFeedDocument.DocumentElement.LocalName -ne 'description' `
+              -or $updateFeedDocument.DocumentElement.NamespaceURI -ne $updateNamespace) {
+            throw 'The generated update manifest has an invalid root element or namespace.'
+          }
+          function Get-RequiredFeedElement([string]$localName) {
+            $nodes = @($updateFeedDocument.GetElementsByTagName($localName, $updateNamespace))
+            if ($nodes.Count -ne 1) {
+              throw "The generated update manifest requires exactly one $localName element."
+            }
+            return $nodes[0]
+          }
+          $expectedFeedText = [ordered]@{
+            id = 'LibreOffice Material Windows x64'
+            version = "Windows x64 $short"
+            buildid = '${{ github.sha }}'
+            gitid = '${{ github.sha }}'
+            os = 'Windows'
+            arch = 'X86_64'
+          }
+          foreach ($entry in $expectedFeedText.GetEnumerator()) {
+            if ((Get-RequiredFeedElement $entry.Key).InnerText -ne $entry.Value) {
+              throw "The generated update manifest has an invalid $($entry.Key) value."
+            }
+          }
+          $updateElement = Get-RequiredFeedElement 'update'
+          $expectedUpdateAttributes = [ordered]@{
+            type = 'application/x-msi'
+            src = $installerUrl
+            sha256 = $installerHash
+            size = [string]$installerBytes
+            'release-tag' = $tag
+            'file-name' = $installerName
+          }
+          foreach ($entry in $expectedUpdateAttributes.GetEnumerator()) {
+            if ($updateElement.GetAttribute($entry.Key) -ne $entry.Value) {
+              throw "The generated update manifest has an invalid $($entry.Key) attribute."
+            }
+          }
+          $releaseNoteElement = Get-RequiredFeedElement 'relnote'
+          if ($releaseNoteElement.GetAttribute('pos') -ne '1' `
+              -or $releaseNoteElement.GetAttribute('src') -ne $releaseUrl) {
+            throw 'The generated update manifest has invalid release-note metadata.'
+          }
           $updateFeedPath = Join-Path 'dist-windows' 'windows-update-manifest.xml'
           $updateFeed | Set-Content -LiteralPath $updateFeedPath -Encoding utf8
+          [xml]$persistedUpdateFeed = (Get-Content -LiteralPath $updateFeedPath -Raw)
+          if ($persistedUpdateFeed.OuterXml -ne $updateFeedDocument.OuterXml) {
+            throw 'The persisted update manifest differs from the validated XML.'
+          }
           $notes = @"
           Unofficial, unsigned LibreOfficeDev Windows x64 build from commit ${{ github.sha }}.
 
-          The MSI passed the required native C++ regression targets (including the verified updater), an administrative extraction check, and contains soffice.exe. The built-in updater follows only this repository's normal Latest release, checks the canonical MSI byte count and SHA-256 after download and again before launch, and requires explicit default-No consent before starting the interactive Windows Installer. The package is currently unsigned; these checks detect corruption but do not replace publisher code signing. Its low-level off-screen desktop interaction and screenshot result will be linked here after the release asset is exercised on Windows. Do not install it over an official LibreOffice release.
+          The MSI passed the required native C++ regression targets, including updater protocol parsing, trusted-source validation, and file-integrity regression tests. It also passed an administrative extraction check and contains soffice.exe. The built-in updater follows only this repository's normal Latest release, checks the canonical MSI byte count and SHA-256 after download and again before launch, and requires explicit default-No consent before starting the interactive Windows Installer. The package is currently unsigned; these checks detect corruption but do not replace publisher code signing. Its low-level off-screen desktop interaction and screenshot result will be linked here after the release asset is exercised on Windows. Do not install it over an official LibreOffice release.
 
           Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           "@
@@ -439,7 +493,27 @@ jobs:
             throw "Creating release $tag failed with exit code $LASTEXITCODE."
           }
 
-          $release = gh release view $tag --json tagName,isDraft,isPrerelease,publishedAt,targetCommitish,url,assets | ConvertFrom-Json
+          $release = $null
+          for ($attempt = 1; $attempt -le 12; $attempt++) {
+            $releaseJson = gh release view $tag --json tagName,isDraft,isPrerelease,publishedAt,targetCommitish,url,assets
+            if ($LASTEXITCODE -eq 0) {
+              $candidate = ($releaseJson -join [Environment]::NewLine) | ConvertFrom-Json
+              $candidateMsi = @($candidate.assets | Where-Object name -eq $installerName)
+              $pendingAssets = @($candidate.assets | Where-Object { $_.state -ne 'uploaded' })
+              if ($candidateMsi.Count -eq 1 -and $pendingAssets.Count -eq 0 `
+                  -and [string]$candidateMsi[0].digest -eq "sha256:$installerHash") {
+                $release = $candidate
+                break
+              }
+            }
+            Write-Host "Waiting for uploaded release asset metadata ($attempt/12)."
+            if ($attempt -lt 12) {
+              Start-Sleep -Seconds 5
+            }
+          }
+          if (-not $release) {
+            throw 'The release assets did not reach uploaded state with the expected MSI digest.'
+          }
           if ($LASTEXITCODE -ne 0 -or $release.isDraft -or $release.isPrerelease `
               -or -not $release.publishedAt -or $release.targetCommitish -ne '${{ github.sha }}') {
             throw 'The published release is not a normal, public release for the built source commit.'
@@ -454,16 +528,48 @@ jobs:
           if (Compare-Object ($expectedAssets | Sort-Object) $actualAssets) {
             throw "The public release asset set is not exact: $($actualAssets -join ', ')"
           }
-          $publicMsi = $release.assets | Where-Object name -eq $installerName
+          $notUploaded = @($release.assets | Where-Object { $_.state -ne 'uploaded' })
+          if ($notUploaded.Count -ne 0) {
+            throw "Release assets are not uploaded: $($notUploaded.name -join ', ')"
+          }
+          $publicMsi = @($release.assets | Where-Object name -eq $installerName)
+          if ($publicMsi.Count -ne 1) {
+            throw 'The public release does not contain exactly one canonical MSI.'
+          }
           if ([long]$publicMsi.size -ne $installerBytes) {
             throw 'The public MSI asset size differs from the staged MSI.'
           }
-          if ($publicMsi.digest -and $publicMsi.digest -ne "sha256:$installerHash") {
+          if ([string]$publicMsi.digest -ne "sha256:$installerHash") {
             throw 'The public MSI asset digest differs from the staged MSI.'
           }
-          $latest = gh api "repos/$repository/releases/latest" | ConvertFrom-Json
-          if ($LASTEXITCODE -ne 0 -or $latest.tag_name -ne $tag -or $latest.draft -or $latest.prerelease) {
-            throw 'The new normal release is not the repository Latest release.'
+
+          $expectedFeedHash = (Get-FileHash -LiteralPath $updateFeedPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $publicFeedPath = Join-Path $env:RUNNER_TEMP "windows-update-manifest-${{ github.run_id }}-${{ github.run_attempt }}.xml"
+          $latestFeedUrl = "https://github.com/$repository/releases/latest/download/windows-update-manifest.xml"
+          $latestFeedVerified = $false
+          for ($attempt = 1; $attempt -le 12; $attempt++) {
+            $latestJson = gh api "repos/$repository/releases/latest"
+            if ($LASTEXITCODE -eq 0) {
+              $latest = ($latestJson -join [Environment]::NewLine) | ConvertFrom-Json
+              if ($latest.tag_name -eq $tag -and -not $latest.draft -and -not $latest.prerelease) {
+                Remove-Item -LiteralPath $publicFeedPath -Force -ErrorAction SilentlyContinue
+                curl.exe -fsSL --retry 2 --retry-delay 2 $latestFeedUrl -o $publicFeedPath
+                if ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $publicFeedPath -PathType Leaf)) {
+                  $publicFeedHash = (Get-FileHash -LiteralPath $publicFeedPath -Algorithm SHA256).Hash.ToLowerInvariant()
+                  if ($publicFeedHash -eq $expectedFeedHash) {
+                    $latestFeedVerified = $true
+                    break
+                  }
+                }
+              }
+            }
+            Write-Host "Waiting for public Latest release routing ($attempt/12)."
+            if ($attempt -lt 12) {
+              Start-Sleep -Seconds 5
+            }
+          }
+          if (-not $latestFeedVerified) {
+            throw 'The public Latest update manifest did not resolve to the validated release asset.'
           }
 
       - name: Stage Windows build diagnostics
