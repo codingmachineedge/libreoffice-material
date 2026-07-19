@@ -31,7 +31,9 @@ fallback in VCL, begin the Start Center surface/header treatment, and implement
 matched light and dark palettes of 23 semantic roles each. `open_all` declares
 the standard `suggested-action` class, which `VclBuilder` maps to
 `PushButton::setAction(true)` so the existing Material `extra="action"` states
-can be selected. The reader resolves
+can be selected under the opt-in Material renderer. The accompanying Windows
+MSI workflow repair restores the legacy CLI payload that its manifests require;
+neither follow-up has native build or runtime proof yet. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates

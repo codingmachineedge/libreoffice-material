@@ -158,6 +158,70 @@ jobs:
           Write-Host "x64 CRT merge module: $($msmX64.FullName)"
           & $cmake --version
 
+          # --without-dotnet disables the modern net_ure feature, but the
+          # legacy CLI bridge required by the MSI still needs .NET Framework
+          # tools. Match configure.ac's 32-bit registry lookups so runner-image
+          # drift fails before the long Cygwin configure/build sequence.
+          $registry32 = [Microsoft.Win32.RegistryKey]::OpenBaseKey(
+            [Microsoft.Win32.RegistryHive]::LocalMachine,
+            [Microsoft.Win32.RegistryView]::Registry32
+          )
+          try {
+            function Get-Registry32Value([string]$subKey, [string]$name) {
+              $key = $registry32.OpenSubKey($subKey)
+              if (-not $key) {
+                return $null
+              }
+              try {
+                return [string]$key.GetValue($name)
+              }
+              finally {
+                $key.Dispose()
+              }
+            }
+
+            $cscRoot = Get-Registry32Value `
+              'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client' 'InstallPath'
+            $csc = if ($cscRoot) { Join-Path $cscRoot 'csc.exe' } else { $null }
+            if (-not $csc -or -not (Test-Path -LiteralPath $csc)) {
+              throw 'The legacy CLI bridge requires .NET Framework csc.exe from the 32-bit registry view.'
+            }
+
+            $legacyNetFxVersions = @('4.8.1', '4.8', '4.7.2', '4.7.1', '4.7', '4.6.2', '4.6.1', '4.6')
+            $al = $null
+            $mscoree = $null
+            foreach ($version in $legacyNetFxVersions) {
+              $baseKey = "SOFTWARE\Microsoft\Microsoft SDKs\NETFXSDK\$version"
+              $toolRoot = Get-Registry32Value "$baseKey\WinSDK-NetFx40Tools" 'InstallationFolder'
+              $alCandidates = @()
+              if ($toolRoot) {
+                $alCandidates += Join-Path $toolRoot 'al.exe'
+                $alCandidates += Join-Path $toolRoot 'bin\al.exe'
+              }
+              foreach ($candidate in $alCandidates) {
+                if (-not $al -and $candidate -and (Test-Path -LiteralPath $candidate)) {
+                  $al = $candidate
+                }
+              }
+
+              $kitsRoot = Get-Registry32Value $baseKey 'KitsInstallationFolder'
+              $candidateMscoree = if ($kitsRoot) { Join-Path $kitsRoot 'Lib\um\x64\mscoree.lib' } else { $null }
+              if (-not $mscoree -and $candidateMscoree -and (Test-Path -LiteralPath $candidateMscoree)) {
+                $mscoree = $candidateMscoree
+              }
+            }
+
+            if (-not $al -or -not $mscoree) {
+              throw 'The legacy CLI bridge requires .NET Framework al.exe and x64 mscoree.lib from the 32-bit registry view.'
+            }
+            Write-Host "Legacy CLI csc.exe: $csc"
+            Write-Host "Legacy CLI al.exe: $al"
+            Write-Host "Legacy CLI mscoree.lib: $mscoree"
+          }
+          finally {
+            $registry32.Dispose()
+          }
+
       - name: Restore external source tarballs
         id: external-cache
         uses: actions/cache/restore@v6

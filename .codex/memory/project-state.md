@@ -87,13 +87,15 @@ The current native source has not completed native CI or run as LibreOffice, so
 these milestones do not prove a whole-GUI rewrite, updater runtime, installer,
 release, or any completed application surface.
 
-Baseline Windows Actions run `29670528974` at
-`79c459cb5b042ab5d4bc70023c7e4bbe0ed9d38c` configured and remains in its
-required native C++ regression stage. It predates the updater source and is not
-final validation. Final Linux validation of the current source is pending. No
-current-source native CI/build, runtime, installer, normal release, headless UI
-smoke, accessibility smoke, or accepted capture has completed. Public assetless
-release/tag `e` remains non-evidence.
+Preceding Windows Actions run `29678095646` at
+`937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
+and its four then-required native C++ targets, then failed only in MSI packaging
+because `--disable-cli` suppressed legacy CLI payloads required by the manifest.
+The post-tenth repair at `1e97d960b` is not yet native-verified. Final Linux
+validation of the current source is pending. No current-source native CI/build,
+runtime, installer, normal release, headless UI smoke, accessibility smoke, or
+accepted capture has completed. Public assetless release/tag `e` remains
+non-evidence.
 
 ## Recorded facts
 
@@ -122,6 +124,8 @@ release/tag `e` remains non-evidence.
   `1e2dca2f76c5f7481451ad0f419a7053222e55df`.
 - Tenth Material VCL source milestone commit:
   `18714cc1c7421225dd66b925e6295e13b56a7a7a`.
+- Post-tenth Start Center action and Windows CLI repair source commit:
+  `1e97d960be2b4d736dc00ec6a4d76fb4cf5dc905`.
 - The imported upstream and fork import commits shared tree object
   `68ccb73abac4f7da67f894f11b0802627e90b474` when verified.
 - Initial native source slice: packaged Material definition; opt-in file-widget
@@ -242,8 +246,11 @@ release/tag `e` remains non-evidence.
 - Stable Windows publication is draft-first on `main`; an exact verified draft
   is promoted to a normal public non-prerelease Latest release only after its
   target and assets pass, with failed-draft cleanup.
-- Baseline Windows run `29670528974` at `79c459cb5` and final Linux validation of
-  the current source are pending; neither is accepted build or release evidence.
+- Preceding Windows run `29678095646` at `937b61fd3` passed configure,
+  `Library_svxcore`, and its four former required native C++ targets, then
+  failed MSI packaging because the legacy CLI payload was disabled. The
+  `1e97d960b` repair and final Linux validation of the current source are
+  pending; neither is accepted build or release evidence.
 - Required runtime opt-in: `VCL_DRAW_WIDGETS_FROM_FILE=1` and
   `VCL_FILE_WIDGET_THEME=material`.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
@@ -327,7 +334,8 @@ release/tag `e` remains non-evidence.
    Windows native build, recording the exact commit and configuration;
 2. run `tools_test`, `extensions_test_update`,
    `vcl_widget_definition_reader_test`, and
-   `vcl_file_definition_widget_draw_test` against the current source;
+   `vcl_file_definition_widget_draw_test`, and `vcl_treeview` against the
+   current source;
 3. launch the built start center with the two opt-in variables and an isolated
    profile on the proven headless desktop;
 4. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
@@ -349,11 +357,12 @@ release/tag `e` remains non-evidence.
 - no complete supported local LibreOffice build profile exists: local VS 2022
   Build Tools has MSVC and CMake but lacks ATL and CRT merge modules; SDK 26100
   is complete; and no supported Cygwin or WSL helper is installed. The hosted
-  Windows workflow supplies those prerequisites. Baseline Windows run
-  `29670528974` remains in native regression testing and predates the updater;
-  final Linux validation of the current source is pending. The current-source
-  native targets, installer/release, real application capture, headless smoke,
-  and accessibility smoke have not completed.
+  Windows workflow supplies those prerequisites. Preceding Windows run
+  `29678095646` passed its former native test set but failed MSI packaging for
+  the missing legacy CLI payload; the `1e97d960b` repair and final Linux
+  validation remain pending. The current-source native targets,
+  installer/release, real application capture, headless smoke, and accessibility
+  smoke have not completed.
 
 ## Multi-repository boundary
 

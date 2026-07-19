@@ -65,9 +65,11 @@
             incomplete, and verified application screenshots remain at zero.
             The public assetless release/tag <code>e</code> contains no build
             and is not an installer or accepted evidence. A genuine Windows MSI
-            workflow now exists, but baseline Windows run
-            <code>29670528974</code> and final current-source Linux validation
-            remain pending. There is still no downloadable build.
+            workflow now exists. The preceding Windows run
+            <code>29678095646</code> reached MSI packaging after its native
+            targets, but lacked the legacy CLI payload; the repair and final
+            current-source Linux validation remain unverified. There is still
+            no downloadable build.
           </p>
         </div>
 
@@ -229,10 +231,12 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           ATL and the CRT merge modules required for packaging; installed SDK
           26100 is complete, but there is no supported local Cygwin or WSL helper.
           The hosted Windows workflow supplies and validates those prerequisites.
-          Baseline Windows run <code>29670528974</code> at
-          <code>79c459cb5</code> is still in its required native C++ test stage
-          and predates the updater source. Final Linux validation of the current
-          source is pending. No accepted current-source build, installer,
+          The preceding Windows run <code>29678095646</code> at
+          <code>937b61fd3</code> passed configure, <code>Library_svxcore</code>,
+          and its four former required native C++ targets, then failed MSI
+          packaging because the legacy CLI payload was disabled. The current
+          repair and final Linux validation remain unverified. No accepted
+          current-source build, installer,
           release, real app run, headless smoke, or accessibility smoke exists.
         </p>
       </section>

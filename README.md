@@ -4,7 +4,8 @@ An experimental LibreOffice engineering fork exploring a suite-wide Material
 Design 3 interface while retaining LibreOffice's native implementation stack,
 document engine, file-format support, and accessibility foundations.
 
-> **Current development focus: Phase 1 — tenth Material VCL source milestone.**
+> **Current development focus: Phase 1 — tenth Material VCL milestone plus a
+> post-tenth Start Center and Windows MSI source follow-up.**
 > Phase 0's native-build and application-evidence gate remains open. Semantic
 > widget tokens, full-track progress indicators, value-sensitive level
 > indicators, native outlined frames, net-less tree connectors, stricter VCL
@@ -22,11 +23,12 @@ document engine, file-format support, and accessibility foundations.
 > Linux build, while [`windows-installer.yml`](.github/workflows/windows-installer.yml)
 > now provides a manually dispatched Visual Studio 2022/Cygwin path for a real
 > Windows x64 MSI. Both publish **only** after genuine packages pass structural
-> validation. Baseline Windows run
-> [`29670528974`](https://github.com/codingmachineedge/libreoffice-material/actions/runs/29670528974)
-> at `79c459cb5` is still in progress in the required native C++ test stage; it
-> predates the updater source. Final Linux validation of the current source is
-> also pending. No native build, runtime, release, headless UI, or accessibility
+> validation. The preceding Windows run
+> [`29678095646`](https://github.com/codingmachineedge/libreoffice-material/actions/runs/29678095646)
+> at `937b61fd3` passed configure, `Library_svxcore`, and its four required
+> native C++ targets, then failed MSI packaging because the legacy CLI payload
+> was disabled. The current CLI repair and final Linux validation remain
+> unverified. No native build, runtime, release, headless UI, or accessibility
 > result is accepted yet, so there is still no MSI to download. A public
 > assetless release/tag named `e` exists, but it contains no build and does not
 > satisfy the project's gates.
@@ -290,10 +292,11 @@ and the imported build files before configuring a machine.
 > installed Windows SDK 26100 is complete, but no supported Cygwin or WSL helper
 > environment is installed. The manually dispatched hosted Windows workflow
 > supplies and validates those prerequisites against a clean LF checkout. The
-> baseline Windows run `29670528974` at `79c459cb5` has configured successfully
-> and is still running the required native C++ regression stage, but it predates
-> the updater source and is not final validation. Final Linux validation of the
-> current source is pending. No completed current-source native C++ test,
+> preceding Windows run `29678095646` at `937b61fd3` passed configure,
+> `Library_svxcore`, and its four former required native C++ targets, then
+> failed MSI packaging because `--disable-cli` omitted the payload. The current
+> CLI repair and final Linux validation remain unverified. No completed
+> current-source native C++ test,
 > LibreOffice application run, installer, normal release, headless UI smoke,
 > accessibility smoke, or accepted capture has occurred yet.
 

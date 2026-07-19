@@ -81,6 +81,12 @@ targets, build, packaging, and artifact staging therefore did not run. The
 dependency list has since been corrected, but that failed run produced no
 installer, `soffice` process, or real LibreOffice capture.
 
+The preceding Windows run, `29678095646` at `937b61fd3`, passed configure,
+`Library_svxcore`, and its four then-required native C++ targets before MSI
+packaging failed because `--disable-cli` suppressed the legacy CLI payload the
+manifest requires. The current source removes that switch and adds payload
+checks, but no post-repair MSI or off-screen LibreOffice run is claimed here.
+
 ## Evidence principles
 
 - test a binary built from the exact recorded fork commit;

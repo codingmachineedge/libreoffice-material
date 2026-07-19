@@ -44,17 +44,18 @@ temporary Notepad process, but no LibreOffice build or window was involved. A
 local Visual Studio Build Tools instance still lacks ATL and CRT merge modules,
 and no supported Cygwin or WSL helper environment is installed. The hosted
 Windows workflow uses a clean LF checkout and a pinned runner that declares
-those components. Baseline Windows run `29670528974` at `79c459cb5` is still in
-the required native C++ regression stage and predates the updater source, so it
-is not final build evidence. Final Linux validation of the current source is
-also pending.
+those components. The preceding Windows run `29678095646` at `937b61fd3`
+passed configure, `Library_svxcore`, and its four former required native C++
+targets, then failed MSI packaging because `--disable-cli` omitted a legacy CLI
+payload that the manifest requires. The current CLI repair and final Linux
+validation remain unverified.
 
 Earlier Linux run `29665678719` at commit `542e4077b` installed the previous
 missing Perl module but stopped during prerequisite validation because `nasm`
 was absent. The current final Linux validation is pending. The native workflows
 gate packaging on `tools_test`, `extensions_test_update`,
 `vcl_widget_definition_reader_test`, and
-`vcl_file_definition_widget_draw_test`; none is yet accepted as final
+`vcl_file_definition_widget_draw_test`, and `vcl_treeview`; none is yet accepted as final
 current-source build evidence.
 
 The source now contains a Windows-only consent-based update path. It reads the

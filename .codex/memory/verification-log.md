@@ -803,6 +803,7 @@ is claimed until the repaired exact-source rerun completes.
 
 ## 2026-07-19 — Start Center action and MSI CLI source repair
 
+- Source commit: `1e97d960be2b4d736dc00ec6a4d76fb4cf5dc905`.
 - The standard GTK `suggested-action` class is now retained by the generic UI
   builder until the leaf widget exists, then mapped by `VclBuilder` to
   `PushButton::setAction(true)`. `startcenter.ui` applies it to `open_all`, so
