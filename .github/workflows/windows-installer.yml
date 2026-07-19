@@ -180,9 +180,16 @@ jobs:
             'perl-Font-TTF', 'perl-IO-String', 'pkg-config', 'python3', 'rsync',
             'unzip', 'wget', 'which', 'zip'
           ) -join ','
-          & $setup -q -n -N -d -R C:\cygwin64 -s https://mirrors.kernel.org/sourceware/cygwin/ -P $packages
-          if ($LASTEXITCODE -ne 0) {
-            throw "Cygwin setup failed with exit code $LASTEXITCODE."
+          $setupArguments = @(
+            '-q', '-n', '-N', '-d',
+            '-R', 'C:\cygwin64',
+            '-s', 'https://mirrors.kernel.org/sourceware/cygwin/',
+            '-P', $packages
+          )
+          $setupProcess = Start-Process -FilePath $setup -ArgumentList $setupArguments `
+            -WindowStyle Hidden -Wait -PassThru
+          if ($setupProcess.ExitCode -ne 0) {
+            throw "Cygwin setup failed with exit code $($setupProcess.ExitCode)."
           }
 
           $toolDir = 'C:\cygwin64\opt\lo\bin'
