@@ -77,6 +77,8 @@ python bin/check_search_field_coverage.py
 python bin/test_search_field_coverage.py
 python bin/check-windows-regex-builder-foundation.py
 python bin/test_windows_regex_builder_foundation.py
+python bin/check-windows-regex-search-integrations.py
+python bin/test_windows_regex_search_integrations.py
 ```
 
 This is the minimum audited native inventory, not permission to ignore a new
@@ -88,8 +90,16 @@ The shared native foundation now provides an ICU/LibreOffice search service,
 literal and regex modes, `i/g/m/s`, bounded match testing, live errors, token
 insertion, and embedded Build/Test/Reference/Examples content. Its
 `GtkPopover` is anchored to the adjacent builder button and deliberately is not
-a modal or bottom-right dialog. Per-field integration across the registry and
-native runtime proof remain open.
+a modal or bottom-right dialog.
+
+`regex-search-integrations.json` is the separate source-implementation ledger.
+It currently records Calc Go to Sheet as 1 of 26 shipping fields. Its validator
+requires direct entry/button adjacency, translated accessible metadata,
+controller-owned change dispatch, the legacy literal case-sensitive default,
+and one `utl::TextSearch` construction before the item loop. Ten mutations
+prove those requirements fail closed. The remaining 25 shipping integrations
+and native build/runtime proof remain open; `runtime_verified: false` is
+intentional until exact-build interaction evidence exists.
 
 ## No unsolicited startup or promotion prompts
 

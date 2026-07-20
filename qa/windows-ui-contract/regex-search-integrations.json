@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "contract": "windows-native-regex-search-integrations",
+  "platform": "windows",
+  "expected_integrations": 1,
+  "integrations": [
+    {
+      "coverage_id": "calc.go-to-sheet",
+      "surface": "Calc Go to Sheet",
+      "status": "source-integrated",
+      "ui_file": "sc/uiconfig/scalc/ui/gotosheetdialog.ui",
+      "entry_id": "entry-mask",
+      "builder_button_id": "entry-mask_regex_builder",
+      "header_file": "sc/source/ui/inc/gototabdlg.hxx",
+      "source_file": "sc/source/ui/miscdlgs/gototabdlg.cxx",
+      "owner_type": "ScGoToTabDlg",
+      "owner_changed_handler": "FindNameHdl",
+      "entry_member": "m_xEnNameMask",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xDialog.get()",
+      "matcher_strategy": "compiled-once-utl-textsearch",
+      "default_mode": "literal-case-sensitive",
+      "runtime_verified": false
+    }
+  ]
+}

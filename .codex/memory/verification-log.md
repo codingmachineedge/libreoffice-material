@@ -1633,6 +1633,25 @@ build or runtime evidence.
   No per-field integration, visible builder interaction, accessibility runtime,
   performance limit, or exact-build proof is claimed.
 
+## 2026-07-20 — first native regex-search field integration
+
+- `bin/check-windows-regex-search-integrations.py` passed Calc Go to Sheet's
+  adjacent accessible builder, controller-owned callback, explicit literal
+  case-sensitive compatibility, invalid-pattern fail-closed behavior, and one
+  `utl::TextSearch` construction before the sheet loop. All ten focused
+  mutation tests passed.
+- The independent search-field coverage contract still reports 26 shipping,
+  one planned, and 16 excluded controls; its ten mutations pass. The shared
+  builder-foundation validator and all eight of its mutations pass too.
+- `bin/lint-ui.py`, `bin/gla11y`, and an XML parse pass for
+  `sc/uiconfig/scalc/ui/gotosheetdialog.ui`. The workflow YAML, implementation
+  registry JSON, all other Windows UI contract jobs, and the nine-check
+  prototype validator also pass locally.
+- This isolated source worktree has no `config_host.mk`, generated `Makefile`,
+  or `autogen.lastrun`, so no native compile, CppUnit execution, visible builder
+  interaction, or runtime accessibility proof is claimed. The implementation
+  ledger therefore retains `runtime_verified: false`.
+
 ## 2026-07-20 — local Git notification-history source foundation
 
 - `bin/check-notification-store-contract.py` passed the public state model,

@@ -41,6 +41,12 @@ jobs:
       - name: Run regex-builder foundation mutations
         run: python3 bin/test_windows_regex_builder_foundation.py
 
+      - name: Validate native regex-search integrations
+        run: python3 bin/check-windows-regex-search-integrations.py
+
+      - name: Run regex-search integration mutations
+        run: python3 bin/test_windows_regex_search_integrations.py
+
       - name: Validate Windows no-nag startup contract
         run: python3 bin/check-windows-no-nag-contract.py
 

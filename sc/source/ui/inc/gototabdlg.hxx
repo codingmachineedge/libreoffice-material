@@ -11,10 +11,16 @@
 #pragma once
 
 #include <vcl/weld/DialogController.hxx>
+#include <vcl/weld/Button.hxx>
 #include <vcl/weld/Entry.hxx>
 #include <vcl/weld/Frame.hxx>
 #include <vcl/weld/TreeView.hxx>
 #include <vcl/weld/Window.hxx>
+
+namespace sfx2
+{
+class RegexSearchController;
+}
 
 class ScGoToTabDlg : public weld::GenericDialogController
 {
@@ -23,8 +29,11 @@ private:
 
     std::unique_ptr<weld::Frame> m_xFrameMask;
     std::unique_ptr<weld::Entry> m_xEnNameMask;
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
     std::unique_ptr<weld::Frame> m_xFrameSheets;
     std::unique_ptr<weld::TreeView> m_xLb;
+    // Must be destroyed before the entry and button whose handlers it owns.
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     DECL_LINK(DblClkHdl, const weld::TreeIter&, bool);
     DECL_LINK(FindNameHdl, weld::TextWidget&, void);

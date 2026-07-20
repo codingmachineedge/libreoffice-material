@@ -11,6 +11,8 @@
 #undef SC_DLLIMPLEMENTATION
 
 #include <gototabdlg.hxx>
+#include <sfx2/RegexSearchController.hxx>
+#include <unotools/textsearch.hxx>
 #include <vcl/vclenum.hxx>
 #include <vcl/weld/Builder.hxx>
 #include <vcl/weld/Dialog.hxx>
@@ -20,13 +22,23 @@ ScGoToTabDlg::ScGoToTabDlg(weld::Window* pParent)
                               u"GoToSheetDialog"_ustr)
     , m_xFrameMask(m_xBuilder->weld_frame(u"frame-mask"_ustr))
     , m_xEnNameMask(m_xBuilder->weld_entry(u"entry-mask"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"entry-mask_regex_builder"_ustr))
     , m_xFrameSheets(m_xBuilder->weld_frame(u"frame-sheets"_ustr))
     , m_xLb(m_xBuilder->weld_tree_view(u"treeview"_ustr))
 {
     m_xLb->set_selection_mode(SelectionMode::Single);
     m_xLb->set_size_request(-1, m_xLb->get_height_rows(10));
     m_xLb->connect_item_activated(LINK(this, ScGoToTabDlg, DblClkHdl));
-    m_xEnNameMask->connect_changed(LINK(this, ScGoToTabDlg, FindNameHdl));
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xDialog.get(), *m_xEnNameMask, *m_xRegexBuilderButton,
+        LINK(this, ScGoToTabDlg, FindNameHdl));
+
+    // Preserve the legacy literal, case-sensitive default until the user explicitly chooses
+    // different settings in the advanced builder.
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::Literal;
+    aState.Flags.CaseInsensitive = false;
+    m_xRegexSearchController->SetState(aState);
 }
 
 ScGoToTabDlg::~ScGoToTabDlg() {}
@@ -61,24 +73,18 @@ IMPL_LINK_NOARG(ScGoToTabDlg, DblClkHdl, const weld::TreeIter&, bool)
 
 IMPL_LINK_NOARG(ScGoToTabDlg, FindNameHdl, weld::TextWidget&, void)
 {
-    const OUString aMask = m_xEnNameMask->get_text();
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    std::unique_ptr<utl::TextSearch> xSearch;
+    if (bValid && !bEmpty)
+        xSearch = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
+
     m_xLb->clear();
-    if (aMask.isEmpty())
+    for (const OUString& rSheetName : maCacheSheetsNames)
     {
-        for (const OUString& s : maCacheSheetsNames)
-        {
-            m_xLb->append_text(s);
-        }
-    }
-    else
-    {
-        for (const OUString& s : maCacheSheetsNames)
-        {
-            if (s.indexOf(aMask) >= 0)
-            {
-                m_xLb->append_text(s);
-            }
-        }
+        if (bEmpty || (xSearch && xSearch->searchForward(rSheetName)))
+            m_xLb->append_text(rSheetName);
     }
 }
 
