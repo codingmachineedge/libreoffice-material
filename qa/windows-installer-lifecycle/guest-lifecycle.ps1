@@ -153,7 +153,7 @@ function Invoke-MsiQuery {
             }
         }
         $view.GetType().InvokeMember('Close', 'InvokeMethod', $null, $view, $null) | Out-Null
-        ,$rows
+        $rows
     }
     finally {
         if ($view) {
@@ -175,6 +175,17 @@ function Get-MsiIdentity {
         -Sql 'SELECT `Property`,`Value` FROM `Property`') {
         $properties[[string]$row[0]] = [string]$row[1]
     }
+    foreach ($requiredProperty in @(
+        'ProductCode',
+        'ProductName',
+        'ProductVersion',
+        'UpgradeCode',
+        'ALLUSERS',
+        'MSIRESTARTMANAGERCONTROL'
+    )) {
+        Assert-Condition ($properties.ContainsKey($requiredProperty)) `
+            "MSI Property table is missing required value: $requiredProperty"
+    }
     $rebootActions = @()
     foreach ($row in Invoke-MsiQuery -DatabasePath $LiteralPath `
         -Sql 'SELECT `Action`,`Condition`,`Sequence` FROM `InstallExecuteSequence`') {
@@ -187,12 +198,12 @@ function Get-MsiIdentity {
         }
     }
     [ordered]@{
-        product_code = [string]$properties.ProductCode
-        product_name = [string]$properties.ProductName
-        product_version = [string]$properties.ProductVersion
-        upgrade_code = [string]$properties.UpgradeCode
-        all_users = [string]$properties.ALLUSERS
-        restart_manager_control = [string]$properties.MSIRESTARTMANAGERCONTROL
+        product_code = [string]$properties['ProductCode']
+        product_name = [string]$properties['ProductName']
+        product_version = [string]$properties['ProductVersion']
+        upgrade_code = [string]$properties['UpgradeCode']
+        all_users = [string]$properties['ALLUSERS']
+        restart_manager_control = [string]$properties['MSIRESTARTMANAGERCONTROL']
         reboot_actions = @($rebootActions)
     }
 }

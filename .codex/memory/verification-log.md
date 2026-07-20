@@ -1349,3 +1349,29 @@ build or runtime evidence.
 - PowerShell parsing, the dependency-free static validator, PowerShell 5.1 and
   7 array-shape probes, and direct-host WDAG refusal all pass. This failed run is
   diagnostic only and proves no install/update/repair/uninstall result.
+
+## 2026-07-20 — second isolated launch reached MSI identity preflight
+
+- Fresh prepared run
+  `20260720-043916-4641037-b451b45fa51a423c880f7092faa45274`
+  passed `Inspect` with an empty output map, old/corrected MSI hashes
+  `437b059c…a43` / `180e511c…eea`, guest SHA-256 `878676d5…448e`, and WSB
+  SHA-256 `fa747271…20a9`. It launched through the low-level off-screen desktop
+  `LOMaterialMSI-e6fc0920-0444`.
+- The serialization fix worked: the guest published valid empty JSON arrays,
+  `results.json`, a byte-pinned `artifact-manifest.json`, and atomic
+  `FAILURE.json`. It failed before any MSI step with strict-mode
+  `PropertyNotFoundException` for `ProductCode`; wrapper exit was exact `1` and
+  no `host-verification.json` was accepted.
+- The query helper's final `,$rows` emitted one object containing all 107 rows,
+  so identity parsing saw no `ProductCode` key. The source now returns `$rows`,
+  requires the six pinned Property-table keys, and uses indexed hashtable reads.
+  A PowerShell 5.1 probe executing the exact three reviewed function definitions
+  against both retained MSI bytes returned old ProductCode
+  `{F6673D3A-81F6-462E-934F-19438F08C9EA}`, corrected ProductCode
+  `{2BD7C198-30D4-4BC6-AE7C-52B7F5DBAF71}`, expected test UpgradeCode/version,
+  `ALLUSERS=1`, `MSIRESTARTMANAGERCONTROL=0`, and zero authored reboot actions.
+- Host before/after fingerprints were identical, no host LibreOffice
+  registration appeared, the server-first/run-bound graceful client disposal
+  path completed, the off-screen window count reached zero, and the desktop was
+  released. This is diagnostic/preflight evidence only; no MSI operation ran.

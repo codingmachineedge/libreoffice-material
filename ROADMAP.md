@@ -200,6 +200,14 @@ and LibreOffice-registration fingerprints remained identical. The harness now
 serializes through typed arrays, tracks the current packaged Sandbox server and
 remote-session process names, and validates retained host proof in `Verify`.
 This diagnostic is not lifecycle runtime proof; a fresh run remains required.
+Fresh run `20260720-043916-4641037-b451b45fa51a423c880f7092faa45274`
+then proved the JSON fix and automatic packaged-client disposal, but stopped
+before any MSI operation because the query helper returned all 107 Property
+rows as one nested collection. It produced a hash-manifested `FAILURE.json`,
+empty step/snapshot arrays, exit `1`, identical host fingerprints, and zero
+remaining Sandbox processes. The helper now emits each row separately and its
+exact PowerShell 5.1 source reads both pinned MSI identities correctly. This is
+also diagnostic only; another fresh run is required.
 
 An interactive, dependency-free Material design reference for the whole suite is
 published at [`site/prototype.html`](site/prototype.html): a hand-built HTML

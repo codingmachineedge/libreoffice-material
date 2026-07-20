@@ -128,6 +128,14 @@ JSON array shape, tracks the current packaged Sandbox server/remote-session
 names, gracefully closes only a run-bound client after backend exit, and makes
 `Verify` require host-retained proof. This remains diagnostic harness evidence
 until a fresh lifecycle run passes.
+Fresh run `20260720-043916-4641037-b451b45fa51a423c880f7092faa45274`
+proved the serialization and packaged-Sandbox disposal fixes, then returned `1`
+before any MSI step because `Invoke-MsiQuery` wrapped all 107 Property-table rows
+inside one collection. It retained a hash-manifested failure bundle with empty
+step/snapshot arrays; host fingerprints again matched and zero Sandbox processes
+remained. The query now emits individual rows, requires all pinned MSI properties,
+and passes an exact-source PowerShell 5.1 identity probe for both retained MSIs.
+Another fresh run is required, so installer lifecycle acceptance remains open.
 
 The exact-source local builds, corrected release, and light/dark/high-contrast Start Center smoke
 do not prove a whole-GUI rewrite, updater runtime, installer lifecycle, or any

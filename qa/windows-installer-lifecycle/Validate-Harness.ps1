@@ -194,6 +194,12 @@ if ($failures.Count -eq 0) {
     }
     Assert-Match $guestText 'New-Object\s+-ComObject\s+WindowsInstaller\.Installer' `
         'Guest preflight must use the Windows Installer COM API.'
+    Assert-Count $guestText '(?m)^\s*\$rows\s*$' 1 `
+        'MSI query results must return each row rather than one nested row collection.'
+    Assert-NotMatch $guestText '(?m)^\s*,\$rows\s*$' `
+        'MSI query results must not wrap every row in one outer array.'
+    Assert-Match $guestText '\$properties\.ContainsKey\(\$requiredProperty\)' `
+        'MSI identity parsing must require every pinned Property-table field.'
     Assert-Match $guestText 'function\s+Assert-WindowsSandboxIdentity' `
         'Guest must positively attest the Windows Sandbox boundary.'
     Assert-Match $guestText "WDAGUtilityAccount" `

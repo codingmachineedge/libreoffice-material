@@ -140,6 +140,26 @@ shape. The host also recognizes `WindowsSandboxRemoteSession.exe` and
 serialization probes pass, but only a fresh complete run can close the runtime
 gate.
 
+### Second live diagnostic
+
+Fresh run
+`20260720-043916-4641037-b451b45fa51a423c880f7092faa45274`
+sealed the corrected guest and both MSI hashes, passed `Inspect`, and launched
+on a new off-screen desktop. It proved the array serialization fix by publishing
+valid empty arrays plus a byte-pinned artifact manifest. It then failed closed
+before any MSI step because `Invoke-MsiQuery` returned all 107 Property-table
+rows inside one outer collection, so strict-mode identity parsing could not find
+`ProductCode`. Exit code was `1`, both host safety snapshots matched, the new
+server-first/run-bound client disposal completed, and zero Sandbox processes
+remained.
+
+The query helper now emits its rows directly, requires all pinned Property-table
+keys, and reads them by hashtable index. A PowerShell 5.1 probe executing the
+exact reviewed function definitions against both retained MSIs returned the
+expected distinct ProductCodes, shared test UpgradeCode/version, machine-wide
+scope, zero reboot actions, and restart-manager property. This still is not
+installer lifecycle proof.
+
 ## Evidence boundary
 
 Preparing or statically validating this harness is not installer lifecycle

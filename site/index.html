@@ -279,7 +279,9 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           results remain pending. A first isolated lifecycle launch failed
           closed during result serialization, left the host safety state
           unchanged, and produced no accepted lifecycle bundle; the corrected
-          harness still requires a fresh passing run.
+          harness still requires a fresh passing run. A second isolated run
+          proved that serialization/disposal repair, then failed before any MSI
+          step on a nested metadata-query result; that defect is also corrected.
         </p>
       </section>
 
