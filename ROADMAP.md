@@ -178,9 +178,9 @@ reading document text or invoking UI actions. The accepted light, dark, and
 forced-high-contrast Start Center runs collected nine complete bounded trees
 with no collector errors; this is a
 collector smoke result, not a full accessibility audit.
-The required native targets, local Windows MSI, and light Start Center headless
-smoke have completed for exact source `577059e274`; its older normal release and
-four public Latest assets are also verified. The launch fix at `fbba560e2` passed
+The required native targets, local Windows MSI, and newest light Start Center
+headless smoke have completed for exact source `7029dccf4`; the older normal
+release and four public Latest assets are also verified. The launch fix at `fbba560e2` passed
 `CppunitTest_extensions_test_update`, an incremental full product/MSI build, and
 Windows Installer administrative extraction. Its corrected unsigned
 199,688,192-byte MSI is `180e511c…afeea`; the 4,885-file, 603,901,200-byte
@@ -189,8 +189,11 @@ extraction returned `0`, and its updater DLL matches the built DLL at
 Home/Recent Documents, Tab-focus, and Templates smoke with three complete
 bounded UNO trees: 96/49, 96/49, and 111/64 total/visible nodes, zero collector
 errors, no partial capture, normal termination, zero remaining matching
-processes/windows, and closed desktop/driver handles. The canonical light run is
-[`20260720-112425-fbba560e27-windows-headless-light`](docs/evidence/runs/20260720-112425-fbba560e27-windows-headless-light/results.json).
+processes/windows, and closed desktop/driver handles. The newest exact build
+repeated those three states with atomic driver-side HWND/PID/thread/DPI
+ownership proof, normal termination, and complete cleanup; its canonical light
+run is
+[`20260720-135505-7029dccf40-windows-headless-light`](docs/evidence/runs/20260720-135505-7029dccf40-windows-headless-light/results.json).
 The former canonical Home/Templates-only run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/)
 remains historical evidence.

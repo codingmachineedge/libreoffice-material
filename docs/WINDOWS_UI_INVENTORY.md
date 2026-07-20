@@ -32,17 +32,18 @@ satisfy an application-surface `B`; and the HTML prototype satisfies only `D`.
 
 Evidence keys:
 
-- `E-BLD` — the exact-source Windows installation set and five required native
-  targets at
-  [`577059e2741185b512c184c64685c16d335d10ea`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/577059e2741185b512c184c64685c16d335d10ea),
+- `E-BLD` — the exact-source Windows MSI/installation set and five required
+  native targets at
+  [`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3),
   recorded in the [roadmap](../ROADMAP.md) and
   [local build record](LOCAL_WINDOWS_BUILD.md). This proves compilation and
   focused source tests, not a rendered component.
 - `E-SC` — nine accepted Start Center images plus bounded UNO trees: light,
   dark, and forced high contrast, each at Home, visible Tab focus, and
-  Templates, from source
-  [`fbba560e27db26de605c40aa237c554c1f0744b1`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/fbba560e27db26de605c40aa237c554c1f0744b1).
-  Exact run manifests: [light](evidence/runs/20260720-112425-fbba560e27-windows-headless-light/manifest.json),
+  Templates. The light trio is from exact source
+  [`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3);
+  dark/high contrast remain from `fbba560e27`. Exact run manifests:
+  [light](evidence/runs/20260720-135505-7029dccf40-windows-headless-light/manifest.json),
   [dark](evidence/runs/20260720-033252-fbba560e27-windows-headless-dark/manifest.json),
   and [forced high contrast](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
   See also the [screenshot index](SCREENSHOTS.md) and

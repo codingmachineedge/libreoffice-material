@@ -397,17 +397,20 @@ Public assetless release/tag `e` remains non-evidence.
   it was not retained because it was unrelated to LibreOffice.
 - Canonical verified exact-source Start Center gallery captures: **9**: three
   light-profile files from committed-harness run
-  `20260720-112425-fbba560e27-windows-headless-light`, three dark files from
+  `20260720-135505-7029dccf40-windows-headless-light`, three dark files from
   `20260720-033252-fbba560e27-windows-headless-dark`, and three
   forced-high-contrast files from
   `20260720-033338-fbba560e27-windows-headless-highcontrast`. Every appearance
   includes a visible Tab focus state whose UNO tree exposes the `Open File` push
-  button as the sole `FOCUSED` node. The earlier corrected light run
+  button as the sole `FOCUSED` node. The superseded three-image corrected light
+  run `20260720-112425-fbba560e27-windows-headless-light`, earlier corrected light run
   `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression` and older
   `20260720-012853-577059e274-vs2026-msi-raster` pair remain historical accepted
-  proof. The fresh light run used committed harness
-  `1bb67261794d190f099c92d9dfdd48722785db34`, clean dedicated same-token driver
-  `beed66ca6ed2503e6170ee1e1158247f1c2f0140`, and ended with normal UNO
+  proof. The newest light run used exact source `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`,
+  committed harness `861555ee914178cf05f9e39362f6b58bd6d1990f`,
+  clean dedicated same-token driver
+  `547a102a49169d41da876de217856229ab7c03a1`, atomically bound HWND/PID/thread/DPI
+  inside the off-screen desktop enumeration callback, and ended with normal UNO
   termination, zero exact-payload processes/windows, a closed desktop, and a
   stopped driver. The corrected extracted runtime launched with
   `VCL_DRAW_WIDGETS_FROM_FILE=1` and `VCL_FILE_WIDGET_THEME=material` set. This

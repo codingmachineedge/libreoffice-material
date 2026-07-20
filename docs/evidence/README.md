@@ -1,7 +1,7 @@
 # Evidence storage
 
 This directory contains reviewed, run-scoped LibreOffice Material evidence.
-Three canonical accepted 2026-07-20 corrected exact-source Windows runs
+Three canonical accepted 2026-07-20 exact-source Windows runs
 contribute nine verified Start Center screenshots and matching bounded
 accessibility trees: three light, three dark, and three forced high contrast.
 Each appearance includes a visible one-step Tab focus state.
@@ -14,8 +14,8 @@ artifact here. It verified harness mechanics, not LibreOffice rendering, and is
 recorded only as a non-accepted observation in the evidence plan and repository
 memory.
 
-The canonical accepted corrected runs are the
-[`light`](runs/20260720-112425-fbba560e27-windows-headless-light/),
+The canonical accepted runs are the newest-source
+[`light`](runs/20260720-135505-7029dccf40-windows-headless-light/),
 [`dark`](runs/20260720-033252-fbba560e27-windows-headless-dark/), and
 [`forced-high-contrast`](runs/20260720-033338-fbba560e27-windows-headless-highcontrast/)
 registrations.

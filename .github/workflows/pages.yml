@@ -48,7 +48,7 @@ jobs:
             done
           }
           stage_run \
-            '20260720-112425-fbba560e27-windows-headless-light' \
+            '20260720-135505-7029dccf40-windows-headless-light' \
             'start-center-light.png' \
             'start-center-light-keyboard-focus.png' \
             'start-center-templates-light.png'

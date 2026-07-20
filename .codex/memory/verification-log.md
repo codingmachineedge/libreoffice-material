@@ -1409,6 +1409,28 @@ build or runtime evidence.
   Material widget states, accelerated rendering, 200% scale, localization,
   suite modules/dialogs, updater execution, or MSI lifecycle behavior.
 
+## 2026-07-20 — newest exact-build light Start Center acceptance
+
+- Run `20260720-135505-7029dccf40-windows-headless-light` accepted the
+  extracted runtime from exact source
+  `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`, whose VS 2026 MSI/package gate
+  had already passed. It used harness
+  `861555ee914178cf05f9e39362f6b58bd6d1990f` and clean driver
+  `547a102a49169d41da876de217856229ab7c03a1`.
+- The driver measured HWND, owning PID, GUI thread ID, and 144 DPI atomically
+  inside `EnumDesktopWindows`; the enumerated PID matched the pidfile-owned
+  `soffice.bin` PID for three stable polls. This replaces the invalid
+  caller-desktop HWND probe without weakening ownership proof.
+- Home, visible `Open File` keyboard focus, and Templates produced three
+  nonblank `1920x1117` PNGs with the registered hashes `e4a21b…4501`,
+  `1039f6…ab13`, and `6fd055…66e5`. Their bound UNO trees contain 96/49,
+  96/49, and 111/64 total/visible nodes, zero errors, and no partial result.
+- Visual and sensitive-data review passed. Normal UNO termination completed,
+  forced cleanup was false, payload processes/windows reached zero, and the
+  desktop, dedicated driver, and path-bearing launch wrapper all closed or
+  were removed. This is scoped Start Center UI/a11y evidence, not MSI lifecycle
+  or updater-runtime proof.
+
 ## 2026-07-20 — third isolated lifecycle launch reached real MSI update work
 
 - Fresh run

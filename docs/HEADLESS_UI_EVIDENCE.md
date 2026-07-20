@@ -114,10 +114,12 @@ exercised in accepted light run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/),
 whose two captures remain immutable historical proof.
 
-A fresh run of the same exact payload used committed harness
-`1bb67261794d190f099c92d9dfdd48722785db34`, clean driver commit
-`beed66ca6ed2503e6170ee1e1158247f1c2f0140`, and a dedicated same-token MCP
-session. It now supplies the canonical light gallery trio:
+A fresh run of the newest exact `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`
+MSI payload used committed harness
+`861555ee914178cf05f9e39362f6b58bd6d1990f`, clean driver commit
+`547a102a49169d41da876de217856229ab7c03a1`, and a dedicated same-token MCP
+session. The driver sampled HWND/PID/thread/DPI atomically inside its off-screen
+desktop enumeration callback. This run supplies the canonical light gallery trio:
 
 - Home/Recent Documents captured at `1920×1117`, 203,493 bytes, SHA-256
   `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`;
@@ -135,8 +137,8 @@ session. It now supplies the canonical light gallery trio:
   dedicated driver stopped.
 
 The accepted manifest and results are under
-[`20260720-112425-fbba560e27-windows-headless-light`](evidence/runs/20260720-112425-fbba560e27-windows-headless-light/).
-This verifies only the corrected extracted runtime UI. It does not execute or
+[`20260720-135505-7029dccf40-windows-headless-light`](evidence/runs/20260720-135505-7029dccf40-windows-headless-light/).
+This verifies only that exact extracted runtime UI. It does not execute or
 prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
 behavior.
 

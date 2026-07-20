@@ -385,3 +385,24 @@
 - Reason: Phase 2+ native work needs a written target more precise than the
   short contract, and the audit trail is stronger when the design is stated
   before implementation rather than reverse-engineered after it.
+
+## D-023 — bind off-screen HWND identity inside driver enumeration
+
+- Date: 2026-07-20
+- State: implemented, pushed, and runtime verified for the exact `7029dccf4`
+  light Start Center run
+- Context: `list_headless_windows` repeatedly returned a stable live SALFRAME
+  on the off-screen desktop, while `GetWindowThreadProcessId` from the harness
+  process attached to the caller desktop returned an invalid handle. Retrying
+  could never establish ownership across that desktop boundary.
+- Decision: sample HWND, process ID, thread ID, and `GetDpiForWindow` atomically
+  inside the low-level driver's `EnumDesktopWindows` callback. The product
+  harness strictly requires numeric positive identity/DPI fields, exact PID
+  equality with the pidfile-owned `soffice.bin`, and three stable handle+PID
+  polls before capture. Missing, zero, or wrong-owner values remain retry
+  diagnostics and cannot be accepted.
+- Reason: identity is measured in the only Windows desktop context that owns
+  the enumerated HWND, while the independent pidfile/executable/start-time gate
+  preserves exact-payload provenance. Run
+  `20260720-135505-7029dccf40-windows-headless-light` proved this path with
+  normal termination and complete cleanup.

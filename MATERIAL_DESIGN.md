@@ -34,13 +34,14 @@ the standard `suggested-action` class, which `VclBuilder` maps to
 can be selected under the opt-in Material renderer. The accompanying Windows
 MSI workflow repair restores the legacy CLI payload that its manifests require.
 Current Linux, Windows, and local VS 2026 runs passed the five required native
-C++ targets. The corrected exact-source `fbba560e2` build produced an
-administratively extracted MSI runtime, and that runtime launched with both
-Material opt-in variables set for accepted light, dark, and forced-high-contrast
-Start Center Home/focus/Templates smoke, with nine registered screenshots and
-nine bounded UNO trees. Each appearance profile's focus checkpoint exposes the
-`Open File` push button as the sole focused UNO node; the canonical light result is
-[`20260720-112425-fbba560e27-windows-headless-light`](docs/evidence/runs/20260720-112425-fbba560e27-windows-headless-light/results.json). The corrected
+C++ targets. Exact source `7029dccf4` produced an administratively extracted
+MSI runtime and supplies the newest accepted light Start Center
+Home/focus/Templates trio; the earlier corrected `fbba560e2` runtime supplies
+the accepted dark and forced-high-contrast trios. Together they retain nine
+registered screenshots and nine bounded UNO trees. Each appearance profile's
+focus checkpoint exposes the `Open File` push button as the sole focused UNO
+node; the canonical light result is
+[`20260720-135505-7029dccf40-windows-headless-light`](docs/evidence/runs/20260720-135505-7029dccf40-windows-headless-light/results.json). The corrected
 normal public non-prerelease Latest release and its four assets are verified.
 No surface is Material-complete; updater execution,
 installer lifecycle behavior, individual widget/state rendering, pixel tests,
