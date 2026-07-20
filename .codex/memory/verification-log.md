@@ -909,3 +909,18 @@ build or runtime evidence.
 - The main workflow now also requires Visual Studio's C++/CLI component before
   beginning its long build, matching the legacy bridge's `/clr` compilation
   requirement. A clean `main` run and normal public release are still required.
+
+## 2026-07-19 — local bootstrap hash-verifier compatibility follow-up
+
+- The first real local all-phase bootstrap installed the dedicated VS 2022 and
+  isolated Cygwin profiles, then its final validation reported that
+  `Get-FileHash` could not be resolved in the no-profile child. The matching
+  Cygwin package/tool validation passed after installation; no native source
+  build, MSI, LibreOffice launch, or runtime capture completed in that attempt.
+- The local builder now computes the same lowercase SHA-256 values through the
+  .NET cryptography API at every pinned-download, tool, and MSI-artifact check,
+  so validation does not depend on PowerShell utility-module auto-loading.
+  A `PendingFileRenameOperations` value created by the installer was cleared
+  only after the operator explicitly authorized removal of restart flags.
+- This is a bootstrap compatibility repair, not native-build or runtime
+  evidence. A fresh local preflight and all-phase build remain required.

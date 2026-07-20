@@ -114,6 +114,29 @@ function Get-FullPath {
     $fullPath
 }
 
+function Get-Sha256FileHash {
+    param([Parameter(Mandatory)][string] $LiteralPath)
+
+    # The elevated bootstrap runs with -NoProfile, where the utility module that
+    # normally provides Get-FileHash is not guaranteed to auto-load. Keep the
+    # pinned-download and artifact checks self-contained without weakening them.
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [IO.File]::OpenRead($LiteralPath)
+        $algorithm = [Security.Cryptography.SHA256]::Create()
+        return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        if ($null -ne $algorithm) {
+            $algorithm.Dispose()
+        }
+        if ($null -ne $stream) {
+            $stream.Dispose()
+        }
+    }
+}
+
 function Test-Administrator {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
@@ -461,7 +484,7 @@ function Test-CygwinToolchain {
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
             return [pscustomobject]@{ Ready = $false; Reason = ('LibreOffice tool is missing: {0}' -f $path) }
         }
-        $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+        $hash = Get-Sha256FileHash -LiteralPath $path
         if ($hash -ne $tool.Sha256) {
             return [pscustomobject]@{ Ready = $false; Reason = ('LibreOffice tool hash mismatch: {0}' -f $path) }
         }
@@ -602,7 +625,7 @@ function Get-SignedDownload {
         Name = $Name
         Url = $Url
         Path = $Destination
-        Sha256 = (Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash.ToLowerInvariant()
+        Sha256 = Get-Sha256FileHash -LiteralPath $Destination
         Signature = $signature.Status
         Signer = $signature.SignerCertificate.Subject
     }
@@ -620,14 +643,14 @@ function Get-PinnedDownload {
 
     $expectedHash = $Sha256.ToLowerInvariant()
     if (Test-Path -LiteralPath $Destination -PathType Leaf) {
-        $actualHash = (Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash.ToLowerInvariant()
+        $actualHash = Get-Sha256FileHash -LiteralPath $Destination
         if ($actualHash -ne $expectedHash) {
             throw ('{0} exists but its SHA-256 differs from the pinned LibreOffice value. It was not replaced: {1}' -f $Name, $Destination)
         }
     }
     else {
         $temporary = Invoke-Download $Url $Destination
-        $actualHash = (Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash.ToLowerInvariant()
+        $actualHash = Get-Sha256FileHash -LiteralPath $temporary
         if ($actualHash -ne $expectedHash) {
             throw ('{0} download SHA-256 mismatch. Retained for inspection: {1}' -f $Name, $temporary)
         }
@@ -1107,7 +1130,7 @@ function Invoke-MsiPackagingValidation {
     $canonicalName = 'LibreOfficeMaterial-Windows-x64.msi'
     $destination = Join-Path $stage $canonicalName
     Copy-Item -LiteralPath $msis[0].FullName -Destination $destination -ErrorAction Stop
-    $hash = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()
+    $hash = Get-Sha256FileHash -LiteralPath $destination
     ($hash + '  ' + $canonicalName) | Set-Content -LiteralPath ($destination + '.sha256') -Encoding ascii
     $sourceCommit = (Get-Content -LiteralPath $script:StatePath -Raw | ConvertFrom-Json).source_commit
     $manifest = [ordered]@{
