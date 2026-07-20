@@ -35,9 +35,9 @@ can be selected under the opt-in Material renderer. The accompanying Windows
 MSI workflow repair restores the legacy CLI payload that its manifests require.
 Current Linux, Windows, and local VS 2026 runs passed the five required native
 C++ targets. Exact source `7029dccf4` produced an administratively extracted
-MSI runtime and supplies the newest accepted light Start Center
-Home/focus/Templates trio; the earlier corrected `fbba560e2` runtime supplies
-the accepted dark and forced-high-contrast trios. Together they retain nine
+MSI runtime and supplies the newest accepted light and dark Start Center
+Home/focus/Templates trios; the earlier corrected `fbba560e2` runtime supplies
+the accepted forced-high-contrast trio. Together they retain nine
 registered screenshots and nine bounded UNO trees. Each appearance profile's
 focus checkpoint exposes the `Open File` push button as the sole focused UNO
 node; the canonical light result is

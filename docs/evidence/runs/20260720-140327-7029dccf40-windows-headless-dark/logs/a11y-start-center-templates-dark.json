@@ -1,0 +1,3720 @@
+{
+  "captured_at_utc": "2026-07-20T18:03:45+00:00",
+  "limits": {
+    "max_children": 500,
+    "max_depth": 32,
+    "max_nodes": 5000,
+    "max_text": 256
+  },
+  "nodes": [
+    {
+      "bounds_parent_px": {
+        "height": 1061,
+        "width": 1898,
+        "x": 11,
+        "y": 45
+      },
+      "child_count_reported": 6,
+      "children_truncated": false,
+      "children_visited": 6,
+      "description": "",
+      "errors": [],
+      "name": "LibreOfficeDev",
+      "path": [],
+      "role": {
+        "id": 49,
+        "name": "ROOT_PANE"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 1898,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 3,
+      "children_truncated": false,
+      "children_visited": 3,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0
+      ],
+      "role": {
+        "id": 35,
+        "name": "MENU_BAR"
+      },
+      "state_mask": "562299456",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 28,
+        "width": 50,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 11,
+      "children_truncated": false,
+      "children_visited": 11,
+      "description": "",
+      "errors": [],
+      "name": "File",
+      "path": [
+        0,
+        0
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "564396608",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "2359808",
+      "states": [
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        1
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        2
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        3
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "2359808",
+      "states": [
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        4
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        5
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "2359808",
+      "states": [
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        6
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        6,
+        0
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        6,
+        1
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        7
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        8
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        8,
+        0
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        9
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        0,
+        10
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 28,
+        "width": 66,
+        "x": 50,
+        "y": 0
+      },
+      "child_count_reported": 4,
+      "children_truncated": false,
+      "children_visited": 4,
+      "description": "",
+      "errors": [],
+      "name": "Tools",
+      "path": [
+        0,
+        1
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "564396608",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 6,
+      "children_truncated": false,
+      "children_visited": 6,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        3
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "2359808",
+      "states": [
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        4
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        0,
+        5
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        1
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        2
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        1,
+        3
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 28,
+        "width": 61,
+        "x": 116,
+        "y": 0
+      },
+      "child_count_reported": 17,
+      "children_truncated": false,
+      "children_visited": 17,
+      "description": "",
+      "errors": [],
+      "name": "Help",
+      "path": [
+        0,
+        2
+      ],
+      "role": {
+        "id": 34,
+        "name": "MENU"
+      },
+      "state_mask": "564396608",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        0
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        1
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        2
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        3
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        4
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        5
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        6
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        7
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        8
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        9
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        10
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        11
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        12
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Check for Updates...",
+      "path": [
+        0,
+        2,
+        13
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        14
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        15
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "8650816",
+      "states": [
+        "ENABLED",
+        "OPAQUE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        0,
+        2,
+        16
+      ],
+      "role": {
+        "id": 36,
+        "name": "MENU_ITEM"
+      },
+      "state_mask": "10748480",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "OPAQUE",
+        "SELECTABLE",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 1898,
+        "x": 0,
+        "y": 40
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 1898,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 1898,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 1898,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 280,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "Application",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 280,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 4,
+      "children_truncated": false,
+      "children_visited": 4,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 876,
+        "width": 268,
+        "x": 6,
+        "y": 6
+      },
+      "child_count_reported": 13,
+      "children_truncated": false,
+      "children_visited": 13,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 6
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Open File",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 74
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Remote Files",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 24,
+        "width": 256,
+        "x": 6,
+        "y": 142
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 174
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Recent Documents",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "17741906496",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE",
+        "CHECKABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 242
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Templates",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "17741906504",
+      "states": [
+        "CHECKED",
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE",
+        "CHECKABLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 24,
+        "width": 256,
+        "x": 6,
+        "y": 310
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 27,
+        "width": 256,
+        "x": 12,
+        "y": 342
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Create:",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6
+      ],
+      "role": {
+        "id": 30,
+        "name": "LABEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 383
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Writer Document",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 451
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Calc Spreadsheet",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        8
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 519
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Impress Presentation",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 587
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Draw Drawing",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 655
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Math Formula",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        11
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 256,
+        "x": 6,
+        "y": 723
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Base Database",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 53,
+        "width": 256,
+        "x": 12,
+        "y": 882
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 280,
+        "x": 0,
+        "y": 947
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "role": {
+        "id": 53,
+        "name": "SEPARATOR"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 268,
+        "x": 6,
+        "y": 955
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 131,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Help",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 60,
+        "width": 131,
+        "x": 137,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "Donate",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1
+      ],
+      "role": {
+        "id": 44,
+        "name": "PUSH_BUTTON"
+      },
+      "state_mask": "562037312",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1,
+        0,
+        0
+      ],
+      "role": {
+        "id": 28,
+        "name": "ICON"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Donate",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1,
+        0,
+        1
+      ],
+      "role": {
+        "id": 30,
+        "name": "LABEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 973,
+        "width": 1554,
+        "x": 320,
+        "y": 24
+      },
+      "child_count_reported": 3,
+      "children_truncated": false,
+      "children_visited": 3,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 68,
+        "width": 1554,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 85,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Home",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "role": {
+        "id": 30,
+        "name": "LABEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 24,
+        "width": 511,
+        "x": 0,
+        "y": 44
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Open recent work, explore templates, or create a new document.",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "role": {
+        "id": 30,
+        "name": "LABEL"
+      },
+      "state_mask": "562102336",
+      "states": [
+        "ENABLED",
+        "MULTI_LINE",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 1554,
+        "x": 0,
+        "y": 84
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 43,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Filter:",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "role": {
+        "id": 30,
+        "name": "LABEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 172,
+        "x": 51,
+        "y": 0
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "Filter:",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "role": {
+        "id": 7,
+        "name": "COMBO_BOX"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 40,
+        "width": 172,
+        "x": 51,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Filter:",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "role": {
+        "id": 60,
+        "name": "TEXT"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 5,
+      "children_truncated": false,
+      "children_visited": 5,
+      "description": "",
+      "errors": [],
+      "name": "Filter:",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "role": {
+        "id": 32,
+        "name": "LIST"
+      },
+      "state_mask": "8405568",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "MANAGES_DESCENDANTS",
+        "SENSITIVE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 37,
+        "width": 168,
+        "x": 592,
+        "y": 267
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "All Documents",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "148897856",
+      "states": [
+        "ENABLED",
+        "SELECTABLE",
+        "SELECTED",
+        "SENSITIVE",
+        "TRANSIENT"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 37,
+        "width": 168,
+        "x": 592,
+        "y": 304
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Text Documents",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "144703552",
+      "states": [
+        "ENABLED",
+        "SELECTABLE",
+        "SENSITIVE",
+        "TRANSIENT"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 37,
+        "width": 168,
+        "x": 592,
+        "y": 341
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Spreadsheets",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "144703552",
+      "states": [
+        "ENABLED",
+        "SELECTABLE",
+        "SENSITIVE",
+        "TRANSIENT"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 37,
+        "width": 168,
+        "x": 592,
+        "y": 378
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Presentations",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        3
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "144703552",
+      "states": [
+        "ENABLED",
+        "SELECTABLE",
+        "SENSITIVE",
+        "TRANSIENT"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 37,
+        "width": 168,
+        "x": 592,
+        "y": 415
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Drawings",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        4
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "144703552",
+      "states": [
+        "ENABLED",
+        "SELECTABLE",
+        "SENSITIVE",
+        "TRANSIENT"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 833,
+        "width": 1554,
+        "x": 0,
+        "y": 140
+      },
+      "child_count_reported": 2,
+      "children_truncated": false,
+      "children_visited": 2,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 833,
+        "width": 1,
+        "x": 1553,
+        "y": 0
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Vertical scroll bar",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      "role": {
+        "id": 50,
+        "name": "SCROLL_BAR"
+      },
+      "state_mask": "830472256",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VERTICAL",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 833,
+        "width": 1553,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 1,
+      "children_truncated": false,
+      "children_visited": 1,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 833,
+        "width": 1553,
+        "x": 0,
+        "y": 0
+      },
+      "child_count_reported": 15,
+      "children_truncated": false,
+      "children_visited": 15,
+      "description": "ThumbnailView",
+      "errors": [],
+      "name": "",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0
+      ],
+      "role": {
+        "id": 32,
+        "name": "LIST"
+      },
+      "state_mask": "562053696",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "MANAGES_DESCENDANTS",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 37,
+        "y": 80
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Modern business letter sans-serif",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        0
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "702547520",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "FOCUSED",
+        "SELECTABLE",
+        "SELECTED",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 340,
+        "y": 80
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Modern business letter serif",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        1
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 643,
+        "y": 80
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "BPMN",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        2
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 946,
+        "y": 80
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Japanese normal",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        3
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 1249,
+        "y": 80
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Simplified Chinese Normal",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        4
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 37,
+        "y": 456
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Businesscard with logo",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        5
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 340,
+        "y": 456
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "CV",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        6
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 643,
+        "y": 456
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Resume",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        7
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 946,
+        "y": 456
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Beehive",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        8
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 296,
+        "width": 266,
+        "x": 1249,
+        "y": 456
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Blue Curve",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        9
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 266,
+        "x": 37,
+        "y": 832
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Blueprint Plans",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        10
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 266,
+        "x": 340,
+        "y": 832
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Candy",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        11
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 266,
+        "x": 643,
+        "y": 832
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "DNA",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        12
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 266,
+        "x": 946,
+        "y": 832
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Focus",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        13
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 2,
+        "width": 266,
+        "x": 1249,
+        "y": 832
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "Forestbird",
+      "path": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        1,
+        0,
+        14
+      ],
+      "role": {
+        "id": 33,
+        "name": "LIST_ITEM"
+      },
+      "state_mask": "698352192",
+      "states": [
+        "ENABLED",
+        "FOCUSABLE",
+        "SELECTABLE",
+        "SENSITIVE",
+        "SHOWING",
+        "TRANSIENT",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 1898,
+        "x": 0,
+        "y": 40
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        2
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 0,
+        "x": 0,
+        "y": 40
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        3
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 1021,
+        "width": 0,
+        "x": 1898,
+        "y": 40
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        4
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    },
+    {
+      "bounds_parent_px": {
+        "height": 0,
+        "width": 1898,
+        "x": 0,
+        "y": 1061
+      },
+      "child_count_reported": 0,
+      "children_truncated": false,
+      "children_visited": 0,
+      "description": "",
+      "errors": [],
+      "name": "",
+      "path": [
+        5
+      ],
+      "role": {
+        "id": 40,
+        "name": "PANEL"
+      },
+      "state_mask": "562036800",
+      "states": [
+        "ENABLED",
+        "SENSITIVE",
+        "SHOWING",
+        "VISIBLE"
+      ]
+    }
+  ],
+  "root": {
+    "frame_name": "",
+    "frame_title": "LibreOfficeDev"
+  },
+  "run_id": "20260720-140327-7029dccf40-windows-headless-dark",
+  "schema_version": 1,
+  "screenshot_sha256": "742395d2f1a229ab44f994a26854ea55017f1e54414e0e5ae347a26da6aca74c",
+  "summary": {
+    "errors": 0,
+    "node_count": 111,
+    "partial": false,
+    "truncation_reasons": [],
+    "visible_nodes": 64
+  }
+}

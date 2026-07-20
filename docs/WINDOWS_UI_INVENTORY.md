@@ -42,9 +42,10 @@ Evidence keys:
   dark, and forced high contrast, each at Home, visible Tab focus, and
   Templates. The light trio is from exact source
   [`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3);
-  dark/high contrast remain from `fbba560e27`. Exact run manifests:
+  dark also comes from `7029dccf4`, while high contrast remains from
+  `fbba560e27`. Exact run manifests:
   [light](evidence/runs/20260720-135505-7029dccf40-windows-headless-light/manifest.json),
-  [dark](evidence/runs/20260720-033252-fbba560e27-windows-headless-dark/manifest.json),
+  [dark](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json),
   and [forced high contrast](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
   See also the [screenshot index](SCREENSHOTS.md) and
   [evidence contract](HEADLESS_UI_EVIDENCE.md).

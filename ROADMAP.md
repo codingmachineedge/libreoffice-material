@@ -197,11 +197,12 @@ run is
 The former canonical Home/Templates-only run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/)
 remains historical evidence.
-The same exact payload then passed dedicated same-token dark and forced-high-
-contrast Home, Tab-focus, and Templates runs with six additional complete trees,
-normal UNO termination, zero remaining payload processes/windows, desktop
-closure, and driver-process cleanup. Their manifests are
-[`20260720-033252-fbba560e27-windows-headless-dark`](docs/evidence/runs/20260720-033252-fbba560e27-windows-headless-dark/manifest.json)
+The newest exact payload also passed a dedicated same-token dark
+Home/Tab-focus/Templates run, while the earlier corrected payload retains the
+accepted forced-high-contrast trio. Together those six states have complete
+trees, normal UNO termination, zero remaining payload processes/windows,
+desktop closure, and driver-process cleanup. Their manifests are
+[`20260720-140327-7029dccf40-windows-headless-dark`](docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json)
 and
 [`20260720-033338-fbba560e27-windows-headless-highcontrast`](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
 The corrected normal release and its four public Latest assets are verified.

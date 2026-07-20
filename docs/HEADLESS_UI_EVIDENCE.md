@@ -142,13 +142,14 @@ This verifies only that exact extracted runtime UI. It does not execute or
 prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
 behavior.
 
-The canonical dark and forced-high-contrast runs used the same exact
-`fbba560e27` extracted payload and clean driver commit through dedicated
-same-token loopback MCP sessions. Keeping
+The canonical dark run now uses the exact `7029dccf4` payload with harness
+`c61a423cd5a764686d703e57a7a6d5889903ba1e` and driver `547a102a49169d41da876de217856229ab7c03a1`;
+the canonical forced-high-contrast run still uses the earlier `fbba560e27`
+payload. Both use dedicated same-token loopback MCP sessions. Keeping
 the GUI and the matching Python/UNO collector at the same integrity level avoids
 the named-pipe block produced by the elevated always-on service:
 
-- [`20260720-033252-fbba560e27-windows-headless-dark`](evidence/runs/20260720-033252-fbba560e27-windows-headless-dark/)
+- [`20260720-140327-7029dccf40-windows-headless-dark`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/)
   forced `ApplicationAppearance=2` and `HighContrast=1`; Home, one background
   Tab focus state, and Templates captured at `1920×1117`. The focus tree exposes
   exactly one `FOCUSED` node, the `Open File` push button. Its three trees report

@@ -398,7 +398,7 @@ Public assetless release/tag `e` remains non-evidence.
 - Canonical verified exact-source Start Center gallery captures: **9**: three
   light-profile files from committed-harness run
   `20260720-135505-7029dccf40-windows-headless-light`, three dark files from
-  `20260720-033252-fbba560e27-windows-headless-dark`, and three
+  `20260720-140327-7029dccf40-windows-headless-dark`, and three
   forced-high-contrast files from
   `20260720-033338-fbba560e27-windows-headless-highcontrast`. Every appearance
   includes a visible Tab focus state whose UNO tree exposes the `Open File` push
@@ -406,8 +406,10 @@ Public assetless release/tag `e` remains non-evidence.
   run `20260720-112425-fbba560e27-windows-headless-light`, earlier corrected light run
   `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression` and older
   `20260720-012853-577059e274-vs2026-msi-raster` pair remain historical accepted
-  proof. The newest light run used exact source `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`,
-  committed harness `861555ee914178cf05f9e39362f6b58bd6d1990f`,
+  proof. The newest light and dark runs used exact source
+  `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`,
+  committed harnesses `861555ee914178cf05f9e39362f6b58bd6d1990f` and
+  `c61a423cd5a764686d703e57a7a6d5889903ba1e`,
   clean dedicated same-token driver
   `547a102a49169d41da876de217856229ab7c03a1`, atomically bound HWND/PID/thread/DPI
   inside the off-screen desktop enumeration callback, and ended with normal UNO

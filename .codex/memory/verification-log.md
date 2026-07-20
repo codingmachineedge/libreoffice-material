@@ -1431,6 +1431,22 @@ build or runtime evidence.
   were removed. This is scoped Start Center UI/a11y evidence, not MSI lifecycle
   or updater-runtime proof.
 
+## 2026-07-20 — newest exact-build dark Start Center acceptance
+
+- Run `20260720-140327-7029dccf40-windows-headless-dark` accepted the forced
+  dark profile from exact source `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`
+  with harness `c61a423cd5a764686d703e57a7a6d5889903ba1e` and clean driver
+  `547a102a49169d41da876de217856229ab7c03a1`.
+- Home, visible `Open File` keyboard focus, and Templates produced three clean
+  `1920x1117` captures with registered hashes `0fc0ea…d78e`, `0e4157…8587`,
+  and `742395…a74c`. The bound UNO trees contain 96/49, 96/49, and 111/64
+  total/visible nodes with zero errors and no partial result; `Open File` is the
+  sole focused node at the keyboard checkpoint.
+- Atomic driver-side HWND/PID/thread/DPI matched the pidfile-owned
+  `soffice.bin`, visual and sensitive-data review passed, UNO termination was
+  normal, forced cleanup was false, and processes/windows/desktop/driver/wrapper
+  cleanup completed. The older `fbba560e27` dark run remains historical proof.
+
 ## 2026-07-20 — third isolated lifecycle launch reached real MSI update work
 
 - Fresh run

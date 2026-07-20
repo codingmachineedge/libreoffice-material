@@ -53,7 +53,7 @@ jobs:
             'start-center-light-keyboard-focus.png' \
             'start-center-templates-light.png'
           stage_run \
-            '20260720-033252-fbba560e27-windows-headless-dark' \
+            '20260720-140327-7029dccf40-windows-headless-dark' \
             'start-center-dark.png' \
             'start-center-dark-keyboard-focus.png' \
             'start-center-templates-dark.png'

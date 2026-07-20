@@ -6,8 +6,8 @@ contribute nine verified Start Center screenshots and matching bounded
 accessibility trees: three light, three dark, and three forced high contrast.
 Each appearance includes a visible one-step Tab focus state.
 Their manifests keep the remaining matrix and MSI lifecycle boundary explicit.
-The two earlier light software-raster runs remain accepted historical proof
-rather than canonical gallery sources.
+The earlier light software-raster runs and superseded dark run remain accepted
+historical proof rather than canonical gallery sources.
 
 The successful 2026-07-16 Notepad-only driver preflight produced no retained
 artifact here. It verified harness mechanics, not LibreOffice rendering, and is
@@ -16,7 +16,7 @@ memory.
 
 The canonical accepted runs are the newest-source
 [`light`](runs/20260720-135505-7029dccf40-windows-headless-light/),
-[`dark`](runs/20260720-033252-fbba560e27-windows-headless-dark/), and
+[`dark`](runs/20260720-140327-7029dccf40-windows-headless-dark/), and
 [`forced-high-contrast`](runs/20260720-033338-fbba560e27-windows-headless-highcontrast/)
 registrations.
 The earlier corrected light run is retained as historical proof at
