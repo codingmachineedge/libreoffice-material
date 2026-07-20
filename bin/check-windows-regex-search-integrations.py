@@ -60,6 +60,10 @@ def _function_body(source: str, signature: str) -> str | None:
     return None
 
 
+def _without_cpp_comments(source: str) -> str:
+    return re.sub(r"//[^\n]*|/\*.*?\*/", "", source, flags=re.DOTALL)
+
+
 def _properties(element: ET.Element) -> dict[str, str]:
     return {
         child.get("name", ""): (child.text or "").strip()
@@ -106,6 +110,18 @@ def _direct_object_children(element: ET.Element) -> list[ET.Element]:
             if grandchild.tag.rsplit("}", 1)[-1] == "object"
         )
     return result
+
+
+def _packing_properties(
+    element: ET.Element, parents: Mapping[ET.Element, ET.Element]
+) -> dict[str, str]:
+    wrapper = parents.get(element)
+    if wrapper is None or wrapper.tag.rsplit("}", 1)[-1] != "child":
+        return {}
+    for child in wrapper:
+        if child.tag.rsplit("}", 1)[-1] == "packing":
+            return _properties(child)
+    return {}
 
 
 def _accessible_object(element: ET.Element) -> ET.Element | None:
@@ -156,6 +172,8 @@ def violations(
     if not isinstance(raw_integrations, list):
         errors.append("registry:integrations:array required")
         raw_integrations = []
+    if not raw_integrations:
+        errors.append("registry:integrations:at least one source integration required")
     if registry.get("expected_integrations") != len(raw_integrations):
         errors.append("registry:expected_integrations:count drift")
 
@@ -238,9 +256,9 @@ def violations(
 
         if values["status"] != "source-integrated":
             errors.append(f"{context}:status:must be source-integrated")
-        if values["matcher_strategy"] != "compiled-once-utl-textsearch":
+        if values["matcher_strategy"] != "legacy-literal-or-compiled-once-utl-textsearch":
             errors.append(f"{context}:matcher_strategy:unsupported strategy")
-        if values["default_mode"] != "literal-case-sensitive":
+        if values["default_mode"] != "literal-case-sensitive-indexof-compatible":
             errors.append(f"{context}:default_mode:compatibility mode required")
         if not isinstance(entry.get("runtime_verified"), bool):
             errors.append(f"{context}:runtime_verified:boolean required")
@@ -272,6 +290,15 @@ def violations(
                     if entry_parent is None or entry_parent is not button_parent:
                         errors.append(f"{context}:ui-adjacency:entry and builder need one parent")
                     else:
+                        parent_properties = _properties(entry_parent)
+                        if (
+                            entry_parent.get("class") != "GtkBox"
+                            or parent_properties.get("orientation") != "horizontal"
+                            or parent_properties.get("spacing") != "6"
+                        ):
+                            errors.append(
+                                f"{context}:ui-parent:horizontal GtkBox with spacing 6 required"
+                            )
                         children = _direct_object_children(entry_parent)
                         try:
                             entry_position = children.index(entry_object)
@@ -283,6 +310,21 @@ def violations(
                         else:
                             if button_position != entry_position + 1:
                                 errors.append(f"{context}:ui-adjacency:builder must follow entry")
+
+                        entry_packing = _packing_properties(entry_object, parents)
+                        button_packing = _packing_properties(button_object, parents)
+                        if entry_packing != {
+                            "expand": "True",
+                            "fill": "True",
+                            "position": "0",
+                        }:
+                            errors.append(f"{context}:ui-packing:entry must fill position 0")
+                        if button_packing != {
+                            "expand": "False",
+                            "fill": "True",
+                            "position": "1",
+                        }:
+                            errors.append(f"{context}:ui-packing:builder must fit position 1")
 
                     entry_properties = _properties(entry_object)
                     if entry_properties.get("hexpand") != "True":
@@ -317,8 +359,9 @@ def violations(
                                 f"{context}:ui-accessibility:{name} must be translated"
                             )
 
-        header = contents.get(header_file, "")
+        header = _without_cpp_comments(contents.get(header_file, ""))
         for marker, label in (
+            ("class RegexSearchController;", "controller-forward-declaration"),
             (f"std::unique_ptr<weld::Button> {button_member};", "builder-member"),
             (
                 f"std::unique_ptr<sfx2::RegexSearchController> {controller_member};",
@@ -328,17 +371,27 @@ def violations(
             if marker not in header:
                 errors.append(f"{context}:header:{label} missing")
 
-        source = contents.get(source_file, "")
+        entry_member_at = header.find(f"std::unique_ptr<weld::Entry> {entry_member};")
+        button_member_at = header.find(f"std::unique_ptr<weld::Button> {button_member};")
+        controller_member_at = header.find(
+            f"std::unique_ptr<sfx2::RegexSearchController> {controller_member};"
+        )
+        if (
+            entry_member_at < 0
+            or button_member_at < 0
+            or controller_member_at < entry_member_at
+            or controller_member_at < button_member_at
+        ):
+            errors.append(
+                f"{context}:header:lifetime:controller must follow the entry and button"
+            )
+
+        source = _without_cpp_comments(contents.get(source_file, ""))
         source_markers = (
             "#include <sfx2/RegexSearchController.hxx>",
             "#include <unotools/textsearch.hxx>",
             f'weld_entry(u"{entry_id}"_ustr)',
             f'weld_button(u"{button_id}"_ustr)',
-            f"{controller_member} = std::make_unique<sfx2::RegexSearchController>(",
-            values["controller_parent"],
-            f"*{entry_member}",
-            f"*{button_member}",
-            f"LINK(this, {owner_type}, {handler})",
         )
         for marker in source_markers:
             if marker not in source:
@@ -350,6 +403,22 @@ def violations(
         if constructor is None:
             errors.append(f"{context}:constructor:not found")
         else:
+            controller_wiring = re.compile(
+                re.escape(controller_member)
+                + r"\s*=\s*std::make_unique<sfx2::RegexSearchController>\s*\(\s*"
+                + re.escape(values["controller_parent"])
+                + r"\s*,\s*\*"
+                + re.escape(entry_member)
+                + r"\s*,\s*\*"
+                + re.escape(button_member)
+                + r"\s*,\s*LINK\s*\(\s*this\s*,\s*"
+                + re.escape(owner_type)
+                + r"\s*,\s*"
+                + re.escape(handler)
+                + r"\s*\)\s*\)\s*;"
+            )
+            if controller_wiring.search(constructor) is None:
+                errors.append(f"{context}:source-wiring:controller constructor mismatch")
             for marker in (
                 "aState.Mode = sfx2::RegexSearchMode::Literal;",
                 "aState.Flags.CaseInsensitive = false;",
@@ -362,12 +431,14 @@ def violations(
         if body is None:
             errors.append(f"{context}:handler:not found")
         else:
+            normalized_body = " ".join(body.split())
             marker_counts = (
                 (f"{controller_member}->GetState()", 1, "state"),
                 ("sfx2::RegexSearchService::Validate(rState)", 1, "validation"),
                 ("std::make_unique<utl::TextSearch>", 1, "compiled-matcher"),
                 (f"{controller_member}->GetSearchOptions()", 1, "search-options"),
                 ("xSearch->searchForward", 1, "matching"),
+                ("rSheetName.indexOf(rState.Pattern)", 1, "legacy-literal"),
             )
             for marker, count, label in marker_counts:
                 if body.count(marker) != count:
@@ -376,9 +447,22 @@ def violations(
             loop_match = re.search(r"\bfor\s*\(", body)
             if compile_at < 0 or loop_match is None or compile_at > loop_match.start():
                 errors.append(f"{context}:compiled-once:matcher must be built before the loop")
-            if ".indexOf(" in body:
-                errors.append(f"{context}:handler:legacy substring matcher remains")
-            if "bEmpty || (xSearch && xSearch->searchForward" not in body:
+            if re.search(r"\bwhile\s*\(", body):
+                errors.append(f"{context}:handler-zero-width:repeated matcher loop forbidden")
+            compatibility_markers = (
+                "const bool bValid = bEmpty || "
+                "sfx2::RegexSearchService::Validate(rState).IsValid;",
+                "const bool bLegacyCompatibleLiteral = rState.Mode == "
+                "sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;",
+                "if (bValid && !bEmpty && !bLegacyCompatibleLiteral)",
+                "bEmpty || (bLegacyCompatibleLiteral && "
+                "rSheetName.indexOf(rState.Pattern) >= 0) || "
+                "(xSearch && xSearch->searchForward(rSheetName))",
+            )
+            for marker in compatibility_markers:
+                if marker not in normalized_body:
+                    errors.append(f"{context}:handler:compatibility route missing {marker}")
+            if "bEmpty || (bLegacyCompatibleLiteral &&" not in normalized_body:
                 errors.append(f"{context}:handler:empty/invalid fail-closed route missing")
 
     return errors
@@ -401,7 +485,8 @@ def main() -> int:
     print(
         "Windows regex-search integrations passed: "
         f"{len(registry['integrations'])} source-integrated field with adjacent accessible "
-        "builder, controller-owned callback, literal compatibility, and compiled-once matching"
+        "builder, controller-owned callback, exact legacy literal compatibility, and "
+        "compiled-once regex/opt-in matching"
     )
     return 0
 

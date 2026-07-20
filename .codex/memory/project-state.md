@@ -103,10 +103,11 @@ matching, token insertion, and embedded advanced documentation in an anchored
 non-modal popover. Its source contract and eight mutations plus UI/accessibility
 lint pass; twelve native tests are wired but not yet compiled. Calc Go to Sheet
 is the first of 26 shipping fields source-integrated through the shared
-controller, with the old literal case-sensitive behavior explicit and one
-compiled matcher per refresh. Its implementation registry, validator, and ten
-mutations pass. The remaining 25 shipping fields, planned Start Center field,
-native compile, and runtime proof remain open.
+controller. Exact legacy `OUString::indexOf` matching remains the literal
+case-sensitive default; regex and explicitly case-insensitive literal search
+use one compiled matcher per refresh. Its implementation registry, hardened
+validator, and ten mutations pass. The remaining 25 shipping fields, planned
+Start Center field, native compile, and runtime proof remain open.
 The same source line implements D-029: automatic Welcome/What’s New, Tip,
 Windows file-association, donation/Get Involved, AutoCorrect-explanation, and
 crash-report submission prompts plus their dead configuration/UI and misleading

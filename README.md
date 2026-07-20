@@ -397,11 +397,12 @@ work, and the Qt popover path clamps to the monitor work area. Twelve native
 CppUnit cases are wired and eight source-mutation families plus
 UI/accessibility lint pass. Calc's Go to Sheet search is the first registered
 field wired to that controller: the adjacent accessible builder owns its change
-callback, preserves the legacy literal case-sensitive default, and constructs
-one `utl::TextSearch` matcher per list refresh rather than per sheet. A separate
-source-integration registry, validator, and ten mutation tests guard that
-wiring. The remaining 25 shipping fields and exact-build runtime proof remain
-open.
+callback and preserves exact legacy `OUString::indexOf` results in the default
+literal, case-sensitive mode. Regex and explicitly case-insensitive literal
+search construct one `utl::TextSearch` matcher per list refresh rather than per
+sheet. A separate source-integration registry, validator, and ten mutation tests
+guard the wiring, destruction order, and compatibility split. The remaining 25
+shipping fields and exact-build runtime proof remain open.
 
 Automatic donation/Get Involved/What’s New promotion, first-start Welcome,
 Tip of the Day scheduling, Windows file-association solicitation, AutoCorrect

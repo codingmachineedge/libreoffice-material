@@ -95,11 +95,13 @@ a modal or bottom-right dialog.
 `regex-search-integrations.json` is the separate source-implementation ledger.
 It currently records Calc Go to Sheet as 1 of 26 shipping fields. Its validator
 requires direct entry/button adjacency, translated accessible metadata,
-controller-owned change dispatch, the legacy literal case-sensitive default,
-and one `utl::TextSearch` construction before the item loop. Ten mutations
-prove those requirements fail closed. The remaining 25 shipping integrations
-and native build/runtime proof remain open; `runtime_verified: false` is
-intentional until exact-build interaction evidence exists.
+controller-owned change dispatch, controller-first destruction, exact legacy
+`OUString::indexOf` behavior in the literal case-sensitive default, and one
+`utl::TextSearch` construction before the item loop for non-legacy modes.
+Comment-only wiring cannot satisfy the source contract. Ten mutations prove
+those requirements fail closed. The remaining 25 shipping integrations and
+native build/runtime proof remain open; `runtime_verified: false` is intentional
+until exact-build interaction evidence exists.
 
 ## No unsolicited startup or promotion prompts
 

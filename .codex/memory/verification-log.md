@@ -1637,9 +1637,19 @@ build or runtime evidence.
 
 - `bin/check-windows-regex-search-integrations.py` passed Calc Go to Sheet's
   adjacent accessible builder, controller-owned callback, explicit literal
-  case-sensitive compatibility, invalid-pattern fail-closed behavior, and one
-  `utl::TextSearch` construction before the sheet loop. All ten focused
-  mutation tests passed.
+  case-sensitive `OUString::indexOf` compatibility, invalid-pattern fail-closed
+  behavior, safe controller destruction order, and one `utl::TextSearch`
+  construction before the sheet loop for non-legacy modes. All ten focused
+  mutation tests passed, including comment-only wiring rejection.
+- Adversarial source review found that `i18npool` deliberately normalizes
+  straight and typographic quotes for non-regex `TextSearch`. The Calc default
+  path therefore retains `OUString::indexOf`; regex and explicitly opted-in
+  case-insensitive literal searches use the compiled matcher.
+- The native API audit confirmed the entry-based `RegexSearchController`
+  constructor and `GetSearchOptions()` declaration, the matching
+  `utl::TextSearch(SearchOptions2)` and one-argument `searchForward()` APIs, and
+  existing `scui` linkage to both `sfx` and `utl`. This is source-level type and
+  linkage evidence, not a compile result.
 - The independent search-field coverage contract still reports 26 shipping,
   one planned, and 16 excluded controls; its ten mutations pass. The shared
   builder-foundation validator and all eight of its mutations pass too.

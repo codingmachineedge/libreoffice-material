@@ -567,7 +567,11 @@
   each field, place the builder directly after the entry, let
   `RegexSearchController` own the existing change callback, preserve that
   field's literal/case behavior explicitly, and compile one `utl::TextSearch`
-  before iterating candidates. Begin with Calc Go to Sheet.
+  before iterating candidates for regex or other opted-in semantics. Calc Go to
+  Sheet retains exact `OUString::indexOf` matching for its default literal,
+  case-sensitive state.
 - Reason: the source contract prevents decorative buttons, callback bypasses,
   semantic regressions, and per-item regex compilation from being counted as a
-  completed integration while keeping build/runtime evidence as separate gates.
+  completed integration. `TextSearch` intentionally normalizes straight and
+  typographic quotes in non-regex mode, so using it for Calc's default would not
+  be exact legacy compatibility. Build/runtime evidence remains a separate gate.

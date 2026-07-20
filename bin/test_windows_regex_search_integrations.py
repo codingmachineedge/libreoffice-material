@@ -51,6 +51,14 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
         self.assertEqual([], self.failures())
 
     def test_shipping_inventory_link_is_required(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["integrations"] = []
+        registry["expected_integrations"] = 0
+        self.assertIn(
+            "registry:integrations:at least one source integration required",
+            self.failures(registry=registry),
+        )
+
         coverage = copy.deepcopy(self.coverage)
         for item in coverage["shipping_fields"]:
             if item["coverage_id"] == self.entry["coverage_id"]:
@@ -70,6 +78,14 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
             f'id="{self.entry["builder_button_id"]}"', 'id="removed-regex-builder"', 1
         )
         self.assertTrue(any(":ui-button:" in error for error in self.failures(contents=contents)))
+
+        contents = dict(self.contents)
+        contents[ui_file] = contents[ui_file].replace(
+            '<property name="orientation">horizontal</property>',
+            '<property name="orientation">vertical</property>',
+            1,
+        )
+        self.assertTrue(any(":ui-parent:" in error for error in self.failures(contents=contents)))
 
     def test_accessible_name_description_and_tooltip_are_required(self) -> None:
         ui_file = self.entry["ui_file"]
@@ -128,9 +144,14 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
             "Link<weld::TextWidget&, void>()",
             1,
         )
+        contents[source_file] += (
+            "\n// A comment cannot satisfy the controller-owned callback contract: "
+            f"LINK(this, {self.entry['owner_type']}, "
+            f"{self.entry['owner_changed_handler']})\n"
+        )
         self.assertTrue(
             any(
-                ":source-wiring:missing LINK(" in error
+                error.endswith("source-wiring:controller constructor mismatch")
                 for error in self.failures(contents=contents)
             )
         )
@@ -143,6 +164,28 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
         self.assertTrue(
             any(
                 error.endswith("direct changed handler bypasses controller")
+                for error in self.failures(contents=contents)
+            )
+        )
+
+        contents = dict(self.contents)
+        header_file = self.entry["header_file"]
+        controller_declaration = (
+            "    std::unique_ptr<sfx2::RegexSearchController> "
+            f"{self.entry['controller_member']};\n"
+        )
+        button_declaration = (
+            f"    std::unique_ptr<weld::Button> {self.entry['builder_member']};\n"
+        )
+        header = contents[header_file].replace(controller_declaration, "", 1)
+        contents[header_file] = header.replace(
+            button_declaration,
+            controller_declaration + button_declaration,
+            1,
+        )
+        self.assertTrue(
+            any(
+                error.endswith("header:lifetime:controller must follow the entry and button")
                 for error in self.failures(contents=contents)
             )
         )
@@ -182,7 +225,7 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
         source_file = self.entry["source_file"]
         source = contents[source_file]
         build = (
-            "    if (bValid && !bEmpty)\n"
+            "    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)\n"
             "        xSearch = std::make_unique<utl::TextSearch>("
             "m_xRegexSearchController->GetSearchOptions());\n\n"
         )
@@ -192,7 +235,7 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
             "    for (const OUString& rSheetName : maCacheSheetsNames)\n    {\n",
             "    for (const OUString& rSheetName : maCacheSheetsNames)\n"
             "    {\n"
-            "        if (bValid && !bEmpty)\n"
+            "        if (bValid && !bEmpty && !bLegacyCompatibleLiteral)\n"
             "            xSearch = std::make_unique<utl::TextSearch>("
             "m_xRegexSearchController->GetSearchOptions());\n",
             1,
@@ -201,6 +244,19 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
         self.assertTrue(
             any(
                 ":compiled-once:matcher must be built before the loop" in error
+                for error in self.failures(contents=contents)
+            )
+        )
+
+        contents = dict(self.contents)
+        contents[source_file] = contents[source_file].replace(
+            "        if (bEmpty\n",
+            "        while (bEmpty\n",
+            1,
+        )
+        self.assertTrue(
+            any(
+                error.endswith("handler-zero-width:repeated matcher loop forbidden")
                 for error in self.failures(contents=contents)
             )
         )
@@ -214,8 +270,8 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
                 ":handler-validation:expected exactly 1",
             ),
             (
-                "bEmpty || (xSearch && xSearch->searchForward",
-                "bEmpty || removedFailClosedRoute",
+                "bEmpty\n            || (bLegacyCompatibleLiteral &&",
+                "removedFailClosedRoute\n            || (bLegacyCompatibleLiteral &&",
                 ":handler:empty/invalid fail-closed route missing",
             ),
         ):
@@ -229,18 +285,17 @@ class WindowsRegexSearchIntegrationsTest(unittest.TestCase):
                     )
                 )
 
-    def test_legacy_substring_matching_cannot_return(self) -> None:
+    def test_exact_legacy_literal_matching_cannot_be_replaced(self) -> None:
         contents = dict(self.contents)
         source_file = self.entry["source_file"]
         contents[source_file] = contents[source_file].replace(
-            "    m_xLb->clear();",
-            "    const sal_Int32 nLegacy = rState.Pattern.indexOf(rState.Pattern);\n"
-            "    (void)nLegacy;\n    m_xLb->clear();",
+            "rSheetName.indexOf(rState.Pattern)",
+            "rSheetName.lastIndexOf(rState.Pattern)",
             1,
         )
         self.assertTrue(
             any(
-                error.endswith("legacy substring matcher remains")
+                ":handler-legacy-literal:expected exactly 1" in error
                 for error in self.failures(contents=contents)
             )
         )

@@ -76,14 +76,20 @@ IMPL_LINK_NOARG(ScGoToTabDlg, FindNameHdl, weld::TextWidget&, void)
     const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
     const bool bEmpty = rState.Pattern.isEmpty();
     const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    // TextSearch intentionally equates straight and typographic quotes in literal mode. Keep the
+    // old exact indexOf semantics until the user chooses different matching options.
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
     std::unique_ptr<utl::TextSearch> xSearch;
-    if (bValid && !bEmpty)
+    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)
         xSearch = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
 
     m_xLb->clear();
     for (const OUString& rSheetName : maCacheSheetsNames)
     {
-        if (bEmpty || (xSearch && xSearch->searchForward(rSheetName)))
+        if (bEmpty
+            || (bLegacyCompatibleLiteral && rSheetName.indexOf(rState.Pattern) >= 0)
+            || (xSearch && xSearch->searchForward(rSheetName)))
             m_xLb->append_text(rSheetName);
     }
 }

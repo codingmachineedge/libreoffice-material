@@ -78,10 +78,11 @@ insertion, and embedded Build/Test/Reference/Examples documentation. It is an
 anchored `GtkPopover` owned by the adjacent builder button rather than a modal
 dialog. Calc's Go to Sheet search is the first registered field integrated in
 source: its adjacent accessible builder owns the prior change callback,
-preserves literal case-sensitive behavior by default, and uses one compiled
-`utl::TextSearch` matcher per refresh. The source-integration registry proves
-that wiring for 1 of 26 shipping fields; the remaining 25 fields and
-build/runtime proof remain open.
+preserves exact legacy `OUString::indexOf` matching in the default literal,
+case-sensitive mode, and uses one compiled `utl::TextSearch` matcher per refresh
+for regex or explicitly case-insensitive literal searches. The
+source-integration registry proves that wiring for 1 of 26 shipping fields; the
+remaining 25 fields and build/runtime proof remain open.
 
 The first shared native implementation seam is now present in source: after
 final VCL `InitShow` layout, Windows `Dialog` instances are positioned at the

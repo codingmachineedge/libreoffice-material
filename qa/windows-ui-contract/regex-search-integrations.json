@@ -19,8 +19,8 @@
       "builder_member": "m_xRegexBuilderButton",
       "controller_member": "m_xRegexSearchController",
       "controller_parent": "m_xDialog.get()",
-      "matcher_strategy": "compiled-once-utl-textsearch",
-      "default_mode": "literal-case-sensitive",
+      "matcher_strategy": "legacy-literal-or-compiled-once-utl-textsearch",
+      "default_mode": "literal-case-sensitive-indexof-compatible",
       "runtime_verified": false
     }
   ]
