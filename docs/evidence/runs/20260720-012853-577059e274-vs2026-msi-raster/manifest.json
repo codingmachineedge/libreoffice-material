@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720-012853-577059e274-vs2026-msi-raster",
+  "status": "accepted",
+  "source": {
+    "repository": "https://github.com/Ding-Ding-Projects/libreoffice-material",
+    "commit": "577059e2741185b512c184c64685c16d335d10ea",
+    "imported_upstream_commit": "63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21",
+    "detached_build_source_clean": true
+  },
+  "build": {
+    "build_identifier": "LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64@577059e274",
+    "profile": "windows-cygwin-vs2026-msi",
+    "product": "LibreOfficeDev 27.2.0.0.alpha0",
+    "architecture": "x86_64",
+    "visual_studio": "Visual Studio 2026 Enterprise 18.7.11925.98",
+    "msvc": "19.51.36248 / v145 14.51.36231",
+    "clang": "22.1.3",
+    "windows_sdk": "10.0.26100.0",
+    "required_native_targets_passed": [
+      "CppunitTest_tools_test",
+      "CppunitTest_extensions_test_update",
+      "CppunitTest_vcl_widget_definition_reader_test",
+      "CppunitTest_vcl_file_definition_widget_draw_test",
+      "CppunitTest_vcl_treeview"
+    ],
+    "legacy_cli_payload_validated": true,
+    "msi": {
+      "original_file_name": "LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64.msi",
+      "bytes": 199692288,
+      "sha256": "437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43",
+      "authenticode_status": "NotSigned",
+      "administrative_extraction_exit_code": 0,
+      "administrative_payload_files": 4929,
+      "administrative_payload_bytes": 605001099,
+      "administrative_payload_soffice_exe_count": 1,
+      "installed_on_host": false
+    },
+    "packaging_boundary": "The build produced the final MSI and Windows Installer completed administrative extraction with status 0. The parent build script exited before its final dist staging/manifest copy, so this run does not claim that the one-click wrapper completed end to end."
+  },
+  "runtime": {
+    "payload_source": "administrative extraction of the recorded MSI",
+    "payload_root_sanitized": "%USERPROFILE%\\lo-material-vs2026-577059e27\\msi-check\\20260720-012452-4022690-LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64-65318bd180824353b4d8c28b53ebeb86",
+    "soffice_exe": {
+      "bytes": 537600,
+      "sha256": "a0ac5360f303435ca89406fd8e648affc30a6e53382af0b901a85f3a5a45c410"
+    },
+    "soffice_bin": {
+      "bytes": 2719744,
+      "sha256": "beb398080f8ed27c44c9425499c1fdd0171648751253c9f2c176943a7fb330ea"
+    },
+    "launch_wrapper": "launch-light.cmd",
+    "isolated_profile_sanitized": "%LOCALAPPDATA%\\Temp\\LibreOfficeMaterialQA\\20260720-012853-577059e274-vs2026-msi-raster\\profile",
+    "uno_pipe": "LibreOfficeMaterialQA-20260720-012853-577059e274-vs2026-msi-raster",
+    "environment": {
+      "VCL_DRAW_WIDGETS_FROM_FILE": "1",
+      "VCL_FILE_WIDGET_THEME": "material",
+      "SAL_SKIA": "raster",
+      "SAL_DISABLEGL": "1",
+      "SAL_LOG": "+WARN.vcl.gdi"
+    },
+    "material_claim_boundary": "The Material file-widget path was requested by environment. These variables alone do not prove every visible control used that definition."
+  },
+  "host": {
+    "operating_system": "Windows 11 Pro",
+    "version": "10.0.26200",
+    "build": "26200",
+    "architecture": "x64",
+    "host_locale": "en-CA",
+    "ui_locale": "en-US",
+    "display_scale_percent": 150,
+    "applied_dpi": 144,
+    "capture_dimensions_px": {
+      "width": 1920,
+      "height": 1117
+    },
+    "appearance": "light",
+    "contrast": "normal",
+    "renderer": "Skia software raster fallback",
+    "desktop_backend": "Win32 off-screen desktop with per-window PrintWindow capture",
+    "font_configuration": "native Windows system fonts; no run-specific font override"
+  },
+  "driver": {
+    "repository": "https://github.com/codingmachineedge/lowlevel-computer-use-mcp",
+    "commit": "beed66ca6ed2503e6170ee1e1158247f1c2f0140",
+    "package_version": "0.1.0",
+    "checkout_clean": true,
+    "branch": "main",
+    "origin_main_divergence": "0 ahead / 0 behind",
+    "desktop_name": "LOMaterialQA-20260720-012853-577059e274"
+  },
+  "observed_window": {
+    "title": "LibreOfficeDev",
+    "class": "SALFRAME",
+    "width": 1920,
+    "height": 1117,
+    "stable_poll_count": 4,
+    "observed_hwnd": 461130,
+    "owned_process_id": 30284,
+    "owned_process_image": "program\\soffice.bin"
+  },
+  "scenarios": [
+    {
+      "id": "E-START-001-LIGHT",
+      "name": "Start Center light baseline",
+      "expected_checkpoints": [
+        "stable owned LibreOfficeDev SALFRAME window",
+        "nonblank Home and Recent Documents view",
+        "no personal documents or unrelated windows"
+      ],
+      "result": "pass",
+      "reviewer": "Codex"
+    },
+    {
+      "id": "E-START-001-TEMPLATES",
+      "name": "Background pointer navigation from Recent Documents to Templates",
+      "expected_checkpoints": [
+        "background input succeeds without switching the live desktop",
+        "Templates navigation state is visible",
+        "bundled template gallery is nonblank"
+      ],
+      "result": "pass",
+      "input": "low-level background client click on the runtime-resolved SALFRAME window",
+      "reviewer": "Codex"
+    },
+    {
+      "id": "E-A11Y-START-LIGHT",
+      "name": "Bounded read-only UNO accessibility-tree smoke",
+      "expected_checkpoints": [
+        "matching screenshot hash",
+        "at least one SHOWING or VISIBLE node",
+        "collector reports no errors or truncation"
+      ],
+      "result": "pass",
+      "reviewer": "Codex"
+    }
+  ],
+  "document_fixtures": [],
+  "screenshots": [
+    {
+      "file": "screenshots/start-center-light.png",
+      "bytes": 203493,
+      "sha256": "e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501",
+      "width": 1920,
+      "height": 1117,
+      "pixel_format": "24bpp RGB",
+      "capture": {
+        "api": "PrintWindow through low-level computer-use MCP",
+        "successful": true,
+        "rendered_ok": true,
+        "runtime_window_dimensions_match": true
+      },
+      "sampled_pixel_statistics": {
+        "sample_step_px": 8,
+        "sample_count": 33600,
+        "unique_sample_colors": 1184,
+        "mean_luma": 236.6643,
+        "min_luma": 0.0,
+        "max_luma": 255.0,
+        "near_white_ratio": 0.690893
+      },
+      "nonblank": true,
+      "visual_review": "pass; real Start Center Home/Recent Documents surface; not occluded, stale, cropped, or stretched; no personal documents or unrelated windows"
+    },
+    {
+      "file": "screenshots/start-center-templates-light.png",
+      "bytes": 212501,
+      "sha256": "30667f9c9c8163183dc6f7d780113e52b90d710dca0ac64044afd5b5243ef378",
+      "width": 1920,
+      "height": 1117,
+      "pixel_format": "24bpp RGB",
+      "capture": {
+        "api": "PrintWindow through low-level computer-use MCP",
+        "successful": true,
+        "rendered_ok": true,
+        "runtime_window_dimensions_match": true
+      },
+      "sampled_pixel_statistics": {
+        "sample_step_px": 8,
+        "sample_count": 33600,
+        "unique_sample_colors": 632,
+        "mean_luma": 241.441,
+        "min_luma": 0.0,
+        "max_luma": 255.0,
+        "near_white_ratio": 0.698125
+      },
+      "nonblank": true,
+      "visual_review": "pass; Templates navigation and bundled template gallery visible; not occluded, stale, cropped, or stretched; no personal documents or unrelated windows"
+    }
+  ],
+  "accessibility": [
+    {
+      "file": "logs/a11y.json",
+      "screenshot_sha256": "e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501",
+      "node_count": 96,
+      "visible_nodes": 49,
+      "errors": 0,
+      "partial": false,
+      "result": "pass"
+    },
+    {
+      "file": "logs/a11y-templates.json",
+      "screenshot_sha256": "30667f9c9c8163183dc6f7d780113e52b90d710dca0ac64044afd5b5243ef378",
+      "node_count": 111,
+      "visible_nodes": 64,
+      "errors": 0,
+      "partial": false,
+      "result": "pass"
+    }
+  ],
+  "cleanup": {
+    "normal_uno_termination": true,
+    "recorded_process_gone": true,
+    "headless_window_count_after_termination": 0,
+    "headless_desktop_closed": true
+  },
+  "review": {
+    "reviewer": "Codex",
+    "review_date": "2026-07-20",
+    "sensitive_data_review": "pass",
+    "limitations": "This is a light-profile Start Center smoke on software raster rendering. Dark, high contrast, accelerated rendering, keyboard-only, 200% scale, RTL/CJK, updater, install/uninstall, and broader suite scenarios remain open."
+  }
+}

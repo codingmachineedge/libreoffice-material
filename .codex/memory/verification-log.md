@@ -1064,3 +1064,62 @@ build or runtime evidence.
 - The incomplete source-copy root for `4fd5d9aa6` was deliberately stopped and
   retained before configure. It is not build evidence. The next candidate must
   use the pushed follow-up commit that contains the CI identity correction.
+
+## 2026-07-20 — exact-source VS 2026 product, MSI, and Start Center evidence
+
+- Clean detached source `577059e2741185b512c184c64685c16d335d10ea` used
+  Visual Studio 2026 Enterprise 18.7.11925.98, MSVC 19.51.36248/v145
+  14.51.36231, Clang 22.1.3, and Windows SDK 10.0.26100.0. The five required
+  native targets (`tools_test`, `extensions_test_update`,
+  `vcl_widget_definition_reader_test`,
+  `vcl_file_definition_widget_draw_test`, and `vcl_treeview`) passed, as did
+  the legacy CLI payload check and full LibreOfficeDev product build.
+- The final `LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64.msi` is 199,692,288
+  bytes with SHA-256
+  `437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`.
+  Authenticode reports `NotSigned`. Windows Installer administrative extraction
+  completed successfully with status `0`; the stabilized payload contains 4,929
+  files, 605,001,099 bytes, and exactly one `soffice.exe`. The wrapper parent
+  exited before final dist staging/manifest copy, so the wrapper is not claimed
+  as an end-to-end success. The MSI was not installed.
+- Extracted `program\soffice.exe` is 537,600 bytes, SHA-256
+  `a0ac5360f303435ca89406fd8e648affc30a6e53382af0b901a85f3a5a45c410`;
+  `program\soffice.bin` is 2,719,744 bytes, SHA-256
+  `beb398080f8ed27c44c9425499c1fdd0171648751253c9f2c176943a7fb330ea`.
+- Clean sibling driver commit
+  `beed66ca6ed2503e6170ee1e1158247f1c2f0140` launched the exact extracted
+  payload on a run-scoped Win32 off-screen desktop with an isolated profile and
+  unique UNO pipe. The first, default-GPU `PrintWindow` capture was blank even
+  though the owned `LibreOfficeDev`/`SALFRAME` window was stable and the bounded
+  UNO collector returned 96 nodes, 49 visible, with no collector errors. The
+  failure is preserved as run `20260720-012601-577059e274-vs2026-msi`.
+- The retry set `SAL_SKIA=raster` and `SAL_DISABLEGL=1`, retained the Material
+  opt-in, and produced two reviewed nonblank `1920×1117` captures. Home/Recent
+  Documents is SHA-256
+  `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`;
+  Templates after a successful background client click is SHA-256
+  `30667f9c9c8163183dc6f7d780113e52b90d710dca0ac64044afd5b5243ef378`.
+  Their paired bounded UNO trees report 96/49 and 111/64 total/visible nodes,
+  no collector errors, and no truncation. The exact process terminated normally
+  over its unique pipe, headless window count reached zero, and the named
+  desktop closed successfully. Run
+  `20260720-012853-577059e274-vs2026-msi-raster` is accepted for these narrow
+  light Start Center checkpoints only.
+- Dark/high-contrast, accelerated capture, keyboard/focus, 200% scale,
+  localization/direction, suite applications, dialogs, updater, and MSI
+  install/upgrade/uninstall/restart-suppression coverage remain open. The
+  Material environment was requested, but that alone does not prove every
+  control used the file definition or that the Start Center is complete.
+
+## 2026-07-20 — per-push normal Windows release workflow source validation
+
+- `windows-installer.yml` now triggers on every push to `main` and retains
+  manual dispatch. Per-SHA concurrency does not allow a newer push to cancel or
+  replace an older pending source commit. The validated MSI and three metadata
+  files are uploaded directly to a draft GitHub Release; only diagnostics use
+  an Actions artifact. Exact asset/digest/target checks precede promotion to a
+  public normal, non-prerelease Latest release.
+- Official `actionlint` 1.7.12, `git diff --check`, and focused semantic
+  assertions passed locally. This is workflow-source validation; no canonical
+  public release existed at the time of this entry, so the first pushed run must
+  still be followed through build, publication, Latest, and public asset checks.

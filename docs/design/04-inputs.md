@@ -15,7 +15,7 @@ and the interactive reference [`site/prototype.html`](../../site/prototype.html)
 
 Implementation labels used throughout:
 
-- **implemented in definition.xml (unbuilt)** — the native part/state exists in
+- **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** — the native part/state exists in
   the file-widget definition but has never been compiled or executed;
 - **prototype-only** — shown in `site/prototype.html`, no native counterpart yet;
 - **specified here, not yet implemented** — in neither source.
@@ -44,7 +44,7 @@ notes in `MATERIAL_DESIGN.md`.
 | Helper/error text (prototype-only) | 12px text below the container |
 | Height | `Entire` part declares `height="@size-standard-control"` (36) natively; prototype dialog fields are 48px, prototype form fields 44px |
 
-The native `editbox` control is **implemented in definition.xml (unbuilt)**:
+The native `editbox` control is **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)**:
 `Entire` with `height="@size-standard-control"` and three states. The floating
 label — a `label`-role caption cut into the top outline (prototype geometry:
 `top:-8px; left:12px; padding:0 4px`, 500-weight 12px, background matching the
@@ -59,11 +59,11 @@ the single 36px `size-standard-control` value with no density policy yet.
 
 | State | Visual treatment | Exact tokens (native where implemented) |
 | --- | --- | --- |
-| Enabled | 1px outline, surface fill, rounded 12 | `stroke="@outline" fill="@surface" stroke-width="@stroke-thin" radius="@corner-container"` — implemented in definition.xml (unbuilt) |
+| Enabled | 1px outline, surface fill, rounded 12 | `stroke="@outline" fill="@surface" stroke-width="@stroke-thin" radius="@corner-container"` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Hover | Identical to enabled (deliberate; see family convention) | no `rollover` state declared |
-| Focused | 2px primary outline replaces the 1px outline; label (prototype) turns `@primary` | `stroke="@primary" ... stroke-width="@stroke-standard"` — implemented in definition.xml (unbuilt) |
+| Focused | 2px primary outline replaces the 1px outline; label (prototype) turns `@primary` | `stroke="@primary" ... stroke-width="@stroke-standard"` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Pressed | No distinct container treatment; the caret placement is the feedback | — |
-| Disabled | 1px `@outline-variant` outline, `@disabled-container` fill, text via `deactiveTextColor` → `@outline` | `stroke="@outline-variant" fill="@disabled-container" stroke-width="@stroke-thin"` — implemented in definition.xml (unbuilt) |
+| Disabled | 1px `@outline-variant` outline, `@disabled-container` fill, text via `deactiveTextColor` → `@outline` | `stroke="@outline-variant" fill="@disabled-container" stroke-width="@stroke-thin"` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Read-only | Enabled container, non-editable text, caret allowed for selection | specified here, not yet implemented |
 | Invalid | 2px error outline, error-coloured label and trailing `error` icon (20px), helper line below | prototype-only (`border:2px solid var(--err-base)`, helper `font 12px`, e.g. "The path does not exist."). The native palette declares no base `error` role — only `error-container`/`on-error-container` (style slots `errorColor`/`errorTextColor`). A native invalid state therefore needs a future base-error role; specified here, not yet implemented |
 | Focused + invalid | Error outline wins at 2px; focus remains programmatically exposed | prototype-only |
@@ -91,7 +91,8 @@ the single 36px `size-standard-control` value with no density policy yet.
   indicator visible without relying on hue alone.
 - Contrast targets: `@on-surface` text on `@surface` and the `@outline` stroke
   against `@surface` must meet 4.5:1 (text) and 3:1 (non-text) respectively;
-  these are design targets, not measured results (verified-capture count 0).
+  these are design targets, not measured results. The current screenshot
+  registry does not constitute this contrast audit.
 - Invalid state is never colour-only: outline colour, trailing icon, and helper
   text that names the problem and the recovery action ("Choose an existing
   folder.") all change together.
@@ -144,7 +145,7 @@ style on top of the Material container.
 
 ### 2.1 Anatomy & tokens
 
-Two native variants are **implemented in definition.xml (unbuilt)**:
+Two native variants are **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)**:
 
 - `editboxnoborder` — `Entire` with `height="@size-standard-control"` (36):
   enabled state paints `@surface` on `@surface` with `stroke-none`, i.e. the
@@ -163,7 +164,7 @@ Two native variants are **implemented in definition.xml (unbuilt)**:
 | Focused | `@primary` stroke at `stroke-standard`, radius `@corner-container` — the border materialises on focus | `@primary` stroke at `stroke-standard` |
 | Disabled | `@disabled-container` fill, `stroke-none` | `@outline-variant` stroke, `@disabled-container` fill |
 
-All rows implemented in definition.xml (unbuilt). No hover states, per the
+All rows implemented in definition.xml (compiled at commit 577059e274; surface state unverified). No hover states, per the
 family convention.
 
 ### 2.3 Interaction
@@ -213,7 +214,7 @@ on `@surface-container` must still allocate the field's own `@surface` area.
 ### 3.1 Anatomy & tokens
 
 Both are composite fields with a trailing dropdown button. Native parts,
-**implemented in definition.xml (unbuilt)**:
+**implemented in definition.xml (compiled at commit 577059e274; surface state unverified)**:
 
 | Part | Geometry | Token use |
 | --- | --- | --- |
@@ -248,7 +249,7 @@ that 48px presentation and the floating label are prototype-only.
 | `ListboxWindow` | enabled / disabled | `@outline-variant` stroke; `@surface` vs `@disabled-container` fill |
 | `Focus` | any | `@primary` frame at `stroke-standard` |
 
-All implemented in definition.xml (unbuilt). Selected dropdown rows use the
+All implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Selected dropdown rows use the
 `listBoxWindowHighlight*` pair (`@primary-container`/`@on-primary-container`).
 
 ### 3.3 Interaction
@@ -287,7 +288,7 @@ these popups. No native density switch exists.
 In RTL the `ButtonDown` mirrors to the inline-start (visual left) edge and the
 text area mirrors accordingly; the shared renderer already carries source
 corrections for composite combo and RTL geometry (`MATERIAL_DESIGN.md`,
-"shared renderer" notes — unbuilt). The chevron glyph is direction-neutral and
+"shared renderer" notes — compiled at commit 577059e274; surface state unverified). The chevron glyph is direction-neutral and
 must not mirror. Long item labels ellipsise in the closed field but the popup
 may widen to fit its widest row within screen bounds.
 
@@ -312,7 +313,7 @@ drop-shadowed square. High contrast bypasses Material drawing entirely.
 
 ### 4.1 Anatomy & tokens
 
-**Spin field** (`spinbox`) — **implemented in definition.xml (unbuilt)** —
+**Spin field** (`spinbox`) — **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** —
 declares `orientation="decrease-edit-increase"` on `Entire`: the decrement
 button, then the edit area, then the increment button in one horizontal
 container. Parts:
@@ -326,7 +327,7 @@ container. Parts:
 | `Focus` | focus frame | four `@primary` lines, `stroke-standard` |
 
 **Standalone spin buttons** (`spinbuttons`) — **implemented in definition.xml
-(unbuilt)** — four directional parts `ButtonUp`, `ButtonDown`, `ButtonLeft`,
+(compiled at commit 577059e274; surface state unverified)** — four directional parts `ButtonUp`, `ButtonDown`, `ButtonLeft`,
 `ButtonRight`, each 28×28 (`@size-compact-control`) with the smaller
 `corner-control` (10px) radius and chevron glyphs drawn in
 `@on-primary-container`. These serve vertical and horizontal spinner
@@ -345,7 +346,7 @@ Note the deliberate difference: the standalone buttons keep the
 `@on-primary-container` glyph across hover/press (their fill change is the
 feedback), while the in-field buttons brighten the glyph to `@on-surface`.
 `Entire` has no hover state (family convention). All rows implemented in
-definition.xml (unbuilt).
+definition.xml (compiled at commit 577059e274; surface state unverified).
 
 ### 4.3 Interaction
 

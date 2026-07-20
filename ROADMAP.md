@@ -29,9 +29,10 @@ No phase is currently marked verified.
 - guard that reference and the build path in CI: a dependency-free validator
   (`bin/validate-prototype.mjs`) and `prototype-check.yml` check its
   self-containment, tokens, icons, and regex engine, while `build-installer.yml`
-  attempts a Linux package and the manually dispatched `windows-installer.yml`
-  pins Visual Studio 2022, provisions Cygwin, runs the required native tests,
-  validates an exact draft release, and only then publishes a normal public,
+  attempts a Linux package and every `main` push (or manual dispatch) starts
+  `windows-installer.yml`. The Windows workflow pins Visual Studio 2022,
+  provisions Cygwin, runs the required native tests, uploads the validated MSI
+  directly to an exact draft release, and only then publishes a normal public,
   non-prerelease Latest Windows x64 MSI release;
 - define native build profiles and artifact retention rules, including a
   source-controlled local Windows bootstrap/build entry point;
@@ -40,7 +41,9 @@ No phase is currently marked verified.
 - establish a repository-memory ledger for decisions, evidence, and progress.
 
 Current evidence: the Windows harness preflight passed on 2026-07-16 using a
-temporary Notepad process, but no LibreOffice window was involved. The local
+temporary Notepad process. On 2026-07-20, the harness advanced to the real
+LibreOfficeDev MSI payload and accepted two light-profile Start Center captures
+plus two bounded UNO trees with no collector errors. The local
 [one-click Windows script](docs/LOCAL_WINDOWS_BUILD.md) now provisions an
 isolated VS 2022 C++/CLI/C++ Clang/Cygwin profile, validates it, and creates a
 clean LF source snapshot. On 2026-07-19, its first bootstrap installed the
@@ -63,9 +66,7 @@ path stops rather than being repaired or silently substituted. Without that
 path, the opt-in profile uses its dedicated
 `%ProgramData%\LibreOfficeMaterialTools\VS2026` Build Tools root. Use a distinct
 build root such as `$env:USERPROFILE\lo-material-vs2026` for its first run. The
-CI workflow remains pinned to VS 2022 for now. This is a source-automation
-profile only, not a completed local native build, installer, runtime, headless
-UI, or accessibility result.
+CI workflow remains pinned to VS 2022 for now.
 The local checker recognizes both the VS 2022 `Llvm\bin` layout and VS 2026's
 host-native `Llvm\x64\bin` Clang layout.
 On 2026-07-19, the named VS 2026 Enterprise host passed no-bootstrap preflight
@@ -73,27 +74,32 @@ after C++/CLI, Clang, and VC145 merge modules were installed, then completed an
 isolated configure at `a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`. Its first
 native build reached third-party compilation and exposed MSVC v145's C++20
 `mdds` conditional-`noexcept` incompatibility. The source now carries a
-bounded v145 C++20 workaround; that is compiler-diagnosis/source evidence, not
-a completed native build, installer, runtime, UI, or accessibility result.
+bounded v145 C++20 workaround. A fresh exact-source build at
+`577059e2741185b512c184c64685c16d335d10ea` then passed all five required
+native targets, validated the legacy CLI payload, completed the product, and
+produced an unsigned 199,692,288-byte MSI. Windows Installer administrative
+extraction returned status `0` with one `soffice.exe`, and that extracted
+runtime supplied the accepted Start Center UI and bounded UNO-tree smoke.
 
 Run `29695815101` did not upload an MSI: its staging script recursively matched
 two retained LibreOffice working databases as well as the final installer. The
 workflow now inspects only the success-only final `LibreOfficeDev\msi\install\en-US`
 directory and still requires exactly one MSI plus administrative extraction and
-`soffice.exe` validation. That corrected staging rule needs a hosted rerun;
-there is no installer artifact, application run, accepted screenshot, release,
-or accessibility result yet.
+`soffice.exe` validation. That corrected staging rule needs a hosted rerun. The
+local wrapper's parent process exited after successful extraction but before its
+final dist staging/manifest copy, so an end-to-end wrapper run and public normal
+release remain open.
 
 The local script is intentionally non-destructive: it checks safe short roots,
 both tool/build-drive free space, and a clean checkout before installing
 dependencies when Git is already available; it uses isolated Cygwin Git rather
 than installing a global Git client. It does not normalize the development
 checkout, delete a prior build root, silently use a host Visual Studio
-installation, reboot Windows, install its MSI, or claim runtime evidence. Its
+installation, reboot Windows, or install its MSI. Its
 VS 2022 default and VS 2026 build state cannot resume each other's work. A
 complete successful full run removes only its verified-clean temporary LF
-worktree. Its default phase remains a build contract until its first local
-native run.
+worktree. The completed VS 2026 build proves the selected toolchain/product path;
+the wrapper's final staging/manifest phase still requires a clean rerun.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL
@@ -109,11 +115,13 @@ download is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.m
 A bounded read-only UNO accessibility-tree collector now accompanies the
 off-screen desktop plan. It runs with the matching built Python runtime and
 records window roles, names, states, child counts, and optional bounds without
-reading document text or invoking UI actions. It is source support for a future
-headless a11y run, not a passed a11y result.
-The required native CI targets and Windows installation-set build have completed
-for this source. Runtime, public release, headless smoke, accessibility smoke,
-and an installer artifact remain pending.
+reading document text or invoking UI actions. The accepted light Start Center
+run collected two complete bounded trees with no collector errors; this is a
+collector smoke result, not a full accessibility audit.
+The required native targets, local Windows MSI, and light Start Center headless
+smoke have completed for exact source `577059e274`. Public release, updater and
+installer lifecycle, the remaining UI/accessibility matrix, and the wrapper's
+final dist staging phase remain pending.
 
 An interactive, dependency-free Material design reference for the whole suite is
 published at [`site/prototype.html`](site/prototype.html): a hand-built HTML
@@ -126,9 +134,9 @@ every search bar, and a Find & Replace dialog. Its tokens mirror
 [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) guards its invariants
 (7/7). It specifies the design the native work targets and is **not** a capture
 of a compiled build, so it does not advance any acceptance gate or the
-verified-capture count. The Windows installation set has built, but no staged
-installer artifact or release exists; the public assetless release/tag `e`
-contains no build and does not satisfy any
+verified-capture count. The exact-source local MSI and Start Center evidence are
+tracked separately; no validated public installer release exists. The historical
+assetless release/tag `e` contains no build and does not satisfy any
 release or evidence gate. Neither package workflow publishes unless a real
 package is produced and validated.
 
@@ -141,7 +149,8 @@ Exit gate:
 
 ## Phase 1 — Material foundations in VCL
 
-**Status: in progress — native C++ targets passed; runtime verification pending**
+**Status: in progress — native C++ targets and light Start Center smoke passed;
+remaining runtime matrix pending**
 
 Implemented source milestones:
 
@@ -241,15 +250,18 @@ Exit gate:
 
 ## Phase 2 — shared shell and common surfaces
 
-**Status: in progress — initial Start Center source with native builder coverage; runtime pending**
+**Status: in progress — initial Start Center source, native builder coverage,
+and light launch/navigation smoke passed; broader shell runtime pending**
 
 The Start Center source slice adds spacing, a Home header/subtitle, distinct
 navigation/content/container surfaces, and VCL-derived recent/template colors.
 Its `open_all` button now uses the standard `suggested-action` semantic, which
 `VclBuilder` preserves as the push-button action state selecting the existing
 Material `extra="action"` styling. Its focused `VclBuilder` fixture passed in
-the current Linux and Windows native runs; it has not yet been displayed or
-captured in a LibreOffice application scenario.
+the current Linux, Windows, and local VS 2026 native runs. The exact-source MSI
+payload has now displayed and captured the light Start Center Home and Templates
+states; dark/high-contrast, visible action-state exercise, and broader shared
+shell scenarios remain open.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

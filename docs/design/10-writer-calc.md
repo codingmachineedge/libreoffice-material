@@ -1,17 +1,18 @@
 # 10 — Writer & Calc
 
-> **Status:** Specification of target design — native implementation per
-> [`ROADMAP.md`](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> **Status:** Specification of target Writer/Calc composition — shared native
+> definitions compiled in the exact-source local build, but these application
+> surfaces are not runtime-verified; see [`ROADMAP.md`](../../ROADMAP.md).
 
 This chapter specifies the two flagship document surfaces: the Writer text
 document window and the Calc spreadsheet window. Normative inputs are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behaviour
 contract), [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native token/part/state contract, unbuilt), and
+(the implemented native token/part/state contract, compiled at `577059e274`), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Every feature is labelled *implemented in definition.xml
-(unbuilt)*, *prototype-only*, or *specified here, not yet implemented*. Shared
+(compiled; surface state unverified)*, *prototype-only*, or *specified here, not yet implemented*. Shared
 controls used on these surfaces (toolbar buttons, fields, combos, tabs, lists,
 scrollbars, progress) are specified in chapters
 [02](02-actions.md)–[07](07-feedback.md); this chapter defines their
@@ -31,13 +32,13 @@ variant removes commands; they re-arrange the identical command set.
 | Region | Size (prototype) | Tokens | Status |
 | --- | --- | --- | --- |
 | Window container | `min(1200px, 97vw)` wide, 11px outer radius, `stroke-thin` `@outline-variant` border on `@surface` | `@surface`, `@outline-variant` | prototype-only (native windows use OS frames) |
-| Title bar | 42px high; app icon 20px in `@primary`; caption buttons 46×42px | `@surface-container` fill, `stroke-thin` `@outline-variant` bottom rule | prototype-only; native title metrics come from `height-window-title` (18) via `titleHeight` — implemented in definition.xml (unbuilt) |
-| Menu bar (classic) | `--menu`: 30px compact / 38px comfortable; items `5px 11px` padding, 8px radius | open item `@primary-container` / `@on-primary-container` | native `menuBarColor` = `@surface-container`, `menuBarRolloverColor` = `@primary-container` — implemented in definition.xml (unbuilt). The prototype paints the bar on `--surface`; the native style mapping is authoritative. |
-| Standard toolbar (classic) | `--tb`: 38px compact / 48px comfortable; buttons 34×34px, icons 20px; separators 1×22px | toolbar background `@surface-container` (`toolbar`/`Entire`, `DrawBackgroundHorz`); separators `@outline-variant` at `stroke-thin` (`SeparatorVert`) | implemented in definition.xml (unbuilt) |
-| Formatting toolbar (classic) | same `--tb` height; combos 30px high | see §10.2/§10.3 composition | composition prototype-only; button/combo parts implemented in definition.xml (unbuilt) |
+| Title bar | 42px high; app icon 20px in `@primary`; caption buttons 46×42px | `@surface-container` fill, `stroke-thin` `@outline-variant` bottom rule | prototype-only; native title metrics come from `height-window-title` (18) via `titleHeight` — implemented in definition.xml (compiled; surface state unverified) |
+| Menu bar (classic) | `--menu`: 30px compact / 38px comfortable; items `5px 11px` padding, 8px radius | open item `@primary-container` / `@on-primary-container` | native `menuBarColor` = `@surface-container`, `menuBarRolloverColor` = `@primary-container` — implemented in definition.xml (compiled; surface state unverified). The prototype paints the bar on `--surface`; the native style mapping is authoritative. |
+| Standard toolbar (classic) | `--tb`: 38px compact / 48px comfortable; buttons 34×34px, icons 20px; separators 1×22px | toolbar background `@surface-container` (`toolbar`/`Entire`, `DrawBackgroundHorz`); separators `@outline-variant` at `stroke-thin` (`SeparatorVert`) | implemented in definition.xml (compiled; surface state unverified) |
+| Formatting toolbar (classic) | same `--tb` height; combos 30px high | see §10.2/§10.3 composition | composition prototype-only; button/combo parts implemented in definition.xml (compiled; surface state unverified) |
 | Ribbon tab row | 38px high; tabs `6px 16px` padding, `16px 16px 0 0` radius, 2px `@primary` underline when active | active tab `@surface` fill, `@primary` text; row on `@surface-container` | prototype-only (notebookbar restyle not yet in native source) |
 | Ribbon command strip | 96px high, 8px padding; big buttons 64×72px (28px icon + 11px label); small buttons 34×34px; chips 30px high at `corner-pill` | groups divided by `stroke-thin` `@outline-variant` rules, group captions 11px `@on-surface-variant` | prototype-only |
-| Status bar | 28px high, `0 14px` padding; text 12px `@on-surface-variant`; zoom slider 120px wide, 4px track, 12px thumb | `@surface-container` fill, `stroke-thin` `@outline-variant` top rule; slider fill `@primary` | prototype-only composition; native slider parts (`slider`/`TrackHorzLeft` `@primary` at `stroke-track`) implemented in definition.xml (unbuilt) |
+| Status bar | 28px high, `0 14px` padding; text 12px `@on-surface-variant`; zoom slider 120px wide, 4px track, 12px thumb | `@surface-container` fill, `stroke-thin` `@outline-variant` top rule; slider fill `@primary` | prototype-only composition; native slider parts (`slider`/`TrackHorzLeft` `@primary` at `stroke-track`) implemented in definition.xml (compiled; surface state unverified) |
 
 Native toolbar buttons resolve through `toolbar`/`Button`, which defines nine
 states — enabled, rollover (`@primary-container`), pressed (`@primary-hover`),
@@ -45,7 +46,7 @@ checked (`button-value="true"`: `@primary` stroke at `stroke-thin` over
 `@primary-container`), rollover+checked, pressed+checked, focused (`@primary`
 at `stroke-standard`), disabled (`@disabled-container`), and disabled+checked
 (`@outline` stroke over `@disabled-container`) — all at `corner-toolbar`
-(18px). Implemented in definition.xml (unbuilt). The prototype rounds its
+(18px). Implemented in definition.xml (compiled; surface state unverified). The prototype rounds its
 34px toolbar buttons at `--r-sm` (8px); the native `corner-toolbar` role is
 authoritative for the built control.
 
@@ -78,11 +79,11 @@ The body below the command area is a horizontal split: document canvas
 
 | Region | Size (prototype) | Tokens | Status |
 | --- | --- | --- | --- |
-| Document canvas | flexible width; vertical padding 26px; scrollable | background `@surface-container-low` | canvas colour implemented in definition.xml (unbuilt) via the `workspaceColor` style slot = `@surface-container-low`; composition prototype-only |
+| Document canvas | flexible width; vertical padding 26px; scrollable | background `@surface-container-low` | canvas colour implemented in definition.xml (compiled; surface state unverified) via the `workspaceColor` style slot = `@surface-container-low`; composition prototype-only |
 | Page | 640px wide (`max-width: 92%`), centred; `64px 72px` inner padding; min-height 760px | `@surface` fill; `stroke-thin` `@outline-variant` border; shadow `0 4px 20px rgba(0,0,0,.10)` | prototype-only (page rendering is document content, not chrome) |
 | Properties sidebar | 300px total: 252px panel + 48px icon rail; `stroke-thin` `@outline-variant` left rule | panel on `@surface`, rail on `@surface-container` | prototype-only composition |
-| Sidebar rail | 48px wide; buttons 38×38px at `corner-small`, 22px icons, 4px gap, 10px top padding | active `@primary-container` / `@on-primary-container`; inactive transparent / `@on-surface-variant` | prototype-only; hover/checked treatment matches `toolbar`/`Button` semantics (implemented in definition.xml, unbuilt) |
-| Panel content | 14px padding; panel title 14px semibold; section headings 11px uppercase `@on-surface-variant` | title/label typography via native `title`/`label` roles (120%/semibold, 100%/medium) | typography roles implemented in definition.xml (unbuilt) |
+| Sidebar rail | 48px wide; buttons 38×38px at `corner-small`, 22px icons, 4px gap, 10px top padding | active `@primary-container` / `@on-primary-container`; inactive transparent / `@on-surface-variant` | prototype-only; hover/checked treatment matches `toolbar`/`Button` semantics (implemented in definition.xml; compiled, surface state unverified) |
+| Panel content | 14px padding; panel title 14px semibold; section headings 11px uppercase `@on-surface-variant` | title/label typography via native `title`/`label` roles (120%/semibold, 100%/medium) | typography roles implemented in definition.xml (compiled; surface state unverified) |
 
 Rail entries (top to bottom, prototype): Properties, Styles, Gallery,
 Navigator, Functions. Exactly one rail entry is active; its deck fills the
@@ -99,7 +100,7 @@ section:
   The built control is a `combobox` — `@outline` stroke on `@surface` at
   `corner-container`, `@primary` at `stroke-standard` when focused, and a
   36×36 (`size-standard-control`) `ButtonDown` chevron zone on
-  `@primary-container` — implemented in definition.xml (unbuilt).
+  `@primary-container` — implemented in definition.xml (compiled; surface state unverified).
 - Font-size field: 56×36px in the prototype, value *12*; built as a
   `spinbox`/`combobox` with the same state set.
 - Character toggle row: six 34×34px icon toggles at `corner-small` — Bold,
@@ -129,7 +130,7 @@ Combos are 30px high with `stroke-thin` `@outline` borders at `corner-small`
 in the prototype; toggle buttons show checked state as `@primary-container`
 fill with `@on-primary-container` glyph and expose `aria-pressed`.
 Composition prototype-only; each control's parts and states implemented in
-definition.xml (unbuilt).
+definition.xml (compiled; surface state unverified).
 
 ### Key user flows
 
@@ -151,7 +152,7 @@ definition.xml (unbuilt).
 - **Loading/long operations:** file open and pagination progress use the
   determinate `progress` control — `@outline-variant` `TrackHorzArea` under a
   `@primary` `Entire` fill at `corner-indicator` — hosted in the status bar;
-  implemented in definition.xml (unbuilt), placement specified here.
+  implemented in definition.xml (compiled; surface state unverified), placement specified here.
 - **Errors:** document-level problems (read-only, recovery, failed save) use
   the banner pattern from [07-feedback](07-feedback.md) with
   `@error-container` / `@on-error-container` and always pair the message with
@@ -203,7 +204,7 @@ expert shortcuts.
 - Formatting toggles expose pressed state; alignment exposes a
   radio-group-like single selection. State is never conveyed by fill colour
   alone: checked toolbar buttons also carry the `stroke-thin` `@primary`
-  outline (implemented in definition.xml, unbuilt).
+  outline (implemented in definition.xml; compiled, surface state unverified).
 - Focus indicators follow chapter [01](01-foundations.md): `stroke-standard`
   `@primary` outlines defined per control part; generic fallback retains the
   VCL focus rectangle when Material drawing is bypassed under high contrast.
@@ -214,7 +215,7 @@ expert shortcuts.
 ### Verification checkpoints
 
 Evidence per [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md);
-scenario identifiers `writer-surface-*`. Verified-capture count today: 0.
+scenario identifiers `writer-surface-*`. Writer surface-specific capture count: 0.
 
 1. `writer-surface-canvas`: headless capture of an open document; assert the
    canvas pixel outside the page equals `@surface-container-low` (`#F7F2FA`
@@ -252,10 +253,10 @@ rule. Contents left to right (prototype geometry):
 
 | Element | Size | Treatment | Status |
 | --- | --- | --- | --- |
-| Name Box | 96×30px | current reference (e.g. `D4`) in 13px medium `@on-surface`; `stroke-thin` `@outline` border, `corner-small`; trailing 18px chevron | prototype-only composition; the built control is a `combobox` (implemented in definition.xml, unbuilt) |
+| Name Box | 96×30px | current reference (e.g. `D4`) in 13px medium `@on-surface`; `stroke-thin` `@outline` border, `corner-small`; trailing 18px chevron | prototype-only composition; the built control is a `combobox` (implemented in definition.xml; compiled, surface state unverified) |
 | Function Wizard | 32×30px | text glyph `fx`, bold 14px in `@primary`; hover `@primary-container` | prototype-only; opens the wizard (Ctrl+F2) |
 | Sum | 32×30px | Σ glyph, 17px in `@on-surface-variant`; hover `@primary-container` / `@on-primary-container` | prototype-only |
-| Formula input | flexible, 30px high | `stroke-thin` `@outline` border at `corner-small` on `@surface`, `0 12px` padding, 13px `@on-surface` text | prototype-only composition; the built control is an `editbox` — `@outline`/`@surface` idle, `@primary` at `stroke-standard` focused, height role `size-standard-control` (implemented in definition.xml, unbuilt) |
+| Formula input | flexible, 30px high | `stroke-thin` `@outline` border at `corner-small` on `@surface`, `0 12px` padding, 13px `@on-surface` text | prototype-only composition; the built control is an `editbox` — `@outline`/`@surface` idle, `@primary` at `stroke-standard` focused, height role `size-standard-control` (implemented in definition.xml; compiled, surface state unverified) |
 
 The prototype derives the formula display from the selected cell: numeric
 cells render as `=` plus the raw value with thousands separators stripped.
@@ -264,7 +265,7 @@ cells render as `=` plus the raw value with thousands separators stripped.
 
 The grid is application-drawn (not a VCL native-control part), so its colour
 behaviour flows through the 72-slot `StyleSettings` mapping — implemented in
-definition.xml (unbuilt) — while its geometry rules are specified here and
+definition.xml (compiled; surface state unverified) — while its geometry rules are specified here and
 mirrored by the prototype.
 
 | Element | Value | Tokens | Status |
@@ -272,12 +273,12 @@ mirrored by the prototype.
 | Corner cell | 44×26px | `@surface-container` fill | prototype-only |
 | Column headers | 26px high, one per column | idle `@surface-container` fill, 12px medium `@on-surface-variant` text; `stroke-thin` `@outline-variant` cell rules | prototype-only geometry; colours via `highlightColor` family below |
 | Row headers | 44px wide, `--row` high | same idle/selected treatment as column headers | prototype-only geometry |
-| Header selection highlight | header containing the active cell | `@primary-container` fill, `@on-primary-container` text (native `highlightColor` / `highlightTextColor` slots) | colour roles implemented in definition.xml (unbuilt); header rule specified here |
+| Header selection highlight | header containing the active cell | `@primary-container` fill, `@on-primary-container` text (native `highlightColor` / `highlightTextColor` slots) | colour roles implemented in definition.xml (compiled; surface state unverified); header rule specified here |
 | Data columns | **76px compact / 92px comfortable** default width | — | prototype-only density rule |
 | Data rows | `--row`: **26px compact / 32px comfortable** | `stroke-thin` `@outline-variant` gridlines | prototype-only density rule |
 | Cells | `0 8px` inline padding, 13px `@on-surface` text | text starts with a digit or `(` → right-aligned; otherwise left-aligned | prototype-only heuristic illustrating the standard numeric/text alignment rule |
-| Cell selection ring | 2px inset ring (`stroke-standard`) in `@primary`; selected cell fill `@surface` against the transparent grid | `@primary`, `@surface` | prototype-only; specified here for native (the accent resolves through the `accentColor` = `@primary` slot, implemented in definition.xml, unbuilt) |
-| Alternating rows (where enabled) | `@surface-container-low` via `alternatingRowColor` | implemented in definition.xml (unbuilt) |
+| Cell selection ring | 2px inset ring (`stroke-standard`) in `@primary`; selected cell fill `@surface` against the transparent grid | `@primary`, `@surface` | prototype-only; specified here for native (the accent resolves through the `accentColor` = `@primary` slot, implemented in definition.xml; compiled, surface state unverified) |
+| Alternating rows (where enabled) | `@surface-container-low` via `alternatingRowColor` | implemented in definition.xml (compiled; surface state unverified) |
 
 The prototype grid shows 8 columns (A–H) and 14 rows with an income-statement
 fixture (`Category/Q1…Q4/Total`, totals row `15,410`).
@@ -294,7 +295,7 @@ Prototype tabs: *Income*, *Balance*, *Cash flow*; status bar mirrors
 "Sheet 1 of 3". This composition is prototype-only; the generic native tab
 control (`tabitem`, `height-tab` = 40, `corner-pill`, with
 `centeredTabs`/`noActiveTabTextRaise` settings) is implemented in
-definition.xml (unbuilt) and applies to dialog tabs, not the sheet bar — the
+definition.xml (compiled; surface state unverified) and applies to dialog tabs, not the sheet bar — the
 sheet bar keeps its own top-radius document-tab shape deliberately.
 
 ### Dense-grid density rules
@@ -335,7 +336,7 @@ implemented).
   gridlines are the only chrome. No placeholder art.
 - **Loading/recalculation:** long recalculations show determinate `progress`
   in the status bar (`@primary` on `@outline-variant`, `corner-indicator`) —
-  control implemented in definition.xml (unbuilt), placement specified here.
+  control implemented in definition.xml (compiled; surface state unverified), placement specified here.
 - **Cell errors:** overflow (`###`) and error values (`Err:…`, `#NAME?`)
   render in the cell in `@on-surface` with the error explained in the status
   bar on selection; validation failures use `@error-container` /
@@ -380,7 +381,7 @@ prototype-only composition).
   readers receive the cell value and format description.
 - High contrast bypasses Material drawing and restores the platform baseline,
   keeping the native focus and selection indicators (implemented in
-  definition.xml routing, unbuilt).
+  definition.xml routing; compiled, surface state unverified).
 
 ### Verification checkpoints
 

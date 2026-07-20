@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720-012601-577059e274-vs2026-msi",
+  "overall_result": "rejected_capture",
+  "checks": {
+    "stable_owned_salframe_window": "pass",
+    "accessibility_tree": "pass",
+    "default_gpu_printwindow_capture": "fail_blank",
+    "normal_app_shutdown": "pass",
+    "headless_desktop_cleanup": "pass"
+  },
+  "accepted_screenshot_count": 0,
+  "rejected_screenshot_count": 1,
+  "follow_up": "Repeat with SAL_SKIA=raster and SAL_DISABLEGL=1; accepted in run 20260720-012853-577059e274-vs2026-msi-raster."
+}

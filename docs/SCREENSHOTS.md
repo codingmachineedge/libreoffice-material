@@ -1,22 +1,22 @@
 # Verified screenshot index
 
-**Current verified screenshot count: 0.**
+**Current verified screenshot count: 2.**
 
-No application screenshot has been committed for LibreOffice Material yet.
-This page reserves reviewable evidence categories without linking to missing
-files or showing mock imagery. A gallery card that says “awaiting capture” is a
-status indicator, not a screenshot.
+Both accepted files come from the same exact-source Windows x64 MSI payload and
+light-profile Start Center run. They establish a real launch and one background
+navigation smoke action; they do not complete the light/dark minimum or any
+whole-suite acceptance gate.
 
 A 2026-07-16 off-screen Notepad capture was used only to preflight the local
 low-level desktop driver. It was temporary, was not committed, and cannot enter
-this registry because it does not show LibreOffice. The verified LibreOffice
-Material screenshot count therefore remains zero.
+this registry because it does not show LibreOffice. It remains excluded from
+the current count.
 
 ## Evidence slots
 
 | Slot | Surface | Minimum checkpoint | Current state | Verified file |
 | --- | --- | --- | --- | --- |
-| E-START-001 | Start center and shared shell | stable launch, light and dark | Awaiting genuine capture | — |
+| E-START-001 | Start center and shared shell | stable launch, light and dark | In progress — light accepted; dark pending | [`Home / Recent Documents`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-light.png) · [`Templates`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-templates-light.png) · run [`manifest`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/manifest.json) / [`results`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/results.json) |
 | E-WRITER-001 | Writer | document open, formatting and sidebar visible | Awaiting genuine capture | — |
 | E-CALC-001 | Calc | populated sheet, formula bar and sheet tabs visible | Awaiting genuine capture | — |
 | E-IMPRESS-001 | Impress | editing canvas, slide pane and properties visible | Awaiting genuine capture | — |

@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "site/**"
+      - "docs/evidence/runs/**"
+      - "docs/SCREENSHOTS.md"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -30,6 +32,17 @@ jobs:
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
+
+      - name: Stage canonical verified captures
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_id='20260720-012853-577059e274-vs2026-msi-raster'
+          source_dir="docs/evidence/runs/$run_id/screenshots"
+          publish_dir="site/evidence/$run_id"
+          mkdir -p "$publish_dir"
+          cp "$source_dir/start-center-light.png" "$publish_dir/"
+          cp "$source_dir/start-center-templates-light.png" "$publish_dir/"
 
       - name: Upload static site
         uses: actions/upload-pages-artifact@v5

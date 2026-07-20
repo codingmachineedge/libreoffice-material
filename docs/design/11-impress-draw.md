@@ -11,10 +11,10 @@ surfaces. Normative inputs are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behavior contract),
 [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Every feature is labelled *implemented in definition.xml
-(unbuilt)*, *prototype-only*, or *specified here, not yet implemented*.
+(compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet implemented*.
 Interaction behavior described below is existing LibreOffice behavior restated
 as the target unless explicitly marked otherwise; the theme changes drawing,
 not command semantics.
@@ -31,7 +31,7 @@ status bar). From start to end:
 
 | Region | Size (prototype) | Fill / border tokens | Status |
 | --- | --- | --- | --- |
-| Slide panel | 172 px fixed width; padding 12 px vertical, 10 px horizontal; 10 px inter-thumbnail gap; vertical scroll | `@surface-container` fill; end border hairline `@outline-variant` (`stroke-thin`) | prototype-only geometry; panel fill/border roles implemented in definition.xml (unbuilt) via `windowbackground` + `fixedline` |
+| Slide panel | 172 px fixed width; padding 12 px vertical, 10 px horizontal; 10 px inter-thumbnail gap; vertical scroll | `@surface-container` fill; end border hairline `@outline-variant` (`stroke-thin`) | prototype-only geometry; panel fill/border roles implemented in definition.xml (compiled at commit 577059e274; surface state unverified) via `windowbackground` + `fixedline` |
 | Canvas region | Remaining flex width; 24 px padding; content centred | `@surface-container-low` workspace fill | prototype-only |
 | Slide canvas card | `max-width: 640px`, aspect ratio 16:9; 6 px corner radius; internal padding 44 px top/bottom, 52 px sides; shadow `0 8px 30px rgba(0,0,0,.16)` | `@surface` fill, hairline `@outline-variant` border | prototype-only (document rendering itself is out of chrome scope) |
 | Layouts panel | 248 px fixed width; 14 px padding; “Layouts” heading (600 weight, 14 px, 14 px bottom margin); 3-column grid, 8 px gap | `@surface` fill; start border hairline `@outline-variant` | prototype-only |
@@ -51,10 +51,10 @@ card:
 
 The native counterpart of this panel is a VCL value set/preview list drawn on
 `windowbackground`/`BackgroundWindow` (`@surface`, implemented in
-definition.xml, unbuilt) with `scrollbar` parts for overflow: `ThumbVert`
+definition.xml, compiled at commit 577059e274; surface state unverified) with `scrollbar` parts for overflow: `ThumbVert`
 `@outline` at rest, `@primary` on hover, `@primary-action-pressed` while
 dragged, over `@surface-container` track parts, all at `corner-small` —
-implemented in definition.xml (unbuilt). The per-thumbnail selection border and
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The per-thumbnail selection border and
 shadow are specified here, not yet implemented in the native definition.
 
 **Layouts panel cells.** Six layout previews in a 3-column grid; each cell has
@@ -63,7 +63,7 @@ a 4:3 aspect ratio, `corner-small` (8 px) radius, and a 24 px
 `@outline-variant` border. Selected cell: `@primary-container` fill with a
 2 px `@primary` border. This mirrors the `tabitem`/`MenuItem` selected pattern
 (`@primary-container` fill, `@primary` stroke) already implemented in
-definition.xml (unbuilt); the grid-cell packaging itself is prototype-only.
+definition.xml (compiled at commit 577059e274; surface state unverified); the grid-cell packaging itself is prototype-only.
 
 ### Chrome variants
 
@@ -73,7 +73,7 @@ definition.xml (unbuilt); the grid-cell packaging itself is prototype-only.
   Impress menu set *File, Edit, View, Insert, Format, Slide, Slide Show,
   Tools, Window, Help*; open menus use `menubar`/`MenuItem` states
   (`@primary-container` rollover, `@primary-hover` selected, `corner-container`
-  radius — implemented in definition.xml, unbuilt);
+  radius — implemented in definition.xml, compiled at commit 577059e274; surface state unverified);
 - standard toolbar and Impress formatting toolbar, each at `--tb` height
   (38 px / 48 px), on `toolbar`/`Entire` `@surface-container`;
 - the formatting row contains a 150 px font-name combo (`Liberation Sans`), a
@@ -82,7 +82,7 @@ definition.xml (unbuilt); the grid-cell packaging itself is prototype-only.
   and **Start from First Slide** (`play_arrow`). Toolbar buttons are 34 × 34 px
   with `corner-small` radius in the prototype; natively they consume
   `toolbar`/`Button` with `corner-toolbar` (18) — implemented in
-  definition.xml (unbuilt), including checked (`button-value="true"`:
+  definition.xml (compiled at commit 577059e274; surface state unverified), including checked (`button-value="true"`:
   `@primary` stroke on `@primary-container`), pressed (`@primary-hover`),
   focused (`@primary` at `stroke-standard`), and the disabled-but-checked state
   (`@outline` stroke on `@disabled-container`).
@@ -126,7 +126,7 @@ prototype-only; the native notebookbar mapping is specified in
 - **Unrenderable media on a slide:** the placeholder keeps its bounds and
   shows an `@error-container` / `@on-error-container` notice naming the asset
   and a *Relink…* recovery action — specified here, not yet implemented; the
-  colour pair is implemented in definition.xml (unbuilt) and validator-checked
+  colour pair is implemented in definition.xml (compiled at commit 577059e274; surface state unverified) and validator-checked
   for contrast.
 
 ### Density & adaptive width
@@ -180,7 +180,7 @@ chords. Every pane must be reachable via `F6` without pointer use.
   plus fill change carries state redundantly.
 - Zoom slider in the status bar must publish value (%) and support arrow-key
   adjustment; the native `slider` control (see §11.2) already defines a
-  focused thumb state — implemented in definition.xml (unbuilt).
+  focused thumb state — implemented in definition.xml (compiled at commit 577059e274; surface state unverified).
 - No contrast measurement is claimed anywhere in this chapter; pairs such as
   `@error-container`/`@on-error-container` are checked by the standalone
   validator as source invariants only.
@@ -211,7 +211,7 @@ scenario “create/present/close one Impress deck”):
 
 | Region | Size (prototype) | Fill / border tokens | Status |
 | --- | --- | --- | --- |
-| Tool rail | 48 px fixed width; buttons 38 × 38 px; 4 px gap; 10 px top padding | `@surface-container` fill; end hairline `@outline-variant` | prototype-only geometry; rail fill = `toolbar`/`DrawBackgroundVert`, implemented in definition.xml (unbuilt) |
+| Tool rail | 48 px fixed width; buttons 38 × 38 px; 4 px gap; 10 px top padding | `@surface-container` fill; end hairline `@outline-variant` | prototype-only geometry; rail fill = `toolbar`/`DrawBackgroundVert`, implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Canvas workspace | Remaining flex; 24 px padding | `@surface-container-low` with a dotted grid: 1 px `@outline-variant` dots on a **22 px** square cell (`radial-gradient` in the prototype) | prototype-only |
 | Page card | `max-width: 620px`, aspect ratio 4:3; square corners; shadow `0 8px 30px rgba(0,0,0,.14)` | `@surface` fill, hairline `@outline-variant` border | prototype-only |
 | Property panel | 248 px fixed width; 14 px padding | `@surface` fill; start hairline `@outline-variant` | prototype-only |
@@ -230,7 +230,7 @@ checked tool maps to `button-value="true"` (`@primary` `stroke-thin` outline on
 `pressed` (`@primary-hover`), keyboard focus to `focused` (`@primary` at
 `stroke-standard`), and a disabled-but-checked tool keeps `@outline` on
 `@disabled-container`. All of these states are implemented in definition.xml
-(unbuilt). The prototype's 8 px cell radius versus the native
+(compiled at commit 577059e274; surface state unverified). The prototype's 8 px cell radius versus the native
 `corner-toolbar` 18 px is a deliberate divergence to resolve in the
 prototype's favour only if a later definition slice changes the role; until
 then the native contract (18) is normative for VCL toolbars.
@@ -245,13 +245,13 @@ then the native contract (18) is normative for VCL toolbars.
   outlined “Color” drop-down field (`@outline` hairline, `corner-small`,
   13 px text). Natively the drop-down is the `listbox` control
   (`Entire`/`ButtonDown`/`ListboxWindow` — implemented in definition.xml,
-  unbuilt; see [06 — Containers](06-containers.md));
+  compiled at commit 577059e274; surface state unverified; see [06 — Containers](06-containers.md));
 - line-width row: 40 px tall with a horizontal slider — 4 px track
   (the `stroke-track` metric), filled portion `@primary`, remainder
   `@outline-variant`, and in the prototype an 18 px round `@primary` thumb at
   40 %.
 
-The native slider is implemented in definition.xml (unbuilt) with different,
+The native slider is implemented in definition.xml (compiled at commit 577059e274; surface state unverified) with different,
 normative thumb anatomy: `slider`/`Button` is **28 × 28 px**
 (`size-compact-control`) with `corner-control` (10) radius at rest, growing to
 `corner-container` (12) on hover/press, `@primary` fill,
@@ -296,7 +296,7 @@ state (one command, two `toolbar`/`Button` instances).
 - **No selection:** panel controls remain visible but disabled, using the
   definition's disabled states (`@disabled-container` fills, `@outline-variant`
   strokes) so layout does not jump — implemented in definition.xml for the
-  controls (unbuilt); the panel policy is specified here.
+  controls (compiled at commit 577059e274; surface state unverified); the panel policy is specified here.
 - **Missing linked image:** placeholder bounds retained with an
   `@error-container`/`@on-error-container` notice and *Relink…* action —
   specified here, not yet implemented.
@@ -333,7 +333,7 @@ keyboard order.
   name/description/bounds); the theme does not alter it.
 - The width slider exposes value/min/max and the definition's focused-thumb
   ring (`@on-surface` at `stroke-standard`) provides a non-colour focus cue —
-  implemented in definition.xml (unbuilt).
+  implemented in definition.xml (compiled at commit 577059e274; surface state unverified).
 - The dotted grid is decorative: 1 px `@outline-variant` dots must never be
   load-bearing for alignment information exposed to assistive tech (snap
   values are announced via the status bar and Position and Size dialog).

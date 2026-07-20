@@ -13,7 +13,7 @@ in
 [`vcl/uiconfig/theme_definitions/material/definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml),
 and the interactive mockup in [`site/prototype.html`](../../site/prototype.html).
 Implementation status is marked per feature: *implemented in definition.xml
-(unbuilt)*, *prototype-only*, or *specified here, not yet implemented*.
+(compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet implemented*.
 
 A convention used throughout: the native drawing definitions position geometry
 in normalized part coordinates (0–1 of the part cell). At the declared
@@ -29,14 +29,14 @@ draws its checkbox and radio glyphs at 20 × 20 px.
 
 | Region | Description | Tokens |
 | --- | --- | --- |
-| Hit cell | Square part cell; also the keyboard focus anchor | `size-selection-control` (24) width and height — implemented in definition.xml (unbuilt) |
+| Hit cell | Square part cell; also the keyboard focus anchor | `size-selection-control` (24) width and height — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Box | Rounded square drawn at `0.08–0.92` of the cell | `corner-checkbox` (3) radius, `stroke-standard` (2) border; state-dependent stroke/fill below |
 | Check glyph | Two-segment tick from `(0.27, 0.52)` to `(0.44, 0.69)` to `(0.75, 0.34)` | `@on-primary` stroke, `stroke-standard` |
 | Mixed dash | Horizontal bar from `(0.27, 0.5)` to `(0.73, 0.5)` | `@on-primary` stroke, `stroke-standard` |
 | Focus ring | Separate `Focus` part: four lines inset at `0.04`/`0.96` forming a square outline | `@primary` stroke, `stroke-standard` |
 | Label | Text to the side of the cell (VCL label, not part of the drawn cell) | `radioCheckTextColor` style slot → `@on-surface`; `label` typography role (100 % height, minimum-weight `medium`) |
 
-All of the above is implemented in definition.xml (unbuilt). The prototype
+All of the above is implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The prototype
 mirrors it with a 20 × 20 box, `--r-check` radius, a 2 px border, and an 18 px
 check icon at stroke width 2.4.
 
@@ -148,7 +148,7 @@ Per the evidence contract style of
 
 | Region | Description | Tokens |
 | --- | --- | --- |
-| Hit cell | Square part cell | `size-selection-control` (24) — implemented in definition.xml (unbuilt) |
+| Hit cell | Square part cell | `size-selection-control` (24) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Ring | Rounded box at `0.08–0.92` | `corner-control` (10) radius, `stroke-standard` (2) |
 | Dot | Inner indicator at `0.33–0.67` | `corner-indicator` (4) radius, `stroke-thin` (1), `@on-primary` |
 | Focus ring | `Focus` part square outline at `0.04`/`0.96` | `@primary`, `stroke-standard` |
@@ -161,7 +161,7 @@ indicator is a ~8 px rounded dot. The prototype idealizes this as a true
 
 ### 2.2 States
 
-Eight `Entire` states plus `Focus` — implemented in definition.xml (unbuilt).
+Eight `Entire` states plus `Focus` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified).
 Radio has no mixed value.
 
 | State | Ring stroke | Ring fill | Dot |
@@ -380,7 +380,7 @@ Writer, Calc, and the Start Center consume one implementation.
 ### 5.1 Anatomy & tokens
 
 The selection treatment for lists, list boxes, and drop-down windows is the
-`primary-container` pair, implemented in definition.xml (unbuilt) through the
+`primary-container` pair, implemented in definition.xml (compiled at commit 577059e274; surface state unverified) through the
 72-slot style mapping rather than a drawn part:
 
 | Style slot | Token |
@@ -463,7 +463,7 @@ outside the Material-drawn surfaces.
 The suite-wide rule: **persistent selection is `primary-container`; transient
 hover of an already-selected thing is `primary-hover`; a disabled selection
 keeps an `@outline` stroke so it never disappears.** The native anchors,
-implemented in definition.xml (unbuilt):
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified):
 
 - `tabitem`/`Entire` — pill tabs: `height-tab` (40), `space-tab-inline` (12)
   margin, `corner-pill` (20) radius;

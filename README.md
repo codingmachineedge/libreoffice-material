@@ -5,8 +5,8 @@ Design 3 interface while retaining LibreOffice's native implementation stack,
 document engine, file-format support, and accessibility foundations.
 
 > **Current development focus: Phase 1 — tenth Material VCL milestone plus a
-> post-tenth Start Center and Windows MSI source follow-up.**
-> Phase 0's native-build and application-evidence gate remains open. Semantic
+> post-tenth Start Center and Windows MSI follow-up.**
+> Phase 0's full evidence matrix remains open. Semantic
 > widget tokens, full-track progress indicators, value-sensitive level
 > indicators, native outlined frames, net-less tree connectors, stricter VCL
 > definition parsing, broader state coverage, Start Center changes, and a
@@ -16,26 +16,35 @@ document engine, file-format support, and accessibility foundations.
 > and in Windows Actions run
 > [`29695815101`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29695815101).
 > That Windows run also completed the full LibreOfficeDev installation-set build
-> and the legacy CLI payload check; it did not stage an MSI artifact.
+> and the legacy CLI payload check; it did not stage an MSI artifact. A later
+> exact-source local build at `577059e2741185b512c184c64685c16d335d10ea`
+> completed the same five native targets with Visual Studio 2026, produced a
+> 199,692,288-byte Windows x64 MSI, and successfully administratively extracted
+> its payload with Windows Installer status `0`.
 > The whole GUI has not been rewritten, and no application surface is
-> Material-complete. **There is no verified installer or downloadable build
-> yet** — the Windows run found a staging-rule defect after building the MSI:
+> Material-complete. **There is no public downloadable build yet** — the earlier
+> hosted run found a staging-rule defect after building the MSI:
 > recursive discovery included two retained intermediate MSI databases alongside
 > the final package. The workflow now scopes discovery to the final success-only
-> `install\en-US` directory, and a rerun is required before an artifact exists.
-> No LibreOffice application run has been accepted; the interactive
+> `install\en-US` directory. The local MSI is unsigned, and the local wrapper's
+> parent process exited after successful extraction but before final dist
+> staging, so it is not presented as an end-to-end wrapper success.
+> A real LibreOfficeDev Start Center run from that extracted MSI payload is now
+> accepted with two reviewed light-profile captures and two bounded UNO trees
+> with no collector errors. The separate interactive
 > [design reference](https://ding-ding-projects.github.io/libreoffice-material/prototype.html)
-> (a mockup, not the app). To run the actual editor, install upstream LibreOffice
+> is a mockup, not the app. To run the actual editor, install upstream LibreOffice
 > from [libreoffice.org](https://www.libreoffice.org/download/), which does not
 > include these Material changes. An automated pipeline
 > ([`build-installer.yml`](.github/workflows/build-installer.yml)) attempts a
 > Linux build, while [`windows-installer.yml`](.github/workflows/windows-installer.yml)
-> now provides a manually dispatched Visual Studio 2022/Cygwin path for a real
-> Windows x64 MSI. Both publish **only** after genuine packages pass structural
-> validation. Run `29695815101` at
+> now starts a Visual Studio 2022/Cygwin Windows x64 MSI build on every `main`
+> push (manual dispatch remains available). Both publish **only** after genuine
+> packages pass structural validation. Run `29695815101` at
 > `e4dc8a850c982f33d8722fc203f86591b2993e8b` proves the repaired CLI payload,
-> required native targets, and full installation-set build, but no staged MSI,
-> runtime, release, headless UI, or accessibility result is accepted yet. No
+> required native targets and full installation-set build. The local VS 2026
+> run adds exact-source MSI, Start Center smoke, and bounded UNO-tree evidence, but
+> no public release or updater-runtime result is accepted yet. No
 > public release in the canonical repository has a validated installer asset.
 
 [Project site](https://ding-ding-projects.github.io/libreoffice-material/) ·
@@ -54,14 +63,33 @@ document engine, file-format support, and accessibility foundations.
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
 | Material VCL implementation | Tenth milestone plus a native-test-backed Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states; `CppunitTest_vcl_treeview` passed in current Linux and Windows runs, while runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
-| Verified UI screenshots | None yet | The truthful empty registry is in [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) |
-| Headless harness | Preflight passed; LibreOffice not run | A temporary Notepad-only driver preflight proved the off-screen mechanics, not this UI; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
+| Verified UI screenshots | 2 light-profile Start Center captures | The Home/Recent Documents baseline and background-navigated Templates gallery are registered under exact-source run [`20260720-012853-577059e274-vs2026-msi-raster`](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/); dark and the rest of the matrix remain open |
+| Headless harness | LibreOffice smoke and bounded UNO collection passed | The sibling low-level driver launched the MSI payload on an off-screen Windows desktop, resolved stable runtime ownership, captured both states, drove background navigation, collected two bounded UNO trees with no collector errors, shut down normally, and released the desktop; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
-| Windows updater | Source implemented; native test/build evidence, no runtime evidence | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; an installer artifact, updater exercise, and release remain pending; see [Privacy](PRIVACY.md) |
-| Installer / release | Full Windows install set built; MSI staging rerun pending | [`windows-installer.yml`](.github/workflows/windows-installer.yml) pins VS 2022, retains and checks the legacy CLI bridge payload, runs the required native targets, and now selects only the final `install\en-US` MSI rather than LibreOffice's retained intermediate databases. Run `29695815101` built the set but stopped before upload at the old selection rule; no artifact or release is claimed |
+| Windows updater | Source implemented; updater flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; the Start Center runtime is proven, but updater download/stage/consent/install and a public release remain pending; see [Privacy](PRIVACY.md) |
+| Installer / release | Local MSI built and structurally extracted; public release pending | The exact-source VS 2026 build produced an unsigned 199,692,288-byte MSI (`437b059c…54a43`), Windows Installer administrative extraction returned `0`, and the extracted runtime supplied the accepted captures. The parent wrapper did not reach final dist staging. [`windows-installer.yml`](.github/workflows/windows-installer.yml) now starts on every `main` push and publishes only a verified normal, non-prerelease Release |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
+
+## Running Windows app — exact-source VS 2026/MSI evidence
+
+<p align="center">
+  <a href="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-light.png"><img src="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-light.png" alt="LibreOfficeDev Start Center Home and Recent Documents view running on an off-screen Windows desktop" width="49%"></a>
+  <a href="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-templates-light.png"><img src="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-templates-light.png" alt="LibreOfficeDev Start Center Templates gallery after a background navigation smoke action" width="49%"></a>
+</p>
+
+These are unedited `1920×1117` captures of the actual Windows binary extracted
+from the MSI built at source commit `577059e274`. The run used the Material
+file-widget opt-in and software-raster fallback because the default-GPU
+`PrintWindow` path produced a preserved blank capture. The accepted run proves
+stable launch, visible Start Center rendering, background navigation to
+Templates, two nonempty bounded UNO trees (96/49 and 111/64 total/visible
+nodes, no collector errors), normal shutdown, and desktop cleanup. It does not
+yet prove dark/high-contrast, accelerated rendering, updater behavior, or the
+whole-suite matrix. See the [manifest](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/manifest.json),
+[results](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/results.json),
+and [screenshot registry](docs/SCREENSHOTS.md).
 
 ## Material VCL source milestones
 
@@ -150,8 +178,10 @@ scheme, 3 semantic typography roles, 8 semantic shape tokens, 15 semantic
 metric roles, 72 style slots, 79 parts, and 205 states.
 The static validator remains source validation, but the current five required
 native C++ targets—including the focused `vcl_treeview` builder fixture—passed
-in Linux and Windows Actions. No `soffice` application scenario has run, no
-surface is verified Material-complete, and the screenshot count remains 0.
+in Linux Actions, Windows Actions, and the exact-source local VS 2026 build. A
+real `soffice` Start Center light-profile smoke has now passed with two accepted
+screenshots; no surface is yet verified Material-complete, and the broader
+appearance, input, localization, suite, and updater matrix remains open.
 Controls whose current file-widget geometry cannot preserve native semantics
 continue through LibreOffice's existing fallback.
 
@@ -168,11 +198,12 @@ $env:VCL_DRAW_WIDGETS_FROM_FILE = "1"
 $env:VCL_FILE_WIDGET_THEME = "material"
 ```
 
-These variables describe the source path; they are not a successful-run claim.
+These variables were requested in the accepted Start Center run, but their
+presence alone does not prove that every visible control used the file theme.
 The `vcl_widget_definition_reader_test` and
 `vcl_file_definition_widget_draw_test` targets have passed in the hosted current
-source runs, while a real `soffice` launch remains pending a successfully staged
-MSI artifact.
+source runs and the local VS 2026 build. The exact-source MSI payload supplied
+the accepted `soffice` run linked above.
 
 ## Windows updater source milestone
 
@@ -201,16 +232,20 @@ For runtime accessibility verification, the repository now includes a bounded,
 read-only UNO tree collector that runs only with the matching built Python
 runtime and is paired with off-screen screenshots; it records roles, names,
 states, and bounds without extracting document text or driving the UI.
-This describes implemented source, not runtime proof: Linux and Windows native
-tests plus the Windows installation-set build have completed, but the updater's
-published-release path, installer exercise, headless UI smoke test, and
-accessibility smoke test are still pending.
+The Start Center headless UI and bounded UNO-tree collection now have runtime
+proof, but they do not constitute a full accessibility audit and do not exercise
+the updater. The published-release path,
+download/protected-stage/consent/install flow, installer lifecycle, and broader
+UI/accessibility matrix are still pending.
 
-The stable release workflow is likewise source-only at this point. On `main` it
-creates a draft release, validates the exact target, asset names, upload states,
-sizes, and digests, then promotes that verified draft to a normal public,
-non-prerelease Latest release and checks the public Latest feed. A failed draft
-is cleaned up. No run has yet completed that path.
+The stable release workflow is likewise source-only at this point. Every push to
+`main` starts an exact-commit Windows build (manual dispatch remains available),
+creates a draft release, uploads the validated MSI and update metadata directly
+to that release, and checks the exact target, asset names, upload states, sizes,
+and digests. It then promotes the verified draft to a normal public,
+non-prerelease Latest release and checks the public Latest feed. Only diagnostics
+use an Actions artifact, and a failed draft is cleaned up. No run has yet
+completed that path.
 
 ## Product direction
 
@@ -260,9 +295,10 @@ See [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) for component rules and
 
 ## Evidence, not mock completion
 
-No screenshot is shown until it is captured from a build of this repository and
-registered with its commit, environment, test scenario, and result. Empty cards
-on the project site are **evidence slots**, not mockups or generated UI claims.
+The two screenshots above were captured from an exact-source build of this
+repository and registered with their commit, environment, scenarios, hashes,
+and review. Remaining empty cards on the project site are **evidence slots**,
+not mockups or generated UI claims.
 
 The interactive reference at
 [`site/prototype.html`](site/prototype.html) is the intended Material look and
@@ -279,19 +315,19 @@ Node check of the prototype's self-containment, tokens, icons, and regex engine
 the semantic roles in
 [`vcl/uiconfig/theme_definitions/material/definition.xml`](vcl/uiconfig/theme_definitions/material/definition.xml).
 It is a design specification aid, **not** a screenshot of a compiled LibreOffice
-and **not** build evidence; it does not change the verified-capture count, which
-remains 0.
+and **not** build evidence; current capture status is tracked only in
+[`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md).
 
 The verification driver is the sibling
 [`lowlevel-computer-use-mcp`](https://github.com/codingmachineedge/lowlevel-computer-use-mcp)
 project. It can launch real GUI applications on an off-screen desktop, target
-windows without focusing them, and capture window images. A 2026-07-16 preflight
-using driver commit `806d9ba85e4afbc2af58d7499496babfa7c68891`
-successfully created and removed an off-screen Win32 desktop around Notepad.
-That temporary capture was unrelated to LibreOffice, was not retained, and is
-not registered as project evidence. The driver is not currently vendored into
-this repository. Exact preflight facts, the future LibreOffice capture contract,
-and safety rules are in [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md).
+windows without focusing them, and capture window images. The 2026-07-20
+accepted run used clean driver commit
+`beed66ca6ed2503e6170ee1e1158247f1c2f0140` to launch and inspect the exact MSI
+payload without taking over the live desktop. The driver is not currently
+vendored into this repository. Exact preflight facts, accepted-run boundaries,
+the capture contract, and safety rules are in
+[`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md).
 
 ## Building LibreOffice
 
@@ -308,16 +344,20 @@ and the imported build files before configuring a machine.
 > when needed,
 > verifies it, and builds from an LF snapshot without touching this checkout.
 > On 2026-07-19, this host installed the dedicated VS 2022/Cygwin profile and a
-> clean local preflight passed it. The first real configure reached LibreOffice's
-> Skia requirement and exposed the missing C++ Clang compiler; the bootstrap now
-> requires that component before attempting another local configure. It does not
-> change the separate hosted result:
+> clean local preflight passed it. The first real configure exposed a missing C++
+> Clang compiler; the bootstrap now requires that component. A separate explicit
+> VS 2026 run then completed from clean detached source
+> `577059e2741185b512c184c64685c16d335d10ea`:
+> all five required native targets, the legacy CLI payload, product build, final
+> MSI, and Windows Installer administrative extraction succeeded. The extracted
+> payload supplied the accepted Start Center UI and bounded UNO-tree run. The wrapper's parent
+> process exited before its final dist copy/manifest step, so that wrapper is not
+> claimed as an end-to-end success. This local result complements the hosted result:
 > current-source Linux run `29695793821` and Windows run `29695815101` passed
 > all five required native C++ targets, and the Windows run built the full
 > installation set but stopped at MSI staging. The corrected final-directory
-> rule awaits its hosted rerun. No staged installer, LibreOffice application
-> run, normal release, headless UI smoke, accessibility smoke, or accepted
-> capture is claimed here.
+> rule awaits its hosted rerun. No normal public release or updater-runtime result
+> is claimed yet.
 
 > **Optional local VS 2026 profile:** Visual Studio 2022 remains the default
 > and the profile that matches the current Windows CI workflow. To select VS
@@ -334,17 +374,18 @@ and the imported build files before configuring a machine.
 > `-VisualStudioInstallPath`, the opt-in profile uses its separate dedicated
 > `%ProgramData%\LibreOfficeMaterialTools\VS2026` Build Tools root. This is a
 > local-build option only until the CI profile is deliberately updated. Its
-> addition is source automation, not evidence of a completed local build, MSI,
-> application launch, UI smoke, or accessibility result.
+> addition is now exercised by the exact-source build described above; it is not
+> the hosted CI profile.
 > The checker accepts VS 2022's legacy <code>Llvm\bin</code> layout and VS
 > 2026's host-native <code>Llvm\x64\bin</code> layout for <code>clang-cl</code>.
 > On 2026-07-19, the named VS 2026 Enterprise host passed no-bootstrap
 > preflight and an isolated configure at `a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`.
 > Its first native build reached third-party compilation and exposed MSVC v145's
 > C++20 `mdds` conditional-`noexcept` incompatibility. The source now carries a
-> narrowly scoped v145 C++20 compatibility patch; a fresh full build is still
-> required. This is not a completed native build, MSI, application-launch,
-> UI-smoke, or accessibility result.
+> narrowly scoped v145 C++20 compatibility patch. On 2026-07-20, a fresh build
+> at `577059e274` completed the native targets, product, and final MSI; its
+> extracted runtime passed the linked light-profile Start Center UI and bounded
+> UNO-tree smoke. Remaining gates are stated in the evidence manifest.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing
 the development checkout. It checks root safety, free space, and (when Git is

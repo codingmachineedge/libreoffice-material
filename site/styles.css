@@ -870,6 +870,34 @@ h3 {
   letter-spacing: 0.025em;
 }
 
+.evidence-captures {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--surface-container-low);
+}
+
+.evidence-captures a {
+  display: block;
+  overflow: hidden;
+  border-radius: calc(var(--radius-sm) - 4px);
+  background: var(--surface-container-lowest);
+}
+
+.evidence-captures img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1920 / 1117;
+  object-fit: contain;
+}
+
+.evidence-captures a:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .evidence-meta {
   display: flex;
   align-items: center;

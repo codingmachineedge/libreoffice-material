@@ -11,13 +11,14 @@ writing conventions. The normative sources are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (contract),
 [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`vcl/uiconfig/theme_definitions/material/definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native contract, unbuilt), and
+(the implemented native contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (hand-built interactive
 mockup, not a build capture). Throughout this spec, every statement is tagged
 with one of three provenance levels:
 
-- **implemented in definition.xml (unbuilt)** — the native file-widget theme
-  declares it; no compiled LibreOffice has ever rendered it;
+- **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** — the native file-widget theme
+  declares it and the build contains it; the accepted run requested the opt-in,
+  but no named component state is treated as rendered proof without a registered checkpoint;
 - **prototype-only** — only the HTML mockup demonstrates it;
 - **specified here, not yet implemented** — a target this spec sets that
   neither source currently contains.
@@ -48,9 +49,9 @@ Derived directly from the goals and non-goals in
 6. **Native only.** Product changes are C++ in VCL/framework/application code,
    UNO where required, and XML `.ui`/configuration resources. No web runtime
    enters the desktop GUI; HTML under `site/` serves documentation only.
-7. **Honesty over optimism.** The suite is source-only and unbuilt with a
-   verified-capture count of 0. No claim of a build, screenshot, or
-   accessibility result is made before real evidence exists per
+7. **Honesty over optimism.** Exact-source build and light Start Center smoke
+   evidence now exists, but the suite is not complete. No claim extends beyond
+   the registered run and checkpoints in
    [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md).
 
 ## 2. The token model
@@ -59,14 +60,14 @@ Components consume **semantic roles, never literals**. A role names intent
 (`primary`, `corner-control`, `size-standard-control`); a palette, renderer, or
 density profile resolves the concrete value. The shared contract has four
 families — color, shape, type, and metric — all implemented in
-`definition.xml` (unbuilt). Elevation, motion, spacing-scale, state-layer, and
+`definition.xml` (compiled at commit 577059e274; surface state unverified). Elevation, motion, spacing-scale, state-layer, and
 layout token families are contract requirements from `MATERIAL_DESIGN.md` that
 remain **specified here, not yet implemented** natively.
 
 ### 2.1 Color roles
 
 The native `<palette>` sections declare 23 matched roles for light and dark
-(implemented in definition.xml, unbuilt). The native theme has **no**
+(implemented in definition.xml, compiled at commit 577059e274; surface state unverified). The native theme has **no**
 high-contrast palette: when resolved high contrast takes precedence, native
 code restores the captured platform `StyleSettings` baseline and bypasses
 Material drawing entirely. The high-contrast column below therefore documents
@@ -118,7 +119,7 @@ Notes on deliberate divergences and prototype extras:
 ### 2.2 Shape roles
 
 Eight semantic corner radii, declared by the native `<shapes>` section
-(implemented in definition.xml, unbuilt). In drawing definitions,
+(implemented in definition.xml, compiled at commit 577059e274; surface state unverified). In drawing definitions,
 `radius="@role"` resolves the role into both native rectangle radius axes; the
 current definition contains 159 rounded rectangles consuming these roles and
 11 deliberately square rectangles. Mixing `radius="@role"` with legacy numeric
@@ -138,7 +139,7 @@ current definition contains 159 rounded rectangles consuming these roles and
 ### 2.3 Typography roles
 
 The native `<typography>` contract declares exactly three roles (implemented
-in definition.xml, unbuilt):
+in definition.xml, compiled at commit 577059e274; surface state unverified):
 
 | Role | Relative height | Minimum-weight policy |
 |---|---:|---|
@@ -163,7 +164,7 @@ the native side remain specified here, not yet implemented.
 ### 2.4 Metric roles
 
 The native `<metrics>` section declares exactly 15 semantic integer roles
-(implemented in definition.xml, unbuilt). They centralize what were previously
+(implemented in definition.xml, compiled at commit 577059e274; surface state unverified). They centralize what were previously
 331 repeated literals; the definition currently carries 346 metric references
 (307 strokes, 34 part dimensions/margins, 5 settings). The native contract
 preserves existing integer geometry and downstream unit conversions — it does
@@ -197,7 +198,7 @@ individual scalars would obscure the 45 complete coordinate patterns.
 
 Between tokens and legacy VCL sits the `<style>` section: an exact mapping of
 all 72 `StyleSettings` color slots onto semantic roles (implemented in
-definition.xml, unbuilt). Representative mappings:
+definition.xml, compiled at commit 577059e274; surface state unverified). Representative mappings:
 
 | StyleSettings slot | Semantic role |
 |---|---|
@@ -220,7 +221,7 @@ Material itself requires every slot. The `<settings>` block additionally fixes
 `listBoxEntryMargin` to `@space-list-entry`, `titleHeight` to
 `@height-window-title`, `floatTitleHeight` to `@height-floating-title`, and
 both list-box preview logic dimensions to `@size-list-preview` (implemented in
-definition.xml, unbuilt).
+definition.xml, compiled at commit 577059e274; surface state unverified).
 
 ### 2.6 Token discipline and validation
 
@@ -239,7 +240,7 @@ Rules for every spec in this directory:
 ## 3. Theme resolution order
 
 Resolution precedence, highest first (implemented in definition.xml and VCL
-source, unbuilt):
+source, compiled at commit 577059e274; surface state unverified):
 
 1. **High contrast.** Resolved high contrast takes precedence over everything.
    It **restores the captured native `StyleSettings`/framework baseline** and
@@ -276,7 +277,7 @@ order:
    is the only elevation channel the native definition currently implements —
    for example the outlined frame (`ControlType::Frame`/`Border`) is exactly
    `@outline-variant` stroke, `@surface-container` fill, `stroke-thin`,
-   `corner-container` (implemented in definition.xml, unbuilt). Borders
+   `corner-container` (implemented in definition.xml, compiled at commit 577059e274; surface state unverified). Borders
    survive high contrast; shadows do not.
 2. **Tonal surfaces.** Containment is layered through the three surface roles:
    `@surface` (documents, menus, fields), `@surface-container` (chrome,
@@ -408,7 +409,7 @@ theme for the native pipeline is specified here, not yet implemented.
 
 Menu and popup indicator glyphs drawn by the theme itself (checks, radio dots,
 submenu arrows) are sized by `@size-menu-indicator` (`18`) and drawn with
-`stroke-standard` strokes (implemented in definition.xml, unbuilt).
+`stroke-standard` strokes (implemented in definition.xml, compiled at commit 577059e274; surface state unverified).
 
 ## 9. Writing and terminology
 
@@ -426,10 +427,10 @@ submenu arrows) are sized by `@size-menu-indicator` (`18`) and drawn with
 - **Spec prose** is British-neutral engineering language: no marketing, no
   superlatives.
 - **Honesty vocabulary** is fixed: `site/prototype.html` is a *prototype* or
-  *mockup*, never a *screenshot*; native work is *implemented source, unbuilt*
-  until a build exists; *verified* is reserved for results registered under
-  the evidence contract; the verified-capture count (currently **0**) is
-  stated wherever completeness might otherwise be implied.
+  *mockup*, never a *screenshot*; native work is *implemented source* before a
+  build and *compiled; surface state unverified* after a build; *verified* is reserved for results registered under
+  the evidence contract; the current registry is linked wherever completeness
+  might otherwise be implied.
 - **Errors** must identify both the problem and a recovery action (contract
   rule; see the feedback spec, [`07-feedback.md`](07-feedback.md)).
 

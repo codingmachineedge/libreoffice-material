@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720-012853-577059e274-vs2026-msi-raster",
+  "overall_result": "pass_with_remaining_matrix",
+  "checks": {
+    "exact_source_commit": "pass",
+    "detached_source_clean": "pass",
+    "msi_administrative_extraction": "pass",
+    "payload_contains_one_soffice_exe": "pass",
+    "stable_owned_salframe_window": "pass",
+    "start_center_light_nonblank_capture": "pass",
+    "background_templates_navigation": "pass",
+    "templates_nonblank_capture": "pass",
+    "baseline_accessibility_tree": "pass",
+    "templates_accessibility_tree": "pass",
+    "sensitive_data_review": "pass",
+    "normal_app_shutdown": "pass",
+    "headless_desktop_cleanup": "pass"
+  },
+  "accessibility_summary": {
+    "captures": 2,
+    "total_reported_errors": 0,
+    "partial_captures": 0
+  },
+  "accepted_screenshot_count": 2,
+  "rejected_screenshot_count": 0,
+  "remaining": [
+    "dark and system/high-contrast appearance",
+    "accelerated renderer capture",
+    "keyboard-only and visible-focus paths",
+    "200 percent display scale",
+    "representative RTL, CJK, and long-label locales",
+    "Writer, Calc, Impress, Draw, Base, Math, shared dialogs, and updater flows",
+    "MSI install, repair, upgrade, uninstall, and restart-suppression exercise"
+  ]
+}

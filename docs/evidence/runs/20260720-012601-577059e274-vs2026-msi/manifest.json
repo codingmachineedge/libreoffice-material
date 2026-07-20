@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720-012601-577059e274-vs2026-msi",
+  "status": "rejected_capture_preserved",
+  "source": {
+    "commit": "577059e2741185b512c184c64685c16d335d10ea",
+    "imported_upstream_commit": "63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21",
+    "detached_build_source_clean": true
+  },
+  "build": {
+    "build_identifier": "LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64@577059e274",
+    "profile": "windows-cygwin-vs2026-msi",
+    "msi_sha256": "437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43"
+  },
+  "payload_source": "administrative extraction of MSI sha256 437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43",
+  "launch_wrapper": "launch-light.cmd",
+  "isolated_profile_sanitized": "%LOCALAPPDATA%\\Temp\\LibreOfficeMaterialQA\\20260720-012601-577059e274-vs2026-msi\\profile",
+  "uno_pipe": "LibreOfficeMaterialQA-20260720-012601-577059e274-vs2026-msi",
+  "driver": {
+    "commit": "beed66ca6ed2503e6170ee1e1158247f1c2f0140",
+    "package_version": "0.1.0",
+    "checkout_clean": true
+  },
+  "desktop_name": "LOMaterialQA-20260720-012601-577059e274",
+  "host": {
+    "operating_system": "Windows 11 Pro 10.0.26200 build 26200 x64",
+    "host_locale": "en-CA",
+    "ui_locale": "en-US",
+    "display_scale_percent": 150,
+    "applied_dpi": 144,
+    "appearance": "light",
+    "contrast": "normal",
+    "desktop_backend": "Win32 off-screen desktop with per-window PrintWindow capture",
+    "font_configuration": "native Windows system fonts; no run-specific font override"
+  },
+  "environment": {
+    "VCL_DRAW_WIDGETS_FROM_FILE": "1",
+    "VCL_FILE_WIDGET_THEME": "material",
+    "renderer": "default GPU path"
+  },
+  "observed_window": {
+    "title": "LibreOfficeDev",
+    "class": "SALFRAME",
+    "width": 1920,
+    "height": 1117,
+    "observed_hwnd": 1640906,
+    "owned_process_id": 16752,
+    "owned_process_image": "program\\soffice.bin"
+  },
+  "preserved_capture": {
+    "file": "screenshots/start-center-light-default-gpu-blank.png",
+    "bytes": 11038,
+    "sha256": "5e27a3ba986aaf2683729e79e64673fb55adc309cf1a75718f3f9968c3ee428a",
+    "width": 1920,
+    "height": 1117,
+    "capture_api": "PrintWindow through low-level computer-use MCP",
+    "capture_successful": true,
+    "rendered_ok_reported": true,
+    "result": "reject_blank_printwindow_capture"
+  },
+  "accessibility": {
+    "file": "logs/a11y-default-gpu-blank.json",
+    "node_count": 96,
+    "visible_nodes": 49,
+    "errors": 0,
+    "partial": false,
+    "interpretation": "The live application exposed a nonempty accessible Start Center even though this renderer path produced a blank PrintWindow client capture."
+  },
+  "cleanup": {
+    "normal_uno_termination": true,
+    "headless_window_count_after_termination": 0,
+    "headless_desktop_closed": true
+  },
+  "document_fixtures": [],
+  "scenario": {
+    "id": "E-START-001-LIGHT-DEFAULT-GPU",
+    "expected_checkpoints": [
+      "stable owned LibreOfficeDev SALFRAME window",
+      "nonblank Start Center capture",
+      "nonempty bounded UNO tree"
+    ],
+    "result": "fail_blank_capture",
+    "reviewer": "Codex"
+  },
+  "review": {
+    "reviewer": "Codex",
+    "review_date": "2026-07-20",
+    "gallery_eligible": false,
+    "reason": "Blank capture; retained to avoid hiding renderer-specific failure."
+  }
+}

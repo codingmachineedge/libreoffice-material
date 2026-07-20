@@ -9,13 +9,13 @@ creation entry points for all six applications. Normative inputs are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behavior contract),
 [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). The existing native source slice lives in
 [`sfx2/uiconfig/ui/startcenter.ui`](../../sfx2/uiconfig/ui/startcenter.ui) and
 [`sfx2/source/dialog/backingwindow.cxx`](../../sfx2/source/dialog/backingwindow.cxx);
 section 9.10 maps this spec onto it. Implementation status is labelled per
-feature as *implemented in definition.xml (unbuilt)*, *prototype-only*, or
+feature as *implemented in definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or
 *specified here, not yet implemented*.
 
 ---
@@ -37,7 +37,7 @@ Top-to-bottom anatomy, with exact prototype metrics:
 
 | Element | Metrics | Tokens | Status |
 | --- | --- | --- | --- |
-| **Open File** pill | 44 px high, `corner-pill` (20), 12 px horizontal padding, 14 px icon gap, 20 px `folder_open` icon, weight-600 14 px label, 6 px bottom margin | `@primary` fill, `@on-primary` text; hover `@primary-action-hover`, pressed `@primary-action-pressed` | pill states implemented in definition.xml (unbuilt) as `pushbutton`/`Entire` `extra="action"`; layout prototype-only |
+| **Open File** pill | 44 px high, `corner-pill` (20), 12 px horizontal padding, 14 px icon gap, 20 px `folder_open` icon, weight-600 14 px label, 6 px bottom margin | `@primary` fill, `@on-primary` text; hover `@primary-action-hover`, pressed `@primary-action-pressed` | pill states implemented in definition.xml (compiled at commit 577059e274; surface state unverified) as `pushbutton`/`Entire` `extra="action"`; layout prototype-only |
 | **Remote Files** item | 40 px high, `corner-pill`, 12 px padding, 20 px `cloud` icon at `@on-surface-variant` | transparent fill, `@on-surface` text; hover `@primary-container` / `@on-primary-container` | prototype-only |
 | Separator | 1 px (`stroke-thin`) rule, 8 px vertical × 6 px horizontal margin | `@outline-variant` | prototype-only |
 | View items (**Recent Documents**, **Templates**) | 40 px high, `corner-pill`, 12 px padding, 20 px icons (`history`, `grid_view`) | selected: `@primary-container` fill, `@on-primary-container` text/icon; idle: transparent, `@on-surface` text, `@on-surface-variant` icon | prototype-only; native equivalents are the `open_recent`/`templates_all` toggle buttons |
@@ -65,7 +65,7 @@ A single 20 px-bottom-margin flex row with 12 px gaps:
 
 | Element | Metrics | Tokens | Status |
 | --- | --- | --- | --- |
-| Filter combo | 38 px high, `corner-small` (8), padding 0 10 px 0 14 px, 13 px label, 18 px `expand_more` chevron; label **All Documents** (recent view) or **All Templates** (templates view) | `@outline` border at `stroke-thin` on `@surface`, `@on-surface` text | prototype-only as drawn; the native `cbFilter` combo resolves the implemented `combobox`/`Entire` + `ButtonDown` parts in definition.xml (unbuilt) |
+| Filter combo | 38 px high, `corner-small` (8), padding 0 10 px 0 14 px, 13 px label, 18 px `expand_more` chevron; label **All Documents** (recent view) or **All Templates** (templates view) | `@outline` border at `stroke-thin` on `@surface`, `@on-surface` text | prototype-only as drawn; the native `cbFilter` combo resolves the implemented `combobox`/`Entire` + `ButtonDown` parts in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Search field | 44 px pill, `corner-pill`, leading 20 px `search` icon, 14 px input text, trailing clear button (28 × 28, `corner-small`), regex mode toggle (`.*`, 28 px high, weight-700 12 px monospace), and builder toggle (30 × 30, `tune` icon) | `@surface-container` fill, `@outline-variant` border; invalid pattern: 2 px `error` border; regex mode text switches to a monospace stack | prototype-only; shared search anatomy is specified in [04-inputs](04-inputs.md) |
 | Actions button | 38 × 38 px icon button, `corner-small`, 20 px `more_vert` icon | transparent, `@on-surface-variant`; hover `@primary-container` | prototype-only; native `mbActions` menu button hosts Clear Recent Documents / Clear Unavailable Files |
 
@@ -202,14 +202,14 @@ keys; the rest restates existing VCL/weld behavior under the target layout.
   `aria-pressed` on the regex toggle and `aria-expanded` on the builder.
 - Focus: a persistent visible indicator is required on every stop; native
   pill/field focus uses the definition-backed `Focus` parts (`@primary` at
-  `stroke-standard`, 4 % inset) — implemented in definition.xml (unbuilt).
+  `stroke-standard`, 4 % inset) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified).
 - Colour independence: the selected view item pairs tonal fill with the
   toggle's exposed state; card hover pairs the `@primary` border with
   elevation; regex errors pair the `error` border with a text message.
 - Contrast: all text/fill pairs use the palette's contrast-checked role pairs
   (`on-primary` on `primary`, `on-primary-container` on `primary-container`).
   High contrast bypasses Material to the native baseline. No accessibility
-  result is claimed — the suite is unbuilt.
+  result is claimed — the suite is compiled at commit 577059e274; surface state unverified.
 
 ## 9.9 RTL & localization
 
@@ -237,7 +237,7 @@ replacing it; the prototype's target anatomy maps onto it as follows.
 | View items | `open_recent`, `templates_all` `GtkToggleButton`s | toggle semantics native; pill-with-tonal-selection styling prototype-only |
 | Create list + 28 px chips | `writer_all` … `database_all` buttons with 32 px document icons | chip anatomy prototype-only; per-module `set_sensitive` already native |
 | Home header | `welcome_header` with `welcome_title` (bold, 1.75 × scale) and `welcome_subtitle`, added by the Material slice | title colour `GetWindowTextColor()` → `@on-surface`; subtitle uses `labelTextColor` → `@on-surface`, versus prototype `@on-surface-variant` |
-| Filter combo | `cbFilter` (`GtkComboBoxText`) | resolves implemented `combobox` parts in definition.xml (unbuilt) |
+| Filter combo | `cbFilter` (`GtkComboBoxText`) | resolves implemented `combobox` parts in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Actions menu | `mbActions` menu button + `clearmenu` | native |
 | Search + regex row | — | no native counterpart; specified here, not yet implemented |
 | Card grid | `all_recent` (`RecentDocsView` in `scrollrecent`) and `local_view` (`TemplateDefaultView` in `scrolllocal`) | the Material slice reroutes both views' fill/text from `officecfg` Start Center colours to `StyleSettings` (`GetWindowColor`/`GetWindowTextColor` → `@surface`/`@on-surface`; highlights → `@primary-container`/`@on-primary-container`); card anatomy (118 px preview, badge, hover elevation) prototype-only |
@@ -263,7 +263,9 @@ active. There are no other deliberate platform differences for this surface.
 Per the evidence contract in
 [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) — off-screen
 desktop, ownership-proven process, `PrintWindow` captures registered with
-SHA-256 per exact commit. Current verified-capture count: **0**.
+SHA-256 per exact commit. The accepted light Home and Templates captures are
+listed in [`docs/SCREENSHOTS.md`](../SCREENSHOTS.md); the remaining checkpoints
+below are still open unless their exact run says otherwise.
 
 | ID | Checkpoint | Proves |
 | --- | --- | --- |

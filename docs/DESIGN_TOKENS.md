@@ -117,6 +117,6 @@ Components in both surfaces should refer to these semantic names. Literal palett
 
 ## Honesty and verification status
 
-This page documents the token contract present in source. It does not establish application runtime behavior. Required current-source native C++ targets and the Windows installation-set build have completed, while the verified-capture count remains **0**. The interactive surface in `site/prototype.html` is a hand-built HTML mockup, not a screenshot of a compiled LibreOffice build.
+This page documents the token contract present in source. It does not establish suite-wide application runtime behavior. Required current-source native C++ targets and the Windows installation-set build have completed. A light Start Center run from the exact-source local MSI payload is registered in [`SCREENSHOTS.md`](SCREENSHOTS.md), but it does not validate this full token contract. The interactive surface in `site/prototype.html` is a hand-built HTML mockup, not a screenshot of a compiled LibreOffice build.
 
-Those limits match the implementation status recorded in `MATERIAL_DESIGN.md`: validators and focused native tests describe invariants, but no application execution, screenshot, accessibility result, or runtime capture is claimed here.
+Those limits match the implementation status recorded in `MATERIAL_DESIGN.md`: validators and focused native tests describe invariants, while the registered Start Center smoke covers only its stated light-profile checkpoints. No whole-contract UI or accessibility audit is claimed here.

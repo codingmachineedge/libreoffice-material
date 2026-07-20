@@ -1,6 +1,6 @@
 # Project state
 
-Last reviewed: 2026-07-19
+Last reviewed: 2026-07-20
 
 ## Objective
 
@@ -13,7 +13,8 @@ licensing and provenance.
 ## Current milestone
 
 **Phase 1 — tenth Material VCL and Windows updater source milestones published;
-suite-wide work continues. Phase 0's native build/evidence gate remains open.**
+exact-source local MSI and light Start Center smoke recorded; suite-wide work
+continues. Phase 0's full reproducibility/release gate remains open.**
 
 The repository contains an imported LibreOffice source baseline, ten native
 Material source milestones, a design contract, roadmap, published GitHub Pages
@@ -21,7 +22,8 @@ site, screenshot registry, and headless evidence plan. The third milestone adds
 matched light/dark profiles, source-level high-contrast fallback routing,
 native-style restoration and dynamic focus-policy refreshes, explicit headless
 dark selection, standalone spin controls, and a dedicated headless drawing test
-target. The automation harness has passed a Notepad-only off-screen preflight.
+target. The automation harness has advanced from its Notepad preflight to an
+accepted exact-source LibreOfficeDev Start Center run.
 The fourth milestone adds strict semantic typography roles that derive from the
 captured native font baseline instead of replacing platform/user fonts.
 The fifth milestone closes all 72 `StyleSettings` color slots with exact
@@ -56,15 +58,16 @@ disabled-affordance gaps: a dimmed disabled `SubmenuArrow`, a disabled-but-check
 `MenuItem`). Three other verified gaps (default-button emphasis, field hover,
 scrollbar-trough feedback) are deferred as design decisions (D-020). The Material
 definition now has 79 parts, 205 states, 159 rounded rectangles, and 346 metric
-references; these changes remain uncompiled and unexecuted.
+  references; they compiled at `577059e274`, while the individual state tuples
+  remain visually unexecuted.
 The post-tenth source slice routes the Start Center's `open_all` standard
 `suggested-action` class through `VclBuilder` to `PushButton::setAction(true)`,
 selecting the existing Material `extra="action"` pushbutton states. Its focused
 leaf-button CppUnit regression is included in the native workflow target list.
 The same slice removes the Windows MSI workflow's contradictory `--disable-cli`
 switch, asserts `ENABLE_CLI=TRUE`, and prebuilds the CLI payload that MSI
-manifests require. These are source/configuration changes only; no new native
-build, package, or runtime evidence is claimed here.
+manifests require. These changes are included in the exact-source local VS 2026
+build and extracted MSI payload recorded below.
 The Windows-only updater source reads the exact GitHub Latest XML release asset
 and accepts one canonical MSI only after strict safe-tag, tag-derived URL,
 filename, `application/x-msi` MIME, positive-size, and lowercase SHA-256 checks.
@@ -77,15 +80,17 @@ user/Administrators/SYSTEM DACL, re-verified, and held with a final read lock
 that excludes write/delete replacement. Network/privacy details are recorded in
 [`PRIVACY.md`](../../PRIVACY.md).
 
-The Windows release workflow is draft-first on `main`: it verifies the exact
-target, asset names, upload states, sizes, and digests before promoting the
-draft to a normal public non-prerelease Latest release, verifies the public
-Latest feed, and removes a failed draft. This is implemented automation source,
-not a successful-release claim.
+Every push to `main` starts the Windows release workflow, with manual dispatch
+retained. It uploads the validated MSI and update metadata directly to a draft,
+verifies the exact target, asset names, upload states, sizes, and digests before
+promoting the draft to a normal public non-prerelease Latest release, verifies
+the public Latest feed, and removes a failed draft. Only diagnostics use an
+Actions artifact. This is implemented automation source, not a
+successful-release claim.
 
-The current native source has not completed native CI or run as LibreOffice, so
-these milestones do not prove a whole-GUI rewrite, updater runtime, installer,
-release, or any completed application surface.
+The exact-source local build and light Start Center smoke do not prove a
+whole-GUI rewrite, updater runtime, installer lifecycle, release, or any
+completed application surface.
 
 Preceding Windows Actions run `29678095646` at
 `937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
@@ -94,9 +99,11 @@ because `--disable-cli` suppressed legacy CLI payloads required by the manifest.
 The first post-tenth Linux native run, `29695337988`, stopped while compiling
 the new `vcl_treeview` fixture because that target did not opt in to the
 internal PushButton header required by the focused VCL test. The target now
-declares `VCL_INTERNALS`, matching the existing lifecycle test; its rerun is
-pending. No current-source native CI/build, runtime, installer, normal release,
-headless UI smoke, accessibility smoke, or accepted capture has completed.
+declares `VCL_INTERNALS`, matching the existing lifecycle test. Subsequent
+current-source Linux/Windows runs passed all five targets, and the exact-source
+local VS 2026 build plus light Start Center/UNO-tree smoke are registered.
+Normal public release, updater, installer lifecycle, and broader runtime matrix
+remain open.
 Public assetless release/tag `e` remains non-evidence.
 
 ## Recorded facts
@@ -264,11 +271,14 @@ Public assetless release/tag `e` remains non-evidence.
   safe/short paths and both drives before bootstrap, keeps Git config isolated
   below the build root, and preserves unique phase logs. It never changes the
   active checkout, deletes a build root, reboots, installs the MSI, or launches
-  a UI. On 2026-07-19 its read-only preflight correctly reported missing
-  dedicated VS 2022/Cygwin and created neither default root; no bootstrap or
-  local build has run.
-- UI driver: sibling repository `lowlevel-computer-use-mcp`, preflighted at
-  commit `806d9ba85e4afbc2af58d7499496babfa7c68891`.
+  a UI. On 2026-07-20, an explicit VS 2026 build from clean detached source
+  `577059e2741185b512c184c64685c16d335d10ea` passed the five native targets
+  and CLI payload, completed the product, and produced an unsigned
+  199,692,288-byte MSI (SHA `437b059c…54a43`). Administrative extraction
+  returned `0` with one `soffice.exe`. The wrapper parent exited before final
+  dist staging/manifest copy, so that final phase still needs a clean rerun.
+- UI driver: sibling repository `lowlevel-computer-use-mcp`, accepted-run commit
+  `beed66ca6ed2503e6170ee1e1158247f1c2f0140` (clean `main`, 0/0 from origin).
 - A read-only driver audit found the same clean commit serving MCP on
   `127.0.0.1:8765`. Launch has no environment/cwd fields; window enumeration
   has no PID; generic move/resize/window actions are not off-screen reliable;
@@ -282,7 +292,10 @@ Public assetless release/tag `e` remains non-evidence.
 - Temporary preflight capture SHA-256:
   `03C6A068ACAAB96579621CE0BFC4F447C0F43E8EB23DDB5B8665A580E062BFA3`;
   it was not retained because it was unrelated to LibreOffice.
-- Verified LibreOffice Material screenshots: **0**.
+- Verified exact-source Start Center captures with the Material opt-in requested:
+  **2**, both light-profile files from run
+  `20260720-012853-577059e274-vs2026-msi-raster`. This wording does not claim
+  that every visible control loaded the Material definition.
 - GitHub Pages source: `site/`; public URL:
   `https://codingmachineedge.github.io/libreoffice-material/`.
 - Interactive Material design reference published at `site/prototype.html`, with
@@ -295,7 +308,7 @@ Public assetless release/tag `e` remains non-evidence.
   inline SVG icons replace the design's hotlinked Google Fonts and its React
   `support.js` runtime; the MD3 palettes, eight corner roles, and density metrics
   match `material/definition.xml`. It is a hand-built design mockup, not a
-  compiled-build capture, and does not change the verified-capture count of 0
+  compiled-build capture and did not itself change the evidence registry
   (D-021). Every search bar (Start Center, Features command catalog, Components
   gallery) carries a full regex builder — token palette, i/g/m/s flags, live
   validity and match count — filtering real data; the Features list keys
@@ -344,34 +357,29 @@ Public assetless release/tag `e` remains non-evidence.
 
 ## Required next gates
 
-1. rerun the hosted clean-LF Windows staging rule, validate the emitted MSI, and
-   record its exact commit, hash, and configuration;
-2. launch the staged built start center with the two opt-in variables and an isolated
-   profile on the proven headless desktop;
-3. preserve the first LibreOffice baseline manifest, result, logs, and reviewed
-   screenshot;
-4. build/runtime-verify light/dark, focus, shape and metric geometry, and
+1. complete the local wrapper's final dist staging/manifest phase and rerun the
+   hosted clean-LF Windows auto-release workflow;
+2. verify the public normal, non-prerelease release, exact four assets, Latest
+   feed, MSI hash, and updater XML;
+3. build/runtime-verify dark, high contrast, accelerated rendering, keyboard
+   focus, shape and metric geometry, and
    high-contrast routing; complete forced-color/platform signal coverage; and
    implement density-aware metric resolution plus the remaining token families
    and VCL primitives;
+4. exercise updater download/protected stage/default-No consent/MSI launch and
+   restart suppression, plus install/upgrade/uninstall lifecycle;
 5. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
 
 ## Known evidence gaps
 
-- no native fork build is registered in the evidence ledger;
-- no headless LibreOffice Material scenario is registered;
-- no screenshot is registered;
 - no application surface is verified Material-complete;
 - no updater download, protected-stage, consent, or MSI-launch flow has been
   runtime-verified;
-- no local native build is registered. A one-click source bootstrap now exists,
-  but this host has Visual Studio 2026 rather than its dedicated VS 2022
-  instance and no isolated Cygwin profile until the bootstrap is run. The hosted
-  Windows workflow supplies its prerequisites. Current-source Linux and Windows
-  native targets passed, and the latter built its full installation set, but MSI
-  staging selected two intermediate databases as well as the final package. The
-  corrected staging rule, installer/release, real application capture, headless
-  smoke, and accessibility smoke remain pending.
+- the local wrapper did not complete final dist staging/manifest copy after the
+  successful MSI extraction; the hosted corrected staging and auto-release path
+  has not yet rerun;
+- dark/high-contrast, accelerated, keyboard/focus, localization, installer,
+  updater, and suite-wide runtime/accessibility coverage remain pending.
 
 ## Multi-repository boundary
 

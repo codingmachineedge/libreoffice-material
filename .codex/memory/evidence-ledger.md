@@ -1,9 +1,11 @@
 # Evidence ledger
 
-Accepted LibreOffice Material build/UI evidence entries: **0**.
+Accepted LibreOffice Material build/UI evidence entries: **1 run / 2 screenshots**.
 
-No native build, headless interaction run, or screenshot has been accepted yet.
-Planned scenarios and empty gallery slots are not evidence.
+The accepted entry is deliberately narrow: exact-source local MSI build and
+administrative extraction, light Start Center launch/navigation on software
+raster rendering, and paired bounded UNO-tree collection. Planned scenarios and
+empty gallery slots are not evidence.
 The public assetless release/tag `e` contains no build and does not change this
 ledger.
 
@@ -11,13 +13,14 @@ ledger.
 
 | Run ID | Fork commit | Platform | Build | Interaction | Visual | Manifest |
 | --- | --- | --- | --- | --- | --- | --- |
-| _None_ | — | — | — | — | — | — |
+| `20260720-012853-577059e274-vs2026-msi-raster` | `577059e2741185b512c184c64685c16d335d10ea` | Windows 11 Pro x64; VS 2026; 150% scale | Five native targets and CLI payload passed; unsigned 199,692,288-byte MSI SHA `437b059c…54a43`; administrative extraction exit `0`; wrapper final dist stage incomplete | Stable owned Start Center, background navigation to Templates, two bounded UNO trees with no collector errors, normal shutdown and desktop cleanup | 2 accepted light-profile `1920×1117` PNGs; dark and broader matrix pending | [`manifest`](../../docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/manifest.json) · [`results`](../../docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/results.json) |
 
 ## Non-accepted harness observations
 
 | Date | Driver commit | Subject | Result | Retention | Why excluded |
 | --- | --- | --- | --- | --- | --- |
 | 2026-07-16 | `806d9ba85e4afbc2af58d7499496babfa7c68891` | Off-screen Notepad on `WinSta0\LibreOfficeMaterialQA` | Create, enumerate, `PrintWindow`, scoped process cleanup, and desktop teardown passed | Capture temporary; not retained | No LibreOffice binary, Material source build, or project UI involved |
+| 2026-07-20 | `beed66ca6ed2503e6170ee1e1158247f1c2f0140` | Exact MSI payload, default-GPU Start Center | Stable owned window and 96-node bounded UNO tree; `PrintWindow` client was blank | Failure capture and run metadata retained under [`20260720-012601-577059e274-vs2026-msi`](../../docs/evidence/runs/20260720-012601-577059e274-vs2026-msi/) | Blank capture is not gallery evidence; software-raster retry accepted separately |
 
 The discarded preflight image reported `rendered_ok: true`, dimensions
 `1920×1125`, window HWND `37291736`, and SHA-256
@@ -50,8 +53,9 @@ remote marker, not a successful release or accepted artifact.
 | 2026-07-18 | Ninth-milestone source audit | Published source `1e2dca2f76c5f7481451ad0f419a7053222e55df` defines the outlined `Frame`/`Border` container (with a 2px native content-region inset satisfying D-017, see D-018) and the net-less `ListNet`/`Entire` state (D-019); exact `2/23/3/8/15/72/79/201` validation, 26 Python tests, 341-row metric closure (geometry hash `f70697ac…bc714082`; unchanged 676-coordinate hash `0979f2b3…331ed2e`), source-validation run `29648977365`, and Pages run `29648977400` pass; C++ renderer/reader changes are source-only | Source consistency and publication only; no compiled, runtime, interaction, or visual evidence |
 | 2026-07-18 | Tenth-milestone source audit | Published source `18714cc1c7421225dd66b925e6295e13b56a7a7a` closes three disabled-affordance gaps and defers three design-decision gaps (D-020); exact `2/23/3/8/15/72/79/205` validation, 27 Python tests, 346-row metric closure (geometry hash `dc16a577…65c60515`, coordinate hash `8345cd28…a13c402e8`, 45 patterns), source-validation run `29650136950`, and Pages run `29650136963` pass; XML-only change | Source consistency and publication only; no compiled, runtime, interaction, or visual evidence |
 
-These audits are reproducibility facts, not accepted build, interaction, or
-visual runs. The verified LibreOffice Material screenshot count remains zero.
+These historical audits remain reproducibility facts rather than visual runs.
+Current accepted screenshot status is maintained in
+[`docs/SCREENSHOTS.md`](../../docs/SCREENSHOTS.md).
 
 ## Entry requirements
 

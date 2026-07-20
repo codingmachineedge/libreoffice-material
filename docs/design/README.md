@@ -1,9 +1,9 @@
 # LibreOffice Material — full design specification
 
 > **Status:** specification of the *target* design. Required current-source
-> native C++ targets and the Windows installation-set build have completed, but
-> nothing in these documents is application-runtime-verified, and the
-> verified-capture count remains **0**. The
+> native C++ targets and the Windows installation-set build have completed. A
+> light Start Center smoke is registered in [`docs/SCREENSHOTS.md`](../SCREENSHOTS.md),
+> but nothing in these target-design documents is thereby suite-runtime-verified. The
 > normative contracts behind this spec are
 > [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (design contract),
 > [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),

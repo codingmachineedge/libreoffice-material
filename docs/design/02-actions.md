@@ -12,7 +12,7 @@ sources are the design contract
 ([definition.xml](../../vcl/uiconfig/theme_definitions/material/definition.xml)),
 and the interactive reference ([prototype.html](../../site/prototype.html)).
 Each statement is tagged with its implementation status: *implemented in
-definition.xml (unbuilt)*, *prototype-only*, or *specified here, not yet
+definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
 implemented*.
 
 ## Token quick reference
@@ -39,7 +39,7 @@ Shape and metric roles: `corner-pill` (20), `corner-toolbar` (18),
 `corner-indicator` (4); `stroke-thin` (1), `stroke-standard` (2),
 `size-compact-control` (28), `size-standard-control` (36). All are declared in
 the native `<shapes>`/`<metrics>` sections (implemented in definition.xml,
-unbuilt). The prototype adds a browser-only density layer with control height
+compiled at commit 577059e274; surface state unverified). The prototype adds a browser-only density layer with control height
 `--ctrl` = 34 px compact / 40 px comfortable.
 
 ---
@@ -55,7 +55,7 @@ icon. Regions:
 | --- | --- |
 | Container | Variant fill/stroke (table below); `radius="@corner-pill"`; `stroke-width="@stroke-thin"` |
 | Label | `label` typography role (100 % native height, minimum-weight `medium`); variant text colour from the `<style>` button slots |
-| Focus ring | `pushbutton`/`Focus` part: four `@primary` lines at `stroke-standard` inset 4 % from each edge (normalized `0.04–0.96`) — implemented in definition.xml (unbuilt) |
+| Focus ring | `pushbutton`/`Focus` part: four `@primary` lines at `stroke-standard` inset 4 % from each edge (normalized `0.04–0.96`) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 The four MD3 variants map onto the native `pushbutton`/`Entire` states as
 follows. VCL distinguishes an *action* button (dialog button-box members are
@@ -65,9 +65,9 @@ plain state, and text to `extra="flat"`.
 
 | Variant | Native state selector | Face | Label colour (`<style>`) | Status |
 | --- | --- | --- | --- | --- |
-| **Filled** | `extra="action"` | fill+stroke `@primary` | `actionButtonTextColor` = `@on-primary` | implemented in definition.xml (unbuilt) |
-| **Tonal** | (no `extra`) | fill+stroke `@primary-container` | `buttonTextColor` = `@on-primary-container` | implemented in definition.xml (unbuilt) |
-| **Text** | `extra="flat"` | idle state empty (no drawing) | `flatButtonTextColor` = `@primary` | implemented in definition.xml (unbuilt) |
+| **Filled** | `extra="action"` | fill+stroke `@primary` | `actionButtonTextColor` = `@on-primary` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| **Tonal** | (no `extra`) | fill+stroke `@primary-container` | `buttonTextColor` = `@on-primary-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| **Text** | `extra="flat"` | idle state empty (no drawing) | `flatButtonTextColor` = `@primary` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | **Outlined** | — | transparent fill, `@outline` border at `stroke-thin`, `@primary` label, `corner-pill` | — | prototype-only (component gallery: `border: var(--bw) solid var(--outline)`, 40 px height, `0 24px` padding) |
 
 The outlined variant has no native `pushbutton` state yet; adding one requires
@@ -82,7 +82,7 @@ footers use `0 28px` for the filled confirm and `0 20px` for outlined/text
 
 ### 1.2 States
 
-All states below are implemented in definition.xml (unbuilt) unless noted.
+All states below are implemented in definition.xml (compiled at commit 577059e274; surface state unverified) unless noted.
 
 | State | Tonal (plain) | Filled (`extra="action"`) | Text (`extra="flat"`) |
 | --- | --- | --- | --- |
@@ -142,7 +142,7 @@ D-020.
   resolved high contrast, Material drawing is bypassed entirely and the native
   `StyleSettings` baseline is restored, so the platform focus rectangle
   applies; controls refresh native-focus suppression on profile change so
-  generic fallback keeps a visible indicator (implemented routing, unbuilt).
+  generic fallback keeps a visible indicator (implemented routing, compiled at commit 577059e274; surface state unverified).
 - Contrast targets: label-to-face ≥ 4.5:1, container boundary and focus ring
   ≥ 3:1 against adjacent surface. The standalone validator checks declared
   feedback/selection contrast pairs; button-pair contrast measurement is a
@@ -157,7 +157,7 @@ D-020.
 | --- | ---: | ---: | --- |
 | Button height | 34 px | 40 px | prototype `--ctrl` density variable (prototype-only) |
 | Label size / line | 13 px / 1.35 | 14 px / 1.45 | prototype `--fs` (prototype-only) |
-| Native integer baseline | `size-standard-control` = 36 | — | implemented in definition.xml (unbuilt) |
+| Native integer baseline | `size-standard-control` = 36 | — | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 The native metric layer preserves the single 36 px integer and adds no density
 selection; compact/comfortable is a separate planned contract
@@ -215,7 +215,7 @@ A toolbar button is the command face inside `toolbar` containers
 
 | Region | Token consumption |
 | --- | --- |
-| Face | `toolbar`/`Button` part; `radius="@corner-toolbar"` (18) — implemented in definition.xml (unbuilt) |
+| Face | `toolbar`/`Button` part; `radius="@corner-toolbar"` (18) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Icon | LibreOffice icon pipeline glyph, 20 px optical size in the prototype |
 | Checked outline | `@primary` (`stroke-thin`) when `button-value="true"` |
 
@@ -228,7 +228,7 @@ the native theme until a build allows visual judgement.
 
 ### 2.2 States
 
-All implemented in definition.xml (unbuilt); state list is the `toolbar`
+All implemented in definition.xml (compiled at commit 577059e274; surface state unverified); state list is the `toolbar`
 `Button` part verbatim. Later, more specific states are ordered after generic
 ones so last-match-wins selects the exact tuple (D-020).
 
@@ -248,7 +248,7 @@ The disabled-checked row is the milestone-10 affordance rule: a disabled but
 checked tool (VCL passes `ControlState::NONE` with tristate `On` from
 `ToolBox::ImplDrawItem`) keeps a dimmed `@outline` checked outline instead of
 collapsing onto the plain disabled fill, so checked-ness survives disabling
-without colour vibrancy (D-020; implemented in definition.xml, unbuilt).
+without colour vibrancy (D-020; implemented in definition.xml, compiled at commit 577059e274; surface state unverified).
 
 ### 2.3 Interaction
 
@@ -291,7 +291,7 @@ not. Text-bearing toolbar items size to the localized label.
 
 Toolbar grips (`ThumbHorz`/`ThumbVert`, `@outline-variant`,
 `corner-indicator`) and separators (`@outline-variant`, `stroke-thin`) are
-implemented in definition.xml (unbuilt). Grip-region source corrections exist
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Grip-region source corrections exist
 in the shared renderer. Press/hover feedback on scrollbar troughs was
 explicitly deferred in D-020 and does not apply here.
 
@@ -366,7 +366,7 @@ Two composites carry a command plus an opening affordance:
    halves, independent hover per half) is **specified here, not yet
    implemented**.
 2. **Combo/list command fields** (`combobox`, `listbox`): implemented in
-   definition.xml (unbuilt). The `ButtonDown` part is
+   definition.xml (compiled at commit 577059e274; surface state unverified). The `ButtonDown` part is
    `size-standard-control` × `size-standard-control` (36 × 36) with
    `radius="@corner-container"` and a two-line chevron
    (`stroke-standard`, normalized `0.35,0.43 → 0.5,0.58 → 0.65,0.43`):
@@ -383,7 +383,7 @@ Spin variants: in-field `spinbox` `ButtonUp`/`ButtonDown` are 36 × 28
 standalone `spinbuttons` are 28 × 28 (`size-compact-control`) at
 `corner-control` with chevrons in `@on-primary-container`, including
 `ButtonLeft`/`ButtonRight` horizontal parts — all implemented in
-definition.xml (unbuilt). Full field behaviour is chapter
+definition.xml (compiled at commit 577059e274; surface state unverified). Full field behaviour is chapter
 [04 — Inputs](04-inputs.md); only the button halves are normative here.
 
 ### 4.2 Interaction
@@ -406,7 +406,7 @@ definition.xml (unbuilt). Full field behaviour is chapter
   ring.
 - RTL: `ButtonDown` docks to the inline-end of the field; the shared renderer
   already contains source corrections for composite combo and RTL geometry
-  (unbuilt). `ButtonLeft`/`ButtonRight` swap meaning with direction; the
+  (compiled at commit 577059e274; surface state unverified). `ButtonLeft`/`ButtonRight` swap meaning with direction; the
   downward chevron itself never mirrors.
 - Density: button halves keep the native 36/28 integers; the prototype shows
   field heights of 34/40 px by density (prototype-only).
@@ -430,8 +430,8 @@ Inline hyperlink text (dialogs, Start Center lists, help panes).
 
 | Aspect | Token | Status |
 | --- | --- | --- |
-| Unvisited colour | `linkColor` = `@primary` | implemented in definition.xml `<style>` (unbuilt) |
-| Visited colour | `visitedLinkColor` = `@visited-link` | implemented in definition.xml (unbuilt); palette values `#7D5260` light / `#EFB8C8` dark; the prototype's high-contrast mockup uses `#4A0052` (prototype-only) |
+| Unvisited colour | `linkColor` = `@primary` | implemented in definition.xml `<style>` (compiled at commit 577059e274; surface state unverified) |
+| Visited colour | `visitedLinkColor` = `@visited-link` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified); palette values `#7D5260` light / `#EFB8C8` dark; the prototype's high-contrast mockup uses `#4A0052` (prototype-only) |
 | Underline | always underlined in body copy; underline may be omitted only in clearly navigational lists where position conveys interactivity | specified here, not yet implemented |
 | Hover | underline persists; colour unchanged (no hover tint) | specified here, not yet implemented |
 | Focus | `@primary` focus outline at `corner-focus` radius | specified here, not yet implemented |
@@ -507,7 +507,7 @@ states remain target design until an application scenario is captured.
 ## Disabled-affordance summary (milestone 10 rules)
 
 Cross-cutting rules this chapter's controls obey, all implemented in
-definition.xml (unbuilt) and recorded in D-020:
+definition.xml (compiled at commit 577059e274; surface state unverified) and recorded in D-020:
 
 1. Disabled faces are always `@disabled-container`; disabled glyphs and labels
    dim to `@outline` (chevrons, spin glyphs) or `@outline-variant` (weakest

@@ -15,16 +15,17 @@ reference [`site/prototype.html`](../../site/prototype.html).
 
 Implementation status legend used throughout:
 
-- **implemented in definition.xml (unbuilt)** — the native file-widget contract
-  already declares the part/state; no build has ever executed it;
+- **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** — the native file-widget contract
+  declares the part/state and the exact-source build compiled it, but the named
+  surface state lacks registered runtime evidence;
 - **prototype-only** — the value exists only in the HTML mockup;
 - **specified here, not yet implemented** — in neither source.
 
 | Component | Native contract | Prototype reference |
 | --- | --- | --- |
-| Menubar + drop menus | `menubar`, `menupopup` parts — implemented in definition.xml (unbuilt) | menu heights, dropdown geometry |
-| Context menus | reuse `menupopup` — implemented in definition.xml (unbuilt) | — |
-| Tab bars | `tabitem` `Entire`/`MenuItem`, `tabheader`, `tabpane`, `tabbody` — implemented in definition.xml (unbuilt) | — |
+| Menubar + drop menus | `menubar`, `menupopup` parts — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) | menu heights, dropdown geometry |
+| Context menus | reuse `menupopup` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) | — |
+| Tab bars | `tabitem` `Entire`/`MenuItem`, `tabheader`, `tabpane`, `tabbody` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified) | — |
 | Notebookbar (ribbon) | toolbar `Button` states only — partial | tab row + 96px group area |
 | Sidebar rail | none (toolbar tokens apply) | 48px rail, 38px buttons |
 | Calc sheet tabs | `tabitem` tokens apply | 34px strip, 26px tabs |
@@ -43,14 +44,14 @@ surface of command items, separators, check/radio marks, and submenu arrows.
 
 | Region | Native part | Tokens | Status |
 | --- | --- | --- | --- |
-| Menubar band | `menubar`/`Entire` | fill `@surface-container`, `stroke-none` | implemented in definition.xml (unbuilt) |
-| Menu title item | `menubar`/`MenuItem` | radius `corner-container`; text `menuBarTextColor → @on-surface` | implemented in definition.xml (unbuilt) |
-| Drop-menu container | `menupopup`/`Entire` | fill `@surface`, stroke `@outline-variant` × `stroke-thin`, radius `corner-container` | implemented in definition.xml (unbuilt) |
-| Command item | `menupopup`/`MenuItem` | radius `corner-small`; text `menuTextColor → @on-surface` | implemented in definition.xml (unbuilt) |
-| Check mark | `menupopup`/`MenuItemCheckMark`, `size-menu-indicator` (18) square | `@primary` glyph, `stroke-standard` | implemented in definition.xml (unbuilt) |
-| Radio mark | `menupopup`/`MenuItemRadioMark`, `size-menu-indicator` (18) square | `@primary` fill, radius `corner-indicator`, inset 0.28–0.72 | implemented in definition.xml (unbuilt) |
-| Separator | `menupopup`/`Separator` | `@outline-variant` × `stroke-thin`, spanning x 0.08–0.92 | implemented in definition.xml (unbuilt) |
-| Submenu arrow | `menupopup`/`SubmenuArrow`, `size-menu-indicator` (18) square | `@on-surface-variant` chevron, `stroke-standard` | implemented in definition.xml (unbuilt) |
+| Menubar band | `menubar`/`Entire` | fill `@surface-container`, `stroke-none` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Menu title item | `menubar`/`MenuItem` | radius `corner-container`; text `menuBarTextColor → @on-surface` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Drop-menu container | `menupopup`/`Entire` | fill `@surface`, stroke `@outline-variant` × `stroke-thin`, radius `corner-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Command item | `menupopup`/`MenuItem` | radius `corner-small`; text `menuTextColor → @on-surface` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Check mark | `menupopup`/`MenuItemCheckMark`, `size-menu-indicator` (18) square | `@primary` glyph, `stroke-standard` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Radio mark | `menupopup`/`MenuItemRadioMark`, `size-menu-indicator` (18) square | `@primary` fill, radius `corner-indicator`, inset 0.28–0.72 | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Separator | `menupopup`/`Separator` | `@outline-variant` × `stroke-thin`, spanning x 0.08–0.92 | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Submenu arrow | `menupopup`/`SubmenuArrow`, `size-menu-indicator` (18) square | `@on-surface-variant` chevron, `stroke-standard` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Accelerator text | — | `label` type role, `@on-surface-variant` | prototype-only (12px monospaced column) |
 
 Prototype geometry: the menubar is `--menu` tall (30px compact / 38px
@@ -94,7 +95,7 @@ Marks and arrow:
 
 VCL reports a checked mark through the pressed control state, which is why the
 mark states pair `pressed="true"` with `enabled`. All states in both tables are
-implemented in definition.xml (unbuilt).
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified).
 
 ### 1.3 Interaction
 
@@ -177,7 +178,7 @@ off-screen desktop:
 **Anatomy & tokens.** Context menus are the same `menupopup` control as drop
 menus: `Entire` container (`@surface` fill, `@outline-variant` ×
 `stroke-thin`, `corner-container`), `MenuItem` rows at `corner-small`, the same
-marks, separator, and submenu arrow. Implemented in definition.xml (unbuilt);
+marks, separator, and submenu arrow. Implemented in definition.xml (compiled at commit 577059e274; surface state unverified);
 no separate context-menu part exists or is needed.
 
 **States.** Identical to §1.2.
@@ -209,7 +210,7 @@ in Calc's sheet-tab strip; capture container, hover, and separator rendering.
 
 Dialog and notebook tab bars use the `tabitem` control, whose native `Entire`
 part declares `margin-width="@space-tab-inline"` (12) and
-`height="@height-tab"` (40) — implemented in definition.xml (unbuilt). Two part
+`height="@height-tab"` (40) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Two part
 variants exist:
 
 | Part | Shape | Use |
@@ -229,7 +230,7 @@ from the style slots `tabTextColor → @on-surface-variant`,
 ### 3.2 States
 
 Both parts declare the same eight states (fills/strokes identical; only the
-radius role differs). All are implemented in definition.xml (unbuilt):
+radius role differs). All are implemented in definition.xml (compiled at commit 577059e274; surface state unverified):
 
 | State | Visual treatment | Exact tokens (`Entire` shown) |
 | --- | --- | --- |
@@ -311,7 +312,7 @@ group area. Prototype anatomy (prototype-only unless noted):
 Command buttons inside groups consume the native `toolbar`/`Button` state set
 (hover `@primary-container`, pressed `@primary-hover`, checked `@primary`
 outline on `@primary-container`, focus `@primary` × `stroke-standard`, radius
-`corner-toolbar`) — implemented in definition.xml (unbuilt); see the actions
+`corner-toolbar`) — implemented in definition.xml (compiled at commit 577059e274; surface state unverified); see the actions
 chapter ([02-actions.md](02-actions.md)). The tab-row/group-area layout itself
 is specified here, not yet implemented natively (notebookbar `.ui` work).
 
@@ -441,7 +442,7 @@ Each tab is 26px tall with 14px side padding, top corners rounded at
 `corner-small`, square bottom (it "docks" into the strip). An Add Sheet button
 (28×26px, `corner-small`, 18px `+` icon) ends the row. Native drawing maps
 sheet tabs onto the `tabitem` token set — implemented in definition.xml
-(unbuilt) at the token level.
+(compiled at commit 577059e274; surface state unverified) at the token level.
 
 ### 6.2 States
 
@@ -506,7 +507,7 @@ application glyph tinted `@primary`; the document-first title
 style slots `activeColor/activeBorderColor → @primary`,
 `activeTextColor → @on-primary`, `deactiveColor → @disabled-container`,
 `deactiveTextColor → @outline`, `deactiveBorderColor → @outline-variant`; all
-implemented in definition.xml (unbuilt). The 42px chrome bar itself is drawn by
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The 42px chrome bar itself is drawn by
 the OS/DWM on Windows unless client-side decoration is adopted, which this spec
 does not require.
 
@@ -575,7 +576,7 @@ thumb. Natively the slider consumes the `slider` control — `Button` at
 `size-compact-control` (28) square, `@primary` fill, radius `corner-control`;
 `TrackHorzLeft` `@primary` × `stroke-track`; `TrackHorzRight`
 `@outline-variant` × `stroke-track`; focus state `@on-surface` ×
-`stroke-standard` — implemented in definition.xml (unbuilt). The status-bar
+`stroke-standard` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The status-bar
 container itself has no dedicated part; it renders from the `faceColor →
 @surface-container` style slot.
 
@@ -640,5 +641,7 @@ remains authoritative for hit-testing.
 Cross-references: shared button and toolbar states in
 [02-actions.md](02-actions.md); container/scrollbar rules in
 [06-containers.md](06-containers.md); the evidence contract in
-[`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md). Nothing in this
-chapter is build- or runtime-verified; the verified-capture count is 0.
+[`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md). The registered
+light Start Center navigation smoke covers only its stated checkpoints; nothing
+else in this chapter is thereby build- or runtime-verified. Current files are in
+[`docs/SCREENSHOTS.md`](../SCREENSHOTS.md).

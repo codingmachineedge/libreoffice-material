@@ -7,6 +7,9 @@
 name: Build Windows MSI
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       jobs:
@@ -27,7 +30,9 @@ permissions:
   contents: write
 
 concurrency:
-  group: windows-msi-${{ github.ref }}
+  # A distinct group per source commit keeps duplicate runs for one SHA orderly
+  # without allowing a newer main push to replace an older pending build.
+  group: windows-msi-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
@@ -39,7 +44,7 @@ jobs:
       LO_BUILD_ROOT: C:\lo
       LO_BUILD_DIR: C:\lo\build
       LO_TARBALL_DIR: C:\lo\tarballs
-      BUILD_JOBS: ${{ inputs.jobs }}
+      BUILD_JOBS: ${{ inputs.jobs || '3' }}
       # Serialize concurrent MSVC writes to shared compiler PDBs in bundled
       # Visual Studio projects such as cppunit.
       CL: /FS
@@ -484,22 +489,11 @@ jobs:
           Get-ChildItem -LiteralPath $dist | Format-Table Name, Length
           "found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Upload validated Windows MSI artifact
-        if: steps.stage.outputs.found == 'true'
-        uses: actions/upload-artifact@v7
-        with:
-          name: libreoffice-material-windows-x64-${{ github.sha }}
-          path: dist-windows/
-          if-no-files-found: error
-          retention-days: 30
-
-      - name: Reject stable publication outside main
-        if: steps.stage.outputs.found == 'true' && github.ref != 'refs/heads/main'
-        shell: pwsh
-        run: throw 'Stable Windows releases may be published only from refs/heads/main.'
-
       - name: Publish Windows MSI release
-        if: steps.stage.outputs.found == 'true' && github.ref == 'refs/heads/main'
+        if: >-
+          steps.stage.outputs.found == 'true' &&
+          github.ref == 'refs/heads/main' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -870,7 +864,11 @@ jobs:
           }
 
       - name: Clean up failed draft release
-        if: failure() && steps.stage.outputs.found == 'true' && github.ref == 'refs/heads/main'
+        if: >-
+          failure() &&
+          steps.stage.outputs.found == 'true' &&
+          github.ref == 'refs/heads/main' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

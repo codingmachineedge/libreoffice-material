@@ -33,9 +33,12 @@ the standard `suggested-action` class, which `VclBuilder` maps to
 `PushButton::setAction(true)` so the existing Material `extra="action"` states
 can be selected under the opt-in Material renderer. The accompanying Windows
 MSI workflow repair restores the legacy CLI payload that its manifests require.
-Current Linux and Windows runs passed the five required native C++ targets and
-the Windows installation-set build, but no LibreOffice runtime scenario or MSI
-artifact is accepted yet. The reader resolves
+Current Linux, Windows, and local VS 2026 runs passed the five required native
+C++ targets. The exact-source local build produced a structurally extracted MSI,
+and its payload supplied an accepted light Start Center launch/navigation smoke
+with two registered screenshots and two bounded UNO trees. No surface is
+Material-complete, and the public release, updater, and broader runtime matrix
+remain open. The reader resolves
 `@token` references independently of declaration order and rejects invalid
 colors, invalid or duplicate palettes, mismatched schemas, unknown or duplicate
 tokens, and unknown or duplicate control parts. The theme currently validates
@@ -107,8 +110,8 @@ requires before it issues the file-definition `Border` draw. `ListNet` is
 declared with a single supported-but-empty `Entire` state: because the renderer
 returns success while drawing nothing, VCL's tree view suppresses its own
 connector nets, giving the flatter Material tree that native GTK and macOS
-themes already produce. Both controls remain source only, unbuilt, and
-unexecuted.
+themes already produce. Both controls compiled into the exact-source local
+build but have not been directly exercised in the accepted UI run.
 
 The tenth milestone closes three disabled-affordance gaps found by auditing
 VCL's real native-control draw calls against the definition: cases where a
@@ -126,8 +129,9 @@ of this slice because they are design decisions rather than corrections:
 emphasizing the keyboard-default push button distinctly from its `action`
 siblings (which would restyle every dialog button box), hover feedback on
 outlined text/spin fields (the field family intentionally renders its idle state
-on hover), and press/hover feedback on scrollbar troughs. This slice, like the
-others, is unbuilt and unexecuted as LibreOffice.
+on hover), and press/hover feedback on scrollbar troughs. This slice compiled
+into the exact-source local build, but these state tuples remain visually
+unexecuted.
 
 The 684 normalized fractional drawing coordinates remain component-local
 literals. They describe proportional glyph and inset geometry rather than
@@ -213,8 +217,9 @@ takes precedence, restores the captured native style/framework baseline, and
 bypasses Material drawing for native or generic fallback. Controls refresh
 native-focus suppression when the profile changes so generic fallback can
 retain a visible VCL focus indicator. Headless VCL maps an explicit dark
-preference because it has no operating-system appearance signal. This routing
-has only narrow native-target coverage and no application-runtime proof. The metric layer preserves the existing integer
+preference because it has no operating-system appearance signal. The accepted
+light Start Center run requested this routing, but it does not prove every
+control, dark/high-contrast path, or platform backend. The metric layer preserves the existing integer
 values and downstream native unit conversions; it does not add density
 selection or a new DPI-aware, `dp`, fractional-scale, or comfortable/touch
 sizing policy.

@@ -10,10 +10,10 @@ Replace. Normative inputs are [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md)
 (component-behavior contract), [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md)
 (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Implementation status is labelled per feature as *implemented in
-definition.xml (unbuilt)*, *prototype-only*, or *specified here, not yet
+definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
 implemented*. Button variants are specified in [02-actions.md](02-actions.md);
 field and search anatomy in [04-inputs.md](04-inputs.md); the snackbar used for
 Replace All reporting in [07-feedback.md](07-feedback.md).
@@ -30,13 +30,13 @@ button row separated by a hairline.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Dialog background | `windowbackground`/`BackgroundDialog` fills `@surface-container`; `<style>` maps `dialogColor` → `@surface-container`, `dialogTextColor` → `@on-surface` | implemented in definition.xml (unbuilt) |
+| Dialog background | `windowbackground`/`BackgroundDialog` fills `@surface-container`; `<style>` maps `dialogColor` → `@surface-container`, `dialogTextColor` → `@on-surface` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Container | `@surface-container` (`--sc`) sheet, `--bw` (1 px; 2 px high contrast) `@outline-variant` border, **16 px** corner radius, shadow `0 24px 64px rgba(0,0,0,.4)`, width `min(W px, 94%)` | prototype-only (`dlgWrap`) |
 | Scrim | Full-window overlay: light `rgba(20,18,24,.38)`, dark `rgba(0,0,0,.6)`, high contrast `rgba(0,0,0,.65)` (`--scrim`) | prototype-only (`PAL.*.scrim`) |
 | Title row | `18px/1` at weight 600 on `@on-surface`; padding `18px 20px 14px`; trailing 34 × 34 px close icon button (`corner-small` radius, 20 px glyph, `@on-surface-variant`) | prototype-only; native `title` type role = 120 % scale, `semibold` minimum; `height-window-title` = 18 |
-| Content region | Consumes field, selection, list, and frame components from chapters 03–06 on the `@surface-container` sheet; grouped regions may use the native outlined frame (`frame`/`Border`: `@outline-variant` stroke, `@surface-container` fill, `stroke-thin`, `corner-container`) | frame implemented in definition.xml (unbuilt) |
-| Footer button row | Order **Help \| spacer \| secondary \| primary**; padding `14px 20px`, 10 px gap, `stroke-thin` `@outline-variant` top hairline; all buttons 40 px tall, `corner-pill` (20) radius | prototype-only (`dlgFooter`); button states implemented in definition.xml (unbuilt) |
-| Primary (filled) button | `@primary` fill, `@on-primary` text, padding `0 28px`; native `pushbutton` `extra="action"` states | implemented in definition.xml (unbuilt); geometry prototype-only |
+| Content region | Consumes field, selection, list, and frame components from chapters 03–06 on the `@surface-container` sheet; grouped regions may use the native outlined frame (`frame`/`Border`: `@outline-variant` stroke, `@surface-container` fill, `stroke-thin`, `corner-container`) | frame implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Footer button row | Order **Help \| spacer \| secondary \| primary**; padding `14px 20px`, 10 px gap, `stroke-thin` `@outline-variant` top hairline; all buttons 40 px tall, `corner-pill` (20) radius | prototype-only (`dlgFooter`); button states implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Primary (filled) button | `@primary` fill, `@on-primary` text, padding `0 28px`; native `pushbutton` `extra="action"` states | implemented in definition.xml (compiled at commit 577059e274; surface state unverified); geometry prototype-only |
 | Secondary (outlined) button | Transparent fill, `--bw` `@outline` border, `@primary` text, padding `0 20px` | prototype-only — the native default `pushbutton` renders tonally (`@primary-container`); see [02-actions.md](02-actions.md) |
 | Tertiary (text) button | Transparent, `@primary` text, padding `0 20px` (`ghostBtn`, used for *Reset*) | prototype-only; native `extra="flat"` pushbutton |
 | Entrance motion | `lo-pop`: 160 ms ease from `opacity:0; translateY(-4px); scale(.98)` | prototype-only; must honour reduced motion |
@@ -126,7 +126,7 @@ Contrast: `@on-surface` on `@surface-container` and `@on-primary` on
 the scrim never carries meaning. Color independence: the default button is
 identified to assistive technology as the default, not merely by fill;
 disabled states keep their glyphs (chapter 02). No accessibility result is
-claimed — the suite is unbuilt.
+claimed — the suite is compiled at commit 577059e274; surface state unverified.
 
 ### Density
 
@@ -197,7 +197,7 @@ Two-pane master–detail inside a 760 px sheet (`min(760px, 94%)`), body height
 The tree consumes the container-tree spec ([06-containers.md](06-containers.md));
 natively its disclosure glyphs are `listnode` (`size-tree-node` = 20) and the
 connector net is suppressed by the empty `listnet`/`Entire` state — both
-implemented in definition.xml (unbuilt). The pane split itself is
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The pane split itself is
 prototype-only.
 
 ### Chrome variants

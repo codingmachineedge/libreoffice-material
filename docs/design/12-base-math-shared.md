@@ -11,10 +11,10 @@ consistency rules that any new surface must satisfy. Normative inputs are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behaviour contract),
 [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (hand-built interactive
 mockup, not a build capture). Implementation status is labelled per feature as
-*implemented in definition.xml (unbuilt)*, *prototype-only*, or *specified
+*implemented in definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified
 here, not yet implemented*.
 
 Shared components are specified in their own chapters — buttons in
@@ -43,7 +43,7 @@ body region at 560 px tall under the shared chrome):
 | Section heading ("Tables") | 16 px/600 `@on-surface`, 16 px bottom margin | `title` role styling | prototype-only |
 | Object card grid | `repeat(auto-fill, minmax(150px, 1fr))`, 12 px gap, 26 px bottom margin | — | prototype-only |
 | Object card | Column layout, 18 px 12 px padding, `@outline-variant` hairline, `corner-container` radius, `@surface` fill; 44 × 44 px icon tile (`corner-container`, `@primary-container` / `@on-primary-container`, 24 px glyph); 13 px/500 `@on-surface` label | see row | prototype-only |
-| Data table (record browser) | Rounded `corner-container` container with `@outline-variant` hairline, clipped corners; header row + striped body rows | see § States | prototype-only composition; header parts implemented in definition.xml (unbuilt) |
+| Data table (record browser) | Rounded `corner-container` container with `@outline-variant` hairline, clipped corners; header row + striped body rows | see § States | prototype-only composition; header parts implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 Data-table anatomy, from the prototype's Customers browser:
 
@@ -60,19 +60,19 @@ The native mapping for the header is the `listheader` control — `Button` part
 radius; `rollover` steps the fill to `@primary-container`; `pressed` to
 `@primary-hover` with a `@primary` stroke) and `Arrow` part with `extra="up"`
 and `extra="down"` sort chevrons in `@on-surface-variant` at
-`stroke-standard` — implemented in definition.xml (unbuilt). Alternating-row
+`stroke-standard` — implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Alternating-row
 colour resolves from the Material profile through the fifth-milestone
-`StyleSettings` mapping — implemented in definition.xml (unbuilt). Tree views
+`StyleSettings` mapping — implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Tree views
 elsewhere in Base (relation and query designers) use the net-less Material
 tree: `listnode` disclosure at `size-tree-node` (20 px) and the empty
 `listnet`/`Entire` state that suppresses connector nets — implemented in
-definition.xml (unbuilt).
+definition.xml (compiled at commit 577059e274; surface state unverified).
 
 ### Chrome variants
 
 Classic chrome gives Base the shared menubar plus standard and formatting
 toolbars (`menubar`, `toolbar` parts — implemented in definition.xml,
-unbuilt). Ribbon chrome uses the Base tab set **File, Home, Insert, Tools,
+compiled at commit 577059e274; surface state unverified). Ribbon chrome uses the Base tab set **File, Home, Insert, Tools,
 View** (prototype `RIBBONTABS.base`) rendered with the shared notebookbar
 treatment from [05 — Navigation](05-navigation.md). Both variants expose
 identical commands; the ribbon is a re-grouping, never a subset.
@@ -96,7 +96,7 @@ identical commands; the ribbon is a re-grouping, never a subset.
   primary action ("Create Table…"). Specified here, not yet implemented.
 - **Loading (opening a database or large record set)** — determinate progress
   uses the native `progress` control with the `TrackHorzArea` full-track
-  anatomy (implemented in definition.xml, unbuilt); indeterminate connection
+  anatomy (implemented in definition.xml, compiled at commit 577059e274; surface state unverified); indeterminate connection
   waits use the shared indeterminate treatment.
 - **Connection error** — inline banner using `@error-container` /
   `@on-error-container` naming both the failure and the recovery action
@@ -167,7 +167,7 @@ command editor, and elements panel. Prototype values (560 px body):
 | Formula canvas | Flexible top region, `@surface-container-low` fill, content centred, 24 px padding | `@surface-container-low` | prototype-only |
 | Render card | Auto-sized card on the canvas: `@surface` fill, `@outline-variant` hairline, `corner-container` radius, 44 px 60 px padding; formula set in a serif face at 34 px, 1.4 line height, `@on-surface` | see row | prototype-only |
 | Command editor strip | Bottom region behind a top hairline `@outline-variant`; editor pane takes remaining width with 14 px 18 px padding | `@outline-variant`, `stroke-thin` | prototype-only |
-| Command editor | Monospace multiline field, ≥ 80 px min-height, `@outline` hairline at `stroke-thin`, `corner-container` radius, 12 px 14 px padding, 15 px text at 1.6 line height, `@surface` fill | maps to `multilineeditbox`/`Entire` | field states implemented in definition.xml (unbuilt); geometry prototype-only |
+| Command editor | Monospace multiline field, ≥ 80 px min-height, `@outline` hairline at `stroke-thin`, `corner-container` radius, 12 px 14 px padding, 15 px text at 1.6 line height, `@surface` fill | maps to `multilineeditbox`/`Entire` | field states implemented in definition.xml (compiled at commit 577059e274; surface state unverified); geometry prototype-only |
 | Elements panel | 240 px fixed width, left hairline `@outline-variant`, 14 px padding; "Elements" title 13 px/600 `@on-surface` | — | prototype-only |
 | Symbol grid | 5 equal columns, 6 px gap; each cell square (1 : 1), `@outline-variant` hairline, `corner-small` (8 px) radius, `@surface` fill, serif glyph at 18 px `@on-surface` | see row | prototype-only |
 
@@ -180,7 +180,7 @@ markup the editor holds; the render card shows its typeset result.
 The command editor consumes the native `multilineeditbox` contract: enabled
 `@outline` / `@surface` at `stroke-thin`, focused `@primary` at
 `stroke-standard`, disabled `@outline-variant` / `@disabled-container` — all
-at `corner-container` radius — implemented in definition.xml (unbuilt). The
+at `corner-container` radius — implemented in definition.xml (compiled at commit 577059e274; surface state unverified). The
 serif rendering face on the canvas is the document face, not chrome: the
 typography contract's family preservation applies to UI roles only and never
 restyles formula output.
@@ -468,9 +468,9 @@ them before it can enter the verification gate in
 9. **Honest states.** Every surface defines empty, loading, and error states
    with a named recovery action, using the shared feedback components.
 10. **Honest status.** New surface specs label every feature as implemented
-    in definition.xml (unbuilt), prototype-only, or specified here, not yet
-    implemented — and claim no build, capture, or accessibility result until
-    the evidence contract in
+    in definition.xml (compiled at commit 577059e274; surface state unverified), prototype-only, or specified here, not yet
+     implemented — and claim no surface capture or accessibility result until
+     the evidence contract in
     [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) is satisfied
-    for an exact commit. The verified-capture count for everything in this
-    chapter is currently **0**.
+     for an exact commit. The accepted Start Center run does not cover a surface
+     in this chapter; its current surface-specific capture count is **0**.

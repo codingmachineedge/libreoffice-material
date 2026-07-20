@@ -9,10 +9,10 @@ cards), outlined frames, scrollbars, document cards, and side panels. Normative
 inputs are [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behavior
 contract), [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Implementation status is labelled per feature as *implemented
-in definition.xml (unbuilt)*, *prototype-only*, or *specified here, not yet
+in definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
 implemented*.
 
 ---
@@ -27,12 +27,12 @@ anatomy through the `listbox` control.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Closed list box container | `@outline` stroke, `@surface` fill, `stroke-thin`, `corner-container` (`listbox`/`Entire`) | implemented in definition.xml (unbuilt) |
-| Drop-down window | `@outline-variant` stroke, `@surface` fill, `stroke-thin`, `corner-container` (`listbox`/`ListboxWindow`) | implemented in definition.xml (unbuilt) |
-| Drop arrow button | `size-standard-control` (36) square; `@primary-container` fill, `corner-container`, chevron `@on-surface-variant` at `stroke-standard` (`listbox`/`ButtonDown`) | implemented in definition.xml (unbuilt) |
-| Entry margin | `space-list-entry` (12) via `listBoxEntryMargin` setting | implemented in definition.xml (unbuilt) |
-| Entry preview (colour/line lists) | `size-list-preview` (18 × 18 logic units) via `listBoxPreviewDefaultLogicWidth/Height` | implemented in definition.xml (unbuilt) |
-| Selected-entry surface | `listBoxWindowHighlightColor` → `@primary-container`; text `listBoxWindowHighlightTextColor` → `@on-primary-container` | implemented in definition.xml (unbuilt) |
+| Closed list box container | `@outline` stroke, `@surface` fill, `stroke-thin`, `corner-container` (`listbox`/`Entire`) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Drop-down window | `@outline-variant` stroke, `@surface` fill, `stroke-thin`, `corner-container` (`listbox`/`ListboxWindow`) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Drop arrow button | `size-standard-control` (36) square; `@primary-container` fill, `corner-container`, chevron `@on-surface-variant` at `stroke-standard` (`listbox`/`ButtonDown`) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Entry margin | `space-list-entry` (12) via `listBoxEntryMargin` setting | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Entry preview (colour/line lists) | `size-list-preview` (18 × 18 logic units) via `listBoxPreviewDefaultLogicWidth/Height` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Selected-entry surface | `listBoxWindowHighlightColor` → `@primary-container`; text `listBoxWindowHighlightTextColor` → `@on-primary-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Standalone list rows (gallery reference) | 44 px row, 14 px horizontal padding, 12 px icon gap, trailing `check` glyph on the selected row | prototype-only |
 
 The prototype's gallery list renders rows at `height:44px; padding:0 14px` with
@@ -85,7 +85,7 @@ profiles until a native density layer exists.
 The drop arrow docks to the inline-end (left in RTL); entry padding and icon
 gaps mirror. Long labels ellipsize at the inline-end while tooltips expose the
 full text; type-ahead follows locale collation. Composite combo/RTL geometry
-corrections already exist in the shared renderer (source only).
+corrections compiled in the exact-source build but remain surface-unverified.
 
 ### Platform notes
 
@@ -110,11 +110,11 @@ captured under a run id `YYYYMMDD-HHMMSS-<commit>-win` with manifest hashes.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Expander (disclosure node) | `size-tree-node` (20 × 20); chevron pair at `stroke-standard` in `@on-surface-variant` | implemented in definition.xml (unbuilt) |
-| Expander focus plate | `@primary` stroke, `@surface` fill, `stroke-thin`, `corner-focus` (6) | implemented in definition.xml (unbuilt) |
-| Connector net | **None.** `listnet`/`Entire` declares one supported-but-empty `enabled="true"` state; the renderer reports success while drawing nothing, so VCL suppresses its dotted connector nets | implemented in definition.xml (unbuilt) |
-| Row selection | `highlightColor` → `@primary-container`, `highlightTextColor` → `@on-primary-container` | implemented in definition.xml (unbuilt) |
-| Row background | `@surface` (window) | implemented in definition.xml (unbuilt) |
+| Expander (disclosure node) | `size-tree-node` (20 × 20); chevron pair at `stroke-standard` in `@on-surface-variant` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Expander focus plate | `@primary` stroke, `@surface` fill, `stroke-thin`, `corner-focus` (6) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Connector net | **None.** `listnet`/`Entire` declares one supported-but-empty `enabled="true"` state; the renderer reports success while drawing nothing, so VCL suppresses its dotted connector nets | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Row selection | `highlightColor` → `@primary-container`, `highlightTextColor` → `@on-primary-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Row background | `@surface` (window) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 The net-less decision is milestone 9: the flat, indentation-only tree that
 native GTK and macOS themes already produce, achieved without a VCL behavior
@@ -134,7 +134,7 @@ Chevron geometry (fractions of the 20 px node): collapsed points inline-end,
 | Focused (± expanded) | Rounded plate + primary chevron | `@primary` stroke / `@surface` fill / `stroke-thin` / `corner-focus` |
 | Disabled (± expanded) | Dimmed chevron | `@outline-variant` |
 
-All eight expander states are implemented in definition.xml (unbuilt). Row
+All eight expander states are implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Row
 hover/selection colours resolve from the shared `<style>` slots above.
 
 ### Interaction
@@ -200,8 +200,8 @@ grid, and Base's data tables and object cards.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Header button | `@outline-variant` stroke, `@surface-container` fill, `stroke-thin`, `corner-small` | implemented in definition.xml (unbuilt) |
-| Sort arrow (`extra="up"`/`extra="down"`) | Chevron at `stroke-standard` in `@on-surface-variant` | implemented in definition.xml (unbuilt) |
+| Header button | `@outline-variant` stroke, `@surface-container` fill, `stroke-thin`, `corner-small` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Sort arrow (`extra="up"`/`extra="down"`) | Chevron at `stroke-standard` in `@on-surface-variant` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 **Calc grid** (prototype-only; region metrics from `site/prototype.html`):
 
@@ -224,7 +224,7 @@ grid, and Base's data tables and object cards.
 | Table container | `@outline-variant` border, `corner-container` (12) radius, clipped corners |
 | Header row | `@surface-container` fill; cells padding 10 × 14 px; 12 px semibold `@on-surface-variant` |
 | Data rows | padding 10 × 14 px; 13 px `@on-surface`; hairline `@outline-variant` separators, none after the last row |
-| Striped rows | odd rows fill `@surface-container-low` — the native `alternatingRowColor` slot resolves to the same role (implemented in definition.xml, unbuilt) |
+| Striped rows | odd rows fill `@surface-container-low` — the native `alternatingRowColor` slot resolves to the same role (implemented in definition.xml, compiled at commit 577059e274; surface state unverified) |
 | Object cards ("table cards") | grid `minmax(150px, 1fr)`, 12 px gap; card: `@surface` fill, `@outline-variant` border, `corner-container` radius, padding 18 × 12 px; 44 px icon tile on `@primary-container` with `corner-container`; hover: border `@primary`, fill `@primary-container` |
 
 ### States
@@ -236,7 +236,7 @@ grid, and Base's data tables and object cards.
 | Header pressed | Primary edge + tonal press | `@primary` stroke, `@primary-hover` fill | definition.xml `pressed="true"` |
 | Sorted asc/desc | Up/down chevron | `Arrow` `extra="up"`/`"down"` | definition.xml |
 | Cell selected (active) | Inset 2 px ring, no fill change beyond `@surface` | `@primary` ring | prototype-only |
-| Range selection | `@primary-container` wash with `@on-primary-container` text (shared `highlightColor` slots) | implemented in definition.xml (unbuilt) |
+| Range selection | `@primary-container` wash with `@on-primary-container` text (shared `highlightColor` slots) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Row stripe | `@surface-container-low` | definition.xml `alternatingRowColor` |
 | Disabled grid | Follows `deactiveColor` → `@disabled-container`, text `@outline` | definition.xml `<style>` |
 
@@ -304,9 +304,9 @@ behind a labelled cluster of dialog controls.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Container rectangle | `@outline-variant` stroke, `@surface-container` fill, `stroke-thin` width, `corner-container` (12) radius (`frame`/`Border`, `enabled="true"`) | implemented in definition.xml (unbuilt) |
-| Group label | `groupTextColor` → `@on-surface-variant`; `label` type role (100 %, medium minimum weight) | implemented in definition.xml (unbuilt) |
-| Horizontal/vertical rules | `fixedline` separators: `@outline-variant` at `stroke-thin` | implemented in definition.xml (unbuilt) |
+| Container rectangle | `@outline-variant` stroke, `@surface-container` fill, `stroke-thin` width, `corner-container` (12) radius (`frame`/`Border`, `enabled="true"`) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Group label | `groupTextColor` → `@on-surface-variant`; `label` type role (100 %, medium minimum weight) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Horizontal/vertical rules | `fixedline` separators: `@outline-variant` at `stroke-thin` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 The `@surface-container` fill matches `dialogColor`, so the frame blends into
 the dialog it groups — one hairline of structure, no tonal box-in-box. The
@@ -376,9 +376,9 @@ Minimal-trough, no-stepper scrollbars in a 12 px gutter (prototype
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Thumb | `@outline` fill, `corner-small` (8) radius; drawn inset within the gutter (fractions 0.2–0.8 across the minor axis at rest) | implemented in definition.xml (unbuilt) |
-| Trough (track quarters) | `@surface-container` fill, `corner-small` | implemented in definition.xml (unbuilt) |
-| Stepper buttons (`ButtonUp/Down/Left/Right`) | Declared with supported-but-empty states — the renderer succeeds while drawing nothing, so no arrows appear | implemented in definition.xml (unbuilt) |
+| Thumb | `@outline` fill, `corner-small` (8) radius; drawn inset within the gutter (fractions 0.2–0.8 across the minor axis at rest) | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Trough (track quarters) | `@surface-container` fill, `corner-small` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Stepper buttons (`ButtonUp/Down/Left/Right`) | Declared with supported-but-empty states — the renderer succeeds while drawing nothing, so no arrows appear | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Prototype trough | Transparent track; thumb `@outline` with 3 px transparent inset border (visible bar ≈ 6 px), 8 px radius | prototype-only |
 
 The prototype's transparent trough versus the native `@surface-container`
@@ -395,7 +395,7 @@ the surrounding `@surface-container` either way.
 | Disabled | Narrow, dim | 0.25 – 0.75 (50 %) | `@outline-variant` |
 
 All four thumb states exist for both `ThumbHorz` and `ThumbVert` —
-implemented in definition.xml (unbuilt). Trough hover/press feedback was
+implemented in definition.xml (compiled at commit 577059e274; surface state unverified). Trough hover/press feedback was
 deliberately excluded from milestone 10 as an open design decision, so the
 trough is state-invariant in the current contract.
 
@@ -580,7 +580,7 @@ rail tooltips carry the full command name.
 ### Platform notes
 
 Panel chrome consumes `windowbackground` and `fixedline` definitions plus
-`StyleSettings` fills (implemented in definition.xml, unbuilt); deck layout and
+`StyleSettings` fills (implemented in definition.xml, compiled at commit 577059e274; surface state unverified); deck layout and
 the rail belong to the sidebar framework and are restyled per surface later in
 [`ROADMAP.md`](../../ROADMAP.md). No platform-specific divergence is intended
 beyond the shared high-contrast bypass.

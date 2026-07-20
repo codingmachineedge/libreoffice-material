@@ -10,10 +10,10 @@ empty/no-results states. Normative inputs are
 [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md) (component-behavior contract),
 [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
-(the implemented native part/state contract, unbuilt), and
+(the implemented native part/state contract, compiled at commit 577059e274; surface state unverified), and
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Implementation status is labelled per feature as *implemented
-in definition.xml (unbuilt)*, *prototype-only*, or *specified here, not yet
+in definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
 implemented*.
 
 ## Token reference for this chapter
@@ -56,8 +56,8 @@ fill-only behaviour.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Track (full width) | `@outline-variant` fill, `stroke-none`, `corner-indicator` (4 px) — `progress`/`TrackHorzArea` | implemented in definition.xml (unbuilt) |
-| Value fill (clipped to value) | `@primary` fill, `stroke-none`, `corner-indicator` — `progress`/`Entire` | implemented in definition.xml (unbuilt) |
+| Track (full width) | `@outline-variant` fill, `stroke-none`, `corner-indicator` (4 px) — `progress`/`TrackHorzArea` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Value fill (clipped to value) | `@primary` fill, `stroke-none`, `corner-indicator` — `progress`/`Entire` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Bar height 4 px, both track and fill rounded at `--r-ind` | prototype gallery, 64 % example fill | prototype-only |
 
 The `corner-indicator` role (4 px) equals the bar height in the prototype, so
@@ -140,11 +140,11 @@ colour.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Track | `@outline-variant` fill, `stroke-none`, `corner-indicator` — `levelbar`/`TrackHorzArea` | implemented in definition.xml (unbuilt) |
-| Critical fill (< 25 %) | `@error-container` — `levelbar`/`Entire` `extra="critical"` | implemented in definition.xml (unbuilt) |
-| Low fill (25–49 %) | `@warning-container` — `extra="low"` | implemented in definition.xml (unbuilt) |
-| Medium fill (50–74 %) | `@primary-hover` — `extra="medium"` | implemented in definition.xml (unbuilt) |
-| High fill (≥ 75 %) | `@primary` — `extra="high"` | implemented in definition.xml (unbuilt) |
+| Track | `@outline-variant` fill, `stroke-none`, `corner-indicator` — `levelbar`/`TrackHorzArea` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Critical fill (< 25 %) | `@error-container` — `levelbar`/`Entire` `extra="critical"` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Low fill (25–49 %) | `@warning-container` — `extra="low"` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Medium fill (50–74 %) | `@primary-hover` — `extra="medium"` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| High fill (≥ 75 %) | `@primary` — `extra="high"` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Gallery band strip: four 8 px segments, 4 px gaps, `--r-ind` radius | prototype-only |
 
 The prototype's gallery renders the four bands side by side (`--err`,
@@ -198,8 +198,9 @@ variant.
 - Future captures must sample values straddling each boundary — e.g. 24/25,
   49/50, 74/75, 100 — and assert the fill colour switches bands exactly at
   25/50/75 %, in light and dark palettes.
-- Validator checks on the warning/error container text pairs stand in for
-  contrast until a build exists; no runtime contrast result is claimed.
+- Validator checks on the warning/error container text pairs remain the only
+  contrast evidence; the build and Start Center smoke do not constitute a
+  runtime contrast result.
 
 ---
 
@@ -213,18 +214,18 @@ lines at the `stroke-track` metric.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Thumb | `@size-compact-control` (28) square; `@primary` fill, `stroke-none`, `corner-control` (10 px) — `slider`/`Button` | implemented in definition.xml (unbuilt) |
-| Filled track (before thumb) | `@primary` line, `stroke-track` (4) — `TrackHorzLeft` | implemented in definition.xml (unbuilt) |
-| Remaining track (after thumb) | `@outline-variant` line, `stroke-track` — `TrackHorzRight` | implemented in definition.xml (unbuilt) |
-| Vertical unfilled (above) | `@outline-variant` line, `stroke-track` — `TrackVertUpper` | implemented in definition.xml (unbuilt) |
-| Vertical filled (below) | `@primary` line, `stroke-track` — `TrackVertLower` | implemented in definition.xml (unbuilt) |
+| Thumb | `@size-compact-control` (28) square; `@primary` fill, `stroke-none`, `corner-control` (10 px) — `slider`/`Button` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Filled track (before thumb) | `@primary` line, `stroke-track` (4) — `TrackHorzLeft` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Remaining track (after thumb) | `@outline-variant` line, `stroke-track` — `TrackHorzRight` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Vertical unfilled (above) | `@outline-variant` line, `stroke-track` — `TrackVertUpper` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Vertical filled (below) | `@primary` line, `stroke-track` — `TrackVertLower` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Gallery reference: 20 px hit strip, 4 px track, 18 px circular thumb with `0 1px 4px rgba(0,0,0,.3)` shadow | prototype-only |
 
 The 4 px track is the dedicated `stroke-track` metric role, distinct from the
 1/2 px border strokes. The prototype's 18 px round thumb is the target visual
 weight; the native 28 px `size-compact-control` Button is the hit and drawing
 region within which that thumb reads. The shared renderer carries source
-corrections for slider sizing (unbuilt).
+corrections for slider sizing (compiled at commit 577059e274; surface state unverified).
 
 ### States
 
@@ -284,7 +285,7 @@ lower segment). Value formatting is host-localized.
 ### Platform notes
 
 Windows-first; the shared renderer's slider-sizing corrections and composite
-RTL geometry corrections live in shared VCL source (unbuilt). Unsupported
+RTL geometry corrections live in shared VCL source (compiled at commit 577059e274; surface state unverified). Unsupported
 slider parts fall back to native drawing.
 
 ### Verification hooks
@@ -306,8 +307,8 @@ A tooltip is a single inverse-surface plate with the small corner radius.
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Plate | `@inverse-surface` fill and stroke, `stroke-none`, `corner-small` (8 px) — `tooltip`/`Entire` | implemented in definition.xml (unbuilt) |
-| Text | `helpTextColor` → `@inverse-on-surface`; surface slot `helpColor` → `@inverse-surface` | implemented in definition.xml (unbuilt) |
+| Plate | `@inverse-surface` fill and stroke, `stroke-none`, `corner-small` (8 px) — `tooltip`/`Entire` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Text | `helpTextColor` → `@inverse-on-surface`; surface slot `helpColor` → `@inverse-surface` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 
 Because the native dark palette declares `@inverse-surface` as a light value
 (`#E6E0E9`) with a dark `@inverse-on-surface`, native tooltips follow the
@@ -469,10 +470,10 @@ The colour pairs are the milestone-5 feedback roles, wired to native
 
 | Region | Token use | Status |
 | --- | --- | --- |
-| Warning surface | `warningColor` → `@warning-container` | implemented in definition.xml (unbuilt) |
-| Warning text/icon | `warningTextColor` → `@on-warning-container` | implemented in definition.xml (unbuilt) |
-| Error surface | `errorColor` → `@error-container` | implemented in definition.xml (unbuilt) |
-| Error text/icon | `errorTextColor` → `@on-error-container` | implemented in definition.xml (unbuilt) |
+| Warning surface | `warningColor` → `@warning-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Warning text/icon | `warningTextColor` → `@on-warning-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Error surface | `errorColor` → `@error-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| Error text/icon | `errorTextColor` → `@on-error-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | Reference geometry: 12 px 16 px padding, `corner-container` (12 px) radius, 12 px icon-text gap, 20 px leading icon, `400 13px/1.3` text | prototype gallery banner ("Document contains unsaved changes.") | prototype-only |
 
 The banner uses the *container* pairs; the base `error` role (`#B3261E`
@@ -631,8 +632,9 @@ surfaces.
   (placard shown, search field retained), the same in RTL and one long
   translation; a screen-reader trace of the zero-result announcement; a
   keyboard-only recovery (edit pattern, results return).
-- Until a build exists, these remain prototype-verifiable only; the
-  verified-capture count is 0.
+- These feedback scenarios remain prototype-only even though a separate light
+  Start Center smoke now exists; see the current registry in
+  [`docs/SCREENSHOTS.md`](../SCREENSHOTS.md).
 
 ---
 

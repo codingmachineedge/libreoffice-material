@@ -177,13 +177,9 @@ the script stops rather than modifying it.
 
 On 2026-07-19, this host's first bootstrap installed the dedicated VS 2022 and
 isolated Cygwin profiles. A later clean preflight passed that installed profile,
-then the first real configure reached LibreOffice's Skia check and exposed the
-missing VS C++ Clang compiler. The script now treats that compiler and its
-<code>clang-cl.exe</code> payload as required, so the next default invocation
-repairs the profile rather than proceeding with an incomplete toolchain. These
-are provisioning/configure observations only: no local native build, MSI,
-LibreOffice launch, or accepted UI evidence is claimed here. The VS 2026
-selection is likewise source automation until an isolated local run is recorded.
+then the first real configure exposed a missing VS C++ Clang compiler. The script
+now treats that compiler and its <code>clang-cl.exe</code> payload as required so
+an incomplete toolchain is repaired before configure.
 On 2026-07-19, the explicit Enterprise 2026 host path above passed this document's
 no-bootstrap preflight after its C++/CLI, Clang, and VC145 merge-module payloads
 were installed. An isolated `-NoBootstrap` configure subsequently completed at
@@ -192,6 +188,17 @@ bundled `mdds` dependency and exposed C2382 in v145 C++20 conditional
 `noexcept` handling. `external/mdds/msvc-v145-cxx20-noexcept.patch.1` preserves
 the upstream specification except for that exact v145 C++20-or-newer compiler
 range. The patch passed direct VS 2026 and VS 2022 syntax checks and dry-runs
-against the unpacked `mdds-3.2.1` tarball. A fresh full build remains required;
-no completed native build, MSI, application launch, UI, or accessibility result
-is implied.
+against the unpacked `mdds-3.2.1` tarball.
+
+On 2026-07-20, a fresh explicit VS 2026 build from clean detached source
+`577059e2741185b512c184c64685c16d335d10ea` passed all five required native
+targets, validated the legacy CLI payload, completed LibreOfficeDev, and
+produced a 199,692,288-byte unsigned MSI with SHA-256
+`437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`.
+Windows Installer administrative extraction completed with status `0`; the
+extracted runtime supplied the registered light Start Center UI and bounded UNO
+tree smoke. The wrapper's parent process exited before the final dist copy and
+manifest stage, so a fully completed one-click wrapper rerun remains required.
+The MSI was not installed, and no public release or installer lifecycle result
+is implied. Exact runtime boundaries are in
+[`HEADLESS_UI_EVIDENCE.md`](HEADLESS_UI_EVIDENCE.md).

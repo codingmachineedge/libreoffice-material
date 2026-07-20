@@ -65,33 +65,42 @@ The audited Windows contract has important boundaries:
 
 These are audited capabilities and constraints, not a LibreOffice run result.
 
-## Current LibreOffice build blocker
+## Current LibreOffice build and accepted-run record — 2026-07-20
 
-No local fork executable exists. [`LOCAL_WINDOWS_BUILD.md`](LOCAL_WINDOWS_BUILD.md)
-defines the source-controlled one-click bootstrap for an isolated VS
-2022/Cygwin profile and the opt-in exact-path VS 2026 profile. On 2026-07-19,
-this host completed the relevant bootstrap/preflight work, and the explicit VS
-2026 Enterprise profile completed an isolated configure at
-`a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`. The subsequent native build reached
-third-party compilation but stopped on MSVC v145 C++20's `mdds`
-conditional-`noexcept` C2382; the source contains a narrowly scoped workaround
-awaiting a fresh full build. This records build diagnosis only—there is still no
-completed local binary, MSI, LibreOffice launch, or off-screen scenario. The
-hosted Windows workflow still supplies and validates its prerequisites against
-a clean LF checkout.
+[`LOCAL_WINDOWS_BUILD.md`](LOCAL_WINDOWS_BUILD.md) defines the source-controlled
+one-click bootstrap and the explicit VS 2026 profile. A clean detached build at
+fork commit `577059e2741185b512c184c64685c16d335d10ea` used Visual Studio 2026
+Enterprise, MSVC v145, Clang 22.1.3, and Windows SDK 10.0.26100.0. It passed the
+five required native C++ targets and legacy CLI payload check, completed the
+LibreOfficeDev product, and produced
+`LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64.msi` (199,692,288 bytes; SHA-256
+`437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`).
+Windows Installer administrative extraction completed with status `0` and
+yielded one `soffice.exe`. The package is unsigned and was not installed. The
+parent build script exited before its final dist copy/manifest step, so this is
+not recorded as an end-to-end wrapper success or a public release.
 
-Current-source Linux Actions run `29695793821` and Windows Actions run
-`29695815101` at `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed the five
-required native C++ targets. The Windows run also passed the legacy CLI payload
-check and completed the full LibreOfficeDev installation-set build.
+The extracted MSI payload then supplied two off-screen runs through clean
+low-level driver commit `beed66ca6ed2503e6170ee1e1158247f1c2f0140`:
 
-That Windows run did not produce a downloadable artifact: the staging script
-recursively collected three MSI files, two of which were LibreOffice working
-databases under `idt_files`; its exact-one safety check stopped before upload.
-The workflow now scopes collection to the success-only final
-`LibreOfficeDev\msi\install\en-US` directory and retains exact-one,
-administrative-extraction, and `soffice.exe` checks. A hosted rerun is required
-before this plan can claim an MSI or an off-screen LibreOffice scenario.
+- the default-GPU run kept a stable owned `LibreOfficeDev`/`SALFRAME` process and
+  a nonempty 96-node accessibility tree, but `PrintWindow` returned a blank
+  client. The rejected capture is preserved under
+  [`20260720-012601-577059e274-vs2026-msi`](evidence/runs/20260720-012601-577059e274-vs2026-msi/);
+- the software-raster fallback run kept the same exact package and Material
+  opt-in, captured a genuine Home/Recent Documents view, used background input
+  to navigate to Templates, captured that gallery, and produced two complete
+  bounded UNO trees with no collector errors. It shut down normally
+  over its unique UNO pipe and released the off-screen desktop. The accepted
+  manifest and results are under
+  [`20260720-012853-577059e274-vs2026-msi-raster`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/).
+
+This closes only the light-profile Start Center launch/navigation smoke on
+software raster rendering. Dark, system/high contrast, accelerated capture,
+keyboard-only/focus, 200% scale, localization/direction, suite applications,
+dialogs, updater, and MSI lifecycle coverage remain open. The Material
+environment gates were requested; that fact alone does not prove every visible
+control used the file definition or that the surface is Material-complete.
 
 ## Evidence principles
 

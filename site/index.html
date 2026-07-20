@@ -64,11 +64,12 @@
             <code>29695793821</code> and Windows run <code>29695815101</code>
             passed all five required native C++ targets; the Windows run also
             built the full LibreOfficeDev installation set and checked the
-            legacy CLI payload. The whole GUI is incomplete, and verified
-            application screenshots remain at zero. MSI staging then stopped
-            because a recursive rule included two intermediate databases with
-            the final package. The workflow now selects only the final package,
-            but the rerun has not produced a downloadable artifact yet.
+            legacy CLI payload. A later exact-source local VS 2026 build at
+            <code>577059e274</code> passed those native targets, produced an
+            unsigned 199,692,288-byte MSI, and successfully extracted it. That
+            payload supplied two accepted light-profile Start Center captures
+            and two bounded UNO trees with no collector errors. The whole GUI is
+            incomplete, and no public downloadable package exists yet.
           </p>
         </div>
 
@@ -91,7 +92,7 @@
             </div>
             <div>
               <dt>Headless harness</dt>
-              <dd><span class="state state-verified">Preflight passed</span></dd>
+              <dd><span class="state state-verified">LibreOffice smoke passed</span></dd>
             </div>
             <div>
               <dt>Design reference</dt>
@@ -99,7 +100,7 @@
             </div>
             <div>
               <dt>Build / installer</dt>
-              <dd><span class="state state-progress">Set built; bootstrap + MSI rerun</span></dd>
+              <dd><span class="state state-progress">Local MSI extracted; release pending</span></dd>
             </div>
             <div>
               <dt>Windows updater</dt>
@@ -111,7 +112,7 @@
             </div>
             <div>
               <dt>Verified captures</dt>
-              <dd><span class="metric">0</span></dd>
+              <dd><span class="metric">2</span></dd>
             </div>
           </dl>
           <div class="readiness-footer">
@@ -124,11 +125,11 @@
       <section class="status-band" aria-label="Project facts">
         <div>
           <strong>Source slice</strong>
-          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 79 parts · 205 states · unbuilt</span>
+          <span>2 schemes · 23 color tokens · 3 type roles · 8 shape tokens · 15 metric roles · 72 style slots · 79 parts · 205 states · locally built at 577059e274</span>
         </div>
         <div>
-          <strong>Harness preflight</strong>
-          <span>Off-screen create → capture → cleanup</span>
+          <strong>Headless smoke</strong>
+          <span>LibreOffice launch → navigate → capture → UNO tree → cleanup</span>
         </div>
         <div>
           <strong>Whole-suite status</strong>
@@ -136,7 +137,7 @@
         </div>
         <div>
           <strong>LibreOffice captures</strong>
-          <span>0 verified files</span>
+          <span>2 verified light-profile files</span>
         </div>
       </section>
 
@@ -150,13 +151,13 @@
               disabled state collapsed onto a generic one. A disabled submenu
               arrow now dims, a disabled-but-checked toolbar button keeps a dimmed
               check, and a disabled tab control still marks its current page. The
-              XML changes have not been compiled, launched, or captured as
-              LibreOffice; the accepted screenshot count remains zero.
+              exact source has now compiled and launched, while these three
+              specific disabled-state tuples have not yet been visually exercised.
             </p>
           </div>
           <div class="slice-status" aria-label="Implementation status">
             <span class="state state-progress">Source present</span>
-            <span class="state state-planned">Build pending</span>
+            <span class="state state-verified">Exact source built</span>
           </div>
         </div>
 
@@ -179,7 +180,7 @@
           <article>
             <span aria-hidden="true">04</span>
             <h3>Audit-driven, scoped</h3>
-            <p>Found by cross-checking VCL draw calls; three further verified gaps were left out as design decisions, not corrections. No new tokens; all affected source remains unexecuted.</p>
+            <p>Found by cross-checking VCL draw calls; three further verified gaps were left out as design decisions, not corrections. No new tokens; exact source built, but these state tuples remain visually unverified.</p>
           </article>
         </div>
 
@@ -223,16 +224,18 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
               read-only UNO accessibility-tree collector. With a matching
               built Python runtime it records roles, names, states, and bounds
               alongside a screenshot without reading document text or driving
-              the UI. It is a test mechanism, not a completed accessibility
-              result.
+              the UI. The accepted light Start Center run exercised it twice
+              with no collector errors; this is not a full accessibility audit.
             </p>
           </div>
           <p class="truth-note">
-            Native targets and the Windows installation-set build have completed,
-            but runtime, a normal release, headless UI smoke, and accessibility
-            smoke are still pending. The stable workflow validates an exact draft
-            before promoting it to a normal public non-prerelease Latest release;
-            that path has not completed.
+            Native targets, a local exact-source MSI, and light Start Center
+            headless/UNO-tree smoke have completed, but updater runtime and a
+            normal public release are still pending. Every <code>main</code> push now starts the
+            stable workflow, which uploads the validated MSI directly to an exact
+            draft before promoting it to a normal public non-prerelease Latest
+            release. Only diagnostics use an Actions artifact; that publication
+            path has not completed.
           </p>
         </div>
         <p class="blocker-note">
@@ -240,29 +243,26 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           provisions and verifies an isolated Visual Studio 2022 C++/CLI/C++ Clang/Cygwin profile
           and builds from a clean LF snapshot without touching this checkout.
           Its bootstrap is one hidden UAC child with isolated Cygwin Git and
-          fail-fast safe-root/free-space checks. On 2026-07-19, the bootstrap
-          installed the dedicated VS 2022/Cygwin profile and a clean preflight
-          passed it; the first real configure then exposed the missing C++ Clang
-          compiler required by Skia. The bootstrap now requires that component
-          before retrying the local configure. VS 2022 remains the default and
+          fail-fast safe-root/free-space checks. VS 2022 remains the default and
           CI-matching profile. VS 2026 is local-only and requires the explicit
           <code>-VisualStudioYear 2026</code> selection; a host installation is
           used only when its exact <code>-VisualStudioInstallPath</code> is
           provided and verified. The wrapper never silently substitutes or
           repairs a host installation, recognizes VS 2026's native
           <code>Llvm\x64\bin</code> Clang layout. Its named Enterprise host
-          passed no-bootstrap preflight and an isolated configure on 2026-07-19;
-          the first native build reached third-party compilation and exposed a
-          v145 C++20 <code>mdds</code> compatibility issue. A narrow source
-          workaround is awaiting a fresh full build, so this remains neither a
-          completed local build nor runtime evidence.
+          passed no-bootstrap preflight and an isolated configure on 2026-07-19.
+          After the narrow v145 C++20 <code>mdds</code> workaround, the fresh
+          exact-source build at <code>577059e274</code> completed the native
+          targets, product, final MSI, and administrative extraction. The build
+          wrapper's parent exited before final dist staging, so end-to-end wrapper
+          completion remains open.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule
           recursively found two intermediate MSI databases alongside the final
           installer, so no artifact was uploaded. The corrected final-directory
-          rule awaits a rerun. No staged installer, release, real app run,
-          headless smoke, or accessibility smoke exists.
+          rule awaits a rerun. The local MSI/runtime evidence does not yet provide
+          a normal public release or updater/installer lifecycle result.
         </p>
       </section>
 
@@ -379,9 +379,9 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         </div>
         <p class="truth-note">
           This is the intended look and interaction drawn in HTML, not a
-          screenshot of a compiled LibreOffice. The native suite has not been
-          built or run with these changes, so it is a specification aid rather
-          than build evidence, and the verified-capture count remains zero.
+          screenshot of a compiled LibreOffice. It remains a specification aid,
+          not build evidence; the separate exact-source Start Center captures
+          are registered below.
         </p>
       </section>
 
@@ -389,12 +389,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         <div class="section-heading evidence-heading">
           <div>
             <p class="eyebrow">Verified visual record</p>
-            <h2 id="evidence-title">A gallery that starts honestly empty.</h2>
+            <h2 id="evidence-title">The real Windows app, with its limits attached.</h2>
             <p>
-              These are evidence slots, not mock screenshots. A slot gains an
-              image only after a real fork build is captured headlessly and its
-              manifest, commit, scenario, and hash pass review. A successful
-              Notepad-only harness preflight was temporary and is not shown here.
+              The Start Center images come from the exact-source Windows MSI
+              payload and passed manifest, commit, scenario, hash, cleanup, and
+              sensitive-data review. Empty cards remain evidence slots, not mocks.
             </p>
           </div>
           <a
@@ -404,11 +403,16 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         </div>
 
         <div class="evidence-grid">
-          <article class="evidence-card">
-            <div class="evidence-slot" aria-label="No start center screenshot committed">
-              <span aria-hidden="true">+</span><strong>Awaiting verified capture</strong>
+          <article class="evidence-card evidence-card-captured">
+            <div class="evidence-captures">
+              <a href="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-light.png">
+                <img src="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-light.png" alt="LibreOfficeDev Start Center Home and Recent Documents view running off screen on Windows" loading="lazy">
+              </a>
+              <a href="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-templates-light.png">
+                <img src="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-templates-light.png" alt="LibreOfficeDev Templates gallery after background navigation on the off-screen Windows desktop" loading="lazy">
+              </a>
             </div>
-            <div class="evidence-meta"><div><h3>Start center</h3><p>E-START-001 · shared shell</p></div><span>0 files</span></div>
+            <div class="evidence-meta"><div><h3>Start center</h3><p>E-START-001 · light accepted; dark pending</p></div><span>2 files</span></div>
           </article>
           <article class="evidence-card">
             <div class="evidence-slot" aria-label="No Writer screenshot committed">
@@ -462,11 +466,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
-            <div><p class="phase-state">Source milestone 10</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, outlined frames, net-less tree connectors, disabled-affordance state completeness, strict parsing, high-contrast fallback, expanded states, and static checks exist but are unbuilt.</p></div>
+            <div><p class="phase-state">Source milestone 10</p><h3>VCL Material primitives</h3><p>Light/dark profiles, complete 72-slot color coverage, native-preserving typography, shape and metric roles, full-track progress and value-sensitive level indicators, outlined frames, net-less tree connectors, disabled-affordance state completeness, strict parsing, high-contrast fallback, expanded states, and static checks compiled at <code>577059e274</code>; only the registered light Start Center checkpoints have runtime evidence.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">2</span>
-            <div><p class="phase-state">Source in progress</p><h3>Shared shell and dialogs</h3><p>The initial Start Center treatment includes <code>open_all</code> routed through VclBuilder's <code>suggested-action</code> semantic to the Material action state; remaining shell work and all runtime proof are pending.</p></div>
+            <div><p class="phase-state">Source in progress</p><h3>Shared shell and dialogs</h3><p>The initial Start Center treatment includes <code>open_all</code> routed through VclBuilder's <code>suggested-action</code> semantic to the Material action state. Light Home/Templates smoke is registered; remaining shell work and broader runtime proof are pending.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">3–6</span>
