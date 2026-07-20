@@ -1503,3 +1503,29 @@ build or runtime evidence.
 - This is source/static correction plus a diagnostic extraction. A fresh run
   must still produce the canonical staged MSI, checksum, manifest, successful
   extraction log, and exact-source provenance before the wrapper gate closes.
+
+## 2026-07-20 — exact-source VS 2026 wrapper completion
+
+- Exact implementation commit
+  `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3` passed the five required native
+  targets: `tools_test` 102 tests, `extensions_test_update` 11,
+  `vcl_widget_definition_reader_test` 9,
+  `vcl_file_definition_widget_draw_test` 6, and `vcl_treeview` 2. The required
+  `cli_ure`/`unoil` payloads and legacy CLI files were present.
+- The subsequent full VS 2026 product/MSI build completed and embedded exact
+  `buildid=7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`. The corrected wrapper then
+  waited for administrative extraction, received exit code `0`, and staged the
+  canonical MSI, checksum, JSON manifest, and retained verbose extraction log.
+- The unsigned staged MSI is 199,671,808 bytes with SHA-256
+  `ea503d3ab4327a3d3936384ceee2c0ef89b7380e5331c017b946d62f13a2b934`.
+  Its extraction contains 4,885 files / 603,901,200 bytes, exactly one
+  `soffice.exe`, and exactly one 571,392-byte `updchklo.dll`. The extracted and
+  build-tree updater DLL hashes match at
+  `b8264c74dc07d989b5e056ca8c156e9dd8c2b07181189d3d475f49e52b7fea58`.
+- MSI inspection records ProductCode
+  `{047F908B-F338-4F1B-B464-F3C1E9438FDE}`, test UpgradeCode
+  `{910006D2-BDF1-440C-89D3-8F1DD93790FE}`, inclusive same-version
+  `OLDPRODUCTS` detection, `FindRelatedProducts` sequence 100,
+  `RemoveExistingProducts` sequence 675, and no `ForceReboot` or
+  `ScheduleReboot` action. This closes local build/package provenance, not
+  install/update/repair/uninstall or hosted release acceptance.

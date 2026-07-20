@@ -200,8 +200,14 @@ extracted runtime supplied the registered light Start Center UI and bounded UNO
 tree smoke. The wrapper's parent process exited before the final dist copy and
 manifest stage. Current source replaces the detach-prone direct `msiexec`
 invocation with a safely quoted, hidden `Start-Process -Wait` client and checks
-that invariant in PowerShell 5.1 and 7; a fully completed one-click wrapper
-rerun remains required.
+that invariant in PowerShell 5.1 and 7. Exact implementation commit `7029dccf4`
+then passed all five required native targets, full product/MSI regeneration,
+waited administrative extraction, and canonical MSI/checksum/manifest staging.
+Its unsigned 199,671,808-byte MSI has SHA-256
+`ea503d3ab4327a3d3936384ceee2c0ef89b7380e5331c017b946d62f13a2b934`;
+the 4,885-file, 603,901,200-byte extraction embeds the exact build ID and its
+`updchklo.dll` matches the built DLL at
+`b8264c74dc07d989b5e056ca8c156e9dd8c2b07181189d3d475f49e52b7fea58`.
 The MSI was not installed during this build run. It was later published as the
 normal, non-prerelease `windows-msi-local-20260720-577059e274` release and all
 four public Latest assets were byte-verified, but that older binary omitted the

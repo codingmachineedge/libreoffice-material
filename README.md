@@ -49,8 +49,10 @@ document engine, file-format support, and accessibility foundations.
 > parent process exited after successful extraction but before final dist
 > staging. Current source now launches administrative extraction through a
 > safely quoted, hidden `Start-Process -Wait` client and validates that invariant
-> under PowerShell 5.1/7; a fresh completed staging run is still required before
-> claiming end-to-end wrapper success.
+> under PowerShell 5.1/7. Exact implementation commit `7029dccf4` then passed
+> all five required VS 2026 native targets, the full product/MSI build, waited
+> administrative extraction, and canonical MSI/checksum/manifest staging, which
+> closes the local wrapper gate.
 > Real LibreOfficeDev Start Center runs from the corrected extracted MSI payload
 > are now the canonical gallery evidence: three light, three dark, and three forced-
 > high-contrast captures with nine matching bounded UNO trees and no collector
@@ -70,10 +72,8 @@ document engine, file-format support, and accessibility foundations.
 > run adds exact-source MSI, Start Center smoke, and bounded UNO-tree evidence.
 > The corrected normal release and its public Latest asset bytes are verified,
 > but updater-runtime and MSI lifecycle proof are not accepted yet.
-> Hosted Windows run
-> [`29756277918`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29756277918)
-> for screenshot commit `439cd1a51` has started; its per-push release remains
-> pending.
+> Hosted Windows publication for the newest pushed source is still running; the
+> exact local VS 2026 result below is not yet a hosted release.
 
 [Project site](https://ding-ding-projects.github.io/libreoffice-material/) ·
 [Interactive preview](https://ding-ding-projects.github.io/libreoffice-material/prototype.html) ·
@@ -98,7 +98,7 @@ document engine, file-format support, and accessibility foundations.
 | Headless harness | Light/dark/high-contrast UI, keyboard focus, and bounded UNO collection passed | The sibling low-level driver launched the exact MSI payload on run-scoped off-screen desktops, resolved stable runtime ownership, captured nine canonical states, drove background pointer and Tab input in every appearance profile, collected nine bounded UNO trees with no collector errors, shut down normally, and left zero matching processes/windows. All three current canonical runs used dedicated same-token MCP sessions so UNO and the GUI shared the same integrity boundary; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
 | Windows updater | Protected staging and no-restart source regressions pass; end-user flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. Current source launches a major update with exactly `/i`, the staged MSI, `REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`; repair-only `REINSTALL` properties are excluded. Its regression suite covers this four-argument vector, exclusive `CREATE_NEW` staging, the SYSTEM/Administrators/Owner Rights DACL, and a retained read lock that rejects write/delete opens. Download/consent/visible-launch and real MSI lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
-| Installer / release | Corrected normal Latest release and four public assets verified | The public, normal, non-draft, non-prerelease `windows-msi-local-20260720-fbba560e2` release targets exact source `fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four assets. Cache-busted Latest downloads matched every corrected release size and hash; its unsigned 199,688,192-byte MSI is `180e511c…afeea`. Administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO reruns. A statically validated [Windows Sandbox lifecycle harness](qa/windows-installer-lifecycle/README.md) pins the old/corrected packages and requires exact-zero install/update/repair/uninstall results with `/norestart`, `REBOOT=ReallySuppress`, unchanged reboot indicators, and clean uninstall. Three isolated launches failed closed without an accepted lifecycle: the first exposed generic-list JSON serialization; the second proved that fix and exposed a nested MSI-query row collection; the third reached real old-install and corrected same-version commands with exit code `0` and unchanged reboot state. Its log proved the Upgrade table found the old ProductCode, but repair-only `REINSTALL` properties selected no features for the new ProductCode and skipped removal. Current source corrects that command split; a fresh acceptance run remains open. Hosted publication also now accepts GitHub's temporary draft URL before promotion while continuing to require the canonical tag URL after publishing; exact pushed-run verification remains pending |
+| Installer / release | Local exact-source MSI/package gate and earlier normal Latest release verified | Exact implementation commit `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3` passed all five VS 2026 native targets, the full product build, and the corrected end-to-end wrapper. Its unsigned 199,671,808-byte MSI is `ea503d3a…b934`; waited administrative extraction returned `0`, produced 4,885 files / 603,901,200 bytes and one `soffice.exe`, embedded the exact build ID, and yielded an updater DLL identical to the build tree (`b8264c74…fea58`). The public, normal, non-draft, non-prerelease Latest release remains `windows-msi-local-20260720-fbba560e2`; it predates the current four-argument updater and is not lifecycle proof. A statically validated [Windows Sandbox lifecycle harness](qa/windows-installer-lifecycle/README.md) pins the old/corrected packages and requires exact-zero install/update/repair/uninstall results with `/norestart`, `REBOOT=ReallySuppress`, unchanged reboot indicators, and clean uninstall. Three isolated launches failed closed; the third proved the Upgrade table found the old ProductCode but repair-only `REINSTALL` properties selected no features and skipped removal. Current source corrects that command split; a fresh acceptance run remains open. Hosted publication also now accepts GitHub's temporary draft URL before promotion while continuing to require the canonical tag URL after publishing; exact pushed-run verification remains pending |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -327,8 +327,8 @@ the 1,011-byte JSON manifest is
 `12e6495e5d5051657dd99e6c0afc6d61941144c1bcde5f792f09a9949bea0fc1`;
 and the 972-byte XML manifest is
 `b686d9e9641360c3962bc27b8b6517b9a76c14c06cd50efbcbcfe485724eab72`.
-Hosted workflow run `29720519794` can remain tracked separately until its exact
-per-push status and release are checked.
+Hosted workflow run `29720519794` later completed unsuccessfully and remains
+historical workflow diagnosis, not release evidence.
 
 ## Product direction
 
@@ -436,13 +436,15 @@ and the imported build files before configuring a machine.
 > payload supplied the accepted Start Center UI and bounded UNO-tree run. The wrapper's parent
 > process exited before its final dist copy/manifest step, so that wrapper is not
 > claimed as an end-to-end success. Current source fixes that asynchronous
-> `msiexec` race with an explicit hidden waited process; real final staging is
-> still pending. This local result complements the hosted result:
+> `msiexec` race with an explicit hidden waited process. Exact implementation
+> commit `7029dccf4` subsequently passed all five native targets, full product/MSI
+> regeneration, administrative extraction, and final canonical staging. This
+> local result complements the hosted result:
 > current-source Linux run `29695793821` and Windows run `29695815101` passed
 > all five required native C++ targets, and the Windows run built the full
-> installation set but stopped at MSI staging. Hosted run `29720519794` is now
-> exercising the corrected final-directory rule at pushed commit `b0e3ea766` and
-> remains in progress. A separate corrected normal public, non-prerelease Latest
+> installation set but stopped at MSI staging. Hosted run `29720519794` later
+> completed unsuccessfully and is historical workflow diagnosis. A separate
+> corrected normal public, non-prerelease Latest
 > release exists at `windows-msi-local-20260720-fbba560e2`; it targets
 > `fbba560e27db26de605c40aa237c554c1f0744b1`, and its four public assets have
 > been independently downloaded and matched byte-for-byte. This publication does

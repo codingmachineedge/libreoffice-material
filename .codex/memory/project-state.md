@@ -351,7 +351,12 @@ Public assetless release/tag `e` remains non-evidence.
   dist staging/manifest copy. Current source now safely quotes the extraction
   command and waits on its hidden `msiexec` client before reading the exit code
   or inspecting payload files; its PowerShell 5.1/7 static validator passes,
-  while the final phase still needs a clean rerun.
+  and exact implementation commit `7029dccf4` passed the final phase. All five
+  required VS 2026 native targets passed before the full product/MSI build. The
+  staged unsigned 199,671,808-byte MSI is `ea503d3a…b934`; waited extraction
+  returned `0`, produced 4,885 files / 603,901,200 bytes and one `soffice.exe`,
+  embedded build ID `7029dccf4`, and yielded an updater DLL matching the build
+  tree at `b8264c74…fea58`.
 - Corrected commit `fbba560e27db26de605c40aa237c554c1f0744b1` produced an
   administratively extracted runtime candidate whose canonical off-screen Home
   and Templates smoke passed. Its bounded UNO trees report 96/49 and 111/64
@@ -472,8 +477,8 @@ Public assetless release/tag `e` remains non-evidence.
 
 ## Required next gates
 
-1. complete the local wrapper's final dist staging/manifest phase and verify the
-   exact hosted clean-LF Windows auto-release workflow result for corrected source;
+1. verify the exact hosted clean-LF Windows auto-release workflow result for
+   corrected source; the local VS 2026 wrapper gate is complete at `7029dccf4`;
 2. build/runtime-verify accelerated rendering, deeper keyboard traversal,
    shape and metric geometry, and system-driven high-contrast routing; complete
    forced-color/platform signal coverage; and
@@ -490,8 +495,7 @@ Public assetless release/tag `e` remains non-evidence.
 - no application surface is verified Material-complete;
 - no updater download, protected-stage, consent, or MSI-launch flow has been
   runtime-verified;
-- the local wrapper did not complete final dist staging/manifest copy after the
-  successful MSI extraction;
+- the locally staged current MSI is unsigned and not yet the public Latest asset;
 - definition/state command and region assertions execute, but individual
   widget/state pixel comparisons remain missing;
 - accelerated rendering, deeper keyboard traversal, 200% scaling, localization,

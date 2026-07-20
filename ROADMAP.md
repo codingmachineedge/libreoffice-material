@@ -100,11 +100,14 @@ workflow now inspects only the success-only final `LibreOfficeDev\msi\install\en
 directory and still requires exactly one MSI plus administrative extraction and
 `soffice.exe` validation. Hosted run
 [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
-is exercising that corrected rule at `b0e3ea766` and remains in progress. The
+completed unsuccessfully after the build and is retained as historical workflow
+diagnosis rather than publication evidence. The
 local wrapper's parent process exited after successful extraction but before its
 final dist staging/manifest copy. Current source waits on the exact hidden
 `msiexec` client before inspecting the payload; static PowerShell 5.1/7
-validation passes, while an end-to-end staging rerun remains open.
+validation passes. Exact implementation commit `7029dccf4` then completed all
+five VS 2026 native targets, full product/MSI regeneration, waited extraction,
+and canonical MSI/checksum/manifest staging.
 
 A separate normal public, non-prerelease release was published at
 [`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
@@ -140,7 +143,8 @@ VS 2022 default and VS 2026 build state cannot resume each other's work. A
 complete successful full run removes only its verified-clean temporary LF
 worktree. The completed VS 2026 build proves the selected toolchain/product path;
 the wrapper now waits for administrative extraction before inspecting/staging,
-and its final staging/manifest phase still requires a clean rerun.
+and exact implementation commit `7029dccf4` passed its final
+staging/manifest phase.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL
@@ -196,8 +200,9 @@ and
 [`20260720-033338-fbba560e27-windows-headless-highcontrast`](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
 The corrected normal release and its four public Latest assets are verified.
 Updater download/stage/consent flow, MSI install/repair/upgrade/uninstall and
-restart-suppression lifecycle proof, the remaining UI/accessibility matrix, and
-the wrapper's final dist staging phase remain pending. This scoped runtime smoke
+restart-suppression lifecycle proof and the remaining UI/accessibility matrix
+remain pending. The wrapper's final dist staging phase passed later at exact
+implementation commit `7029dccf4`. This scoped runtime smoke
 does not prove any MSI lifecycle behavior.
 A fresh exact-tag Sandbox input run
 `20260720-041140-7240676-b3777205bfb344a2977090ba35d643c3` now passes the
