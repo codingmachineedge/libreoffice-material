@@ -19,8 +19,8 @@ Donate button, member, icon constant, conditional substitution, and donation
 URL dispatch from the footer. Help and Extensions remain. Its focused validator
 and six tests, VS 2026 product build, five-target native regression phase, MSI
 staging/extraction, and accepted light UI/accessibility smoke pass. Earlier
-screenshots that show the old button remain immutable historical evidence;
-dark and high-contrast refreshes from the current source are still required.
+screenshots that show the old button remain immutable historical evidence. The
+light, dark, and forced-high-contrast current-source refreshes are accepted.
 
 ## Current milestone
 
@@ -406,19 +406,18 @@ Public assetless release/tag `e` remains non-evidence.
 - Canonical verified exact-source Start Center gallery captures: **9**: three
   Help/Extensions-only light-profile files from committed-harness run
   `20260720-143309-393263ad92-windows-headless-light`, three dark files from
-  `20260720-140327-7029dccf40-windows-headless-dark`, and three
+  `20260720-144200-393263ad92-windows-headless-dark`, and three
   forced-high-contrast files from
-  `20260720-033338-fbba560e27-windows-headless-highcontrast`. Every appearance
+  `20260720-144249-393263ad92-windows-headless-highcontrast`. Every appearance
   includes a visible Tab focus state whose UNO tree exposes the `Open File` push
   button as the sole `FOCUSED` node. The superseded three-image corrected light
   run `20260720-112425-fbba560e27-windows-headless-light`, earlier corrected light run
   `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression` and older
   `20260720-012853-577059e274-vs2026-msi-raster` pair remain historical accepted
-  proof. The newest light run used exact source
-  `393263ad924eae8d64b4f9a35bd6486ef83578fc` and that same clean harness
-  revision; the dark run used `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`
-  with harness `c61a423cd5a764686d703e57a7a6d5889903ba1e`. Both used clean,
-  dedicated same-token driver `547a102a49169d41da876de217856229ab7c03a1`,
+  proof. All three newest appearance runs used exact source
+  `393263ad924eae8d64b4f9a35bd6486ef83578fc`; dark and high contrast used clean
+  harness `75c119e395b9689e2c97341d5f63128db10c255a`. All used clean, dedicated
+  same-token driver `547a102a49169d41da876de217856229ab7c03a1`,
   atomically bound HWND/PID/thread/DPI
   inside the off-screen desktop enumeration callback, and ended with normal UNO
   termination, zero exact-payload processes/windows, a closed desktop, and a

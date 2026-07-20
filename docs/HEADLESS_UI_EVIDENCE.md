@@ -143,22 +143,23 @@ This verifies only that exact extracted runtime UI. It does not execute or
 prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
 behavior.
 
-The canonical dark run now uses the exact `7029dccf4` payload with harness
-`c61a423cd5a764686d703e57a7a6d5889903ba1e` and driver `547a102a49169d41da876de217856229ab7c03a1`;
-the canonical forced-high-contrast run still uses the earlier `fbba560e27`
-payload. Both use dedicated same-token loopback MCP sessions. Keeping
+The canonical dark and forced-high-contrast runs now use the same exact
+`393263ad9` payload with harness `75c119e395b9689e2c97341d5f63128db10c255a`
+and driver `547a102a49169d41da876de217856229ab7c03a1`. Both use dedicated
+same-token loopback MCP sessions. Keeping
 the GUI and the matching Python/UNO collector at the same integrity level avoids
 the named-pipe block produced by the elevated always-on service:
 
-- [`20260720-140327-7029dccf40-windows-headless-dark`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/)
+- [`20260720-144200-393263ad92-windows-headless-dark`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/)
   forced `ApplicationAppearance=2` and `HighContrast=1`; Home, one background
   Tab focus state, and Templates captured at `1920×1117`. The focus tree exposes
   exactly one `FOCUSED` node, the `Open File` push button. Its three trees report
-  96/49, 96/49, and 111/64 total/visible nodes, zero errors, and no truncation;
-- [`20260720-033338-fbba560e27-windows-headless-highcontrast`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/)
+  93/46, 93/46, and 108/61 total/visible nodes, zero errors, and no truncation;
+- [`20260720-144249-393263ad92-windows-headless-highcontrast`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/)
   forced `ApplicationAppearance=1` and `HighContrast=2` and passed the same three
   checkpoints, including the accessible `Open File` focus state and complete
-  96/49, 96/49, and 111/64 trees.
+  93/46, 93/46, and 108/61 trees. Both runs visibly show Help and Extensions
+  without the retired footer Donate control.
 
 All three canonical appearance runs terminated normally, reached zero
 exact-payload processes and headless windows, closed the desktop handle, stopped

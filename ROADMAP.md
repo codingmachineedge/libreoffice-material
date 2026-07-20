@@ -197,14 +197,13 @@ normal termination, and complete cleanup; its canonical light run is
 The former canonical Home/Templates-only run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/)
 remains historical evidence.
-The newest exact payload also passed a dedicated same-token dark
-Home/Tab-focus/Templates run, while the earlier corrected payload retains the
-accepted forced-high-contrast trio. Together those six states have complete
+The newest exact payload also passed dedicated same-token dark and
+forced-high-contrast Home/Tab-focus/Templates runs. Together those six states have complete
 trees, normal UNO termination, zero remaining payload processes/windows,
 desktop closure, and driver-process cleanup. Their manifests are
-[`20260720-140327-7029dccf40-windows-headless-dark`](docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json)
+[`20260720-144200-393263ad92-windows-headless-dark`](docs/evidence/runs/20260720-144200-393263ad92-windows-headless-dark/manifest.json)
 and
-[`20260720-033338-fbba560e27-windows-headless-highcontrast`](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
+[`20260720-144249-393263ad92-windows-headless-highcontrast`](docs/evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/manifest.json).
 The corrected normal release and its four public Latest assets are verified.
 Updater download/stage/consent flow, MSI install/repair/upgrade/uninstall and
 restart-suppression lifecycle proof and the remaining UI/accessibility matrix
@@ -387,8 +386,8 @@ wiring, leaving the Help and Extensions footer actions in contiguous positions;
 a focused source validator and six tests pass. Exact commit `393263ad9` also
 passed the VS 2026 product build, five-target native regression phase, MSI
 staging/extraction, and accepted light Home/focus/Templates UI and accessibility
-smoke. Dark and high-contrast refreshes from this exact footer source remain
-open.
+smoke. Exact-source dark and forced-high-contrast Home/focus/Templates runs
+then passed the same visual, interaction, accessibility, and cleanup gates.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

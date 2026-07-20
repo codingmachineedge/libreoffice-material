@@ -53,12 +53,12 @@ jobs:
             'start-center-light-keyboard-focus.png' \
             'start-center-templates-light.png'
           stage_run \
-            '20260720-140327-7029dccf40-windows-headless-dark' \
+            '20260720-144200-393263ad92-windows-headless-dark' \
             'start-center-dark.png' \
             'start-center-dark-keyboard-focus.png' \
             'start-center-templates-dark.png'
           stage_run \
-            '20260720-033338-fbba560e27-windows-headless-highcontrast' \
+            '20260720-144249-393263ad92-windows-headless-highcontrast' \
             'start-center-highcontrast.png' \
             'start-center-highcontrast-keyboard-focus.png' \
             'start-center-templates-highcontrast.png'

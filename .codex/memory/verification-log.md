@@ -1586,5 +1586,9 @@ build or runtime evidence.
   control. Normal UNO termination and every process/window/desktop/driver
   cleanup gate passed without forced payload cleanup.
 - This is light-profile runtime evidence only. Dark and forced-high-contrast
-  post-removal refreshes, broader dialogs/suite surfaces, updater UI, and MSI
-  lifecycle acceptance remain open.
+  post-removal refreshes were then completed in runs
+  `20260720-144200-393263ad92-windows-headless-dark` and
+  `20260720-144249-393263ad92-windows-headless-highcontrast`. Both accepted
+  Home/focus/Templates, the 93/46, 93/46, and 108/61 complete tree counts, the
+  two-action footer, normal termination, and full cleanup. Broader
+  dialogs/suite surfaces, updater UI, and MSI lifecycle acceptance remain open.

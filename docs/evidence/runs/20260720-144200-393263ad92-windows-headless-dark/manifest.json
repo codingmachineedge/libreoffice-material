@@ -1,0 +1,480 @@
+{
+  "schema_version": 2,
+  "run_id": "20260720-144200-393263ad92-windows-headless-dark",
+  "status": "accepted",
+  "generated_at_utc": "2026-07-20T18:42:00.9755512+00:00",
+  "completed_at_utc": "2026-07-20T18:42:23.1536472+00:00",
+  "source_commit": "393263ad924eae8d64b4f9a35bd6486ef83578fc",
+  "source": {
+    "repository": "https://github.com/Ding-Ding-Projects/libreoffice-material.git",
+    "commit": "393263ad924eae8d64b4f9a35bd6486ef83578fc",
+    "upstream_baseline": "63584e7f9f0cdc74b0e004bcbf88e5c3b42dba21",
+    "checkout_clean": true,
+    "checkout_dirty": false,
+    "dirty_worktree_entries": [],
+    "embedded_build_id": "393263ad924eae8d64b4f9a35bd6486ef83578fc",
+    "version_metadata": {
+      "path": "program/version.ini",
+      "bytes": 483,
+      "sha256": "cfa13aa1892fd3fa8257374a8ecb8f83be051ebbb3b827f5e77350d76fb76189"
+    }
+  },
+  "harness": {
+    "repository": "https://github.com/Ding-Ding-Projects/libreoffice-material.git",
+    "commit": "75c119e395b9689e2c97341d5f63128db10c255a",
+    "checkout_clean": true,
+    "checkout_dirty": false,
+    "dirty_worktree_entries": [],
+    "entrypoint": {
+      "path": "bin/Run-Windows-Headless-Smoke.ps1",
+      "bytes": 64430,
+      "sha256": "719dd6987ef9d1d6e5fedd89e4494cee7be242b4edb5637b59bfb56c6c5decf6"
+    },
+    "dependencies": [
+      {
+        "path": "bin/call-lowlevel-mcp.py",
+        "bytes": 3683,
+        "sha256": "e75322af3206e88dcf8267efb4685ed3c05cf85c394591e275762a2a7204e458"
+      },
+      {
+        "path": "bin/analyze-png.py",
+        "bytes": 1682,
+        "sha256": "230707efe3213c3e138a630b20173a8f9afb4b6a8fbd113ef0c4f724e8f48278"
+      },
+      {
+        "path": "bin/dump-a11y.py",
+        "bytes": 15361,
+        "sha256": "3c15e81dfdd41ac1d91e0606af89ef14f54f77f622ce760882e7e0eb21649172"
+      },
+      {
+        "path": "bin/Validate-Windows-Headless-Evidence.ps1",
+        "bytes": 32088,
+        "sha256": "79568690be35d708e7d294caf08697786f46cfb81a41b0360ffa9d72475bc62d"
+      }
+    ]
+  },
+  "appearance": "Dark",
+  "profile_values": {
+    "ApplicationAppearance": 2,
+    "HighContrast": 1
+  },
+  "environment": {
+    "VCL_DRAW_WIDGETS_FROM_FILE": "1",
+    "VCL_FILE_WIDGET_THEME": "material",
+    "SAL_SKIA": "raster",
+    "SAL_DISABLEGL": "1",
+    "SAL_LOG": "+WARN.vcl.gdi"
+  },
+  "host": {
+    "operating_system": "Microsoft Windows NT 10.0.26200.0",
+    "architecture": "AMD64",
+    "host_locale": "en-CA",
+    "ui_locale": "en-US",
+    "desktop_backend": "Win32 off-screen desktop with per-window PrintWindow capture",
+    "display_scale": {
+      "dpi": 144,
+      "percent": 150,
+      "reference_dpi": 96,
+      "source": "GetDpiForWindow in the low-level list_headless_windows enumeration callback"
+    },
+    "font_configuration": {
+      "source": "native Windows system fonts inherited by LibreOffice VCL",
+      "run_specific_override": false,
+      "override_files": []
+    }
+  },
+  "application": {
+    "executable": {
+      "path": "program/soffice.exe",
+      "bytes": 537600,
+      "sha256": "a0ac5360f303435ca89406fd8e648affc30a6e53382af0b901a85f3a5a45c410"
+    },
+    "runtime_executable": {
+      "path": "program/soffice.bin",
+      "bytes": 2719744,
+      "sha256": "beb398080f8ed27c44c9425499c1fdd0171648751253c9f2c176943a7fb330ea"
+    },
+    "updater_library": {
+      "path": "program/updchklo.dll",
+      "bytes": 571392,
+      "sha256": "b8264c74dc07d989b5e056ca8c156e9dd8c2b07181189d3d475f49e52b7fea58"
+    },
+    "material_theme_definition": {
+      "path": "share/theme_definitions/material/definition.xml",
+      "bytes": 59272,
+      "sha256": "7000c0d643ea105302fb16fccd08c6740736e052b087279c533daa80b725e3c4"
+    },
+    "python_executable": {
+      "path": "program/python.exe",
+      "bytes": 258048,
+      "sha256": "39ce7553f6ba806eb78f555cf36643c6184b0ef63cf349e9cbf3b61575c88f91"
+    },
+    "arguments": [
+      "-env:UserInstallation=<run-root-uri>/profile",
+      "--nologo",
+      "--norestore",
+      "--quickstart=no",
+      "--language=en-US",
+      "--pidfile=<run-root>/soffice.pid",
+      "--accept=pipe,name=LibreOfficeMaterialQA-393263ad92-dark-d927e1a3;urp"
+    ],
+    "arguments_path_tokenized": true,
+    "launch_wrapper": {
+      "path": "launch-headless.cmd",
+      "bytes": 1044,
+      "sha256": "f15bc73a2a30158f975ed638b8178430338e907cec1a1fd7467675fc7f37b3ae",
+      "retained_in_public_evidence": false
+    },
+    "isolated_profile_root": "profile",
+    "user_profile_root": "profile/user",
+    "user_installation_uri": "<run-root-uri>/profile",
+    "profile_configuration": {
+      "path": "profile/user/registrymodifications.xcu",
+      "bytes": 614,
+      "sha256": "bd208a2073d6db4e5bda94dcdde4bb34531094f2836dc100c6c5e00efbedf4e5",
+      "retained_in_public_evidence": false
+    },
+    "uno_pipe": "LibreOfficeMaterialQA-393263ad92-dark-d927e1a3",
+    "uno_accept_argument": "--accept=pipe,name=LibreOfficeMaterialQA-393263ad92-dark-d927e1a3;urp",
+    "pid_file": "<run-root>/soffice.pid",
+    "document_fixtures": []
+  },
+  "driver": {
+    "repository": "https://github.com/cafepromenade/lowlevel-computer-use-mcp.git",
+    "commit": "547a102a49169d41da876de217856229ab7c03a1",
+    "checkout_clean": true,
+    "checkout_dirty": false,
+    "package_name": "lowlevel-computer-use-mcp",
+    "package_version": "0.1.0",
+    "mcp_url": "http://127.0.0.1:59007/mcp",
+    "transport": "streamable HTTP over dedicated loopback endpoint",
+    "dedicated_server": true,
+    "server_pid": 9088,
+    "desktop_name": "LOMaterialQA-393263ad92-dark-809dbd0a",
+    "session": {
+      "mode": "dedicated same-token server process",
+      "harness_pid": 22260,
+      "harness_windows_session_id": 1,
+      "server_windows_session_id": 1,
+      "same_windows_session": true,
+      "token_inheritance": "Start-Process inherited the harness token",
+      "integrity": {
+        "mandatory_label_sid": "S-1-16-8192",
+        "mandatory_label_rid": 8192,
+        "level": "medium",
+        "is_administrator": false
+      },
+      "integrity_verification_method": "Harness mandatory label measured with whoami; dedicated server label inferred from Start-Process token inheritance, same Windows session, and MCP is_admin parity; server mandatory label is not read directly.",
+      "server_mandatory_label_measured_directly": false,
+      "server_reported_is_administrator": false,
+      "integrity_match": true
+    }
+  },
+  "process": {
+    "pid": 19104,
+    "pidfile_pid": 19104,
+    "launcher_pid": 10636,
+    "name": "soffice.bin",
+    "executable_path": "program/soffice.bin",
+    "creation_date": "07/20/2026 14:42:04"
+  },
+  "window": {
+    "handle": 8194504,
+    "process_id": 19104,
+    "thread_id": 31908,
+    "title": "LibreOfficeDev",
+    "class": "SALFRAME",
+    "width": 1920,
+    "height": 1117,
+    "dpi": 144,
+    "stable_poll_count": 3
+  },
+  "window_handoff_diagnostics": [],
+  "scenarios": [
+    {
+      "id": "E-START-DARK",
+      "slug": "start-center-dark",
+      "name": "Dark Start Center Home and Recent Documents",
+      "inventory_ids": [
+        "WIN-SC-001",
+        "WIN-SHL-001"
+      ],
+      "automation_result": "pass",
+      "result": "pass",
+      "input": "none; initial stable Start Center state",
+      "requires_focused_accessibility": false,
+      "expected_checkpoints": [
+        "stable owned LibreOffice SALFRAME window",
+        "rendered nonblank screenshot with exact dimensions and SHA-256",
+        "nonempty complete UNO accessibility tree with visible nodes"
+      ],
+      "checkpoint": {
+        "captured_at_utc": "2026-07-20T18:42:10.7794797+00:00",
+        "window_handle": 8194504,
+        "window_process_id": 19104,
+        "window_thread_id": 31908,
+        "window_title": "LibreOfficeDev",
+        "window_class": "SALFRAME",
+        "window_dpi": 144,
+        "normal_uno_termination_requested": false
+      },
+      "screenshot": {
+        "bytes": 202232,
+        "channel_extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ],
+        "channel_mean": [
+          30.413381,
+          29.46105,
+          34.320171
+        ],
+        "channel_stddev": [
+          35.731642,
+          36.468047,
+          34.828806
+        ],
+        "height": 1117,
+        "mode": "RGB",
+        "nonblank": true,
+        "path": "screenshots/start-center-dark.png",
+        "sha256": "aae90db51a16b03899ae67d8912e3433eeb7433b1ce1bba78d47c9c33d3ef551",
+        "width": 1920
+      },
+      "capture_api": "PrintWindow through low-level computer-use MCP",
+      "accessibility": {
+        "path": "logs/a11y-start-center-dark.json",
+        "bytes": 54667,
+        "sha256": "541f6ce8dc7dd14bd499a5945eaca2439440a5f034330bc4278205edf6799cdb",
+        "screenshot_sha256": "aae90db51a16b03899ae67d8912e3433eeb7433b1ce1bba78d47c9c33d3ef551",
+        "summary": {
+          "node_count": 93,
+          "visible_nodes": 46,
+          "errors": 0,
+          "partial": false,
+          "focused_node_count": 0,
+          "focused_nodes": []
+        }
+      }
+    },
+    {
+      "id": "E-START-DARK-KEYBOARD",
+      "slug": "start-center-dark-keyboard-focus",
+      "name": "Background Tab navigation exposes keyboard focus",
+      "inventory_ids": [
+        "WIN-SC-002",
+        "WIN-ACT-006",
+        "WIN-SC-006"
+      ],
+      "automation_result": "pass",
+      "result": "pass",
+      "input": "low-level MCP win_send_keys: tab",
+      "requires_focused_accessibility": true,
+      "expected_checkpoints": [
+        "background Tab input delivered to the owned window",
+        "at least one FOCUSED UNO accessibility node",
+        "rendered nonblank screenshot retained for visual review"
+      ],
+      "checkpoint": {
+        "captured_at_utc": "2026-07-20T18:42:13.2770992+00:00",
+        "window_handle": 8194504,
+        "window_process_id": 19104,
+        "window_thread_id": 31908,
+        "window_title": "LibreOfficeDev",
+        "window_class": "SALFRAME",
+        "window_dpi": 144,
+        "normal_uno_termination_requested": false
+      },
+      "screenshot": {
+        "bytes": 202487,
+        "channel_extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ],
+        "channel_mean": [
+          30.503491,
+          29.542454,
+          34.43647
+        ],
+        "channel_stddev": [
+          35.907802,
+          36.606408,
+          35.122718
+        ],
+        "height": 1117,
+        "mode": "RGB",
+        "nonblank": true,
+        "path": "screenshots/start-center-dark-keyboard-focus.png",
+        "sha256": "682222e3a5d4a5b09b906274d066e2a2d0ff61a9e2adebaf3cf26c1ab4aa228d",
+        "width": 1920
+      },
+      "capture_api": "PrintWindow through low-level computer-use MCP",
+      "accessibility": {
+        "path": "logs/a11y-start-center-dark-keyboard-focus.json",
+        "bytes": 54686,
+        "sha256": "61193494f0e30a27fd1f381a52e7539e10769dc276744bc1283631deedae4117",
+        "screenshot_sha256": "682222e3a5d4a5b09b906274d066e2a2d0ff61a9e2adebaf3cf26c1ab4aa228d",
+        "summary": {
+          "node_count": 93,
+          "visible_nodes": 46,
+          "errors": 0,
+          "partial": false,
+          "focused_node_count": 1,
+          "focused_nodes": [
+            {
+              "path": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "role": "PUSH_BUTTON",
+              "name": "Open File"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "E-START-DARK-TEMPLATES",
+      "slug": "start-center-templates-dark",
+      "name": "Background pointer navigation to Templates",
+      "inventory_ids": [
+        "WIN-SC-003",
+        "WIN-SC-005"
+      ],
+      "automation_result": "pass",
+      "result": "pass",
+      "input": "low-level MCP mouse_click at client coordinates (140, 330)",
+      "requires_focused_accessibility": false,
+      "expected_checkpoints": [
+        "background pointer click delivered at recorded client coordinates",
+        "rendered nonblank post-input screenshot retained for visual review",
+        "nonempty complete post-input UNO accessibility tree with visible nodes"
+      ],
+      "checkpoint": {
+        "captured_at_utc": "2026-07-20T18:42:18.2168582+00:00",
+        "window_handle": 8194504,
+        "window_process_id": 19104,
+        "window_thread_id": 31908,
+        "window_title": "LibreOfficeDev",
+        "window_class": "SALFRAME",
+        "window_dpi": 144,
+        "normal_uno_termination_requested": true
+      },
+      "screenshot": {
+        "bytes": 210732,
+        "channel_extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ],
+        "channel_mean": [
+          72.417065,
+          70.912712,
+          76.407083
+        ],
+        "channel_stddev": [
+          92.312521,
+          93.091148,
+          91.06877
+        ],
+        "height": 1117,
+        "mode": "RGB",
+        "nonblank": true,
+        "path": "screenshots/start-center-templates-dark.png",
+        "sha256": "738149c0d3961fbc62831e0adde7b9fdd3ebc92044068325454633719c4a9e00",
+        "width": 1920
+      },
+      "capture_api": "PrintWindow through low-level computer-use MCP",
+      "accessibility": {
+        "path": "logs/a11y-start-center-templates-dark.json",
+        "bytes": 65144,
+        "sha256": "141edc22cd5f82fe165dcd6279a08a6c441e60692f1cb47ffea07427fd35b2cc",
+        "screenshot_sha256": "738149c0d3961fbc62831e0adde7b9fdd3ebc92044068325454633719c4a9e00",
+        "summary": {
+          "node_count": 108,
+          "visible_nodes": 61,
+          "errors": 0,
+          "partial": false,
+          "focused_node_count": 1,
+          "focused_nodes": [
+            {
+              "path": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                2,
+                1,
+                0,
+                0
+              ],
+              "role": "LIST_ITEM",
+              "name": "Modern business letter sans-serif"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "review": {
+    "status": "pass",
+    "reviewer": "Codex visual review 2026-07-20",
+    "sensitive_data_review": "pass",
+    "reviewed_scenario_ids": [
+      "E-START-DARK",
+      "E-START-DARK-KEYBOARD",
+      "E-START-DARK-TEMPLATES"
+    ],
+    "limitations": "Start Center only, forced dark profile, software raster renderer, one Tab focus transition. This exact run verifies the Help/Extensions-only footer and absence of the retired footer Donate control. It does not cover accelerated rendering, deeper keyboard traversal, 200% scale, localization, suite applications, dialogs, updater UI, the retained periodic donation banner, or MSI lifecycle behavior."
+  },
+  "cleanup": {
+    "normal_uno_termination": true,
+    "forced_owned_process_cleanup": false,
+    "remaining_payload_processes": 0,
+    "process_cleanup_error": null,
+    "headless_windows_before_close": 0,
+    "desktop_closed": true,
+    "desktop_cleanup_error": null,
+    "dedicated_driver_stopped": true,
+    "dedicated_driver_cleanup_error": null,
+    "runtime_launch_wrapper_removed": true,
+    "runtime_launch_wrapper_cleanup_error": null
+  },
+  "error": null
+}

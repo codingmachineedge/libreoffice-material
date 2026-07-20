@@ -16,12 +16,11 @@ memory.
 
 The canonical accepted runs are the newest-source
 [`light`](runs/20260720-143309-393263ad92-windows-headless-light/),
-[`dark`](runs/20260720-140327-7029dccf40-windows-headless-dark/), and
-[`forced-high-contrast`](runs/20260720-033338-fbba560e27-windows-headless-highcontrast/)
+[`dark`](runs/20260720-144200-393263ad92-windows-headless-dark/), and
+[`forced-high-contrast`](runs/20260720-144249-393263ad92-windows-headless-highcontrast/)
 registrations.
-The light run is the first exact-source runtime proof after removal of the
-footer Donate control; dark and forced high contrast remain accepted historical
-appearance evidence until they are refreshed from that source.
+All three are exact-source runtime proof after removal of the footer Donate
+control; earlier appearance runs remain accepted historical evidence.
 The earlier corrected light run is retained as historical proof at
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/),
 as is the older-payload run at

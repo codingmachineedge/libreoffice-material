@@ -95,7 +95,7 @@ document engine, file-format support, and accessibility foundations.
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
 | Material VCL implementation | Tenth milestone plus a native-test-backed Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states. Exact source `393263ad9` removes the bottom Donate action and leaves Help/Extensions in the footer; its focused 6-test validator, VS 2026 product build, native regression phase, MSI extraction, light UI smoke, and bounded accessibility capture pass |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md); the 105-row [`Windows UI inventory`](docs/WINDOWS_UI_INVENTORY.md) records the owner, current evidence, missing gates, and stable acceptance IDs for every named Windows surface |
-| Verified UI screenshots | 9 canonical Start Center captures: 3 each in light, dark, and forced high contrast | The newest exact `393263ad9` build supplies the Help/Extensions-only Light Home/focus/Templates trio under [`20260720-143309-393263ad92-windows-headless-light`](docs/evidence/runs/20260720-143309-393263ad92-windows-headless-light/results.json). Dark remains under [`20260720-140327-7029dccf40-windows-headless-dark`](docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/) and forced high contrast under [`20260720-033338-fbba560e27-windows-headless-highcontrast`](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/); those two predate the footer removal and remain pending exact-source refresh. Earlier runs remain historical proof; scaling, accelerated rendering, localization, and suite surfaces remain open |
+| Verified UI screenshots | 9 canonical Start Center captures: 3 each in light, dark, and forced high contrast | Exact build `393263ad9` supplies Help/Extensions-only Home/focus/Templates trios in [`light`](docs/evidence/runs/20260720-143309-393263ad92-windows-headless-light/), [`dark`](docs/evidence/runs/20260720-144200-393263ad92-windows-headless-dark/), and [`forced high contrast`](docs/evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/). Every current canonical screenshot omits the retired footer Donate control. Earlier runs remain historical proof; scaling, accelerated rendering, localization, and suite surfaces remain open |
 | Headless harness | Light/dark/high-contrast UI, keyboard focus, and bounded UNO collection passed | The sibling low-level driver launched the exact MSI payload on run-scoped off-screen desktops, resolved stable runtime ownership, captured nine canonical states, drove background pointer and Tab input in every appearance profile, collected nine bounded UNO trees with no collector errors, shut down normally, and left zero matching processes/windows. All three current canonical runs used dedicated same-token MCP sessions so UNO and the GUI shared the same integrity boundary; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
 | Windows updater | Protected staging and no-restart source regressions pass; end-user flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. Current source launches a major update with exactly `/i`, the staged MSI, `REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`; repair-only `REINSTALL` properties are excluded. Its regression suite covers this four-argument vector, exclusive `CREATE_NEW` staging, the SYSTEM/Administrators/Owner Rights DACL, and a retained read lock that rejects write/delete opens. Download/consent/visible-launch and real MSI lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
@@ -113,16 +113,15 @@ its code, build result, interaction checks, and committed visual evidence agree.
 </p>
 
 <p align="center">
-  <a href="docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png"><img src="docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png" alt="Exact-build LibreOfficeDev dark Start Center with a visible keyboard focus ring on Open File" width="49%"></a>
-  <a href="docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png"><img src="docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png" alt="LibreOfficeDev forced-high-contrast Start Center with visible keyboard focus on Open File" width="49%"></a>
+  <a href="docs/evidence/runs/20260720-144200-393263ad92-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png"><img src="docs/evidence/runs/20260720-144200-393263ad92-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png" alt="Exact-build LibreOfficeDev dark Start Center with visible keyboard focus and no footer Donate button" width="49%"></a>
+  <a href="docs/evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png"><img src="docs/evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png" alt="Exact-build LibreOfficeDev forced-high-contrast Start Center with visible keyboard focus and no footer Donate button" width="49%"></a>
 </p>
 
 These are unedited `1920×1117` captures of actual Windows binaries. The light
 trio comes from the MSI built at exact source commit `393263ad924eae8d64b4f9a35bd6486ef83578fc`
-and visibly proves the Help/Extensions-only footer. The dark trio comes from
-the earlier exact `7029dccf4` build, while the forced-high-contrast
-captures remain accepted evidence for the earlier corrected `fbba560e27`
-payload. Each run used the Material
+and visibly proves the Help/Extensions-only footer. The dark and
+forced-high-contrast trios come from that same exact build and prove the same
+footer contract. Each run used the Material
 file-widget opt-in and software-raster fallback because the default-GPU
 `PrintWindow` path produced a preserved blank capture. The canonical light run proves
 stable launch, visible Start Center rendering, one background Tab transition,
@@ -131,8 +130,8 @@ contain 93/46, 93/46, and 108/61 total/visible nodes with no collector errors or
 partial capture; `Open File` is the single `FOCUSED` node at the focus checkpoint.
 It also proves normal shutdown and clean desktop/driver disposal. The dark and
 forced-high-contrast runs repeated Home/focus/Templates and passed the same
-cleanup gates; their [dark manifest](docs/evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json)
-and [high-contrast manifest](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json)
+cleanup gates; their [dark manifest](docs/evidence/runs/20260720-144200-393263ad92-windows-headless-dark/manifest.json)
+and [high-contrast manifest](docs/evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/manifest.json)
 bind every PNG to its tree. This still does not prove accelerated rendering,
 scaling, localization, updater behavior, or the whole-suite matrix. It also does
 not execute MSI install, repair, upgrade, uninstall, or restart-suppression

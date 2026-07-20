@@ -2,12 +2,10 @@
 
 **Current canonical gallery screenshot count: 9.**
 
-The canonical light trio comes from the newest exact-source Windows x64 MSI
-payload at `393263ad924eae8d64b4f9a35bd6486ef83578fc` and verifies the
-Help/Extensions-only footer. The canonical dark trio still comes from
-`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`; the canonical forced-high-contrast
-trio remains accepted evidence for the earlier corrected
-`fbba560e27db26de605c40aa237c554c1f0744b1` payload. Together they
+The canonical light, dark, and forced-high-contrast trios come from the newest
+exact-source Windows x64 MSI payload at
+`393263ad924eae8d64b4f9a35bd6486ef83578fc` and verify the
+Help/Extensions-only footer. Together they
 establish real launch, background Templates navigation, and one keyboard Tab
 focus transition in each appearance. They do not establish 200% scaling,
 accelerated rendering, localization, suite applications, dialogs, updater UI,
@@ -23,12 +21,12 @@ the current count.
 
 | Slot | Surface | Minimum checkpoint | Current state | Verified file |
 | --- | --- | --- | --- | --- |
-| E-START-001 | Start center and shared shell | stable launch, light and dark | Passed for scoped Home/focus/Templates software-raster smoke; current footer is accepted in light and still needs dark/high-contrast refresh | Light [`Home`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-light.png) / [`keyboard focus`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-light-keyboard-focus.png) / [`Templates`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-templates-light.png) · dark [`Home`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/screenshots/start-center-dark.png) / [`keyboard focus`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png) / [`Templates`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/screenshots/start-center-templates-dark.png) · light run [`manifest`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/manifest.json) / [`results`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/results.json) · dark run [`manifest`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json) / [`results`](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/results.json) |
+| E-START-001 | Start center and shared shell | stable launch, light and dark | Passed for scoped exact-source Home/focus/Templates software-raster smoke in all three appearance profiles; broader shell work remains | Light [`Home`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-light.png) / [`keyboard focus`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-light-keyboard-focus.png) / [`Templates`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/screenshots/start-center-templates-light.png) · dark [`Home`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/screenshots/start-center-dark.png) / [`keyboard focus`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/screenshots/start-center-dark-keyboard-focus.png) / [`Templates`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/screenshots/start-center-templates-dark.png) · light run [`manifest`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/manifest.json) / [`results`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/results.json) · dark run [`manifest`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/manifest.json) / [`results`](evidence/runs/20260720-144200-393263ad92-windows-headless-dark/results.json) |
 | E-WRITER-001 | Writer | document open, formatting and sidebar visible | Awaiting genuine capture | — |
 | E-CALC-001 | Calc | populated sheet, formula bar and sheet tabs visible | Awaiting genuine capture | — |
 | E-IMPRESS-001 | Impress | editing canvas, slide pane and properties visible | Awaiting genuine capture | — |
 | E-DIALOG-001 | Shared dialog | keyboard focus, validation, and long labels | Awaiting genuine capture | — |
-| E-A11Y-001 | Accessibility modes | high contrast, 200% scale, visible focus | In progress — forced high contrast and visible Tab focus accepted; 200% scale pending | [`Home`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/screenshots/start-center-highcontrast.png) · [`keyboard focus`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png) · [`Templates`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/screenshots/start-center-templates-highcontrast.png) · run [`manifest`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json) / [`results`](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/results.json) |
+| E-A11Y-001 | Accessibility modes | high contrast, 200% scale, visible focus | In progress — exact-source forced high contrast and visible Tab focus accepted; 200% scale pending | [`Home`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/screenshots/start-center-highcontrast.png) · [`keyboard focus`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/screenshots/start-center-highcontrast-keyboard-focus.png) · [`Templates`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/screenshots/start-center-templates-highcontrast.png) · run [`manifest`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/manifest.json) / [`results`](evidence/runs/20260720-144249-393263ad92-windows-headless-highcontrast/results.json) |
 
 ## Adding a verified image
 
