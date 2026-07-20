@@ -897,3 +897,15 @@ build or runtime evidence.
   `C:\ProgramData\LibreOfficeMaterialTools` and
   `%USERPROFILE%\lo-material` absent. No installer, native build, MSI,
   LibreOffice launch, or runtime capture occurred.
+
+## 2026-07-19 — main Windows MSI publication gate
+
+- The non-main Windows run `29701798057` at
+  `94c159c2d62f7ed2df68aec71d79ef51c71d9cfb` passed configure, the required
+  native targets, legacy CLI payload generation, the full installation-set
+  build, and administrative MSI extraction. It uploaded a 184 MB artifact;
+  the job then intentionally failed at the stable-publication guard because
+  that validation branch is not `main`.
+- The main workflow now also requires Visual Studio's C++/CLI component before
+  beginning its long build, matching the legacy bridge's `/clr` compilation
+  requirement. A clean `main` run and normal public release are still required.

@@ -101,12 +101,13 @@ jobs:
 
           $vs = & $vswhere -latest -version '[17.0,18.0)' -products '*' -requires `
             Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            Microsoft.VisualStudio.Component.VC.CLI.Support `
             Microsoft.VisualStudio.Component.VC.ATL `
             Microsoft.VisualStudio.Component.VC.Redist.MSM `
             Microsoft.VisualStudio.Component.VC.CMake.Project `
             -property installationPath
           if (-not $vs) {
-            throw 'Visual Studio 2022 with MSVC x64, ATL, CMake, and CRT merge modules was not found.'
+            throw 'Visual Studio 2022 with MSVC x64, C++/CLI, ATL, CMake, and CRT merge modules was not found.'
           }
           Write-Host "Visual Studio: $vs"
 
