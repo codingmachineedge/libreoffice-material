@@ -74,6 +74,70 @@ class WindowsNoNagHeadlessHarnessTest(unittest.TestCase):
                     {item["rule"] for item in violations},
                 )
 
+    def test_legacy_registry_seed_namespace_and_typed_values_are_guarded(self) -> None:
+        baseline = VALIDATOR.find_violations(self.contents, self.present)
+        self.assertEqual([], baseline)
+        for (_, name), (_, expected_value) in (
+            VALIDATOR.LEGACY_REGISTRY_EXPECTATIONS.items()
+        ):
+            with self.subTest(property=name, value=expected_value):
+                needle = (
+                    f'<prop oor:name="{name}" oor:op="fuse">'
+                    f"<value>{expected_value}</value></prop>"
+                )
+                self.assertIn(needle, self.contents[VALIDATOR.ENGINE])
+                bad_value = "false" if expected_value == "true" else "invalid"
+                replacement = needle.replace(
+                    f"<value>{expected_value}</value>",
+                    f"<value>{bad_value}</value>",
+                )
+                mutated = dict(self.contents)
+                mutated[VALIDATOR.ENGINE] = mutated[VALIDATOR.ENGINE].replace(
+                    needle, replacement, 1
+                )
+                violations = VALIDATOR.find_violations(mutated, self.present)
+                self.assertIn(
+                    "legacy-registry-seed-schema",
+                    {item["rule"] for item in violations},
+                )
+
+        mutated = dict(self.contents)
+        seed_start = mutated[VALIDATOR.ENGINE].index(VALIDATOR.LEGACY_SEED_START)
+        namespace_index = mutated[VALIDATOR.ENGINE].index(
+            VALIDATOR.OOR_NAMESPACE, seed_start
+        )
+        mutated[VALIDATOR.ENGINE] = (
+            mutated[VALIDATOR.ENGINE][:namespace_index]
+            + "urn:mutation:wrong-registry-namespace"
+            + mutated[VALIDATOR.ENGINE][namespace_index + len(VALIDATOR.OOR_NAMESPACE) :]
+        )
+        violations = VALIDATOR.find_violations(mutated, self.present)
+        self.assertIn(
+            "legacy-registry-seed-schema",
+            {item["rule"] for item in violations},
+        )
+
+        for original, replacement in (
+            ('oor:op="fuse"', 'oor:op="replace"'),
+            ("<value>true</value>", '<value xsi:nil="true">true</value>'),
+        ):
+            with self.subTest(seed_structure=original):
+                mutated = dict(self.contents)
+                seed_start = mutated[VALIDATOR.ENGINE].index(
+                    VALIDATOR.LEGACY_SEED_START
+                )
+                mutation_index = mutated[VALIDATOR.ENGINE].index(original, seed_start)
+                mutated[VALIDATOR.ENGINE] = (
+                    mutated[VALIDATOR.ENGINE][:mutation_index]
+                    + replacement
+                    + mutated[VALIDATOR.ENGINE][mutation_index + len(original) :]
+                )
+                violations = VALIDATOR.find_violations(mutated, self.present)
+                self.assertIn(
+                    "legacy-registry-seed-schema",
+                    {item["rule"] for item in violations},
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

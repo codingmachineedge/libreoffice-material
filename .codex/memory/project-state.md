@@ -115,9 +115,13 @@ required suppressions/safeguards/manual actions, and four mutation tests;
 the dedicated fresh/legacy blank-Writer headless harness, evidence-schema
 extension, source validator, and four mutation families now pass as source-only
 infrastructure. The harness uses disposable profiles, rejects UI-suppression
-switches, binds exact build/PID/HWND identity, retains owned-window polling, and
-pairs screenshots with complete UNO trees. No current-build no-nag run or
-accepted screenshot exists yet. Extracted payloads also cannot prove the
+switches, preserves encoded profile URIs across batch parsing, clears inherited
+crash-dump enablement, validates the legacy XCU schema, binds exact
+build/PID/HWND/thread/DPI plus the dedicated listener, requires one total stable
+window, and independently checks retained poll/screenshot/complete-UNO-tree
+evidence. Its focused validator now covers 63 required safeguards and five
+forbidden switches. No current-build no-nag run or accepted screenshot exists
+yet. Extracted payloads also cannot prove the
 installed-product `HKLM` file-association gate; that needs an MSI-installed
 disposable Sandbox or VM.
 The same slice removes the Windows MSI workflow's contradictory `--disable-cli`

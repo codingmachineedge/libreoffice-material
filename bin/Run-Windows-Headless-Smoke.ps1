@@ -46,12 +46,13 @@ $script:NoNagDeniedText = @(
     'Did you know?',
     "What's new in",
     'Welcome to',
+    'for the first time',
+    'Please take a moment to personalize your settings',
+    'You are running version',
     'Default file formats not registered',
     'Perform check on startup',
     'Crash Report',
     'Send Crash Report',
-    'Donate',
-    'Get involved',
     'Support the development',
     'Help us make',
     'Autocorrection has removed a leading or trailing character'
@@ -59,8 +60,13 @@ $script:NoNagDeniedText = @(
 $script:RetainedSafetyPromptText = @(
     'Document Recovery',
     'Troubleshoot Mode',
+    'Incompatible Extensions',
+    'Extension Dependencies',
     'Macros disabled',
+    'Security Warning',
+    'Hidden Information',
     'read-only mode',
+    'Master Password',
     'Password Required',
     'Extension Update'
 )
@@ -234,6 +240,10 @@ function Record-WindowEnumeration {
     $script:WindowPollLog.Add($entry)
     Write-JsonFile -Path $script:WindowPollLogPath -Value ([ordered]@{
         run_id = $script:RunId
+        owned_process_id = $script:WindowPollOwnedProcessId
+        observation_started_at_utc = $script:ObservationStartedAtUtc
+        observation_completed_at_utc = $script:ObservationCompletedAtUtc
+        observation_elapsed_milliseconds = $script:ObservationElapsedMilliseconds
         polls = @($script:WindowPollLog.ToArray())
     })
     return $entry
@@ -242,6 +252,7 @@ function Record-WindowEnumeration {
 function Sync-WindowPollOwnership {
     param([Parameter(Mandatory = $true)] [int]$OwnedProcessId)
 
+    $script:WindowPollOwnedProcessId = $OwnedProcessId
     foreach ($entry in @($script:WindowPollLog.ToArray())) {
         $ownedCount = 0
         foreach ($window in @($entry.windows)) {
@@ -255,6 +266,9 @@ function Sync-WindowPollOwnership {
     Write-JsonFile -Path $script:WindowPollLogPath -Value ([ordered]@{
         run_id = $script:RunId
         owned_process_id = $OwnedProcessId
+        observation_started_at_utc = $script:ObservationStartedAtUtc
+        observation_completed_at_utc = $script:ObservationCompletedAtUtc
+        observation_elapsed_milliseconds = $script:ObservationElapsedMilliseconds
         polls = @($script:WindowPollLog.ToArray())
     })
 }
@@ -264,26 +278,39 @@ function Assert-NoNagWindowEnumeration {
         [Parameter(Mandatory = $true)] [object]$Entry,
         [Parameter(Mandatory = $true)] [long]$ExpectedHandle,
         [Parameter(Mandatory = $true)] [int]$ExpectedProcessId,
+        [long]$ExpectedThreadId = 0,
+        [int]$ExpectedDpi = 0,
+        [int]$ExpectedWidth = 0,
+        [int]$ExpectedHeight = 0,
+        [string]$ExpectedTitle = '',
         [switch]$RequireSingleWriter
     )
 
-    $owned = @($Entry.windows | Where-Object { $_.payload_owned })
+    $allWindows = @($Entry.windows)
+    if ([int]$Entry.desktop_window_count -ne $allWindows.Count) {
+        throw 'No-nag desktop-window count differs from its retained inventory.'
+    }
+    $owned = @($allWindows | Where-Object { $_.payload_owned })
     $titleMatches = @(Find-NoNagTextMatches -Text @(
-        $owned | ForEach-Object { [string]$_.title }
+        $allWindows | ForEach-Object { [string]$_.title }
     ))
     if ($titleMatches.Count -ne 0) {
         foreach ($match in $titleMatches) { $script:NoNagDeniedMatches.Add($match) }
         throw "Former nag text appeared in an owned window title: $($titleMatches | ConvertTo-Json -Compress)"
     }
     if ($RequireSingleWriter) {
-        if ($owned.Count -ne 1) {
-            throw "No-nag observation expected exactly one payload-owned top-level window, found $($owned.Count)."
+        if ($allWindows.Count -ne 1 -or $owned.Count -ne 1) {
+            throw "No-nag observation expected exactly one total and payload-owned top-level window, found $($allWindows.Count) total / $($owned.Count) owned."
         }
         if ([long]$owned[0].handle -ne $ExpectedHandle -or
             [int]$owned[0].process_id -ne $ExpectedProcessId -or
+            [long]$owned[0].thread_id -ne $ExpectedThreadId -or
+            [int]$owned[0].dpi -ne $ExpectedDpi -or
+            [int]$owned[0].width -ne $ExpectedWidth -or
+            [int]$owned[0].height -ne $ExpectedHeight -or
             [string]$owned[0].class -cne 'SALFRAME' -or
-            [string]$owned[0].title -notmatch 'Writer') {
-            throw 'No-nag observation lost the exact PID/HWND-owned Writer SALFRAME.'
+            [string]$owned[0].title -cne $ExpectedTitle) {
+            throw 'No-nag observation lost the exact PID/HWND/thread/DPI/geometry/title-owned Writer SALFRAME.'
         }
     }
 }
@@ -558,10 +585,12 @@ function ConvertTo-WindowsCommandLineArgument {
     param(
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [string]$Argument
+        [string]$Argument,
+        [switch]$ForceQuote
     )
 
-    if ($Argument.Length -gt 0 -and $Argument -notmatch '[\s"]') {
+    if (-not $ForceQuote -and $Argument.Length -gt 0 -and
+        $Argument -notmatch '[\s"]') {
         return $Argument
     }
 
@@ -913,6 +942,105 @@ function Capture-State {
     }
 }
 
+function Get-CimProcessIdentity {
+    param([Parameter(Mandatory = $true)] [int]$ProcessId)
+
+    $records = @(Get-CimInstance -ClassName Win32_Process `
+        -Filter "ProcessId = $ProcessId" -Property ProcessId, ParentProcessId, CreationDate)
+    if ($records.Count -eq 0) { return $null }
+    if ($records.Count -ne 1) {
+        throw "Expected one process identity for PID $ProcessId, found $($records.Count)."
+    }
+    return [pscustomobject]@{
+        process_id = [int]$records[0].ProcessId
+        parent_process_id = [int]$records[0].ParentProcessId
+        creation_ticks = ([DateTime]$records[0].CreationDate).ToUniversalTime().Ticks
+        creation_date = ([DateTime]$records[0].CreationDate).ToUniversalTime().ToString('o')
+    }
+}
+
+function Get-ValidatedLoopbackListenerIdentity {
+    param(
+        [Parameter(Mandatory = $true)] [int]$Port,
+        [Parameter(Mandatory = $true)] [System.Diagnostics.Process]$RootProcess
+    )
+
+    $listeners = @(Get-NetTCPConnection -State Listen -LocalPort $Port `
+        -ErrorAction Stop | Where-Object { $_.LocalAddress -eq '127.0.0.1' })
+    $listenerPids = @($listeners | ForEach-Object { [int]$_.OwningProcess } |
+        Select-Object -Unique)
+    if ($listenerPids.Count -ne 1) {
+        throw "Expected one dedicated loopback listener on port $Port, found $($listenerPids.Count)."
+    }
+
+    $rootIdentity = Get-CimProcessIdentity -ProcessId ([int]$RootProcess.Id)
+    if ($null -eq $rootIdentity) {
+        throw "Dedicated driver root PID $($RootProcess.Id) exited before listener ownership was bound."
+    }
+    $expectedRootTicks = $RootProcess.StartTime.ToUniversalTime().Ticks
+    if ([long]$rootIdentity.creation_ticks -ne $expectedRootTicks) {
+        throw "Dedicated driver root PID $($RootProcess.Id) was reused before listener ownership was bound."
+    }
+
+    $listenerIdentity = Get-CimProcessIdentity -ProcessId $listenerPids[0]
+    $cursor = $listenerIdentity
+    $visited = [System.Collections.Generic.HashSet[int]]::new()
+    while ($null -ne $cursor -and $visited.Add([int]$cursor.process_id)) {
+        if ([int]$cursor.process_id -eq [int]$rootIdentity.process_id -and
+            [long]$cursor.creation_ticks -eq [long]$rootIdentity.creation_ticks) {
+            return $listenerIdentity
+        }
+        if ([int]$cursor.parent_process_id -le 0) { break }
+        $cursor = Get-CimProcessIdentity -ProcessId ([int]$cursor.parent_process_id)
+    }
+    throw "Loopback listener PID $($listenerIdentity.process_id) is not the dedicated driver root or its live descendant."
+}
+
+function Stop-RecordedProcessIdentity {
+    param(
+        [Parameter(Mandatory = $true)] [object]$Identity,
+        [int]$TimeoutMilliseconds = 15000
+    )
+
+    $current = Get-CimProcessIdentity -ProcessId ([int]$Identity.process_id)
+    if ($null -eq $current) { return $false }
+    if ([long]$current.creation_ticks -ne [long]$Identity.creation_ticks) {
+        throw "Refusing to stop reused listener PID $($Identity.process_id)."
+    }
+    Stop-Process -Id ([int]$Identity.process_id) -Force -ErrorAction Stop
+    $deadline = [DateTimeOffset]::UtcNow.AddMilliseconds($TimeoutMilliseconds)
+    do {
+        Start-Sleep -Milliseconds 100
+        $current = Get-CimProcessIdentity -ProcessId ([int]$Identity.process_id)
+        if ($null -eq $current) { return $true }
+        if ([long]$current.creation_ticks -ne [long]$Identity.creation_ticks) {
+            return $true
+        }
+    } while ([DateTimeOffset]::UtcNow -lt $deadline)
+    throw "Dedicated listener PID $($Identity.process_id) did not stop."
+}
+
+function ConvertTo-WindowsBatchCommandLineArgument {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string]$Argument
+    )
+
+    if ($Argument -match "[`r`n]") {
+        throw 'A Windows batch launch argument cannot contain a newline.'
+    }
+
+    # A literal URI escape such as %20 is parsed as the second batch argument
+    # followed by "0" inside a .cmd file. Doubling every percent preserves the
+    # literal percent through the one batch-expansion pass. Force quotes around
+    # cmd metacharacters even when the Windows argv value contains no spaces.
+    $batchEscaped = $Argument.Replace('%', '%%')
+    $forceQuote = $batchEscaped -match '[&|<>^()]'
+    return ConvertTo-WindowsCommandLineArgument -Argument $batchEscaped `
+        -ForceQuote:$forceQuote
+}
+
 $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $payloadFull = [System.IO.Path]::GetFullPath($PayloadRoot)
 $programRoot = Join-Path $payloadFull 'program'
@@ -1085,6 +1213,7 @@ if ($StartupProfile -eq 'Configured') {
 }
 elseif ($StartupProfile -eq 'Legacy') {
     New-Item -ItemType Directory -Path $profileUserRoot -Force | Out-Null
+    # BEGIN LEGACY NO-NAG REGISTRY SEED
     $profileConfig = @'
 <?xml version="1.0" encoding="UTF-8"?>
 <oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -1111,11 +1240,23 @@ elseif ($StartupProfile -eq 'Legacy') {
 </item>
 </oor:items>
 '@
+    # END LEGACY NO-NAG REGISTRY SEED
     $legacyTriggerNames = @(
-        'FirstRun', 'CrashReport', 'ShowTipOfTheDay', 'LastTipOfTheDayShown',
-        'PerformFileExtCheck', 'ShowDonation', 'ooSetupLastVersion', 'WhatsNew',
-        'WhatsNewDialog', 'LastTimeGetInvolvedShown', 'LastTimeDonateShown',
-        'Donate', 'GetInvolved', 'WhatsNew', 'AutoCorrLeadTrail'
+        'Office.Common/Misc/FirstRun',
+        'Office.Common/Misc/CrashReport',
+        'Office.Common/Misc/ShowTipOfTheDay',
+        'Office.Common/Misc/LastTipOfTheDayShown',
+        'Office.Common/Misc/PerformFileExtCheck',
+        'Office.Common/Misc/ShowDonation',
+        'Setup/Product/ooSetupLastVersion',
+        'Setup/Product/WhatsNew',
+        'Setup/Product/WhatsNewDialog',
+        'Setup/Product/LastTimeGetInvolvedShown',
+        'Setup/Product/LastTimeDonateShown',
+        'Office.UI/Infobar/Enabled/Donate',
+        'Office.UI/Infobar/Enabled/GetInvolved',
+        'Office.UI/Infobar/Enabled/WhatsNew',
+        'Office.UI/Infobar/Enabled/AutoCorrLeadTrail'
     )
     $profileConfigPath = Join-Path $profileUserRoot 'registrymodifications.xcu'
     Write-Utf8Lf -Path $profileConfigPath -Text $profileConfig
@@ -1161,6 +1302,9 @@ $pidPath = Join-Path $runRoot 'soffice.pid'
 $stdoutPath = Join-Path $script:LogsRoot 'soffice.stdout.log'
 $stderrPath = Join-Path $script:LogsRoot 'soffice.stderr.log'
 $wrapperPath = Join-Path $runRoot 'launch-headless.cmd'
+if ($wrapperPath.Contains('%')) {
+    throw 'OutputRoot cannot contain a percent sign because cmd.exe expands it before the private launch wrapper starts.'
+}
 $profileUri = [System.Uri]::new($profileRoot).AbsoluteUri
 $acceptArgument = "--accept=pipe,name=$($script:UnoPipe);urp"
 $publicProfileUri = '<run-root-uri>/profile'
@@ -1187,11 +1331,12 @@ else {
         "-env:UserInstallation=$publicProfileUri", '--writer', '--quickstart=no',
         '--language=en-US', "--pidfile=$publicPidPath", $acceptArgument
     )
-    if ($StartupProfile -eq 'Legacy') {
-        # CRASH_DUMP_ENABLE is intentionally not used: CrashReporter treats any
-        # nonempty value, including "0", as enabled.  The bootstrap value
-        # disables dump creation while the pre-existing dump.ini still seeds
-        # the historical startup-prompt condition.
+    if ($StartupProfile -ne 'Configured') {
+        # Never assign a nonempty CRASH_DUMP_ENABLE value: CrashReporter treats
+        # even "0" as enabled. The private wrapper removes an inherited value,
+        # and this bootstrap value disables dump creation in both disposable
+        # no-nag profiles. The legacy dump.ini still seeds the historical
+        # prompt condition without pointing at a real dump.
         $applicationArguments += '-env:CrashDumpEnable=false'
         $publicApplicationArguments += '-env:CrashDumpEnable=false'
     }
@@ -1200,8 +1345,17 @@ else {
 }
 # END NO-NAG APPLICATION ARGUMENTS
 $applicationCommandLine = @($applicationArguments | ForEach-Object {
-    ConvertTo-WindowsCommandLineArgument -Argument $_
+    ConvertTo-WindowsBatchCommandLineArgument -Argument $_
 }) -join ' '
+$sofficeCommandToken = ConvertTo-WindowsBatchCommandLineArgument -Argument $soffice
+$stdoutCommandToken = ConvertTo-WindowsBatchCommandLineArgument -Argument $stdoutPath
+$stderrCommandToken = ConvertTo-WindowsBatchCommandLineArgument -Argument $stderrPath
+$noNagCrashEnvironment = if ($StartupProfile -ne 'Configured') {
+    # Remove an inherited truthy process override so the explicit bootstrap
+    # CrashDumpEnable=false value remains authoritative.
+    'set "CRASH_DUMP_ENABLE="'
+}
+else { '' }
 $wrapper = @"
 @echo off
 setlocal DisableDelayedExpansion
@@ -1210,7 +1364,8 @@ set "VCL_FILE_WIDGET_THEME=material"
 set "SAL_SKIA=raster"
 set "SAL_DISABLEGL=1"
 set "SAL_LOG=+WARN.vcl.gdi"
-"$soffice" $applicationCommandLine 1>"$stdoutPath" 2>"$stderrPath"
+$noNagCrashEnvironment
+$sofficeCommandToken $applicationCommandLine 1>$stdoutCommandToken 2>$stderrCommandToken
 exit /b %ERRORLEVEL%
 "@
 $existing = @(Get-ExactPayloadProcesses -ProgramRoot $programRoot)
@@ -1332,7 +1487,10 @@ $results = [ordered]@{
         SAL_SKIA = 'raster'
         SAL_DISABLEGL = '1'
         SAL_LOG = '+WARN.vcl.gdi'
-        CRASH_DUMP_ENABLE = $null
+        CRASH_DUMP_ENABLE = if ($StartupProfile -ne 'Configured') {
+            '<cleared-before-launch>'
+        }
+        else { '<not-modified>' }
     }
     host = [ordered]@{
         operating_system = [System.Environment]::OSVersion.VersionString
@@ -1387,6 +1545,7 @@ $results = [ordered]@{
         transport = 'streamable HTTP over dedicated loopback endpoint'
         dedicated_server = $false
         server_pid = $null
+        listener_process = $null
         desktop_name = $desktopName
         session = [ordered]@{
             mode = 'dedicated same-token server process'
@@ -1412,6 +1571,9 @@ $results = [ordered]@{
         }
         else { 0 }
         poll_interval_milliseconds = 500
+        observation_started_at_utc = $null
+        observation_completed_at_utc = $null
+        observation_elapsed_milliseconds = $null
         startup_poll_count = 0
         observation_poll_count = 0
         window_poll_log = $null
@@ -1443,6 +1605,8 @@ $results = [ordered]@{
         desktop_closed = $false
         desktop_cleanup_error = $null
         dedicated_driver_stopped = $null
+        dedicated_driver_endpoint_closed = $null
+        dedicated_listener_forced_cleanup = $false
         dedicated_driver_cleanup_error = $null
         runtime_launch_wrapper_removed = $false
         runtime_launch_wrapper_cleanup_error = $null
@@ -1452,6 +1616,8 @@ $results = [ordered]@{
 
 $desktopCreated = $false
 $dedicatedDriver = $null
+$dedicatedListenerIdentity = $null
+$driverPort = $null
 $ownedPid = $null
 $ownedProcessStartTimeUtcTicks = $null
 $pidFilePid = $null
@@ -1459,6 +1625,10 @@ $pidFileResolutionError = $null
 $windowHandoffDiagnostics = [System.Collections.Generic.List[string]]::new()
 $script:WindowPollLog = [System.Collections.Generic.List[object]]::new()
 $script:WindowPollLogPath = Join-Path $script:LogsRoot 'window-polls.json'
+$script:WindowPollOwnedProcessId = $null
+$script:ObservationStartedAtUtc = $null
+$script:ObservationCompletedAtUtc = $null
+$script:ObservationElapsedMilliseconds = $null
 $normalTermination = $false
 $fatal = $null
 $script:WindowHandle = $null
@@ -1511,6 +1681,17 @@ try {
         throw "Low-level MCP server did not become ready at $($script:McpUrl)."
     }
     $dedicatedDriver.Refresh()
+    $dedicatedListenerIdentity = Get-ValidatedLoopbackListenerIdentity `
+        -Port $driverPort -RootProcess $dedicatedDriver
+    $results.driver.listener_process = [ordered]@{
+        pid = [int]$dedicatedListenerIdentity.process_id
+        parent_pid = [int]$dedicatedListenerIdentity.parent_process_id
+        creation_ticks = [long]$dedicatedListenerIdentity.creation_ticks
+        creation_date = [string]$dedicatedListenerIdentity.creation_date
+        local_address = '127.0.0.1'
+        local_port = [int]$driverPort
+        ancestry_validated_to_server_pid = $true
+    }
     $serverProcess = Get-Process -Id $dedicatedDriver.Id -ErrorAction Stop
     $serverAdmin = Invoke-LowLevelTool -Tool 'is_admin' -Arguments @{} `
         -TimeoutSeconds 15
@@ -1550,7 +1731,7 @@ try {
             throw 'Legacy no-nag crash seed changed before launch.'
         }
     }
-    $launchCommand = 'cmd.exe /d /c call "{0}"' -f $wrapperPath
+    $launchCommand = 'cmd.exe /d /v:off /c call "{0}"' -f $wrapperPath
     $launcher = Invoke-LowLevelTool -Tool 'launch_on_headless_desktop' -Arguments @{
         name = $desktopName
         command = $launchCommand
@@ -1559,6 +1740,11 @@ try {
     $deadline = [DateTimeOffset]::UtcNow.AddSeconds(90)
     $stableHandle = $null
     $stableProcessId = $null
+    $stableThreadId = $null
+    $stableDpi = $null
+    $stableWidth = $null
+    $stableHeight = $null
+    $stableTitle = $null
     $stableCount = 0
     $lastWindows = $null
     while ([DateTimeOffset]::UtcNow -lt $deadline) {
@@ -1730,6 +1916,14 @@ try {
                 }
                 continue
             }
+            if ($StartupProfile -ne 'Configured' -and
+                [string]$titleProperty.Value -notmatch 'Writer') {
+                $diagnostic = "Rejected SALFRAME HWND ${handleLabel}: blank-Writer no-nag startup has not reached its Writer title."
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
 
             $candidate = [pscustomobject][ordered]@{
                 handle = [long]$candidateHandle
@@ -1747,12 +1941,22 @@ try {
 
         if ($candidate) {
             if ($stableHandle -eq [long]$candidate.handle -and
-                $stableProcessId -eq [long]$candidate.process_id) {
+                $stableProcessId -eq [long]$candidate.process_id -and
+                $stableThreadId -eq [long]$candidate.thread_id -and
+                $stableDpi -eq [long]$candidate.dpi -and
+                $stableWidth -eq [long]$candidate.width -and
+                $stableHeight -eq [long]$candidate.height -and
+                $stableTitle -ceq [string]$candidate.title) {
                 $stableCount++
             }
             else {
                 $stableHandle = [long]$candidate.handle
                 $stableProcessId = [long]$candidate.process_id
+                $stableThreadId = [long]$candidate.thread_id
+                $stableDpi = [long]$candidate.dpi
+                $stableWidth = [long]$candidate.width
+                $stableHeight = [long]$candidate.height
+                $stableTitle = [string]$candidate.title
                 $stableCount = 1
             }
         }
@@ -1812,7 +2016,8 @@ try {
                 -ExpectedHandle $script:WindowHandle -ExpectedProcessId $ownedPid
         }
 
-        $observationDeadline = [DateTimeOffset]::UtcNow.AddSeconds($ObservationSeconds)
+        $script:ObservationStartedAtUtc = [DateTimeOffset]::UtcNow.ToString('o')
+        $observationStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         do {
             $observationWindows = Invoke-LowLevelTool -Tool 'list_headless_windows' `
                 -Arguments @{ name = $desktopName } -TimeoutSeconds 15
@@ -1821,11 +2026,27 @@ try {
                 -OwnedProcessId $ownedPid
             Assert-NoNagWindowEnumeration -Entry $observationEntry `
                 -ExpectedHandle $script:WindowHandle -ExpectedProcessId $ownedPid `
+                -ExpectedThreadId $script:WindowThreadId -ExpectedDpi $script:WindowDpi `
+                -ExpectedWidth $results.window.width `
+                -ExpectedHeight $results.window.height `
+                -ExpectedTitle $script:WindowTitle `
                 -RequireSingleWriter
             $results.no_nag_contract.observation_poll_count = `
                 [int]$results.no_nag_contract.observation_poll_count + 1
             Start-Sleep -Milliseconds 500
-        } while ([DateTimeOffset]::UtcNow -lt $observationDeadline)
+        } while ($observationStopwatch.Elapsed.TotalSeconds -lt $ObservationSeconds)
+        $observationStopwatch.Stop()
+        $script:ObservationCompletedAtUtc = [DateTimeOffset]::UtcNow.ToString('o')
+        $script:ObservationElapsedMilliseconds = [long]$observationStopwatch.ElapsedMilliseconds
+        if ($script:ObservationElapsedMilliseconds -lt ($ObservationSeconds * 1000)) {
+            throw 'No-nag observation ended before its monotonic minimum duration.'
+        }
+        $results.no_nag_contract.observation_started_at_utc = `
+            $script:ObservationStartedAtUtc
+        $results.no_nag_contract.observation_completed_at_utc = `
+            $script:ObservationCompletedAtUtc
+        $results.no_nag_contract.observation_elapsed_milliseconds = `
+            $script:ObservationElapsedMilliseconds
         Sync-WindowPollOwnership -OwnedProcessId $ownedPid
 
         $profileUpper = $StartupProfile.ToUpperInvariant()
@@ -1995,14 +2216,51 @@ finally {
     }
     if ($dedicatedDriver) {
         try {
-            if (-not $dedicatedDriver.HasExited) {
-                Stop-ControlledProcessTree -RootProcess $dedicatedDriver `
-                    -Description 'dedicated low-level MCP driver' `
-                    -TimeoutMilliseconds 15000
+            $driverCleanupFailures = [System.Collections.Generic.List[string]]::new()
+            try {
+                if (-not $dedicatedDriver.HasExited) {
+                    Stop-ControlledProcessTree -RootProcess $dedicatedDriver `
+                        -Description 'dedicated low-level MCP driver' `
+                        -TimeoutMilliseconds 15000
+                }
             }
-            $results.cleanup.dedicated_driver_stopped = $dedicatedDriver.HasExited
+            catch {
+                $driverCleanupFailures.Add("root tree: $($_.Exception.Message)")
+            }
+            try {
+                if ($null -ne $dedicatedListenerIdentity) {
+                    $results.cleanup.dedicated_listener_forced_cleanup = `
+                        [bool](Stop-RecordedProcessIdentity `
+                            -Identity $dedicatedListenerIdentity `
+                            -TimeoutMilliseconds 15000)
+                }
+            }
+            catch {
+                $driverCleanupFailures.Add("listener identity: $($_.Exception.Message)")
+            }
+            try {
+                $remainingListeners = @(Get-NetTCPConnection -State Listen `
+                    -LocalPort $driverPort -ErrorAction SilentlyContinue |
+                    Where-Object { $_.LocalAddress -eq '127.0.0.1' })
+                $results.cleanup.dedicated_driver_endpoint_closed = `
+                    ($remainingListeners.Count -eq 0)
+                if (-not $results.cleanup.dedicated_driver_endpoint_closed) {
+                    throw "Dedicated loopback port $driverPort is still listening."
+                }
+            }
+            catch {
+                $driverCleanupFailures.Add("endpoint: $($_.Exception.Message)")
+            }
+            $dedicatedDriver.Refresh()
+            $results.cleanup.dedicated_driver_stopped = (
+                $dedicatedDriver.HasExited -and
+                [bool]$results.cleanup.dedicated_driver_endpoint_closed
+            )
             if (-not $results.cleanup.dedicated_driver_stopped) {
-                throw 'The dedicated low-level MCP process tree did not stop.'
+                $driverCleanupFailures.Add('dedicated root/listener cleanup remained incomplete')
+            }
+            if ($driverCleanupFailures.Count -ne 0) {
+                throw ($driverCleanupFailures -join '; ')
             }
         }
         catch {

@@ -572,6 +572,14 @@
   least 15 seconds, and deny former-nag text in titles and the complete UNO
   tree. Keep recovery, Safe Mode, macro, read-only, credential, compatibility,
   and explicit manual actions outside that denylist.
+- Adversarial hardening: preserve URI percent escapes across the batch expansion
+  pass, disable delayed expansion in both command processors, clear any
+  inherited truthy crash-dump environment override for both profiles, and
+  validate the legacy XCU as a closed path-qualified schema. Require each stable
+  poll to contain exactly one total window with the same PID/HWND/thread/DPI,
+  bind the loopback listener to the dedicated root by PID creation identity,
+  prove endpoint closure, and have evidence acceptance independently recompute
+  ownership and rescan window titles plus the retained accessibility tree.
 - Reason: blank Writer reaches the historical document-startup prompt sites,
   while separate profiles prove both default and stale-configuration behavior
   without weakening required safety UI. An extracted MSI is not registered as

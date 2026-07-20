@@ -1635,10 +1635,16 @@ build or runtime evidence.
   mode safely seeds the removed first-run, tip, promotion, association,
   AutoCorrect-explanation, and crash-report triggers, retains sanitized seed
   hashes, points crash metadata at a nonexistent run-scoped dump/loopback URL,
-  and passes `-env:CrashDumpEnable=false`. The similarly named process
-  environment variable is deliberately absent because LibreOffice treats any
-  nonempty value, including `0`, as enabled.
-- `bin/check-windows-nonag-headless-harness.py` passes 45 required safeguards
+  and passes `-env:CrashDumpEnable=false`. Both modes clear the similarly named
+  process environment variable in the private wrapper because LibreOffice
+  treats any nonempty value, including `0`, as enabled.
+- An adversarial source pass corrected batch `%20` expansion, forced delayed
+  expansion off, closed the legacy XCU namespace/path/operation/value schema,
+  added monotonic duration and exact total-window/PID/HWND/thread/DPI evidence,
+  bound and cleaned the dedicated listener by PID creation identity, replaced
+  ambiguous promotional labels with specific historical body text, and made
+  acceptance independently rescan retained window/a11y artifacts.
+- `bin/check-windows-nonag-headless-harness.py` passes 63 required safeguards
   and five forbidden suppression arguments; all four mutation families pass.
   PowerShell parsing, the existing source-only contracts, and documentation
   checks are recorded by the final branch validation entry.

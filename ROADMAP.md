@@ -456,10 +456,14 @@ mutation tests pass. A dedicated exact-build headless harness now implements the
 fresh plus seeded legacy-profile startup matrix without `--nologo`,
 `--norestore`, or other GUI-suppression switches. It binds the payload build ID,
 exact PID/HWND ownership, bounded window polling, screenshots, complete UNO
-trees, former-nag text denial, and the retained safety/manual allowlist. Its
-source validator and four mutation families pass. No new native payload was
-launched for this harness slice, so both runtime scenarios, visual review, and
-accepted evidence remain open. Because an administratively extracted MSI lacks
+trees, former-nag text denial, and the retained safety/manual allowlist. The
+adversarial source pass additionally enforces batch-safe encoded profile URIs,
+clears inherited crash-dump enablement in both modes, binds PID/HWND/thread/DPI
+and exactly one total stable window, validates the dedicated listener identity
+and endpoint cleanup, and independently rescans retained poll/a11y artifacts.
+Its 63-safeguard source validator and four mutation families pass. No new native
+payload was launched for this harness slice, so both runtime scenarios, visual
+review, and accepted evidence remain open. Because an administratively extracted MSI lacks
 the installed-product `HKLM` registration used by the historical automatic
 association check, that registry-gated branch requires an MSI-installed
 disposable Windows Sandbox or VM and cannot be claimed from extracted-payload

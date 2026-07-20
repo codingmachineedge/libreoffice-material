@@ -328,20 +328,26 @@ but requires zero entries immediately before launch; it never pre-creates
 first-run, Tip, Welcome/What’s New, promotion, file-association, AutoCorrect
 explanation, and crash-report flags on. Its parseable crash seed points to a
 nonexistent run-scoped dump and loopback discard URL while
-`-env:CrashDumpEnable=false` prevents dump creation; the similarly named
-`CRASH_DUMP_ENABLE` process environment variable is deliberately absent because
-LibreOffice treats every nonempty value, including `0`, as enabled. Sanitized
-copies of both legacy seed files are retained under `logs/` and hash-bound in
-the manifest.
+`-env:CrashDumpEnable=false` prevents dump creation. Both modes clear any
+inherited `CRASH_DUMP_ENABLE` value in their private wrapper before launch,
+because LibreOffice treats every nonempty value, including `0`, as enabled.
+The legacy registry document is also closed-schema checked for exact namespace,
+path-qualified property set, `oor:op`, lexical type, and value. Sanitized copies
+of both legacy seed files are retained under `logs/` and hash-bound in the
+manifest.
 
 Both modes launch exactly one blank Writer with an isolated user-installation
 URI, `--writer`, `--quickstart=no`, `--language=en-US`, a unique PID file, and a
 unique UNO pipe. They must not use `--nologo`, `--norestore`, `--headless`,
 `--invisible`, or `--nodefault`. Startup enumerations are retained, ownership is
 reconciled to the exact PID-file `soffice.bin`, and the stable phase polls at
-500 ms for at least 15 seconds. Every stable poll must contain exactly one
-payload-owned Writer `SALFRAME` with the recorded PID and HWND. Any extra owned
-top-level window or former-nag title fails the run.
+500 ms for at least 15 monotonic seconds. Encoded profile URI percents survive
+the batch expansion pass, and delayed expansion is disabled in both the outer
+and private command processors. Every stable poll must contain exactly one
+total and payload-owned Writer `SALFRAME` with the recorded PID, HWND, thread,
+and DPI. Thus a prompt from a helper process fails too. The exact loopback
+listener PID and creation time must trace to the dedicated MCP root; cleanup
+independently proves the root exited and that its endpoint closed.
 
 The screenshot must be nonblank and at least 640×480. Its SHA-256 is passed to
 the matching built Python/UNO collector; the tree must be complete, nonempty,
@@ -351,7 +357,9 @@ crash-report, donation/Get Involved, and AutoCorrect-explanation text. Recovery,
 Troubleshoot/Safe Mode, macro security, read-only, credential, and extension
 compatibility prompts are intentionally not denied. The manual Tip, What’s New,
 and Options file-association commands remain source-guarded and are recorded as
-retained actions, not silently exercised by startup smoke.
+retained actions, not silently exercised by startup smoke. Evidence validation
+recomputes PID ownership for every retained window and independently rescans
+the complete accessibility artifact instead of trusting its summary field.
 
 Each candidate retains `screenshots/writer-<profile>-startup-no-nags.png`, its
 paired `logs/a11y-writer-<profile>-startup-no-nags.json`, and

@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -28,6 +30,10 @@ EVIDENCE_VALIDATOR = "bin/Validate-Windows-Headless-Evidence.ps1"
 WORKFLOW = ".github/workflows/windows-ui-contract.yml"
 SEGMENT_START = "# BEGIN NO-NAG APPLICATION ARGUMENTS"
 SEGMENT_END = "# END NO-NAG APPLICATION ARGUMENTS"
+LEGACY_SEED_START = "# BEGIN LEGACY NO-NAG REGISTRY SEED"
+LEGACY_SEED_END = "# END LEGACY NO-NAG REGISTRY SEED"
+OOR_NAMESPACE = "http://openoffice.org/2001/registry"
+OOR = f"{{{OOR_NAMESPACE}}}"
 SUPPRESSIVE_ARGUMENTS = (
     "--nologo",
     "--norestore",
@@ -35,6 +41,42 @@ SUPPRESSIVE_ARGUMENTS = (
     "--invisible",
     "--nodefault",
 )
+
+LEGACY_REGISTRY_EXPECTATIONS = {
+    ("/org.openoffice.Office.Common/Misc", "FirstRun"): ("boolean", "true"),
+    ("/org.openoffice.Office.Common/Misc", "CrashReport"): ("boolean", "true"),
+    ("/org.openoffice.Office.Common/Misc", "ShowTipOfTheDay"): (
+        "boolean",
+        "true",
+    ),
+    ("/org.openoffice.Office.Common/Misc", "LastTipOfTheDayShown"): (
+        "int",
+        "-1",
+    ),
+    ("/org.openoffice.Office.Common/Misc", "PerformFileExtCheck"): (
+        "boolean",
+        "true",
+    ),
+    ("/org.openoffice.Office.Common/Misc", "ShowDonation"): ("boolean", "true"),
+    ("/org.openoffice.Setup/Product", "ooSetupLastVersion"): ("string", "1.0"),
+    ("/org.openoffice.Setup/Product", "WhatsNew"): ("boolean", "true"),
+    ("/org.openoffice.Setup/Product", "WhatsNewDialog"): ("boolean", "true"),
+    ("/org.openoffice.Setup/Product", "LastTimeGetInvolvedShown"): ("long", "1"),
+    ("/org.openoffice.Setup/Product", "LastTimeDonateShown"): ("long", "1"),
+    ("/org.openoffice.Office.UI.Infobar/Enabled", "Donate"): ("boolean", "true"),
+    ("/org.openoffice.Office.UI.Infobar/Enabled", "GetInvolved"): (
+        "boolean",
+        "true",
+    ),
+    ("/org.openoffice.Office.UI.Infobar/Enabled", "WhatsNew"): (
+        "boolean",
+        "true",
+    ),
+    ("/org.openoffice.Office.UI.Infobar/Enabled", "AutoCorrLeadTrail"): (
+        "boolean",
+        "true",
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -93,6 +135,24 @@ REQUIRED_MARKERS = (
         ENGINE,
         "Assert-NoNagLaunchArguments -Arguments $applicationArguments",
         "runtime launch construction must reject prompt-suppressive arguments",
+    ),
+    MarkerRule(
+        "batch-percent-escape",
+        ENGINE,
+        "Argument.Replace('%', '%%')",
+        "encoded profile URIs must survive Windows batch parameter expansion",
+    ),
+    MarkerRule(
+        "batch-launcher-percent-rejection",
+        ENGINE,
+        "OutputRoot cannot contain a percent sign",
+        "cmd.exe must not expand the private wrapper path before launch",
+    ),
+    MarkerRule(
+        "batch-launcher-delayed-expansion-disabled",
+        ENGINE,
+        "cmd.exe /d /v:off /c call",
+        "the outer cmd parser must preserve exclamation marks in the wrapper path",
     ),
     MarkerRule(
         "evidence-suppressive-argument-prefix-guard",
@@ -175,13 +235,13 @@ REQUIRED_MARKERS = (
     MarkerRule(
         "legacy-no-truthy-crash-environment",
         ENGINE,
-        "CRASH_DUMP_ENABLE is intentionally not used",
+        "'set \"CRASH_DUMP_ENABLE=\"'",
         "the legacy harness must not mistake a nonempty environment value for false",
     ),
     MarkerRule(
         "legacy-crash-bootstrap-evidence",
         EVIDENCE_VALIDATOR,
-        "environment.CRASH_DUMP_ENABLE",
+        "'No-nag evidence must clear any inherited truthy crash-dump override.'",
         "accepted evidence must prove the truthy process override remained absent",
     ),
     MarkerRule(
@@ -189,6 +249,18 @@ REQUIRED_MARKERS = (
         ENGINE,
         "if ($embeddedBuildId -ne $sourceLower)",
         "runtime payload and exact source commit must agree",
+    ),
+    MarkerRule(
+        "dedicated-listener-ancestry",
+        ENGINE,
+        "$dedicatedListenerIdentity = Get-ValidatedLoopbackListenerIdentity",
+        "the MCP listener PID must be bound to the dedicated driver ancestry",
+    ),
+    MarkerRule(
+        "dedicated-listener-failure-cleanup",
+        ENGINE,
+        "[bool](Stop-RecordedProcessIdentity",
+        "an orphaned validated listener must be stopped by exact PID/creation identity",
     ),
     MarkerRule(
         "window-inventory",
@@ -199,14 +271,26 @@ REQUIRED_MARKERS = (
     MarkerRule(
         "bounded-window-polling",
         ENGINE,
-        "Start-Sleep -Milliseconds 500\n        } while ([DateTimeOffset]::UtcNow -lt $observationDeadline)",
+        "while ($observationStopwatch.Elapsed.TotalSeconds -lt $ObservationSeconds)",
         "stable no-nag observation must poll at a bounded cadence",
+    ),
+    MarkerRule(
+        "monotonic-observation-duration",
+        ENGINE,
+        "$script:ObservationElapsedMilliseconds = [long]$observationStopwatch.ElapsedMilliseconds",
+        "the retained proof must bind the monotonic observation duration",
     ),
     MarkerRule(
         "single-owned-writer",
         ENGINE,
-        "-RequireSingleWriter",
-        "each observation must retain exactly one PID/HWND-owned Writer window",
+        "expected exactly one total and payload-owned top-level window",
+        "each observation must reject prompts owned by helper processes too",
+    ),
+    MarkerRule(
+        "exact-writer-thread-dpi",
+        ENGINE,
+        "-ExpectedWidth $results.window.width",
+        "stable observations must retain full window identity and geometry",
     ),
     MarkerRule(
         "a11y-deny-check",
@@ -225,6 +309,18 @@ REQUIRED_MARKERS = (
         ENGINE,
         "'Welcome to'",
         "Welcome text must remain in the former-nag denylist",
+    ),
+    MarkerRule(
+        "former-nag-whats-new-infobar",
+        ENGINE,
+        "'You are running version'",
+        "the historical What's New infobar body must remain denied",
+    ),
+    MarkerRule(
+        "former-nag-first-time-body",
+        ENGINE,
+        "'Please take a moment to personalize your settings'",
+        "the historical first-run body must remain denied",
     ),
     MarkerRule(
         "former-nag-association",
@@ -255,6 +351,24 @@ REQUIRED_MARKERS = (
         ENGINE,
         "'Macros disabled'",
         "macro security must be explicitly outside the former-nag denylist",
+    ),
+    MarkerRule(
+        "retained-extension-compatibility",
+        ENGINE,
+        "'Incompatible Extensions'",
+        "extension compatibility warnings must remain outside the denylist",
+    ),
+    MarkerRule(
+        "retained-hidden-information",
+        ENGINE,
+        "'Hidden Information'",
+        "hidden-information security warnings must remain outside the denylist",
+    ),
+    MarkerRule(
+        "retained-master-password",
+        ENGINE,
+        "'Master Password'",
+        "credential safeguards must remain outside the denylist",
     ),
     MarkerRule(
         "retained-readonly-warning",
@@ -297,6 +411,42 @@ REQUIRED_MARKERS = (
         EVIDENCE_VALIDATOR,
         "foreach ($poll in $windowPolls)",
         "accepted evidence must inspect startup and observation ownership inventories",
+    ),
+    MarkerRule(
+        "evidence-poll-ownership-equivalence",
+        EVIDENCE_VALIDATOR,
+        "forged or missing payload-ownership marker",
+        "accepted evidence must reject false-negative ownership flags",
+    ),
+    MarkerRule(
+        "evidence-single-total-window",
+        EVIDENCE_VALIDATOR,
+        "exactly one total/owned window",
+        "accepted observation evidence must reject helper-process prompt windows",
+    ),
+    MarkerRule(
+        "evidence-a11y-deny-rescan",
+        EVIDENCE_VALIDATOR,
+        "a11y tree contains former nag text",
+        "accepted evidence must independently rescan the retained accessibility tree",
+    ),
+    MarkerRule(
+        "evidence-observation-duration",
+        EVIDENCE_VALIDATOR,
+        "monotonic observation duration is shorter",
+        "accepted evidence must revalidate the observation duration",
+    ),
+    MarkerRule(
+        "evidence-safety-denylist-disjoint",
+        EVIDENCE_VALIDATOR,
+        "Retained safety prompts must remain disjoint",
+        "safety prompts cannot be silently added to the former-nag denylist",
+    ),
+    MarkerRule(
+        "evidence-listener-cleanup",
+        EVIDENCE_VALIDATOR,
+        "cleanup.dedicated_driver_endpoint_closed",
+        "passed evidence must prove the dedicated loopback endpoint closed",
     ),
     MarkerRule(
         "evidence-association-boundary",
@@ -351,6 +501,107 @@ def _argument_segment(text: str) -> tuple[str | None, str | None]:
     return text[start:end], None
 
 
+def _legacy_seed_segment(text: str) -> tuple[str | None, str | None]:
+    if text.count(LEGACY_SEED_START) != 1 or text.count(LEGACY_SEED_END) != 1:
+        return None, "legacy registry seed must have one start and one end marker"
+    start = text.index(LEGACY_SEED_START) + len(LEGACY_SEED_START)
+    end = text.index(LEGACY_SEED_END)
+    if end <= start:
+        return None, "legacy registry seed markers are reversed"
+    segment = text[start:end]
+    xml_start = segment.find("<?xml")
+    xml_end_marker = "</oor:items>"
+    xml_end = segment.find(xml_end_marker)
+    if xml_start < 0 or xml_end < xml_start:
+        return None, "legacy registry seed does not contain one complete oor:items XML document"
+    xml_end += len(xml_end_marker)
+    if segment.find("<?xml", xml_start + 1) >= 0 or segment.find(
+        xml_end_marker, xml_end
+    ) >= 0:
+        return None, "legacy registry seed contains multiple XML documents"
+    return segment[xml_start:xml_end], None
+
+
+def _legacy_registry_seed_violations(text: str) -> list[str]:
+    xml_text, error = _legacy_seed_segment(text)
+    if error:
+        return [error]
+    assert xml_text is not None
+    for namespace_marker in (
+        f'xmlns:oor="{OOR_NAMESPACE}"',
+        'xmlns:xs="http://www.w3.org/2001/XMLSchema"',
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+    ):
+        if namespace_marker not in xml_text:
+            return [f"legacy registry seed is missing {namespace_marker}"]
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError as error:
+        return [f"legacy registry seed is invalid XML: {error}"]
+    if root.tag != f"{OOR}items":
+        return ["legacy registry seed root is not oor:items"]
+
+    actual: dict[tuple[str, str], str] = {}
+    violations: list[str] = []
+    if root.attrib:
+        violations.append("legacy registry seed root contains unexpected attributes")
+    for item in root:
+        if item.tag != "item":
+            violations.append(f"unexpected legacy registry element {item.tag}")
+            continue
+        path = item.attrib.get(f"{OOR}path", "")
+        if not path or set(item.attrib) != {f"{OOR}path"}:
+            violations.append(
+                "legacy registry item must contain only one nonblank oor:path"
+            )
+        for prop in item:
+            if prop.tag != "prop":
+                violations.append(f"unexpected element below {path}: {prop.tag}")
+                continue
+            name = prop.attrib.get(f"{OOR}name", "")
+            operation = prop.attrib.get(f"{OOR}op", "")
+            children = list(prop)
+            values = [child for child in children if child.tag == "value"]
+            if (
+                not name
+                or operation != "fuse"
+                or set(prop.attrib) != {f"{OOR}name", f"{OOR}op"}
+                or len(children) != 1
+                or len(values) != 1
+                or values[0].attrib
+                or list(values[0])
+            ):
+                violations.append(
+                    f"legacy registry property {path}/{name} must have only a name, oor:op=fuse, and one scalar value"
+                )
+                continue
+            key = (path, name)
+            if key in actual:
+                violations.append(f"duplicate legacy registry property {path}/{name}")
+                continue
+            actual[key] = (values[0].text or "").strip()
+
+    if set(actual) != set(LEGACY_REGISTRY_EXPECTATIONS):
+        missing = sorted(set(LEGACY_REGISTRY_EXPECTATIONS) - set(actual))
+        extra = sorted(set(actual) - set(LEGACY_REGISTRY_EXPECTATIONS))
+        violations.append(f"legacy registry property set differs; missing={missing}, extra={extra}")
+    for key, (value_type, expected_value) in LEGACY_REGISTRY_EXPECTATIONS.items():
+        if key not in actual:
+            continue
+        value = actual[key]
+        if value != expected_value:
+            violations.append(
+                f"legacy registry value {key[0]}/{key[1]} must be {expected_value!r}, found {value!r}"
+            )
+        if value_type == "boolean" and value not in {"true", "false"}:
+            violations.append(f"legacy boolean {key[0]}/{key[1]} has invalid lexical value")
+        elif value_type in {"int", "long"} and not re.fullmatch(r"[+-]?\d+", value):
+            violations.append(f"legacy integer {key[0]}/{key[1]} has invalid lexical value")
+        elif value_type == "string" and not value:
+            violations.append(f"legacy string {key[0]}/{key[1]} is blank")
+    return violations
+
+
 def find_violations(
     contents: Mapping[str, str], present: set[str]
 ) -> list[dict[str, str]]:
@@ -400,6 +651,14 @@ def find_violations(
                         "detail": f"no-nag launch block contains {argument}",
                     }
                 )
+    for detail in _legacy_registry_seed_violations(contents.get(ENGINE, "")):
+        violations.append(
+            {
+                "rule": "legacy-registry-seed-schema",
+                "path": ENGINE,
+                "detail": detail,
+            }
+        )
     return violations
 
 
