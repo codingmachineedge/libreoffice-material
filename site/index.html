@@ -251,8 +251,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           provided and verified. The wrapper never silently substitutes or
           repairs a host installation, recognizes VS 2026's native
           <code>Llvm\x64\bin</code> Clang layout. Its named Enterprise host
-          passed no-bootstrap preflight on 2026-07-19, but this profile has not
-          produced local build or runtime evidence.
+          passed no-bootstrap preflight and an isolated configure on 2026-07-19;
+          the first native build reached third-party compilation and exposed a
+          v145 C++20 <code>mdds</code> compatibility issue. A narrow source
+          workaround is awaiting a fresh full build, so this remains neither a
+          completed local build nor runtime evidence.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule

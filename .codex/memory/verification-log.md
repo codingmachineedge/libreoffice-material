@@ -1014,3 +1014,23 @@ build or runtime evidence.
   This is toolchain/preflight evidence only: no configure, native target, MSI,
   LibreOffice launch, UI smoke, accessibility smoke, or release result is
   claimed.
+
+## 2026-07-19 — VS 2026 v145 C++20 mdds compatibility follow-up
+
+- The explicit Enterprise VS 2026 profile completed an isolated configure at
+  source commit `a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef` in the preserved
+  `C:\Users\cntow\lo-material-vs2026` build root. The native build reached
+  third-party compilation and stopped in `mdds-3.2.1` with C2382 on the
+  matching conditional `noexcept` declaration/definition of
+  `flat_segment_tree::operator==`.
+- The failure reproduces with MSVC 19.51/v145 in C++20 mode, does not reproduce
+  with the installed VS 2022 toolset, and is isolated to that mdds operation;
+  the analogous `segment_tree` and `multi_type_matrix` syntax checks pass. The
+  source now registers a patch that omits the conditional exception
+  specification only for `_MSC_VER` 1950–1959 in C++20-or-newer mode. It
+  dry-runs against the unpacked tarball and passed direct v145 and VS 2022
+  syntax checks.
+- This is a compiler diagnosis and source compatibility repair. The failed build
+  root is retained, and a fresh exact-current-source build is still required
+  before claiming a native target, MSI, application launch, headless UI smoke,
+  accessibility smoke, or release.

@@ -339,10 +339,13 @@ and the imported build files before configuring a machine.
 > application launch, UI smoke, or accessibility result.
 > The checker accepts VS 2022's legacy <code>Llvm\bin</code> layout and VS
 > 2026's host-native <code>Llvm\x64\bin</code> layout for <code>clang-cl</code>.
-> On 2026-07-19, the named VS 2026 Enterprise host passed the script's
-> no-bootstrap preflight. That verifies the selected toolchain only; it is not
-> a configure, native-build, MSI, application-launch, UI-smoke, or accessibility
-> result.
+> On 2026-07-19, the named VS 2026 Enterprise host passed no-bootstrap
+> preflight and an isolated configure at `a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`.
+> Its first native build reached third-party compilation and exposed MSVC v145's
+> C++20 `mdds` conditional-`noexcept` incompatibility. The source now carries a
+> narrowly scoped v145 C++20 compatibility patch; a fresh full build is still
+> required. This is not a completed native build, MSI, application-launch,
+> UI-smoke, or accessibility result.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing
 the development checkout. It checks root safety, free space, and (when Git is

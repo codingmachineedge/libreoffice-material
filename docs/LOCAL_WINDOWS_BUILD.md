@@ -186,5 +186,12 @@ LibreOffice launch, or accepted UI evidence is claimed here. The VS 2026
 selection is likewise source automation until an isolated local run is recorded.
 On 2026-07-19, the explicit Enterprise 2026 host path above passed this document's
 no-bootstrap preflight after its C++/CLI, Clang, and VC145 merge-module payloads
-were installed. No configure, native build, MSI, application launch, UI, or
-accessibility result is implied by that preflight.
+were installed. An isolated `-NoBootstrap` configure subsequently completed at
+`a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`; its first native build reached the
+bundled `mdds` dependency and exposed C2382 in v145 C++20 conditional
+`noexcept` handling. `external/mdds/msvc-v145-cxx20-noexcept.patch.1` preserves
+the upstream specification except for that exact v145 C++20-or-newer compiler
+range. The patch passed direct VS 2026 and VS 2022 syntax checks and dry-runs
+against the unpacked `mdds-3.2.1` tarball. A fresh full build remains required;
+no completed native build, MSI, application launch, UI, or accessibility result
+is implied.

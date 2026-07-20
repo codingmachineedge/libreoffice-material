@@ -68,15 +68,17 @@ These are audited capabilities and constraints, not a LibreOffice run result.
 ## Current LibreOffice build blocker
 
 No local fork executable exists. [`LOCAL_WINDOWS_BUILD.md`](LOCAL_WINDOWS_BUILD.md)
-now defines a source-controlled one-click bootstrap that installs a dedicated
-VS 2022 C++/CLI/Cygwin profile, verifies it, and builds from an LF source snapshot. It
-uses one hidden elevated bootstrap, isolated Cygwin Git, safe short build
-roots, and per-invocation logs; no bootstrap or local build has executed. This host currently has Visual Studio
-2026 rather than the required dedicated VS 2022 instance and no isolated
-Cygwin profile. Its 2026-07-19 read-only preflight correctly reported those
-two missing prerequisites without creating the default roots; no bootstrap or
-local build ran. The manually dispatched hosted Windows workflow still supplies
-and validates its prerequisites against a clean LF checkout.
+defines the source-controlled one-click bootstrap for an isolated VS
+2022/Cygwin profile and the opt-in exact-path VS 2026 profile. On 2026-07-19,
+this host completed the relevant bootstrap/preflight work, and the explicit VS
+2026 Enterprise profile completed an isolated configure at
+`a6d9f9a7dbdf10c08afe2eb03239e702ec5172ef`. The subsequent native build reached
+third-party compilation but stopped on MSVC v145 C++20's `mdds`
+conditional-`noexcept` C2382; the source contains a narrowly scoped workaround
+awaiting a fresh full build. This records build diagnosis only—there is still no
+completed local binary, MSI, LibreOffice launch, or off-screen scenario. The
+hosted Windows workflow still supplies and validates its prerequisites against
+a clean LF checkout.
 
 Current-source Linux Actions run `29695793821` and Windows Actions run
 `29695815101` at `e4dc8a850c982f33d8722fc203f86591b2993e8b` passed the five

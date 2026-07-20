@@ -1,0 +1,27 @@
+MSVC v145 / C++20 rejects mdds 3.2.1's matching dependent noexcept
+specifications on flat_segment_tree::operator== as C2382.  The compiler accepts
+the source with noexcept types disabled, but LibreOffice must not weaken that
+toolchain setting globally.  Preserve upstream's conditional noexcept on every
+other compiler mode and omit it only for the affected v145 C++20-or-newer mode.
+
+diff -ur mdds.org/include/mdds/flat_segment_tree.hpp mdds/include/mdds/flat_segment_tree.hpp
+--- mdds.org/include/mdds/flat_segment_tree.hpp	2025-01-01 00:00:00.000000000 +0000
++++ mdds/include/mdds/flat_segment_tree.hpp	2025-01-01 00:00:00.000000000 +0000
+@@ -501 +501,6 @@
+-    bool operator==(const flat_segment_tree& other) const noexcept(nothrow_eq_comparable_v);
++#if defined(_MSC_VER) && _MSC_VER >= 1950 && _MSC_VER < 1960 && defined(_MSVC_LANG) && _MSVC_LANG >= 202002L
++    // MSVC v145 emits C2382 for the matching dependent noexcept in the out-of-class definition.
++    bool operator==(const flat_segment_tree& other) const;
++#else
++    bool operator==(const flat_segment_tree& other) const noexcept(nothrow_eq_comparable_v);
++#endif
+diff -ur mdds.org/include/mdds/flat_segment_tree_def.inl mdds/include/mdds/flat_segment_tree_def.inl
+--- mdds.org/include/mdds/flat_segment_tree_def.inl	2025-01-01 00:00:00.000000000 +0000
++++ mdds/include/mdds/flat_segment_tree_def.inl	2025-01-01 00:00:00.000000000 +0000
+@@ -761 +761,5 @@
+-bool flat_segment_tree<Key, Value>::operator==(const flat_segment_tree& other) const noexcept(nothrow_eq_comparable_v)
++#if defined(_MSC_VER) && _MSC_VER >= 1950 && _MSC_VER < 1960 && defined(_MSVC_LANG) && _MSVC_LANG >= 202002L
++bool flat_segment_tree<Key, Value>::operator==(const flat_segment_tree& other) const
++#else
++bool flat_segment_tree<Key, Value>::operator==(const flat_segment_tree& other) const noexcept(nothrow_eq_comparable_v)
++#endif
