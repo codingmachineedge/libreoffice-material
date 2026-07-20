@@ -402,9 +402,15 @@ coverage but does not inherit the earlier `393263ad9` build or screenshot proof.
 An exhaustive Windows dialog contract now registers all 599 top-level
 `GtkDialog`, `GtkMessageDialog`, and `GtkAssistant` roots for migration to a
 customizable bottom-right notification form. The registry validator fails on
-new, removed, duplicated, reclassified, or implicitly governed roots. It is a
-coverage milestone only: notification hosting, customization, local Git-backed
-undo/history, bulk management, and exact-build runtime proof remain open.
+new, removed, duplicated, reclassified, or implicitly governed roots. Current
+native source also adds the shared Windows-only post-layout placement seam:
+every VCL `Dialog` reaching final `InitShow` is anchored to the bottom-right of
+the visible owner/work area with a bounded 16 px inset and decorated-window
+clamping; LibreOfficeKit and other operating systems are unchanged. Its source
+contract and eleven mutation regressions pass. This is placement infrastructure,
+not a complete notification form: hosting, customization, stacking, persistence,
+local Git-backed undo/history, bulk management, and exact-build runtime proof
+remain open.
 
 The companion search contract registers 26 audited shipping text-query fields,
 one planned Start Center field, and 15 explicit non-search exclusions. It fails

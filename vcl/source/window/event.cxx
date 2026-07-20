@@ -21,6 +21,7 @@
 #include <vcl/window.hxx>
 #include <vcl/dockwin.hxx>
 #include <vcl/layout.hxx>
+#include <vcl/toolkit/dialog.hxx>
 #include <sal/log.hxx>
 
 #include <window.h>
@@ -498,6 +499,13 @@ void Window::ImplCallInitShow()
     mpWindowImpl->mbInInitShow    = true;
     CompatStateChanged( StateChangedType::InitShow );
     mpWindowImpl->mbInInitShow    = false;
+
+#if defined(_WIN32)
+    // Run after the complete virtual StateChanged chain: derived dialogs can perform a final
+    // layout after Dialog::StateChanged returns.
+    if (Dialog* pDialog = dynamic_cast<Dialog*>(this))
+        pDialog->ImplPositionAsWindowsNotification();
+#endif
 
     vcl::Window* pWindow = mpWindowImpl->mpFirstOverlap;
     while ( pWindow )

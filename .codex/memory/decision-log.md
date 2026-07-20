@@ -477,3 +477,20 @@
 - Reason: this closes the full Start Center donation/promotion path without
   hiding an accessibility node or retaining dormant solicitation logic. The
   broader no-nag inventory remains separate and pending.
+
+## D-028 — centralize Windows dialog notification placement after final layout
+
+- Date: 2026-07-20
+- State: implemented in source; focused validation passed; build/runtime proof pending
+- Context: the exhaustive registry assigns every LibreOffice-owned dialog to a
+  bottom-right notification-form policy, but per-dialog geometry edits would be
+  incomplete and derived dialogs can change size after the base dialog show path.
+- Decision: hook the common VCL final-`InitShow` point, after the complete virtual
+  layout chain, and on Windows position each `Dialog` against the visible owner
+  and monitor work-area intersection. Use a bounded 16 px Material inset, clamp
+  decorated extents, fall back to the selected monitor work area for an
+  unavailable owner, and leave LibreOfficeKit and non-Windows geometry unchanged.
+- Reason: one shared seam covers legacy, welded, synchronous, asynchronous,
+  modeless, and derived dialog paths while keeping the current change limited to
+  positioning. Form composition, customization, persistence, Git history, bulk
+  management, stacking, accessibility, and visual proof remain later gates.

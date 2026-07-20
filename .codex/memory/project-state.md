@@ -81,6 +81,14 @@ The post-tenth source slice routes the Start Center's `open_all` standard
 `suggested-action` class through `VclBuilder` to `PushButton::setAction(true)`,
 selecting the existing Material `extra="action"` pushbutton states. Its focused
 leaf-button CppUnit regression is included in the native workflow target list.
+The canonical Windows rewrite now also has a source-only shared dialog
+placement seam (D-028). After final VCL `InitShow` layout, Windows `Dialog`
+instances are anchored to the bottom-right of the visible owner/work area with
+a bounded 16 px inset and decorated-extent clamping. LibreOfficeKit and
+non-Windows geometry remain unchanged. Its static contract and eleven mutation
+regressions pass; notification composition, persistence, customization,
+stacking, Git-backed history/undo, bulk management, and current-build runtime
+proof remain open.
 The same slice removes the Windows MSI workflow's contradictory `--disable-cli`
 switch, asserts `ENABLE_CLI=TRUE`, and prebuilds the CLI payload that MSI
 manifests require. These changes are included in the exact-source local VS 2026

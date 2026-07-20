@@ -1592,3 +1592,15 @@ build or runtime evidence.
   Home/focus/Templates, the 93/46, 93/46, and 108/61 complete tree counts, the
   two-action footer, normal termination, and full cleanup. Broader
   dialogs/suite surfaces, updater UI, and MSI lifecycle acceptance remain open.
+
+## 2026-07-20 — centralized Windows dialog placement source contract
+
+- `bin/check-windows-dialog-placement.py` passed against the shared VCL
+  post-`InitShow` hook, Windows and LibreOfficeKit guards, visible owner/work-area
+  anchoring, bounded 16 px inset, and decorated-extent clamping.
+- `bin/test_windows_dialog_placement.py` passed all 11 mutation regressions;
+  Python byte-compilation, `git diff --check`, and focused Clang formatting also
+  passed.
+- This is source/static evidence only. No current VS 2026 build, dialog capture,
+  keyboard flow, accessibility audit, scaling/multi-monitor test, or
+  notification-manager behavior is claimed.

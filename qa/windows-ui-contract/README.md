@@ -20,8 +20,12 @@ Each row must explicitly choose one of these policies:
   non-empty `exclusion_reason` and cannot silently inherit a profile.
 
 There are no exclusions in the initial registry. The contract intentionally
-does not claim that a registered dialog has already been converted or runtime
-verified; it establishes complete, reviewable migration coverage.
+does not claim that a registered dialog has already become a complete
+notification form or been runtime verified; it establishes complete,
+reviewable migration coverage. A separate source contract now guards the first
+shared implementation seam: Windows VCL dialogs are repositioned only after
+their final `InitShow` layout, relative to the visible owner/work area, with
+bounded Material inset and work-area clamping. That seam is geometry only.
 
 `ui_path` plus `object_id` is the stable locator. The two source roots that do
 not define a GTK object ID use an empty `object_id`, so their repository path is
@@ -32,6 +36,8 @@ Validate the checked-in registry and its regression suite:
 ```sh
 python bin/check-windows-dialog-notification-contract.py
 python bin/test_windows_dialog_notification_contract.py
+python bin/check-windows-dialog-placement.py
+python bin/test_windows_dialog_placement.py
 ```
 
 After deliberately adding, removing, or changing a root dialog, regenerate the

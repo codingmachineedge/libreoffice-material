@@ -23,6 +23,12 @@ jobs:
       - name: Run registry regressions
         run: python3 bin/test_windows_dialog_notification_contract.py
 
+      - name: Validate final-layout Windows dialog placement
+        run: python3 bin/check-windows-dialog-placement.py
+
+      - name: Run dialog-placement mutation regressions
+        run: python3 bin/test_windows_dialog_placement.py
+
       - name: Validate native search-field coverage
         run: python3 bin/check_search_field_coverage.py
 

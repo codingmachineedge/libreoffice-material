@@ -66,6 +66,7 @@
 #include <salframe.hxx>
 #include <tools/json_writer.hxx>
 
+#include <algorithm>
 #include <iostream>
 #include <stack>
 #include <utility>
@@ -709,6 +710,83 @@ Size bestmaxFrameSizeForScreenSize(const Size &rScreenSize)
 
     const int n = std::min<CGFloat>([[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
     return Size(n-10, n-10);
+#endif
+}
+
+#if defined(_WIN32)
+namespace
+{
+constexpr tools::Long kMaterialNotificationInset = 16;
+
+tools::Long lclClampDialogCoordinate(tools::Long nDesired, tools::Long nWorkAreaStart,
+                                     tools::Long nWorkAreaEnd, tools::Long nDialogExtent)
+{
+    // An oversized dialog cannot fit completely. Pinning it to the work-area origin keeps its
+    // title and leading content reachable instead of allowing the notification placement to move
+    // the entire window off screen.
+    const tools::Long nLastVisibleStart
+        = std::max(nWorkAreaStart, nWorkAreaEnd - nDialogExtent + 1);
+    return std::clamp(nDesired, nWorkAreaStart, nLastVisibleStart);
+}
+
+void lclPositionDialogAsWindowsNotification(Dialog& rDialog)
+{
+    // LibreOfficeKit owns dialog geometry and transports it to a remote client.
+    if (comphelper::LibreOfficeKit::isActive())
+        return;
+
+    const AbsoluteScreenPixelRectangle aWorkArea(rDialog.GetDesktopRectPixel());
+    if (aWorkArea.IsEmpty())
+        return;
+
+    // Prefer the visible portion of the owning window. A minimized, off-screen, or otherwise
+    // unavailable owner falls back to the monitor work area selected by the dialog's frame.
+    AbsoluteScreenPixelRectangle aAnchorArea(aWorkArea);
+    if (const vcl::Window* pParent = rDialog.GetParent())
+    {
+        const AbsoluteScreenPixelRectangle aVisibleParent(
+            pParent->GetWindowExtentsAbsolute().GetIntersection(aWorkArea));
+        if (!aVisibleParent.IsEmpty())
+            aAnchorArea = aVisibleParent;
+    }
+
+    // Use decorated extents for both placement and clamping so the frame and resize borders stay
+    // visible too. SetPosPixel() expects the client origin, so retain the decoration offset when
+    // moving the outer rectangle.
+    const AbsoluteScreenPixelRectangle aDialogExtent(rDialog.GetWindowExtentsAbsolute());
+    const Size aDialogSize(aDialogExtent.GetSize());
+    if (aDialogSize.Width() <= 0 || aDialogSize.Height() <= 0)
+        return;
+
+    const Size aAnchorSize(aAnchorArea.GetSize());
+    const tools::Long nHorizontalRoom
+        = std::max<tools::Long>(0, aAnchorSize.Width() - aDialogSize.Width());
+    const tools::Long nVerticalRoom
+        = std::max<tools::Long>(0, aAnchorSize.Height() - aDialogSize.Height());
+    const tools::Long nHorizontalInset = std::min(kMaterialNotificationInset, nHorizontalRoom);
+    const tools::Long nVerticalInset = std::min(kMaterialNotificationInset, nVerticalRoom);
+
+    const tools::Long nDesiredOuterX
+        = aAnchorArea.Right() - aDialogSize.Width() + 1 - nHorizontalInset;
+    const tools::Long nDesiredOuterY
+        = aAnchorArea.Bottom() - aDialogSize.Height() + 1 - nVerticalInset;
+    const tools::Long nOuterX = lclClampDialogCoordinate(nDesiredOuterX, aWorkArea.Left(),
+                                                         aWorkArea.Right(), aDialogSize.Width());
+    const tools::Long nOuterY = lclClampDialogCoordinate(nDesiredOuterY, aWorkArea.Top(),
+                                                         aWorkArea.Bottom(), aDialogSize.Height());
+
+    const AbsoluteScreenPixelPoint aClientOrigin(rDialog.OutputToAbsoluteScreenPixel(Point()));
+    const Point aDecorationOffset(aClientOrigin.X() - aDialogExtent.Left(),
+                                  aClientOrigin.Y() - aDialogExtent.Top());
+    rDialog.SetPosPixel(Point(nOuterX + aDecorationOffset.X(), nOuterY + aDecorationOffset.Y()));
+}
+}
+#endif
+
+void Dialog::ImplPositionAsWindowsNotification()
+{
+#if defined(_WIN32)
+    lclPositionDialogAsWindowsNotification(*this);
 #endif
 }
 

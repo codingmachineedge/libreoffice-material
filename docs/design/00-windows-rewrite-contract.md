@@ -71,6 +71,14 @@ top-level dialog roots. Registration is coverage, not implementation or runtime
 proof. Search-field coverage is governed by the companion registry in the same
 directory.
 
+The first shared native implementation seam is now present in source: after
+final VCL `InitShow` layout, Windows `Dialog` instances are positioned at the
+bottom-right of the visible owner/work area with a bounded 16 px inset and
+decorated-extent clamping. LibreOfficeKit and non-Windows paths are explicitly
+unchanged. This source-level placement does not by itself supply notification
+form composition, persistence, customization, stacking, history, management,
+or build/runtime evidence.
+
 The notification system must include a full manager, customizable form profile,
 bulk operations, and local Git-backed event history so dismissed or deleted
 notifications can be restored. The history repository must be local-only, use

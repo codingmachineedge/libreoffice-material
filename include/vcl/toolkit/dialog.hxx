@@ -87,6 +87,7 @@ protected:
 public:
     SAL_DLLPRIVATE bool    IsInClose() const { return mbInClose; }
     SAL_DLLPRIVATE void    disposeOwnedButtons();
+    SAL_DLLPRIVATE void    ImplPositionAsWindowsNotification();
 
     SAL_DLLPRIVATE static vcl::Window* GetDefDialogParent();
 
