@@ -406,3 +406,23 @@
   preserves exact-payload provenance. Run
   `20260720-135505-7029dccf40-windows-headless-light` proved this path with
   normal termination and complete cleanup.
+
+## D-024 — remove the Start Center footer Donate action
+
+- Date: 2026-07-20
+- State: implemented in source; focused validation passed; native rebuild and
+  refreshed runtime evidence pending
+- Context: the operator requested removal after reviewing the real Start Center
+  screenshot. The footer conditionally hid Extensions and substituted a Donate
+  button, so deleting only the label would have left dead accessibility and URL
+  dispatch wiring.
+- Decision: remove the `donate`/`donate_image` UI objects, welded member,
+  conditional show/hide and label/icon code, Donate click path, and now-unused
+  bitmap constant. Keep Help and Extensions in contiguous footer positions and
+  route Extensions only to the Extensions URL. Retain the separate periodic
+  donation banner and global donation command because they are outside the
+  requested footer button.
+- Reason: this completely removes the visible control and its accessibility
+  node without broadening the request to unrelated donation surfaces. A focused
+  source validator guards the two-button footer, dead-marker absence, and
+  Extensions route; six tests cover production and adversarial cases.

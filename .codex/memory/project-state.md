@@ -14,6 +14,12 @@ Current delivery and verification scope is Windows. Cross-platform acceptance
 gates remain documented as deferred future work rather than being removed or
 counted as current evidence.
 
+The current unbuilt Start Center source removes the bottom Donate button,
+member, icon constant, conditional substitution, and donation URL dispatch from
+the footer. Help and Extensions remain, and a focused validator plus six tests
+pass. Existing accepted screenshots still show the old button and remain
+historical evidence until a fresh native build and capture replace them.
+
 ## Current milestone
 
 **Phase 1 — tenth Material VCL and Windows updater source milestones published;

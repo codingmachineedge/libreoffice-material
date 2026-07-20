@@ -6,13 +6,18 @@ on:
       - main
     paths:
       - "bin/check-material-theme.py"
+      - "bin/check-startcenter-no-donate.py"
       - "bin/test_material_theme_validator.py"
+      - "bin/test_startcenter_no_donate.py"
       - "include/tools/XmlWalker.hxx"
       - "include/vcl/builder.hxx"
       - "include/vcl/builderbase.hxx"
       - "include/vcl/settings.hxx"
       - "include/vcl/widgetbuilder.hxx"
+      - "sfx2/inc/bitmaps.hlst"
       - "sfx2/uiconfig/ui/startcenter.ui"
+      - "sfx2/source/dialog/backingwindow.cxx"
+      - "sfx2/source/dialog/backingwindow.hxx"
       - "tools/source/xml/XmlWalker.cxx"
       - "tools/qa/data/test.xml"
       - "tools/qa/cppunit/test_xmlwalker.cxx"
@@ -30,13 +35,18 @@ on:
   pull_request:
     paths:
       - "bin/check-material-theme.py"
+      - "bin/check-startcenter-no-donate.py"
       - "bin/test_material_theme_validator.py"
+      - "bin/test_startcenter_no_donate.py"
       - "include/tools/XmlWalker.hxx"
       - "include/vcl/builder.hxx"
       - "include/vcl/builderbase.hxx"
       - "include/vcl/settings.hxx"
       - "include/vcl/widgetbuilder.hxx"
+      - "sfx2/inc/bitmaps.hlst"
       - "sfx2/uiconfig/ui/startcenter.ui"
+      - "sfx2/source/dialog/backingwindow.cxx"
+      - "sfx2/source/dialog/backingwindow.hxx"
       - "tools/source/xml/XmlWalker.cxx"
       - "tools/qa/data/test.xml"
       - "tools/qa/cppunit/test_xmlwalker.cxx"
@@ -71,3 +81,9 @@ jobs:
 
       - name: Lint Start Center UI
         run: python3 bin/lint-ui.py sfx2/uiconfig/ui/startcenter.ui
+
+      - name: Validate Start Center actions
+        run: python3 bin/check-startcenter-no-donate.py
+
+      - name: Test Start Center action validator
+        run: python3 -m unittest bin/test_startcenter_no_donate.py

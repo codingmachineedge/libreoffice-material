@@ -382,6 +382,10 @@ payload has now displayed and captured light, dark, and forced-high-contrast
 Start Center Home and Templates states plus a visible `Open File` Tab-focus state
 in every appearance profile. Deeper keyboard traversal, visible action-state
 exercise, and broader shared shell scenarios remain open.
+Current source also removes the bottom Donate action and its native/accessibility
+wiring, leaving the Help and Extensions footer actions in contiguous positions;
+a focused source validator and six tests pass. Existing captures predate that
+removal, so native build and refreshed runtime/a11y evidence remain required.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

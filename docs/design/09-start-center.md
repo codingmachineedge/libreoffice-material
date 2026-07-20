@@ -49,7 +49,7 @@ Top-to-bottom anatomy, with exact prototype metrics:
 | View items (**Recent Documents**, **Templates**) | 40 px high, `corner-pill`, 12 px padding, 20 px icons (`history`, `grid_view`) | selected: `@primary-container` fill, `@on-primary-container` text/icon; idle: transparent, `@on-surface` text, `@on-surface-variant` icon | prototype-only; native equivalents are the `open_recent`/`templates_all` toggle buttons |
 | **Create** heading | weight-700 11 px, letter-spacing 0.08 em, uppercase, padding 6 px 10 px 8 px | `@on-surface-variant` | prototype-only |
 | Create list (six rows) | 40 px rows, `corner-container` (12), 10 px padding, 12 px gap; leading **28 × 28 px app chip** at `corner-small` (8) holding an 18 px icon | chip: `@primary-container` fill, `@on-primary-container` icon; row hover: `@primary-container` / `@on-primary-container` | prototype-only |
-| Footer (**Help**, **Extensions**) | two equal-width 34 px buttons, `corner-pill`, weight-500 12 px | transparent, `@on-surface-variant` text; hover `@primary-container` | prototype-only |
+| Footer (**Help**, **Extensions**) | two equal-width 34 px buttons, `corner-pill`, weight-500 12 px | transparent, `@on-surface-variant` text; hover `@primary-container` | Help/Extensions-only action set implemented in native source; exact metrics/style and refreshed runtime capture pending |
 
 The six create rows are Writer Document (`article`), Calc Spreadsheet
 (`table_chart`), Impress Presentation (`co_present`), Draw Drawing (`brush`),
