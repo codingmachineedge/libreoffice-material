@@ -26,9 +26,7 @@
 #include <vcl/weld/Button.hxx>
 #include <vcl/weld/ComboBox.hxx>
 #include <vcl/weld/Container.hxx>
-#include <vcl/weld/Image.hxx>
 #include <vcl/weld/Label.hxx>
-#include <vcl/weld/LinkButton.hxx>
 #include <vcl/weld/MenuButton.hxx>
 #include <vcl/weld/ToggleButton.hxx>
 
@@ -43,8 +41,6 @@
 #include <com/sun/star/frame/XFrame.hpp>
 
 #include <memory>
-
-class BrandImage;
 
 class BackingWindow : public InterimItemWindow
 {
@@ -73,9 +69,6 @@ class BackingWindow : public InterimItemWindow
     std::unique_ptr<weld::Button> mxDrawAllButton;
     std::unique_ptr<weld::Button> mxDBAllButton;
     std::unique_ptr<weld::Button> mxMathAllButton;
-    std::unique_ptr<BrandImage> mxBrandImage;
-    std::unique_ptr<weld::CustomWeld> mxBrandImageWeld;
-
     std::unique_ptr<weld::Button> mxHelpButton;
     std::unique_ptr<weld::Button> mxExtensionsButton;
 
@@ -90,13 +83,6 @@ class BackingWindow : public InterimItemWindow
     std::unique_ptr<weld::CustomWeld> mxAllRecentThumbnailsWin;
     std::unique_ptr<TemplateDefaultView> mxLocalView;
     std::unique_ptr<weld::CustomWeld> mxLocalViewWin;
-    std::unique_ptr<weld::Image> mxDonationLeft;
-    std::unique_ptr<weld::Image> mxDonationRight;
-    std::unique_ptr<weld::LinkButton> mxDonationLink;
-    std::unique_ptr<weld::Container> mxDonationBox;
-    std::unique_ptr<weld::Label> mxDonationBoxTitle;
-    std::unique_ptr<weld::Label> mxDonationBoxText;
-
     bool mbLocalViewInitialized;
 
     css::uno::Reference<css::datatransfer::dnd::XDropTarget> mxDropTarget;
@@ -119,10 +105,7 @@ class BackingWindow : public InterimItemWindow
     DECL_LINK(CreateContextMenuHdl, TemplateViewItem*, void);
     DECL_LINK(OpenTemplateHdl, const OUString&, void);
     DECL_LINK(EditTemplateHdl, const OUString&, void);
-    DECL_STATIC_LINK(BackingWindow, OnDonateLinkClick, weld::LinkButton&, bool);
-
     void initControls();
-    void initDonationBanner();
 
     void initializeLocalView();
 

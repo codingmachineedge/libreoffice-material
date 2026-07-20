@@ -1,0 +1,24 @@
+name: Windows UI contract
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dialog-notification-coverage:
+    name: Exhaustive dialog notification coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Validate native dialog policy registry
+        run: python3 bin/check-windows-dialog-notification-contract.py
+
+      - name: Run registry regressions
+        run: python3 bin/test_windows_dialog_notification_contract.py

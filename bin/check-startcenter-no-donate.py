@@ -5,7 +5,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-"""Keep the Start Center's retired footer Donate action out of the native UI."""
+"""Keep non-canonical Donate and legacy brand surfaces out of Start Center."""
 
 from __future__ import annotations
 
@@ -27,11 +27,29 @@ DEFAULT_BITMAPS = REPOSITORY / "sfx2/inc/bitmaps.hlst"
 
 FORBIDDEN_NATIVE_MARKERS = (
     "mxDonateButton",
+    "mxDonation",
     "ExtLinkClickHdl",
     'weld_button(u"donate"_ustr)',
+    'u"daBrand"_ustr',
+    "BrandImage",
+    "initDonationBanner",
+    "OnDonateLinkClick",
+    "SID_DONATION",
     "BMP_DONATE",
     "STR_DONATE_BUTTON",
 )
+
+FORBIDDEN_WIDGET_IDS = {
+    "donate",
+    "donate_image",
+    "gdDonation",
+    "imgDonationLeft",
+    "imgDonationRight",
+    "lbDonateTitle",
+    "lbDonateText",
+    "btnDonateLink",
+    "daBrand",
+}
 
 
 def _small_button_ids(root: ET.Element) -> tuple[list[str], list[str]]:
@@ -81,10 +99,10 @@ def validate(
     object_ids = {
         element.get("id") for element in root.findall(".//object") if element.get("id")
     }
-    retired_ids = sorted({"donate", "donate_image"} & object_ids)
+    retired_ids = sorted(FORBIDDEN_WIDGET_IDS & object_ids)
     if retired_ids:
         raise ValidationError(
-            "retired Start Center Donate widget IDs remain: " + ", ".join(retired_ids)
+            "non-canonical Start Center widget IDs remain: " + ", ".join(retired_ids)
         )
 
     button_ids, positions = _small_button_ids(root)
@@ -146,8 +164,8 @@ def main() -> int:
         return 1
 
     print(
-        "Start Center validation passed: footer Donate action absent; "
-        "Extensions route intact."
+        "Start Center validation passed: Donate and legacy brand surfaces absent; "
+        "Help/Extensions footer and Extensions route intact."
     )
     return 0
 

@@ -21,8 +21,6 @@
 #include <utility>
 #include <vcl/event.hxx>
 #include <vcl/help.hxx>
-#include <vcl/metaactiontypes.hxx>
-#include <vcl/ptrstyle.hxx>
 #include <vcl/settings.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/syswin.hxx>
@@ -41,7 +39,6 @@
 #include <comphelper/processfactory.hxx>
 #include <comphelper/propertysequence.hxx>
 #include <comphelper/propertyvalue.hxx>
-#include <sfx2/app.hxx>
 #include <officecfg/Office/Common.hxx>
 
 #include <i18nlangtag/languagetag.hxx>
@@ -66,99 +63,11 @@
 #include <sfx2/tplpitem.hxx>
 
 #include <svl/itemset.hxx>
-#include <sfx2/dispatch.hxx>
-#include <sfx2/sfxsids.hrc>
-#include <rtl/bootstrap.hxx>
-#include <vcl/virdev.hxx>
-#include <vcl/graph.hxx>
-#include <vcl/graphicfilter.hxx>
-
-#include <config_folders.h>
-
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::beans;
 using namespace ::com::sun::star::frame;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::document;
-
-class BrandImage final : public weld::CustomWidgetController
-{
-private:
-    Bitmap maBrandImage;
-    bool mbIsDark = false;
-    Size m_BmpSize;
-
-public:
-    const Size & getSize() { return m_BmpSize; }
-
-    virtual void SetDrawingArea(weld::DrawingArea* pDrawingArea) override
-    {
-        weld::CustomWidgetController::SetDrawingArea(pDrawingArea);
-
-        const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-        OutputDevice& rDevice = pDrawingArea->get_ref_device();
-        rDevice.SetBackground(Wallpaper(rStyleSettings.GetWindowColor()));
-
-        SetPointer(PointerStyle::RefHand);
-    }
-
-    virtual void Resize() override
-    {
-        auto nWidth = GetOutputSizePixel().Width();
-        if (maBrandImage.GetSizePixel().Width() != nWidth)
-            LoadImageForWidth(nWidth);
-        weld::CustomWidgetController::Resize();
-    }
-
-    void LoadImageForWidth(int nWidth)
-    {
-        mbIsDark = Application::GetSettings().GetStyleSettings().GetDialogColor().IsDark();
-        SfxApplication::loadBrandSvg(mbIsDark ? u"shell/logo-sc_inverted" : u"shell/logo-sc",
-                                    maBrandImage, nWidth);
-    }
-
-    void ConfigureForWidth(int nWidth)
-    {
-        LoadImageForWidth(nWidth);
-        m_BmpSize = maBrandImage.GetSizePixel();
-        set_size_request(m_BmpSize.Width(), m_BmpSize.Height());
-    }
-
-    virtual void StyleUpdated() override
-    {
-        const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-
-        // tdf#141857 update background to current theme
-        OutputDevice& rDevice = GetDrawingArea()->get_ref_device();
-        rDevice.SetBackground(Wallpaper(rStyleSettings.GetWindowColor()));
-
-        const bool bIsDark = rStyleSettings.GetDialogColor().IsDark();
-        if (bIsDark != mbIsDark)
-            LoadImageForWidth(GetOutputSizePixel().Width());
-        weld::CustomWidgetController::StyleUpdated();
-    }
-
-    virtual bool MouseButtonUp(const MouseEvent& rMEvt) override
-    {
-        if (rMEvt.IsLeft())
-        {
-            OUString sURL = officecfg::Office::Common::Menus::VolunteerURL::get();
-            localizeWebserviceURI(sURL);
-
-            Reference<css::system::XSystemShellExecute> const xSystemShellExecute(
-                css::system::SystemShellExecute::create(
-                    ::comphelper::getProcessComponentContext()));
-            xSystemShellExecute->execute(sURL, OUString(),
-                                         css::system::SystemShellExecuteFlags::URIS_ONLY);
-        }
-        return true;
-    }
-
-    virtual void Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle&) override
-    {
-        rRenderContext.DrawBitmap(Point(0, 0), maBrandImage);
-    }
-};
 
 // increase size of the text in the buttons on the left fMultiplier-times
 float const g_fMultiplier = 1.2f;
@@ -181,8 +90,6 @@ BackingWindow::BackingWindow(vcl::Window* i_pParent)
     , mxDrawAllButton(m_xBuilder->weld_button(u"draw_all"_ustr))
     , mxDBAllButton(m_xBuilder->weld_button(u"database_all"_ustr))
     , mxMathAllButton(m_xBuilder->weld_button(u"math_all"_ustr))
-    , mxBrandImage(new BrandImage)
-    , mxBrandImageWeld(new weld::CustomWeld(*m_xBuilder, u"daBrand"_ustr, *mxBrandImage))
     , mxHelpButton(m_xBuilder->weld_button(u"help"_ustr))
     , mxExtensionsButton(m_xBuilder->weld_button(u"extensions"_ustr))
     , mxAllButtonsBox(m_xBuilder->weld_container(u"all_buttons_box"_ustr))
@@ -196,27 +103,11 @@ BackingWindow::BackingWindow(vcl::Window* i_pParent)
     , mxLocalView(new TemplateDefaultView(m_xBuilder->weld_scrolled_window(u"scrolllocal"_ustr, true),
                                           m_xBuilder->weld_menu(u"localmenu"_ustr)))
     , mxLocalViewWin(new weld::CustomWeld(*m_xBuilder, u"local_view"_ustr, *mxLocalView))
-    , mxDonationLeft(m_xBuilder->weld_image(u"imgDonationLeft"_ustr))
-    , mxDonationRight(m_xBuilder->weld_image(u"imgDonationRight"_ustr))
-    , mxDonationLink(m_xBuilder->weld_link_button(u"btnDonateLink"_ustr))
-    , mxDonationBox(m_xBuilder->weld_container(u"gdDonation"_ustr))
-    , mxDonationBoxTitle(m_xBuilder->weld_label(u"lbDonateTitle"_ustr))
-    , mxDonationBoxText(m_xBuilder->weld_label(u"lbDonateText"_ustr))
     , mbLocalViewInitialized(false)
     , mbInitControls(false)
 {
     // init background, undo InterimItemWindow defaults for this widget
     SetPaintTransparent(false);
-
-    // draw the donation image/text
-    const bool bShowDonation(officecfg::Office::Common::Misc::ShowDonation::get());
-
-    const auto t0 = std::chrono::system_clock::now().time_since_epoch();
-    const sal_Int32 nDay = std::chrono::duration_cast<std::chrono::hours>(t0).count()/24; // days since 1970-01-01
-    if (bShowDonation && (nDay % 30 == 0))  // show the donation banner every 30 days
-        initDonationBanner();
-    else
-        mxDonationBox->set_visible(false);
 
     // square action button
     auto nHeight = mxFilter->get_preferred_size().getHeight();
@@ -243,51 +134,6 @@ BackingWindow::BackingWindow(vcl::Window* i_pParent)
     Reference<XDesktop2> xDesktop = Desktop::create( comphelper::getProcessComponentContext() );
     mxDesktopDispatchProvider = xDesktop;
 
-}
-
-void BackingWindow::initDonationBanner()
-{
-    mxDonationLink->connect_activate_link(LINK(this, BackingWindow, OnDonateLinkClick));
-
-    mxDonationBox->set_background(COL_WHITE);
-    mxDonationBoxTitle->set_font_color(COL_BLACK);
-    mxDonationBoxText->set_font_color(COL_BLACK);
-
-    ScopedVclPtr<VirtualDevice> m_pVirDevLeft = mxDonationLeft->create_virtual_device();
-    Graphic aGraphic;
-    Size aGraphicSize;
-    OUString aURL = "$BRAND_BASE_DIR/" LIBO_ETC_FOLDER + u"/shell/donate1.png"_ustr;
-    rtl::Bootstrap::expandMacros( aURL );
-    if (GraphicFilter::LoadGraphic(aURL, OUString(), aGraphic) == ERRCODE_NONE)
-    {
-        aGraphicSize = Size(200, 200);
-        m_pVirDevLeft->SetOutputSizePixel(aGraphicSize);
-        m_pVirDevLeft->DrawBitmap(Point(0, 0), aGraphicSize, aGraphic.GetBitmap());
-    }
-    mxDonationLeft->set_image(m_pVirDevLeft.get());
-    m_pVirDevLeft.disposeAndClear();
-
-    ScopedVclPtr<VirtualDevice> m_pVirDevRight = mxDonationRight->create_virtual_device();
-    aURL = "$BRAND_BASE_DIR/" LIBO_ETC_FOLDER + u"/shell/donate2.png"_ustr;
-    rtl::Bootstrap::expandMacros( aURL );
-    if (GraphicFilter::LoadGraphic(aURL, OUString(), aGraphic) == ERRCODE_NONE)
-    {
-        aGraphicSize = Size(150, 150);
-        m_pVirDevRight->SetOutputSizePixel(aGraphicSize);
-        // image has a transparent background and needs to be drawn with the advanced function
-        m_pVirDevRight->DrawBitmap(Point(0, 0), aGraphicSize, Point(), aGraphicSize,
-                                   aGraphic.GetBitmap(), MetaActionType::BMPEX);
-    }
-    mxDonationRight->set_image(m_pVirDevRight.get());
-    m_pVirDevRight.disposeAndClear();
-}
-
-IMPL_STATIC_LINK_NOARG(BackingWindow, OnDonateLinkClick, weld::LinkButton&, bool)
-{
-    SfxDispatcher &rDispatcher = *SfxGetpApp()->GetDispatcher_Impl();
-    rDispatcher.Execute(SID_DONATION, SfxCallMode::ASYNCHRON);
-
-    return true;
 }
 
 IMPL_LINK(BackingWindow, ClickHelpHdl, weld::Button&, rButton, void)
@@ -328,8 +174,6 @@ void BackingWindow::dispose()
     mxDrawAllButton.reset();
     mxDBAllButton.reset();
     mxMathAllButton.reset();
-    mxBrandImageWeld.reset();
-    mxBrandImage.reset();
     mxHelpButton.reset();
     mxExtensionsButton.reset();
     mxAllButtonsBox.reset();
@@ -480,14 +324,7 @@ void BackingWindow::ApplyStyleSettings()
     Size aPrefSize(mxAllButtonsBox->get_preferred_size());
     set_width_request(aPrefSize.Width());
 
-    // Now set a brand image wide enough to fill this width
-    weld::DrawingArea* pDrawingArea = mxBrandImage->GetDrawingArea();
-    mxBrandImage->ConfigureForWidth(aPrefSize.Width() -
-                                    (pDrawingArea->get_margin_start() + pDrawingArea->get_margin_end()));
-    // Refetch because the brand image height to match this width is now set
-    aPrefSize = mxAllButtonsBox->get_preferred_size();
-
-    set_height_request(nMenuHeight + aPrefSize.Height() + mxBrandImage->getSize().getHeight());
+    set_height_request(nMenuHeight + aPrefSize.Height());
 }
 
 void BackingWindow::initializeLocalView()

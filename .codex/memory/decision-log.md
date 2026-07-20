@@ -410,19 +410,69 @@
 ## D-024 — remove the Start Center footer Donate action
 
 - Date: 2026-07-20
-- State: implemented in source; focused validation passed; native rebuild and
-  refreshed runtime evidence pending
+- State: implemented and locally build/runtime verified at `393263ad9`;
+  subsequently broadened by D-027
 - Context: the operator requested removal after reviewing the real Start Center
   screenshot. The footer conditionally hid Extensions and substituted a Donate
   button, so deleting only the label would have left dead accessibility and URL
   dispatch wiring.
-- Decision: remove the `donate`/`donate_image` UI objects, welded member,
+- Decision at that milestone: remove the `donate`/`donate_image` UI objects, welded member,
   conditional show/hide and label/icon code, Donate click path, and now-unused
   bitmap constant. Keep Help and Extensions in contiguous footer positions and
-  route Extensions only to the Extensions URL. Retain the separate periodic
-  donation banner and global donation command because they are outside the
-  requested footer button.
+  route Extensions only to the Extensions URL. The separate periodic donation
+  banner was outside that initial footer request and was later removed by
+  D-027 under the complete archive/no-nag contract.
 - Reason: this completely removes the visible control and its accessibility
   node without broadening the request to unrelated donation surfaces. A focused
   source validator guards the two-button footer, dead-marker absence, and
-  Extensions route; six tests cover production and adversarial cases.
+  Extensions route; the then-current focused tests and exact-source VS 2026
+  build/headless runs passed. D-027 expands that validator and requires a new
+  build before its broader source can claim runtime proof.
+
+## D-025 — adopt the complete design archive as the Windows rewrite contract
+
+- Date: 2026-07-20
+- State: contract recorded; implementation in progress
+- Context: the operator clarified that every UI page in the provided archive is
+  required and that this is a whole-application rewrite, not a Start Center
+  styling exercise. The reviewed archive contains eleven interactive surfaces
+  and a 2,433-command catalog.
+- Decision: pin the archive SHA-256 in
+  `docs/design/00-windows-rewrite-contract.md`, require all eleven surfaces, and
+  use the 105-row Windows inventory as the evidence ledger. Prototype and
+  registry coverage cannot be counted as compiled UI proof.
+- Reason: a hashed, repository-tracked source of truth prevents partial UI work
+  from being mistaken for the requested whole-suite result.
+
+## D-026 — supersede transient archive behavior with notification and regex systems
+
+- Date: 2026-07-20
+- State: coverage contracts in progress; native implementation pending
+- Context: the operator requires every LibreOffice-owned dialog to become a
+  customizable bottom-right notification form, with local Git-backed undo and
+  a full bulk manager, and requires advanced documented regex support beside
+  every app-owned search field. The archive itself shows centered dialogs and
+  does not contain the complete requested regex system.
+- Decision: treat the later operator requirements as authoritative extensions.
+  Register every native dialog and search field explicitly, then implement the
+  shared hosts/controllers before closing application surfaces. Remove
+  promotional and recurring nags, but retain safety-critical confirmations.
+- Reason: exhaustive registries make future additions fail closed, while the
+  safety boundary avoids suppressing warnings that protect user data or
+  security.
+
+## D-027 — remove all non-canonical Start Center promotion surfaces
+
+- Date: 2026-07-20
+- State: implemented in source; focused validation passed; rebuild pending
+- Context: D-024 deliberately retained the separate periodic donation banner.
+  The complete design archive has neither that banner nor the clickable legacy
+  brand artwork, and the operator subsequently requested removal of all nagging
+  prompts.
+- Decision: remove the donation grid, images, labels, dispatch handler,
+  configuration schedule, brand drawing area, brand controller, and their dead
+  native wiring. Extend the existing Start Center validator to reject all of
+  those widget IDs and C++ markers.
+- Reason: this closes the full Start Center donation/promotion path without
+  hiding an accessibility node or retaining dormant solicitation logic. The
+  broader no-nag inventory remains separate and pending.

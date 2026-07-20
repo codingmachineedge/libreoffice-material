@@ -74,7 +74,29 @@ class StartCenterNoDonateValidatorTest(unittest.TestCase):
     def test_rejects_retired_widget_id(self) -> None:
         mutated = self.ui.replace('id="extensions"', 'id="donate"', 1)
         self.assert_validation_fails(
-            "retired Start Center Donate widget IDs remain: donate", ui=mutated
+            "non-canonical Start Center widget IDs remain: donate", ui=mutated
+        )
+
+    def test_rejects_periodic_donation_banner(self) -> None:
+        mutated = self.ui.replace(
+            '<object class="GtkBox" id="box2">',
+            '<object class="GtkBox" id="box2">\n'
+            '  <child><object class="GtkGrid" id="gdDonation"/></child>',
+            1,
+        )
+        self.assert_validation_fails(
+            "non-canonical Start Center widget IDs remain: gdDonation", ui=mutated
+        )
+
+    def test_rejects_legacy_brand_surface(self) -> None:
+        mutated = self.ui.replace(
+            '<object class="GtkBox" id="buttons_box">',
+            '<object class="GtkBox" id="buttons_box">\n'
+            '  <child><object class="GtkDrawingArea" id="daBrand"/></child>',
+            1,
+        )
+        self.assert_validation_fails(
+            "non-canonical Start Center widget IDs remain: daBrand", ui=mutated
         )
 
     def test_rejects_retired_native_member(self) -> None:

@@ -21,6 +21,10 @@ silently removed or treated as evidence for the current Windows milestone.
 The 105-row [`Windows UI inventory`](docs/WINDOWS_UI_INVENTORY.md) is the
 measurable Windows closure ledger: every future evidence credit names its stable
 inventory ID rather than inheriting completion from a shared primitive.
+The operator-provided design archive is pinned and interpreted in the
+[`canonical Windows rewrite contract`](docs/design/00-windows-rewrite-contract.md).
+Its eleven surfaces are all required; no single application or shared primitive
+stands in for whole-suite completion.
 
 ## Phase 0 — reproducible foundation
 
@@ -28,6 +32,8 @@ inventory ID rather than inheriting completion from a shared primitive.
 
 - preserve and document the exact LibreOffice upstream baseline;
 - establish the Material design contract and token vocabulary;
+- pin the canonical design archive by SHA-256 and map all eleven surfaces to
+  the 105-row Windows acceptance inventory;
 - publish an honest project site and screenshot registry;
 - publish an interactive, dependency-free Material design reference on the site
   as the whole-suite visual and interaction target — 11 suite surfaces, a regex
@@ -388,6 +394,21 @@ passed the VS 2026 product build, five-target native regression phase, MSI
 staging/extraction, and accepted light Home/focus/Templates UI and accessibility
 smoke. Exact-source dark and forced-high-contrast Home/focus/Templates runs
 then passed the same visual, interaction, accessibility, and cleanup gates.
+The next source slice removes the archive-external periodic donation banner and
+clickable legacy brand artwork as well. This newer source has focused validator
+coverage but does not inherit the earlier `393263ad9` build or screenshot proof.
+
+An exhaustive Windows dialog contract now registers all 599 top-level
+`GtkDialog`, `GtkMessageDialog`, and `GtkAssistant` roots for migration to a
+customizable bottom-right notification form. The registry validator fails on
+new, removed, duplicated, reclassified, or implicitly governed roots. It is a
+coverage milestone only: notification hosting, customization, local Git-backed
+undo/history, bulk management, and exact-build runtime proof remain open.
+
+The rewrite also removes promotional and recurring nagging prompts while
+preserving data-loss, security, credential, destructive-action, and required
+compatibility confirmations. An audited source inventory and regression policy
+must land before this requirement can be marked implemented.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
