@@ -21,6 +21,7 @@
 
 #include <iterator>
 #include <string_view>
+#include <tuple>
 
 #include <comphelper/hash.hxx>
 #include <comphelper/scopeguard.hxx>
@@ -1263,14 +1264,13 @@ void UpdateCheck::install()
         return;
     }
 
-    rtl_uString* aArguments[] = {
-        aCommand.Arguments[0].pData, aCommand.Arguments[1].pData,
-        aCommand.Arguments[2].pData, aCommand.Arguments[3].pData
-    };
+    std::array<rtl_uString*, std::tuple_size_v<decltype(aCommand.Arguments)>> aArguments;
+    for (std::size_t nIndex = 0; nIndex < aCommand.Arguments.size(); ++nIndex)
+        aArguments[nIndex] = aCommand.Arguments[nIndex].pData;
     oslProcess hProcess = nullptr;
     const oslProcessError eError
-        = osl_executeProcess(aMsiexecURL.pData, aArguments,
-                             static_cast<sal_uInt32>(std::size(aArguments)),
+        = osl_executeProcess(aMsiexecURL.pData, aArguments.data(),
+                             static_cast<sal_uInt32>(aArguments.size()),
                              osl_Process_DETACHED, nullptr, nullptr, nullptr, 0, &hProcess);
     if (eError == osl_Process_E_None)
     {
