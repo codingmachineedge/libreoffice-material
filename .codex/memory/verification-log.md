@@ -924,3 +924,16 @@ build or runtime evidence.
   only after the operator explicitly authorized removal of restart flags.
 - This is a bootstrap compatibility repair, not native-build or runtime
   evidence. A fresh local preflight and all-phase build remain required.
+
+## 2026-07-19 — local Cygwin preflight execution repair
+
+- A fresh local preflight showed that the Cygwin probe's multiline `bash -c`
+  payload was split by Windows PowerShell native argument marshalling, and that
+  a fresh Cygwin shell needs its POSIX path established before the first
+  `uname` call. The probe now sets that path first and is sent to `bash -s` on
+  standard input; its normal version output is suppressed so the helper returns
+  only its readiness object.
+- With that repair, `Build-Windows.cmd -Phase Preflight` passed the installed
+  isolated-toolchain checks and reached the intentional clean-checkout guard.
+  It stopped only because this repair itself was not yet committed. No native
+  build, MSI, LibreOffice launch, or runtime capture ran in that invocation.

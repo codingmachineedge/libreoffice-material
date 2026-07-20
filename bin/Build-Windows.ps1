@@ -491,8 +491,8 @@ function Test-CygwinToolchain {
     }
 
 $validation = @'
-test "$(uname -o)" = Cygwin
 export PATH="/opt/lo/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+test "$(uname -o)" = Cygwin
 for package in \
   autoconf automake bison cabextract diffutils file flex gawk gettext-devel git \
   gperf libxml2-devel libxslt make nasm ninja patch perl perl-Archive-Zip \
@@ -515,7 +515,9 @@ nasm_version="$(nasm -v | awk '{ print $3 }')"
 printf 'NASM %s\n' "$nasm_version"
 test "$(printf '%s\n' 2.16 "$nasm_version" | sort -V | head -n 1)" = 2.16
 '@
-    & $bash --noprofile --norc -o igncr -eo pipefail -c $validation
+    # Feed the multiline probe on stdin: Windows PowerShell's native argument
+    # marshaller can split a newline-bearing -c payload before Cygwin sees it.
+    $validation | & $bash --noprofile --norc -o igncr -eo pipefail -s | Out-Null
     $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) {
         return [pscustomobject]@{ Ready = $false; Reason = ('Cygwin tool validation failed with exit code {0}.' -f $exitCode) }
