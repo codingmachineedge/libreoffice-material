@@ -101,6 +101,24 @@ before this plan can claim an MSI or an off-screen LibreOffice scenario.
 - remove personal documents, credentials, usernames, and unrelated windows;
 - treat an image as evidence only after its manifest and scenario pass review.
 
+## Accessibility collector
+
+`bin/dump-a11y.py` is the source-controlled companion to the low-level
+off-screen driver. It must be launched with the matching built
+`instdir/program/python.exe`, never a system Python. It connects only to the
+run-scoped UNO pipe, obtains the current frame's container-window
+`XAccessible` root, and records a bounded read-only tree of role, name,
+description, state, child count, and optional parent-relative bounds.
+
+The collector intentionally does not retrieve accessible text, invoke actions,
+move focus, or attach listeners. Its traversal is capped at 5,000 nodes, 500
+children per node, depth 32, and 256 characters per name/description. Every
+limit or per-node failure is recorded as partial evidence rather than silently
+discarded. A run must require at least one `SHOWING` or `VISIBLE` node and
+pair the JSON output with the matching screenshot SHA-256 in its manifest.
+This implements an a11y evidence mechanism; it is not a claim that a runtime
+accessibility scenario has passed.
+
 ## Run identity and storage
 
 Use a run identifier of the form `YYYYMMDD-HHMMSS-<short-commit>-<platform>`.
@@ -160,14 +178,18 @@ Exact arguments belong in the run manifest or automation macro.
    visual review before driving input.
 10. Use runtime-resolved child HWNDs and background-capable operations; record
     any coordinate input and avoid relying on modifier chords.
-11. Shut down normally over the unique UNO pipe with the built Python/UNO
+11. Run `bin/dump-a11y.py` with the built Python/UNO runtime, its exact unique
+    pipe, `--require-visible`, and the screenshot hash. Require a nonempty
+    JSON tree before treating screenshot-based smoke steps as accessibility
+    evidence.
+12. Shut down normally over the unique UNO pipe with the built Python/UNO
     runtime, then poll until the recorded PID and windows disappear.
-12. If normal termination fails, preserve a failure capture/log and terminate
+13. If normal termination fails, preserve a failure capture/log and terminate
     only after revalidating that exact PID, path, and creation time. Never kill
     every process named `soffice.exe`.
-13. Release the desktop, end the dedicated driver process so cached desktop
+14. Release the desktop, end the dedicated driver process so cached desktop
     handles close, and verify cleanup.
-14. Hash files, write results, review for sensitive data, and only then add
+15. Hash files, write results, review for sensitive data, and only then add
     accepted captures to the screenshot registry.
 
 For the current opt-in Material slice, the future LibreOffice launch environment

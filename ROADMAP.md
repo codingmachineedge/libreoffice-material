@@ -102,6 +102,11 @@ The visible MSI launch requires explicit default-No consent; silent install is
 not implemented, and it passes `REBOOT=ReallySuppress` so it cannot request or
 force a Windows restart. Automatic checks default on weekly, while automatic
 download is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
+A bounded read-only UNO accessibility-tree collector now accompanies the
+off-screen desktop plan. It runs with the matching built Python runtime and
+records window roles, names, states, child counts, and optional bounds without
+reading document text or invoking UI actions. It is source support for a future
+headless a11y run, not a passed a11y result.
 The required native CI targets and Windows installation-set build have completed
 for this source. Runtime, public release, headless smoke, accessibility smoke,
 and an installer artifact remain pending.

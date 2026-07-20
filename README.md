@@ -198,6 +198,10 @@ cannot request or force a Windows restart.
 Automatic update checking is enabled by default on a weekly interval. Automatic
 download is disabled by default, and download and installation remain user
 opt-in. Network and data-handling details are in [`PRIVACY.md`](PRIVACY.md).
+For runtime accessibility verification, the repository now includes a bounded,
+read-only UNO tree collector that runs only with the matching built Python
+runtime and is paired with off-screen screenshots; it records roles, names,
+states, and bounds without extracting document text or driving the UI.
 This describes implemented source, not runtime proof: Linux and Windows native
 tests plus the Windows installation-set build have completed, but the updater's
 published-release path, installer exercise, headless UI smoke test, and
