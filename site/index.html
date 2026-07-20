@@ -215,9 +215,12 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
               bytes are copied with <code>CREATE_NEW</code> into protected
               LocalAppData staging with a user/Administrators/SYSTEM DACL,
               verified again, and held under a final read lock before a visible
-              Windows Installer launch. Corrected source forwards the generated
-              <code>REBOOT=ReallySuppress</code> argument. Runtime proof of MSI
-              restart suppression still requires lifecycle testing.
+              Windows Installer launch. Current source uses the exact major-
+              update vector: <code>/i</code>, the staged MSI,
+              <code>REBOOT=ReallySuppress</code>, and
+              <code>MSIRESTARTMANAGERCONTROL=DisableShutdown</code>. Repair-only
+              <code>REINSTALL</code> properties are excluded. Runtime proof of
+              MSI restart suppression still requires lifecycle testing.
             </p>
             <p>
               Confirmation defaults to No; no silent install exists. Checks

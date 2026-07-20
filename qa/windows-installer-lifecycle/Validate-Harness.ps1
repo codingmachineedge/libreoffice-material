@@ -218,12 +218,37 @@ if ($failures.Count -eq 0) {
         '/norestart',
         'REBOOT=ReallySuppress',
         'MSIRESTARTMANAGERCONTROL=DisableShutdown',
-        'REINSTALL=ALL',
-        'REINSTALLMODE=vomus',
         '/L*V!'
     )) {
         if (-not $guestText.Contains($argument)) {
             Add-Failure -Message "Guest MSI safety or updater argument is missing: $argument"
+        }
+    }
+    $updateBlock = [regex]::Match(
+        $guestText,
+        '(?s)Invoke-MsiStep -Name ''corrected-same-version-update''.*?Assert-ProductAbsent -ProductCode \$oldProductCode'
+    ).Value
+    if ([string]::IsNullOrWhiteSpace($updateBlock)) {
+        Add-Failure -Message 'Guest same-version update block is missing.'
+    }
+    else {
+        Assert-Match $updateBlock "-OperationArguments\s+@\('/i',\s*\`$correctedMsi\)" `
+            'Major-update operation must install the corrected MSI with /i.'
+        Assert-NotMatch $updateBlock 'REINSTALL(?:MODE)?=' `
+            'Major-update operation must not use repair-only REINSTALL properties.'
+    }
+    $repairBlock = [regex]::Match(
+        $guestText,
+        '(?s)Invoke-MsiStep -Name ''corrected-repair''.*?Assert-ProductInstalled -ProductCode \$correctedProductCode'
+    ).Value
+    if ([string]::IsNullOrWhiteSpace($repairBlock)) {
+        Add-Failure -Message 'Guest corrected repair block is missing.'
+    }
+    else {
+        foreach ($repairArgument in @('REINSTALL=ALL', 'REINSTALLMODE=vomus')) {
+            if (-not $repairBlock.Contains($repairArgument)) {
+                Add-Failure -Message "Guest repair argument is missing: $repairArgument"
+            }
         }
     }
     Assert-Match $guestText '\$exitCode\s+-eq\s+0' `

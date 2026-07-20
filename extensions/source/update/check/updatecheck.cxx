@@ -72,9 +72,9 @@ constexpr OUStringLiteral PROPERTY_SHOW_BUBBLE = u"BubbleVisible";
 constexpr OUStringLiteral PROPERTY_CLICK_HDL = u"MenuClickHDL";
 constexpr OUString PROPERTY_SHOW_MENUICON = u"MenuIconVisible"_ustr;
 
-std::array<rtl_uString*, 6> WindowsInstallerCommand::getProcessArguments() const
+std::array<rtl_uString*, 4> WindowsInstallerCommand::getProcessArguments() const
 {
-    std::array<rtl_uString*, 6> aArguments;
+    std::array<rtl_uString*, 4> aArguments;
     for (std::size_t nIndex = 0; nIndex < Arguments.size(); ++nIndex)
         aArguments[nIndex] = Arguments[nIndex].pData;
     return aArguments;
@@ -87,8 +87,7 @@ WindowsInstallerCommand buildWindowsInstallerCommand(const OUString& rSystemDire
     // list deliberately has no quiet or passive switch. Suppress reboot
     // requests and prevent Restart Manager from shutting applications down.
     return { rSystemDirectory + u"\\msiexec.exe"_ustr,
-             { u"/i"_ustr, rInstallerPath, u"REINSTALL=ALL"_ustr,
-               u"REINSTALLMODE=vomus"_ustr, u"REBOOT=ReallySuppress"_ustr,
+             { u"/i"_ustr, rInstallerPath, u"REBOOT=ReallySuppress"_ustr,
                u"MSIRESTARTMANAGERCONTROL=DisableShutdown"_ustr } };
 }
 

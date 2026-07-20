@@ -87,9 +87,11 @@ No as the default. There is no silent install. Confirmed bytes are copied with
 `CREATE_NEW` into a protected per-run LocalAppData directory with full-access
 ACEs limited to SYSTEM, Administrators, and Owner Rights, re-verified, and held
 with a final read lock that excludes write/delete replacement. Current source
-forwards all six installer arguments, including `REBOOT=ReallySuppress` and
-`MSIRESTARTMANAGERCONTROL=DisableShutdown`; the focused VS 2026 suite verifies
-the DACL, exclusive create, retained lock, and full argument vector. Network/privacy details are recorded in
+forwards exactly four major-update arguments: `/i`, the staged MSI,
+`REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`. It
+excludes `REINSTALL=ALL` and `REINSTALLMODE=vomus`, which are retained only for
+explicit repair; the focused suite covers the DACL, exclusive create, retained
+lock, and exact argument vector. Network/privacy details are recorded in
 [`PRIVACY.md`](../../PRIVACY.md).
 
 Every push to `main` starts the Windows release workflow, with manual dispatch
@@ -144,12 +146,16 @@ and passes an exact-source PowerShell 5.1 identity probe for both retained MSIs.
 Third run `20260720-045143-7859553-08fb3836f8b446dda272e206d296a591`
 performed real old-install and corrected same-version MSI commands with exit
 code `0` and unchanged guest reboot fingerprints. It then failed closed because
-the old ProductCode remained registered at state `5` rather than being removed
-by the shared UpgradeCode. Cleanup uninstalled the old product with exit `0`,
+the old ProductCode remained registered at state `5`. The retained update log
+shows `OLDPRODUCTS` contained the old ProductCode, but the command incorrectly
+passed `REINSTALL=ALL` and `REINSTALLMODE=vomus` to the new ProductCode. Windows
+Installer selected no features and skipped `RemoveExistingProducts`. Current
+source removes those properties from the major-update command while retaining
+them for repair. Cleanup uninstalled the old product with exit `0`,
 left both ProductCodes absent, and host before/after safety snapshots matched;
 repair, corrected uninstall, `COMPLETE.json`, and host verification were not
-accepted. Lifecycle sequencing must be corrected and rerun, so installer
-lifecycle acceptance remains open.
+accepted. The corrected sequence passes static PowerShell 5.1/7 validation but
+must be rerun, so installer lifecycle acceptance remains open.
 
 The exact-source local builds, corrected release, and light/dark/high-contrast Start Center smoke
 do not prove a whole-GUI rewrite, updater runtime, installer lifecycle, or any

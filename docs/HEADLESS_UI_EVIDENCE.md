@@ -102,10 +102,14 @@ That second run remains accepted historical proof. A later launch-site audit
 found that its product binary forwarded only four of five updater installer
 arguments and omitted `REBOOT=ReallySuppress`. Corrected source commit
 `fbba560e27db26de605c40aa237c554c1f0744b1` forwards all five arguments and
-produced a new extracted candidate. Current source extends that command to six
-arguments by also setting `MSIRESTARTMANAGERCONTROL=DisableShutdown`; the focused
-VS 2026 updater suite verifies all six, exclusive staging creation, the protected
-DACL, and the retained read lock. The five-argument corrected runtime was first
+produced a new extracted candidate. A later Sandbox update log showed that its
+two `REINSTALL` properties prevented the new ProductCode from selecting
+features even though the MSI found the old ProductCode. Current source instead
+uses four major-update arguments—`/i`, the staged MSI,
+`REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`—and
+retains the `REINSTALL` properties only for repair. The focused updater suite
+asserts that split, exclusive staging creation, the protected DACL, and the
+retained read lock. The five-argument corrected runtime was first
 exercised in accepted light run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/),
 whose two captures remain immutable historical proof.

@@ -102,10 +102,10 @@ legacy/current Sandbox process is absent and the host-safety checks pass does it
 The guest performs, in order:
 
 1. old exact-tag MSI install;
-2. corrected same-version major update with `REINSTALL=ALL` and
-   `REINSTALLMODE=vomus`;
+2. corrected same-version major update with a plain `/i corrected.msi` command;
 3. corrected repair after moving `program\updchklo.dll` aside as the repair
-   probe;
+   probe, using `REINSTALL=ALL` and `REINSTALLMODE=vomus` only for this
+   maintenance operation;
 4. corrected ProductCode uninstall.
 
 Every operation uses `/qn`, `/norestart`, `REBOOT=ReallySuppress`,
@@ -178,9 +178,11 @@ passed sealed-input inspection, installed the old MSI with exit code `0`, and
 ran the corrected same-version command with exit code `0`. Neither step changed
 the guest reboot fingerprint. The post-update assertion then failed closed
 because the old ProductCode remained registered with Windows Installer state
-`5`; a same-version package carrying the shared UpgradeCode did not remove the
-old product automatically. Repair and the corrected-product uninstall were not
-attempted, so this is not lifecycle acceptance.
+`5`. Its log proves the corrected MSI found the old ProductCode, but the command
+incorrectly supplied repair-only `REINSTALL=ALL` and `REINSTALLMODE=vomus`
+properties to a new ProductCode. Windows Installer therefore selected no
+features and skipped `RemoveExistingProducts`. Repair and the corrected-product
+uninstall were not attempted, so this is not lifecycle acceptance.
 
 Best-effort cleanup uninstalled the old ProductCode with exit code `0`, left
 both ProductCodes absent, reported no cleanup error or reboot-state change, and
@@ -189,7 +191,9 @@ LibreOffice-registration snapshots were identical. The packaged Sandbox client
 did not complete its normal disposal deadline, so no `host-verification.json`
 or `COMPLETE.json` was accepted. The retained result therefore documents two
 real successful MSI operations and a precise same-version upgrade-sequencing
-gap, not a passed update/repair/uninstall lifecycle.
+gap, not a passed update/repair/uninstall lifecycle. The source updater and
+harness now use a plain `/i` major-upgrade command and retain the `REINSTALL`
+properties only for the explicit repair step; a fresh run is still required.
 
 ## Evidence boundary
 
@@ -200,5 +204,6 @@ contains the four zero-exit lifecycle logs, before/after reboot snapshots,
 `COMPLETE.json` sentinel, followed by verified Sandbox client disposal. The
 current source updater and the lifecycle harness
 both supply `MSIRESTARTMANAGERCONTROL=DisableShutdown`; the corrected public
-`fbba560e2` release predates that sixth updater argument, so it must not be
-reported as runtime proof for this additional protection.
+`fbba560e2` release predates that protection and still carries the two
+repair-only reinstall properties, so it must not be reported as runtime proof
+for the current four-argument major-update command.

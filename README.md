@@ -31,7 +31,13 @@ document engine, file-format support, and accessibility foundations.
 > SHA-256
 > `180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`.
 > Cache-busted unauthenticated Latest downloads for all four corrected assets
-> matched the release sizes and SHA-256 values exactly. The older
+> matched the release sizes and SHA-256 values exactly. A later real Sandbox
+> diagnostic found that this release's updater command still mixes
+> major-upgrade and repair properties: it detects the old ProductCode but
+> `REINSTALL=ALL` prevents the new ProductCode from selecting features. Current
+> source removes both `REINSTALL` properties from the update launch while
+> retaining both restart-suppression properties; this correction is not yet
+> runtime lifecycle proof. The older
 > [`577059e274` release](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
 > remains historical because its updater launch forwarded only four of five
 > generated arguments and omitted `REBOOT=ReallySuppress`; do not treat that
@@ -62,9 +68,9 @@ document engine, file-format support, and accessibility foundations.
 > The corrected normal release and its public Latest asset bytes are verified,
 > but updater-runtime and MSI lifecycle proof are not accepted yet.
 > Hosted Windows run
-> [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
-> for screenshot commit `b0e3ea766` remains in progress and has not yet published
-> its per-push release.
+> [`29756277918`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29756277918)
+> for screenshot commit `439cd1a51` has started; its per-push release remains
+> pending.
 
 [Project site](https://ding-ding-projects.github.io/libreoffice-material/) ·
 [Interactive preview](https://ding-ding-projects.github.io/libreoffice-material/prototype.html) ·
@@ -88,8 +94,8 @@ document engine, file-format support, and accessibility foundations.
 | Verified UI screenshots | 9 canonical Start Center captures: 3 each in light, dark, and forced high contrast | Light Home/focus/Templates are registered under [`20260720-112425-fbba560e27-windows-headless-light`](docs/evidence/runs/20260720-112425-fbba560e27-windows-headless-light/results.json); dark Home/focus/Templates under [`20260720-033252-fbba560e27-windows-headless-dark`](docs/evidence/runs/20260720-033252-fbba560e27-windows-headless-dark/); and forced-high-contrast Home/focus/Templates under [`20260720-033338-fbba560e27-windows-headless-highcontrast`](docs/evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/). The former canonical corrected light pair and the earlier `577059e274` pair remain historical proof; scaling, accelerated rendering, localization, and suite surfaces remain open |
 | Headless harness | Light/dark/high-contrast UI, keyboard focus, and bounded UNO collection passed | The sibling low-level driver launched the exact MSI payload on run-scoped off-screen desktops, resolved stable runtime ownership, captured nine canonical states, drove background pointer and Tab input in every appearance profile, collected nine bounded UNO trees with no collector errors, shut down normally, and left zero matching processes/windows. All three current canonical runs used dedicated same-token MCP sessions so UNO and the GUI shared the same integrity boundary; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
-| Windows updater | No-restart staging/launch regressions pass; end-user flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. The corrected release forwards `REBOOT=ReallySuppress`; current source additionally forwards `MSIRESTARTMANAGERCONTROL=DisableShutdown`. Its VS 2026 updater suite now verifies exclusive `CREATE_NEW` staging, the SYSTEM/Administrators/Owner Rights DACL, a retained read lock that rejects write/delete opens, and all six forwarded arguments. Download/consent/visible-launch and real MSI lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
-| Installer / release | Corrected normal Latest release and four public assets verified | The public, normal, non-draft, non-prerelease `windows-msi-local-20260720-fbba560e2` release targets exact source `fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four assets. Cache-busted Latest downloads matched every corrected release size and hash; its unsigned 199,688,192-byte MSI is `180e511c…afeea`. Administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO reruns. A statically validated [Windows Sandbox lifecycle harness](qa/windows-installer-lifecycle/README.md) pins the old/corrected packages and requires exact-zero install/update/repair/uninstall results with `/norestart`, `REBOOT=ReallySuppress`, unchanged reboot indicators, and clean uninstall. Three isolated launches failed closed without an accepted lifecycle: the first exposed generic-list JSON serialization; the second proved that fix and exposed a nested MSI-query row collection; the third reached real old-install and corrected same-version commands with exit code `0` and unchanged reboot state, then proved the old ProductCode remained installed instead of being automatically removed. The first two defects are corrected; lifecycle sequencing and a fresh acceptance run remain open. Hosted publication also now accepts GitHub's temporary draft URL before promotion while continuing to require the canonical tag URL after publishing; exact pushed-run verification remains pending |
+| Windows updater | Protected staging and no-restart source regressions pass; end-user flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. Current source launches a major update with exactly `/i`, the staged MSI, `REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`; repair-only `REINSTALL` properties are excluded. Its regression suite covers this four-argument vector, exclusive `CREATE_NEW` staging, the SYSTEM/Administrators/Owner Rights DACL, and a retained read lock that rejects write/delete opens. Download/consent/visible-launch and real MSI lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
+| Installer / release | Corrected normal Latest release and four public assets verified | The public, normal, non-draft, non-prerelease `windows-msi-local-20260720-fbba560e2` release targets exact source `fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four assets. Cache-busted Latest downloads matched every corrected release size and hash; its unsigned 199,688,192-byte MSI is `180e511c…afeea`. Administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO reruns. A statically validated [Windows Sandbox lifecycle harness](qa/windows-installer-lifecycle/README.md) pins the old/corrected packages and requires exact-zero install/update/repair/uninstall results with `/norestart`, `REBOOT=ReallySuppress`, unchanged reboot indicators, and clean uninstall. Three isolated launches failed closed without an accepted lifecycle: the first exposed generic-list JSON serialization; the second proved that fix and exposed a nested MSI-query row collection; the third reached real old-install and corrected same-version commands with exit code `0` and unchanged reboot state. Its log proved the Upgrade table found the old ProductCode, but repair-only `REINSTALL` properties selected no features for the new ProductCode and skipped removal. Current source corrects that command split; a fresh acceptance run remains open. Hosted publication also now accepts GitHub's temporary draft URL before promotion while continuing to require the canonical tag URL after publishing; exact pushed-run verification remains pending |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -266,7 +272,11 @@ SYSTEM; it verifies the staged copy and retains a final read lock that excludes
 write/delete replacement. The only install action is a visible Windows
 Installer launch after an explicit confirmation whose default is **No**. There
 is no silent install path, and the launch passes `REBOOT=ReallySuppress` so it
-cannot request or force a Windows restart.
+cannot request or force a Windows restart. It also passes
+`MSIRESTARTMANAGERCONTROL=DisableShutdown`, and it deliberately omits
+`REINSTALL=ALL` and `REINSTALLMODE=vomus` because those maintenance properties
+prevent a newly generated ProductCode from selecting features during a major
+upgrade.
 
 Automatic update checking is enabled by default on a weekly interval. Automatic
 download is disabled by default, and download and installation remain user
@@ -281,7 +291,12 @@ the updater. A launch-site audit after publishing the older `577059e274` MSI
 found that only four of the command builder's five generated arguments reached
 `osl_executeProcess`, dropping `REBOOT=ReallySuppress`. Commit `fbba560e2`
 replaced that fixed four-element list with an array sized from the command and
-forwards all five entries. `CppunitTest_extensions_test_update`, the incremental
+forwarded all five entries. The third Sandbox diagnostic later proved that two
+of those entries, `REINSTALL=ALL` and `REINSTALLMODE=vomus`, were repair-only:
+the corrected MSI found the old ProductCode but selected no features for its
+new ProductCode. Current source now forwards the exact four major-update entries
+and retains the reinstall properties only in the harness's explicit repair.
+`CppunitTest_extensions_test_update`, the incremental
 full product build, and MSI creation passed with Visual Studio 2026. The corrected
 unsigned MSI is 199,688,192 bytes with SHA-256 `180e511c…afeea`; administrative
 extraction returned `0` with 4,885 files and 603,901,200 bytes, and the extracted
@@ -459,8 +474,11 @@ and the imported build files before configuring a machine.
 > `REBOOT=ReallySuppress`; its focused updater target, incremental product build,
 > corrected 199,688,192-byte MSI, administrative extraction, and updater-DLL hash
 > match, corrected scoped headless UI/UNO rerun, and corrected normal public
-> release all passed. MSI install/repair/upgrade/uninstall and restart-suppression
-> lifecycle proof remain open. Remaining
+> release all passed. A subsequent Sandbox log proved that its two reinstall
+> properties suppress a new ProductCode's feature selection; current source
+> replaces that launch vector with the four correct major-update arguments.
+> MSI install/repair/upgrade/uninstall and restart-suppression lifecycle proof
+> remain open. Remaining
 > gates are stated in the evidence manifest.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing

@@ -1449,3 +1449,27 @@ build or runtime evidence.
 - The source correction is committed locally at
   `113971316830b2cb88ffa291ed42481ca68fba6d`; hosted normal non-prerelease
   publication for the next pushed SHA remains to be verified.
+
+## 2026-07-20 — major-upgrade command diagnosis and source correction
+
+- The third Sandbox run's corrected MSI does contain the expected inclusive
+  Upgrade-table row and action sequence. Its verbose update log records the old
+  ProductCode in `OLDPRODUCTS`, so product discovery and MSI authoring were not
+  the cause of the retained old registration.
+- The update command incorrectly supplied `REINSTALL=ALL` and
+  `REINSTALLMODE=vomus` to the corrected MSI's new ProductCode. Windows
+  Installer set `Preselected=1`, left every feature with a null requested/action
+  state, and skipped `RemoveExistingProducts` as a maintenance/uninstall case.
+  Those properties describe maintenance of an installed ProductCode, not the
+  initial feature selection for a major upgrade.
+- Current updater source now launches exactly `/i`, the staged MSI,
+  `REBOOT=ReallySuppress`, and
+  `MSIRESTARTMANAGERCONTROL=DisableShutdown`. The lifecycle update step matches
+  that command, while its separate repair step retains `REINSTALL=ALL` and
+  `REINSTALLMODE=vomus`.
+- The C++ regression expects the exact four-entry updater vector. The lifecycle
+  validator additionally rejects either reinstall property in the update block
+  and requires both in the repair block. The dependency-free harness validator
+  passes under Windows PowerShell 5.1 and PowerShell 7. This remains source and
+  static evidence until the native C++ target and a fresh Sandbox lifecycle run
+  complete.

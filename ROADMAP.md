@@ -152,10 +152,13 @@ not implemented. An audit found that the `577059e274` binary forwarded only four
 of its five generated installer arguments and omitted `REBOOT=ReallySuppress`.
 Commit `fbba560e27db26de605c40aa237c554c1f0744b1` sizes the launch array from
 the command and forwards all five release-binary entries, including restart
-suppression. Current source adds a sixth safety property,
-`MSIRESTARTMANAGERCONTROL=DisableShutdown`; its focused VS 2026 suite verifies
-exclusive `CREATE_NEW` staging, the protected DACL, the retained read lock, and
-all six forwarded arguments.
+suppression. A real Sandbox update log later proved that its two `REINSTALL`
+properties apply to repair, not a major update: the corrected MSI found the old
+ProductCode but selected no features for its new ProductCode. Current source
+uses the exact four-entry major-update vector `/i`, staged MSI,
+`REBOOT=ReallySuppress`, and `MSIRESTARTMANAGERCONTROL=DisableShutdown`; the
+focused suite asserts those arguments, the absence of repair-only properties,
+exclusive `CREATE_NEW` staging, the protected DACL, and the retained read lock.
 Automatic checks default on weekly, while automatic download is off and
 download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
 A bounded read-only UNO accessibility-tree collector now accompanies the

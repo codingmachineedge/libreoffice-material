@@ -566,9 +566,8 @@ try {
     Assert-UpdaterDllHash -ExpectedSha256 ([string]$script:Expected.old.updater_dll_sha256)
 
     Invoke-MsiStep -Name 'corrected-same-version-update' `
-        -OperationArguments @(
-            '/i', $correctedMsi, 'REINSTALL=ALL', 'REINSTALLMODE=vomus'
-        ) -LogName '02-corrected-same-version-update.log' | Out-Null
+        -OperationArguments @('/i', $correctedMsi) `
+        -LogName '02-corrected-same-version-update.log' | Out-Null
     Assert-ProductAbsent -ProductCode $oldProductCode
     Assert-ProductInstalled -ProductCode $correctedProductCode
     Assert-UpdaterDllHash -ExpectedSha256 ([string]$script:Expected.corrected.updater_dll_sha256)

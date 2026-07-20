@@ -47,15 +47,15 @@ bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource);
 struct WindowsInstallerCommand
 {
     OUString ExecutablePath;
-    std::array<OUString, 6> Arguments;
+    std::array<OUString, 4> Arguments;
 
-    std::array<rtl_uString*, 6> getProcessArguments() const;
+    std::array<rtl_uString*, 4> getProcessArguments() const;
 };
 
 // Builds the interactive Windows Installer command used for an in-place
-// update. The updater runs from an installed product, so the MSI must be
-// explicitly recached and all installed features reinstalled even when the
-// package keeps the same ProductCode and effective ProductVersion.
+// major update. REINSTALL properties are deliberately omitted: they describe
+// maintenance of an already installed ProductCode and would prevent a newly
+// generated ProductCode from selecting features during a major upgrade.
 WindowsInstallerCommand buildWindowsInstallerCommand(const OUString& rSystemDirectory,
                                                        const OUString& rInstallerPath);
 
