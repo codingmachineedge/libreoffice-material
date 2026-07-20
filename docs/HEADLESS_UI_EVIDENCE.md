@@ -121,6 +121,16 @@ This verifies only the corrected extracted runtime UI. It does not execute or
 prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
 behavior.
 
+The same corrected 199,688,192-byte MSI is now the normal public, non-draft,
+non-prerelease Latest release
+[`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2),
+published at 2026-07-20T06:44:07Z for exact target
+`fbba560e27db26de605c40aa237c554c1f0744b1`. Its four cache-busted public
+Latest downloads matched the release bytes; the MSI is 199,688,192 bytes with
+SHA-256
+`180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`.
+Release publication does not expand the accepted UI or MSI-lifecycle scope.
+
 This closes only the light-profile Start Center launch/navigation smoke on
 software raster rendering. Dark, system/high contrast, accelerated capture,
 keyboard-only/focus, 200% scale, localization/direction, suite applications,

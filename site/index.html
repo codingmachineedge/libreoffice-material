@@ -52,6 +52,7 @@
             than replacing the document engine with a web shell.
           </p>
           <div class="hero-actions">
+            <a class="button button-filled" href="https://github.com/Ding-Ding-Projects/libreoffice-material/releases/latest/download/LibreOfficeMaterial-Windows-x64.msi">Download Windows MSI</a>
             <a class="button button-filled" href="#roadmap">Explore the roadmap</a>
             <a
               class="button button-outlined"
@@ -70,8 +71,9 @@
             Corrected source <code>fbba560e27</code> forwarded all five updater
             launch arguments, and its extracted runtime supplied the two canonical
             light-profile Start Center captures and two bounded UNO trees with no
-            collector errors. The whole GUI is incomplete. An older normal release
-            is public; the corrected release and MSI lifecycle proof remain pending.
+            collector errors. The corrected build is the normal public,
+            non-prerelease Latest release with four byte-verified assets. The whole
+            GUI is incomplete, and MSI lifecycle proof remains pending.
           </p>
         </div>
 
@@ -102,7 +104,7 @@
             </div>
             <div>
               <dt>Build / installer</dt>
-              <dd><span class="state state-progress">Older release public; corrected pending</span></dd>
+              <dd><span class="state state-verified">Corrected Latest release public</span></dd>
             </div>
             <div>
               <dt>Windows updater</dt>
@@ -231,10 +233,12 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
             </p>
           </div>
           <p class="truth-note">
-            Native targets, a corrected local exact-source MSI, and corrected
-            light Start Center headless/UNO-tree smoke have completed, but updater
-            and MSI install/repair/upgrade/restart-suppression runtime remain open.
-            An older normal public release exists; a corrected release is pending.
+            Native targets, a corrected local exact-source MSI, corrected light
+            Start Center headless/UNO-tree smoke, and a normal public corrected
+            Latest release have completed. The release targets
+            <code>fbba560e27db26de605c40aa237c554c1f0744b1</code> and its four public
+            assets are byte-verified. Updater and MSI
+            install/repair/upgrade/uninstall/restart-suppression runtime remain open.
             Every <code>main</code> push now starts the
             stable workflow, which uploads the validated MSI directly to an exact
             draft before promoting it to a normal public non-prerelease Latest
@@ -263,11 +267,12 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule
           recursively found two intermediate MSI databases alongside the final
-          installer, so no artifact was uploaded. A separately published older
-          normal release has four byte-verified assets. Corrected source
-          <code>fbba560e27</code> produced and extracted a new MSI, and its runtime
-          passed scoped Start Center UI/UNO smoke. Its corrected release and
-          updater/installer lifecycle result remain pending.
+          installer, so no artifact was uploaded. Corrected source
+          <code>fbba560e27</code> produced and extracted a new MSI, its runtime
+          passed scoped Start Center UI/UNO smoke, and its normal public
+          <a href="https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2">Latest release</a>
+          has exactly four byte-verified assets. Updater/installer lifecycle
+          results remain pending.
         </p>
       </section>
 
@@ -468,7 +473,7 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         <ol class="roadmap-list">
           <li class="roadmap-item current">
             <span class="phase-number">0</span>
-            <div><p class="phase-state">In progress</p><h3>Reproducible foundation</h3><p>Provenance, design contract, site, updater/release source, and a passed harness preflight; native build, release, headless, and accessibility gates remain open.</p></div>
+            <div><p class="phase-state">In progress</p><h3>Reproducible foundation</h3><p>Provenance, design contract, site, corrected public release, real headless captures, and bounded UNO smoke are recorded; full reproducibility, installer lifecycle, and accessibility gates remain open.</p></div>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">1</span>
@@ -484,7 +489,7 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           </li>
           <li class="roadmap-item">
             <span class="phase-number">7–8</span>
-            <div><p class="phase-state">Source in progress</p><h3>Hardening and release proof</h3><p>Consent-based updater and draft-first release automation exist in source; native, release, accessibility, locale, performance, and compatibility proof remains.</p></div>
+            <div><p class="phase-state">Source in progress</p><h3>Hardening and release proof</h3><p>The corrected normal Latest release and four public assets are verified. Consent-based updater and draft-first automation exist in source; installer lifecycle, accessibility, locale, performance, and compatibility proof remains.</p></div>
           </li>
         </ol>
       </section>

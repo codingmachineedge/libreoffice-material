@@ -1183,7 +1183,8 @@ build or runtime evidence.
   bytes and exactly matches the built DLL at SHA-256
   `32f80adfcd5097ef54f13951b748a5703439aef0dbb751d6a4c5d3e6102446a3`.
 - The corrected MSI's low-level headless UI/UNO rerun passed as recorded below;
-  its corrected normal release remains pending. No updater download,
+  publication had not yet occurred at this checkpoint, and the later release
+  entry below supersedes that boundary. No updater download,
   protected-stage, consent, installer launch, restart-suppression runtime,
   install, repair, upgrade, or uninstall result is claimed.
 
@@ -1210,5 +1211,30 @@ build or runtime evidence.
   `20260720-012853-577059e274-vs2026-msi-raster` run remains historical proof.
   This corrected result verifies only extracted-runtime Start Center UI/UNO
   smoke; it does not execute MSI install, repair, upgrade, uninstall, or
-  restart-suppression lifecycle behavior. Corrected release publication remains
-  pending.
+  restart-suppression lifecycle behavior.
+
+## 2026-07-20 — corrected normal public release and Latest-byte proof
+
+- Corrected release
+  [`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+  was published at 2026-07-20T06:44:07Z. GitHub reports it as public,
+  non-draft, non-prerelease, and Latest, targeting exact product source
+  `fbba560e27db26de605c40aa237c554c1f0744b1`.
+- The release contains exactly four public assets. Cache-busted unauthenticated
+  downloads through the public Latest route matched each published asset size
+  and SHA-256 exactly:
+  - `LibreOfficeMaterial-Windows-x64.msi`: 199,688,192 bytes,
+    `180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`;
+  - `LibreOfficeMaterial-Windows-x64.msi.sha256`: 102 bytes,
+    `e82f022d06665a165b8d0145acac0aae7b39cd9f8b9cbd0f7a1cfa1105021b9e`;
+  - `windows-msi-manifest.json`: 1,011 bytes,
+    `12e6495e5d5051657dd99e6c0afc6d61941144c1bcde5f792f09a9949bea0fc1`;
+  - `windows-update-manifest.xml`: 972 bytes,
+    `b686d9e9641360c3962bc27b8b6517b9a76c14c06cd50efbcbcfe485724eab72`.
+- This supersedes the older `windows-msi-local-20260720-577059e274` release as
+  the update candidate. The older release remains historical with its warning:
+  that product omitted the fifth updater launch argument and is not
+  restart-suppression or updater-runtime proof.
+- Publication and public-byte verification do not execute the updater or prove
+  MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
+  behavior. Those runtime gates remain open.

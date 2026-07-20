@@ -22,22 +22,20 @@ document engine, file-format support, and accessibility foundations.
 > 199,692,288-byte Windows x64 MSI, and successfully administratively extracted
 > its payload with Windows Installer status `0`.
 > The whole GUI has not been rewritten, and no application surface is
-> Material-complete. A normal public, non-prerelease release now exists at
-> [`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274).
-> It targets product source `577059e274`, contains exactly the MSI plus its
-> checksum and two update manifests, and was published on 2026-07-20 at
-> 06:06:42 UTC. Its unsigned 199,692,288-byte MSI has SHA-256
-> `437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`.
-> This is the older build used for the first accepted screenshots: a later audit found
-> that its updater launch forwarded only four of five generated arguments and
-> therefore omitted `REBOOT=ReallySuppress`. Do not treat that release as
-> restart-suppression or updater-runtime proof. Commit
-> `fbba560e27db26de605c40aa237c554c1f0744b1` forwards all five arguments; its
-> corrected MSI has been rebuilt and structurally checked, and its extracted
-> runtime passed the corrected headless UI/UNO rerun. A corrected release still
-> remains pending. After an initial propagation delay,
-> cache-busted unauthenticated Latest downloads for all four assets succeeded and
-> matched the release bytes and SHA-256 values exactly. The earlier hosted run
+> Material-complete. The corrected build is now a normal public, non-draft,
+> non-prerelease Latest release at
+> [`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2).
+> It targets exact product source `fbba560e27db26de605c40aa237c554c1f0744b1`,
+> contains exactly the MSI plus its checksum and two update manifests, and was
+> published on 2026-07-20 at 06:44:07 UTC. Its unsigned 199,688,192-byte MSI has
+> SHA-256
+> `180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`.
+> Cache-busted unauthenticated Latest downloads for all four corrected assets
+> matched the release sizes and SHA-256 values exactly. The older
+> [`577059e274` release](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
+> remains historical because its updater launch forwarded only four of five
+> generated arguments and omitted `REBOOT=ReallySuppress`; do not treat that
+> older release as restart-suppression or updater-runtime proof. The earlier hosted run
 > found a staging-rule defect after building the MSI:
 > recursive discovery included two retained intermediate MSI databases alongside
 > the final package. The workflow now scopes discovery to the final success-only
@@ -60,8 +58,8 @@ document engine, file-format support, and accessibility foundations.
 > `e4dc8a850c982f33d8722fc203f86591b2993e8b` proves the repaired CLI payload,
 > required native targets and full installation-set build. The local VS 2026
 > run adds exact-source MSI, Start Center smoke, and bounded UNO-tree evidence.
-> The older normal release and its public Latest asset bytes are verified, but
-> updater-runtime proof and corrected-binary publication are not accepted yet.
+> The corrected normal release and its public Latest asset bytes are verified,
+> but updater-runtime and MSI lifecycle proof are not accepted yet.
 > Hosted Windows run
 > [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
 > for screenshot commit `b0e3ea766` remains in progress and has not yet published
@@ -75,6 +73,9 @@ document engine, file-format support, and accessibility foundations.
 [Headless UI evidence plan](docs/HEADLESS_UI_EVIDENCE.md) ·
 [Screenshot index](docs/SCREENSHOTS.md)
 
+**[Download the latest Windows x64 MSI](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/latest/download/LibreOfficeMaterial-Windows-x64.msi)** ·
+[Release details](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+
 ## What is true today
 
 | Area | State | Evidence |
@@ -87,7 +88,7 @@ document engine, file-format support, and accessibility foundations.
 | Headless harness | LibreOffice smoke and bounded UNO collection passed | The sibling low-level driver launched the MSI payload on an off-screen Windows desktop, resolved stable runtime ownership, captured both states, drove background navigation, collected two bounded UNO trees with no collector errors, shut down normally, and released the desktop; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
 | Windows updater | Corrected source rebuilt and UI-smoked; updater flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. Commit `fbba560e2` fixed the launch site to forward all five generated arguments, including `REBOOT=ReallySuppress`; its focused VS 2026 updater test and incremental product/MSI build passed, and the corrected extracted runtime passed the scoped headless Start Center/UNO smoke. Download/stage/consent/install and MSI install/repair/upgrade/restart-suppression lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
-| Installer / release | Older normal release and public bytes verified; corrected release pending | The public, normal, non-prerelease `windows-msi-local-20260720-577059e274` release targets `577059e274` and has exactly four assets. Cache-busted Latest downloads matched all release bytes and hashes; its unsigned 199,692,288-byte MSI is `437b059c…54a43`. This older binary omits the fifth updater launch argument. The corrected unsigned MSI is 199,688,192 bytes (`180e511c…afeea`); administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO rerun. A corrected normal release remains pending |
+| Installer / release | Corrected normal Latest release and four public assets verified | The public, normal, non-draft, non-prerelease `windows-msi-local-20260720-fbba560e2` release targets exact source `fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four assets. Cache-busted Latest downloads matched every corrected release size and hash; its unsigned 199,688,192-byte MSI is `180e511c…afeea`. Administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO rerun. MSI install/repair/upgrade/uninstall and restart-suppression lifecycle proof remain open |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -279,16 +280,22 @@ remains available), creates a draft release, uploads the validated MSI and updat
 metadata directly to that release, and checks the exact target, asset names,
 upload states, sizes, and digests. It then promotes the verified draft to a normal
 public, non-prerelease Latest release and checks the public Latest feed. Only
-diagnostics use an Actions artifact, and a failed draft is cleaned up. An
-independently staged normal release now exists at
-`windows-msi-local-20260720-577059e274` with the expected four assets, but the
-workflow run for `b0e3ea766` is still in progress and has not published its
-per-push release. After an initial propagation 404, cache-busted unauthenticated
-Latest downloads for the XML (976 bytes), JSON manifest (943 bytes), checksum
-sidecar (102 bytes), and MSI (199,692,288 bytes) all matched the release assets
-and their SHA-256 values exactly. The existing release contains the older launch
-omission; the corrected `fbba560e2` MSI has completed the scoped headless UI/UNO
-verification but must receive its own release before it replaces that candidate.
+diagnostics use an Actions artifact, and a failed draft is cleaned up. The
+independently staged corrected release
+[`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+is now the normal public, non-prerelease Latest release. It targets exact source
+`fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four assets.
+Cache-busted unauthenticated Latest downloads matched the release assets exactly:
+the 199,688,192-byte MSI is
+`180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`;
+the 102-byte checksum sidecar is
+`e82f022d06665a165b8d0145acac0aae7b39cd9f8b9cbd0f7a1cfa1105021b9e`;
+the 1,011-byte JSON manifest is
+`12e6495e5d5051657dd99e6c0afc6d61941144c1bcde5f792f09a9949bea0fc1`;
+and the 972-byte XML manifest is
+`b686d9e9641360c3962bc27b8b6517b9a76c14c06cd50efbcbcfe485724eab72`.
+Hosted workflow run `29720519794` can remain tracked separately until its exact
+per-push status and release are checked.
 
 ## Product direction
 
@@ -400,11 +407,11 @@ and the imported build files before configuring a machine.
 > all five required native C++ targets, and the Windows run built the full
 > installation set but stopped at MSI staging. Hosted run `29720519794` is now
 > exercising the corrected final-directory rule at pushed commit `b0e3ea766` and
-> remains in progress. A separate normal public, non-prerelease release exists at
-> `windows-msi-local-20260720-577059e274`, but its older MSI predates the corrected
-> five-argument updater launch. Its four public Latest assets have now been
-> independently downloaded and matched byte-for-byte. No updater-runtime result
-> is claimed.
+> remains in progress. A separate corrected normal public, non-prerelease Latest
+> release exists at `windows-msi-local-20260720-fbba560e2`; it targets
+> `fbba560e27db26de605c40aa237c554c1f0744b1`, and its four public assets have
+> been independently downloaded and matched byte-for-byte. This publication does
+> not establish updater-runtime or MSI lifecycle behavior.
 
 > **Optional local VS 2026 profile:** Visual Studio 2022 remains the default
 > and the profile that matches the current Windows CI workflow. To select VS
@@ -436,8 +443,9 @@ and the imported build files before configuring a machine.
 > generated updater argument. Commit `fbba560e2` forwards all five, including
 > `REBOOT=ReallySuppress`; its focused updater target, incremental product build,
 > corrected 199,688,192-byte MSI, administrative extraction, and updater-DLL hash
-> match and corrected scoped headless UI/UNO rerun passed. Its corrected release
-> and MSI lifecycle proof remain open. Remaining
+> match, corrected scoped headless UI/UNO rerun, and corrected normal public
+> release all passed. MSI install/repair/upgrade/uninstall and restart-suppression
+> lifecycle proof remain open. Remaining
 > gates are stated in the evidence manifest.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing

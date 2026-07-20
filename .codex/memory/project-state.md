@@ -14,8 +14,9 @@ licensing and provenance.
 
 **Phase 1 — tenth Material VCL and Windows updater source milestones published;
 corrected exact-source local MSI and canonical light Start Center smoke recorded;
-suite-wide work continues. The older normal release is public, while the
-corrected release and Phase 0's full reproducibility gate remain open.**
+suite-wide work continues. The corrected normal public Latest release and its
+four assets are verified, while Phase 0's full reproducibility and installer
+lifecycle gates remain open.**
 
 The repository contains an imported LibreOffice source baseline, ten native
 Material source milestones, a design contract, roadmap, published GitHub Pages
@@ -87,12 +88,15 @@ retained. It uploads the validated MSI and update metadata directly to a draft,
 verifies the exact target, asset names, upload states, sizes, and digests before
 promoting the draft to a normal public non-prerelease Latest release, verifies
 the public Latest feed, and removes a failed draft. Only diagnostics use an
-Actions artifact. A normal older `577059e274` release has four publicly verified
-assets; publication of the corrected `fbba560e27` candidate remains pending.
+Actions artifact. The corrected
+[`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+release is normal, public, non-draft, non-prerelease, and Latest. It targets
+exact source `fbba560e27db26de605c40aa237c554c1f0744b1` and has exactly four
+publicly byte-verified assets.
 
-The exact-source local builds and light Start Center smoke do not prove a
-whole-GUI rewrite, updater runtime, installer lifecycle, corrected release, or
-any completed application surface.
+The exact-source local builds, corrected release, and light Start Center smoke
+do not prove a whole-GUI rewrite, updater runtime, installer lifecycle, or any
+completed application surface.
 
 Preceding Windows Actions run `29678095646` at
 `937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
@@ -104,8 +108,7 @@ internal PushButton header required by the focused VCL test. The target now
 declares `VCL_INTERNALS`, matching the existing lifecycle test. Subsequent
 current-source Linux/Windows runs passed all five targets, and the exact-source
 local VS 2026 build plus light Start Center/UNO-tree smoke are registered.
-Normal public release, updater, installer lifecycle, and broader runtime matrix
-remain open.
+Updater, installer lifecycle, and the broader runtime matrix remain open.
 Public assetless release/tag `e` remains non-evidence.
 
 ## Recorded facts
@@ -286,6 +289,22 @@ Public assetless release/tag `e` remains non-evidence.
   normal, matching process/window counts reached zero, and the desktop closed.
   This is runtime-only proof and does not cover MSI install, repair, upgrade,
   uninstall, or restart suppression.
+- Corrected release
+  [`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+  was published on 2026-07-20 at 06:44:07 UTC as a normal public, non-draft,
+  non-prerelease Latest release targeting exact source
+  `fbba560e27db26de605c40aa237c554c1f0744b1`. Its exactly four cache-busted
+  public Latest downloads matched the release: MSI 199,688,192 bytes,
+  `180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`;
+  sidecar 102 bytes,
+  `e82f022d06665a165b8d0145acac0aae7b39cd9f8b9cbd0f7a1cfa1105021b9e`;
+  JSON manifest 1,011 bytes,
+  `12e6495e5d5051657dd99e6c0afc6d61941144c1bcde5f792f09a9949bea0fc1`;
+  and XML manifest 972 bytes,
+  `b686d9e9641360c3962bc27b8b6517b9a76c14c06cd50efbcbcfe485724eab72`.
+  This proves publication and public bytes, not updater execution or MSI
+  lifecycle behavior. The older `577059e274` release remains historical and
+  retains its missing-fifth-launch-argument warning.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, accepted-run commit
   `beed66ca6ed2503e6170ee1e1158247f1c2f0140` (clean `main`, 0/0 from origin).
 - A read-only driver audit found the same clean commit serving MCP on
@@ -368,18 +387,16 @@ Public assetless release/tag `e` remains non-evidence.
 
 ## Required next gates
 
-1. complete the local wrapper's final dist staging/manifest phase and the hosted
-   clean-LF Windows auto-release workflow for corrected source;
-2. publish and verify the corrected public normal, non-prerelease release, exact
-   four assets, Latest feed, MSI hash, and updater XML;
-3. build/runtime-verify dark, high contrast, accelerated rendering, keyboard
+1. complete the local wrapper's final dist staging/manifest phase and verify the
+   exact hosted clean-LF Windows auto-release workflow result for corrected source;
+2. build/runtime-verify dark, high contrast, accelerated rendering, keyboard
    focus, shape and metric geometry, and
    high-contrast routing; complete forced-color/platform signal coverage; and
    implement density-aware metric resolution plus the remaining token families
    and VCL primitives;
-4. exercise updater download/protected stage/default-No consent/MSI launch and
+3. exercise updater download/protected stage/default-No consent/MSI launch and
    restart suppression, plus install/upgrade/uninstall lifecycle;
-5. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
+4. continue through every phase in `ROADMAP.md` without skipping suite surfaces.
 
 ## Known evidence gaps
 
@@ -387,7 +404,7 @@ Public assetless release/tag `e` remains non-evidence.
 - no updater download, protected-stage, consent, or MSI-launch flow has been
   runtime-verified;
 - the local wrapper did not complete final dist staging/manifest copy after the
-  successful MSI extraction; corrected release publication remains pending;
+  successful MSI extraction;
 - dark/high-contrast, accelerated, keyboard/focus, localization, installer,
   updater, and suite-wide runtime/accessibility coverage remain pending.
 

@@ -105,7 +105,22 @@ exactly the MSI, checksum sidecar, JSON build manifest, and XML update manifest,
 and its unsigned 199,692,288-byte MSI has SHA-256 `437b059c…54a43`. After an
 initial propagation delay, cache-busted unauthenticated Latest downloads for all
 four assets matched the release sizes and SHA-256 values exactly. This is a real
-release, but not the corrected updater candidate described below.
+historical release, but not the corrected updater candidate described below.
+
+The corrected candidate was subsequently published as the normal public,
+non-draft, non-prerelease Latest release
+[`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2)
+on 2026-07-20 at 06:44:07 UTC. It targets exact product source
+`fbba560e27db26de605c40aa237c554c1f0744b1` and contains exactly four public
+assets. Cache-busted unauthenticated Latest downloads matched the published
+sizes and SHA-256 values: MSI 199,688,192 bytes,
+`180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`;
+sidecar 102 bytes,
+`e82f022d06665a165b8d0145acac0aae7b39cd9f8b9cbd0f7a1cfa1105021b9e`;
+JSON manifest 1,011 bytes,
+`12e6495e5d5051657dd99e6c0afc6d61941144c1bcde5f792f09a9949bea0fc1`;
+and XML manifest 972 bytes,
+`b686d9e9641360c3962bc27b8b6517b9a76c14c06cd50efbcbcfe485724eab72`.
 
 The local script is intentionally non-destructive: it checks safe short roots,
 both tool/build-drive free space, and a clean checkout before installing
@@ -151,10 +166,11 @@ Home/Recent Documents and Templates smoke with two complete bounded UNO trees:
 normal termination, zero remaining matching processes/windows, and a closed
 desktop. The accepted run is
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/).
-A corrected normal release, updater download/stage/consent flow, MSI
-install/repair/upgrade/restart-suppression lifecycle proof, the remaining
-UI/accessibility matrix, and the wrapper's final dist staging phase remain
-pending. This scoped runtime smoke does not prove any MSI lifecycle behavior.
+The corrected normal release and its four public Latest assets are verified.
+Updater download/stage/consent flow, MSI install/repair/upgrade/uninstall and
+restart-suppression lifecycle proof, the remaining UI/accessibility matrix, and
+the wrapper's final dist staging phase remain pending. This scoped runtime smoke
+does not prove any MSI lifecycle behavior.
 
 An interactive, dependency-free Material design reference for the whole suite is
 published at [`site/prototype.html`](site/prototype.html): a hand-built HTML
@@ -168,10 +184,12 @@ every search bar, and a Find & Replace dialog. Its tokens mirror
 (7/7). It specifies the design the native work targets and is **not** a capture
 of a compiled build, so it does not advance any acceptance gate or the
 verified-capture count. The exact-source local MSI and Start Center evidence are
-tracked separately. The normal `windows-msi-local-20260720-577059e274` release
-has four byte-verified public assets, but its MSI predates the five-argument
-updater-launch correction and therefore does not close the updater runtime or
-restart-suppression gate. The historical assetless release/tag `e` contains no
+tracked separately. The corrected normal
+`windows-msi-local-20260720-fbba560e2` Latest release has four byte-verified
+public assets and targets the five-argument updater-launch correction. Release
+publication is complete, but it does not close the updater runtime or
+restart-suppression lifecycle gate. The older `577059e274` release remains
+historical with its launch-argument warning. The historical assetless release/tag `e` contains no
 build and does not satisfy any release or evidence gate. Neither package workflow
 publishes unless a real package is produced and validated.
 
@@ -391,8 +409,8 @@ Exit gate:
 
 ## Phase 8 — release readiness and upstreamability
 
-**Status: in progress — older normal release and public assets verified;
-corrected updater release and runtime proof pending**
+**Status: in progress — corrected normal release and public assets verified;
+updater and MSI lifecycle proof pending**
 
 - complete native validation of the Windows updater and stable packaging path;
 - preserve the exact GitHub Latest XML, strict MSI metadata/hash checks,

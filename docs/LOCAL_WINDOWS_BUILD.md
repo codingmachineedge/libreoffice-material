@@ -204,6 +204,13 @@ normal, non-prerelease `windows-msi-local-20260720-577059e274` release and all
 four public Latest assets were byte-verified, but that older binary omitted the
 fifth generated updater launch argument. Commit `fbba560e2` corrects the launch,
 and its incremental VS 2026 product/MSI rebuild, administrative extraction, and
-headless UI/UNO rerun passed. No installer lifecycle or restart-suppression
-runtime result is implied. Exact runtime boundaries are in
+headless UI/UNO rerun passed. That corrected 199,688,192-byte MSI was published
+as normal public, non-draft, non-prerelease Latest release
+[`windows-msi-local-20260720-fbba560e2`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-fbba560e2),
+targeting exact source `fbba560e27db26de605c40aa237c554c1f0744b1`.
+Cache-busted public Latest downloads matched all four corrected assets; the MSI
+SHA-256 is
+`180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`.
+No installer lifecycle or restart-suppression runtime result is implied. Exact
+runtime boundaries are in
 [`HEADLESS_UI_EVIDENCE.md`](HEADLESS_UI_EVIDENCE.md).
