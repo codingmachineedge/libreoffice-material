@@ -14,10 +14,33 @@ $screenshotRoot = Join-Path $temporaryRoot 'screenshots'
 $logsRoot = Join-Path $temporaryRoot 'logs'
 $screenshotPath = Join-Path $screenshotRoot 'focus.png'
 $a11yPath = Join-Path $logsRoot 'a11y-focus.json'
+$knownAnswerPath = Join-Path $temporaryRoot 'sha256-known-answer.bin'
 
 function Write-Candidate {
     param([Parameter(Mandatory = $true)] [object]$Candidate)
     $Candidate | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $candidatePath -Encoding utf8
+}
+
+function Get-Sha256Hex {
+    param([Parameter(Mandatory = $true)] [string]$Path)
+
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [System.IO.File]::Open(
+            $Path,
+            [System.IO.FileMode]::Open,
+            [System.IO.FileAccess]::Read,
+            [System.IO.FileShare]::Read
+        )
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        $bytes = $algorithm.ComputeHash($stream)
+        return [System.BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        if ($null -ne $stream) { $stream.Dispose() }
+        if ($null -ne $algorithm) { $algorithm.Dispose() }
+    }
 }
 
 function Assert-Rejected {
@@ -55,13 +78,22 @@ function Write-A11yFixture {
     )
     $item = Get-Item -LiteralPath $a11yPath
     $Candidate.scenarios[0].accessibility.bytes = [long]$item.Length
-    $Candidate.scenarios[0].accessibility.sha256 = `
-        (Get-FileHash -LiteralPath $a11yPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $Candidate.scenarios[0].accessibility.sha256 = Get-Sha256Hex -Path $a11yPath
 }
 
 New-Item -ItemType Directory -Path $temporaryRoot, $screenshotRoot, $logsRoot `
     -ErrorAction Stop | Out-Null
 try {
+    [System.IO.File]::WriteAllBytes(
+        $knownAnswerPath,
+        [System.Text.Encoding]::ASCII.GetBytes('abc')
+    )
+    $knownAnswer = Get-Sha256Hex -Path $knownAnswerPath
+    if ($knownAnswer -ne `
+        'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad') {
+        throw "Direct .NET SHA-256 known-answer test failed: $knownAnswer"
+    }
+
     $hash = 'a' * 64
     $commit = 'b' * 40
     # The contract reads only the PNG signature and IHDR dimensions; no image
@@ -72,8 +104,7 @@ try {
         0, 0, 7, 128, 0, 0, 4, 56
     ))
     $screenshotItem = Get-Item -LiteralPath $screenshotPath
-    $screenshotHash = (Get-FileHash -LiteralPath $screenshotPath `
-        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $screenshotHash = Get-Sha256Hex -Path $screenshotPath
     $a11yReport = [ordered]@{
         run_id = '20990101-000000-bbbbbbbbbb-windows-headless-light'
         screenshot_sha256 = $screenshotHash
@@ -391,6 +422,38 @@ try {
     & $validator -Path $candidatePath -RequireAccepted | Out-Null
 
     $runnerText = Get-Content -LiteralPath $runner -Raw
+    $validatorText = Get-Content -LiteralPath $validator -Raw
+    $qaText = Get-Content -LiteralPath $PSCommandPath -Raw
+    $legacyHashCommand = 'Get-' + 'FileHash'
+    foreach ($source in @(
+        @{ name = 'runner'; text = $runnerText },
+        @{ name = 'validator'; text = $validatorText },
+        @{ name = 'contract regression'; text = $qaText }
+    )) {
+        if ($source.text.Contains($legacyHashCommand)) {
+            throw "$($source.name) still depends on the legacy file-hash cmdlet."
+        }
+        if (-not $source.text.Contains(
+            '[System.Security.Cryptography.SHA256]::Create()')) {
+            throw "$($source.name) is missing the direct .NET SHA-256 helper."
+        }
+    }
+
+    $identityIndex = $runnerText.IndexOf('$versionMetadataIdentity =')
+    $wrapperWriteIndex = $runnerText.IndexOf('Write-Utf8Lf -Path $wrapperPath')
+    $wrapperRemovalIndex = $runnerText.IndexOf(
+        'Remove-Item -LiteralPath $wrapperPath',
+        $wrapperWriteIndex
+    )
+    $resultsIndex = $runnerText.IndexOf('$results = [ordered]@{')
+    if ($identityIndex -lt 0 -or $wrapperWriteIndex -le $identityIndex) {
+        throw 'Runner must precompute fallible evidence identities before writing the wrapper.'
+    }
+    if ($wrapperRemovalIndex -le $wrapperWriteIndex -or `
+        $resultsIndex -le $wrapperRemovalIndex) {
+        throw 'Runner must remove a path-bearing wrapper when wrapper preflight fails.'
+    }
+
     foreach ($needle in @(
         "Join-Path `$programRoot 'version.ini'",
         'upstream_baseline',

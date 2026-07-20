@@ -98,6 +98,28 @@ function Assert-Commit {
     Assert-Evidence ($Value -cmatch '^[0-9a-f]{40}$') "$Name must be a lowercase full commit ID."
 }
 
+function Get-Sha256Hex {
+    param([Parameter(Mandatory = $true)] [string]$Path)
+
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [System.IO.File]::Open(
+            $Path,
+            [System.IO.FileMode]::Open,
+            [System.IO.FileAccess]::Read,
+            [System.IO.FileShare]::Read
+        )
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        $bytes = $algorithm.ComputeHash($stream)
+        return [System.BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        if ($null -ne $stream) { $stream.Dispose() }
+        if ($null -ne $algorithm) { $algorithm.Dispose() }
+    }
+}
+
 function Resolve-RunArtifactPath {
     param(
         [Parameter(Mandatory = $true)] [string]$ManifestRoot,
@@ -140,7 +162,7 @@ function Assert-ArtifactFileIdentity {
     $item = Get-Item -LiteralPath $ArtifactPath
     Assert-Evidence ([long]$Record.bytes -eq [long]$item.Length) `
         "$Description byte count does not match the file."
-    $actualHash = (Get-FileHash -LiteralPath $ArtifactPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $actualHash = Get-Sha256Hex -Path $ArtifactPath
     Assert-Evidence ([string]$Record.sha256 -ceq $actualHash) `
         "$Description SHA-256 does not match the file."
 }

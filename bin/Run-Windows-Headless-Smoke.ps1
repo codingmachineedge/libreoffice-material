@@ -114,6 +114,28 @@ function Write-JsonFile {
     Write-Utf8Lf -Path $Path -Text (($Value | ConvertTo-Json -Depth 20) + "`n")
 }
 
+function Get-Sha256Hex {
+    param([Parameter(Mandatory = $true)] [string]$Path)
+
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [System.IO.File]::Open(
+            $Path,
+            [System.IO.FileMode]::Open,
+            [System.IO.FileAccess]::Read,
+            [System.IO.FileShare]::Read
+        )
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        $bytes = $algorithm.ComputeHash($stream)
+        return [System.BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        if ($null -ne $stream) { $stream.Dispose() }
+        if ($null -ne $algorithm) { $algorithm.Dispose() }
+    }
+}
+
 function Invoke-EvidenceGit {
     param(
         [Parameter(Mandatory = $true)] [string]$Root,
@@ -187,7 +209,7 @@ function Get-EvidenceFileIdentity {
     $identity = [ordered]@{
         path = $PublicPath
         bytes = [long]$item.Length
-        sha256 = (Get-FileHash -LiteralPath $item.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+        sha256 = Get-Sha256Hex -Path $item.FullName
     }
     if ($RuntimeOnly) {
         $identity.Add('retained_in_public_evidence', $false)
@@ -643,7 +665,7 @@ function Capture-State {
     $a11y = Get-Content -LiteralPath $a11yPath -Raw | ConvertFrom-Json
     $a11ySummary = Assert-A11yReport -Report $a11y -RequireFocused:$RequireFocused
     $a11yFile = Get-Item -LiteralPath $a11yPath
-    $a11yHash = (Get-FileHash -LiteralPath $a11yPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $a11yHash = Get-Sha256Hex -Path $a11yPath
 
     return [ordered]@{
         id = $ScenarioId
@@ -872,11 +894,51 @@ set "SAL_LOG=+WARN.vcl.gdi"
 "$soffice" -env:UserInstallation=$profileUri --nologo --norestore --quickstart=no --language=en-US --pidfile="$pidPath" $acceptArgument 1>"$stdoutPath" 2>"$stderrPath"
 exit /b %ERRORLEVEL%
 "@
-Write-Utf8Lf -Path $wrapperPath -Text $wrapper
-
 $existing = @(Get-ExactPayloadProcesses -ProgramRoot $programRoot)
 if ($existing.Count -ne 0) {
     throw "Exact payload already has running processes: $($existing | ConvertTo-Json -Compress)"
+}
+
+# Finish every fallible provenance/hash probe before writing the path-bearing
+# runtime wrapper. A failed preflight therefore cannot strand that private file.
+$versionMetadataIdentity = Get-EvidenceFileIdentity -Path $versionIniPath `
+    -PublicPath 'program/version.ini'
+$harnessEntrypointIdentity = Get-EvidenceFileIdentity -Path $PSCommandPath `
+    -PublicPath 'bin/Run-Windows-Headless-Smoke.ps1'
+$harnessDependencyIdentities = @(
+    (Get-EvidenceFileIdentity -Path $script:McpClientPath `
+        -PublicPath 'bin/call-lowlevel-mcp.py'),
+    (Get-EvidenceFileIdentity -Path $script:PngAnalyzerPath `
+        -PublicPath 'bin/analyze-png.py'),
+    (Get-EvidenceFileIdentity -Path $script:A11yCollectorPath `
+        -PublicPath 'bin/dump-a11y.py'),
+    (Get-EvidenceFileIdentity -Path $evidenceValidatorPath `
+        -PublicPath 'bin/Validate-Windows-Headless-Evidence.ps1')
+)
+$sofficeIdentity = Get-EvidenceFileIdentity -Path $soffice `
+    -PublicPath 'program/soffice.exe'
+$runtimeIdentity = Get-EvidenceFileIdentity -Path $sofficeBin `
+    -PublicPath 'program/soffice.bin'
+$updaterIdentity = Get-EvidenceFileIdentity -Path $updaterLibrary `
+    -PublicPath 'program/updchklo.dll'
+$themeIdentity = Get-EvidenceFileIdentity -Path $materialThemeDefinition `
+    -PublicPath 'share/theme_definitions/material/definition.xml'
+$pythonIdentity = Get-EvidenceFileIdentity -Path $script:PayloadPython `
+    -PublicPath 'program/python.exe'
+$profileConfigurationIdentity = Get-EvidenceFileIdentity -Path $profileConfigPath `
+    -PublicPath 'profile/user/registrymodifications.xcu' -RuntimeOnly
+$harnessWindowsSessionId = [int](Get-Process -Id $PID -ErrorAction Stop).SessionId
+
+try {
+    Write-Utf8Lf -Path $wrapperPath -Text $wrapper
+    $launchWrapperIdentity = Get-EvidenceFileIdentity -Path $wrapperPath `
+        -PublicPath 'launch-headless.cmd' -RuntimeOnly
+}
+catch {
+    if (Test-Path -LiteralPath $wrapperPath -PathType Leaf) {
+        Remove-Item -LiteralPath $wrapperPath -Force -ErrorAction SilentlyContinue
+    }
+    throw
 }
 
 $results = [ordered]@{
@@ -894,8 +956,7 @@ $results = [ordered]@{
         checkout_dirty = (-not $sourceIdentity.checkout_clean)
         dirty_worktree_entries = @($sourceIdentity.dirty_worktree_entries)
         embedded_build_id = $embeddedBuildId
-        version_metadata = (Get-EvidenceFileIdentity -Path $versionIniPath `
-            -PublicPath 'program/version.ini')
+        version_metadata = $versionMetadataIdentity
     }
     harness = [ordered]@{
         repository = $harnessIdentity.repository
@@ -903,18 +964,8 @@ $results = [ordered]@{
         checkout_clean = $harnessIdentity.checkout_clean
         checkout_dirty = (-not $harnessIdentity.checkout_clean)
         dirty_worktree_entries = @($harnessIdentity.dirty_worktree_entries)
-        entrypoint = (Get-EvidenceFileIdentity -Path $PSCommandPath `
-            -PublicPath 'bin/Run-Windows-Headless-Smoke.ps1')
-        dependencies = @(
-            (Get-EvidenceFileIdentity -Path $script:McpClientPath `
-                -PublicPath 'bin/call-lowlevel-mcp.py'),
-            (Get-EvidenceFileIdentity -Path $script:PngAnalyzerPath `
-                -PublicPath 'bin/analyze-png.py'),
-            (Get-EvidenceFileIdentity -Path $script:A11yCollectorPath `
-                -PublicPath 'bin/dump-a11y.py'),
-            (Get-EvidenceFileIdentity -Path $evidenceValidatorPath `
-                -PublicPath 'bin/Validate-Windows-Headless-Evidence.ps1')
-        )
+        entrypoint = $harnessEntrypointIdentity
+        dependencies = @($harnessDependencyIdentities)
     }
     appearance = $Appearance
     profile_values = [ordered]@{
@@ -947,27 +998,18 @@ $results = [ordered]@{
         }
     }
     application = [ordered]@{
-        executable = (Get-EvidenceFileIdentity -Path $soffice `
-            -PublicPath 'program/soffice.exe')
-        runtime_executable = (Get-EvidenceFileIdentity -Path $sofficeBin `
-            -PublicPath 'program/soffice.bin')
-        updater_library = (Get-EvidenceFileIdentity -Path $updaterLibrary `
-            -PublicPath 'program/updchklo.dll')
-        material_theme_definition = (Get-EvidenceFileIdentity `
-            -Path $materialThemeDefinition `
-            -PublicPath 'share/theme_definitions/material/definition.xml')
-        python_executable = (Get-EvidenceFileIdentity -Path $script:PayloadPython `
-            -PublicPath 'program/python.exe')
+        executable = $sofficeIdentity
+        runtime_executable = $runtimeIdentity
+        updater_library = $updaterIdentity
+        material_theme_definition = $themeIdentity
+        python_executable = $pythonIdentity
         arguments = @($publicApplicationArguments)
         arguments_path_tokenized = $true
-        launch_wrapper = (Get-EvidenceFileIdentity -Path $wrapperPath `
-            -PublicPath 'launch-headless.cmd' -RuntimeOnly)
+        launch_wrapper = $launchWrapperIdentity
         isolated_profile_root = 'profile'
         user_profile_root = 'profile/user'
         user_installation_uri = $publicProfileUri
-        profile_configuration = (Get-EvidenceFileIdentity -Path $profileConfigPath `
-            -PublicPath 'profile/user/registrymodifications.xcu' `
-            -RuntimeOnly)
+        profile_configuration = $profileConfigurationIdentity
         uno_pipe = $script:UnoPipe
         uno_accept_argument = $acceptArgument
         pid_file = $publicPidPath
@@ -988,7 +1030,7 @@ $results = [ordered]@{
         session = [ordered]@{
             mode = 'dedicated same-token server process'
             harness_pid = $PID
-            harness_windows_session_id = [int](Get-Process -Id $PID).SessionId
+            harness_windows_session_id = $harnessWindowsSessionId
             server_windows_session_id = $null
             same_windows_session = $null
             token_inheritance = 'Start-Process inherited the harness token'
