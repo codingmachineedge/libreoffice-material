@@ -223,3 +223,15 @@ SHA-256 is
 No installer lifecycle or restart-suppression runtime result is implied. Exact
 runtime boundaries are in
 [`HEADLESS_UI_EVIDENCE.md`](HEADLESS_UI_EVIDENCE.md).
+
+On 2026-07-20, the retained clean VS 2026 build root was advanced forward to
+exact source `393263ad924eae8d64b4f9a35bd6486ef83578fc` after preserving its
+prior state. No configure-sensitive source changed. The wrapper's full product
+build, five required native targets and CLI payload checks, MSI staging, and
+waited administrative extraction all passed. The new unsigned 199,651,328-byte
+MSI has SHA-256
+`7e8b10575d3a70f8a09f8e5a2f9dcd911b890441fa2493670c4721fa18fd00e9`,
+embeds that exact build ID, contains one `soffice.exe`, and packages a Start
+Center whose footer has Help and Extensions but no `donate` or `donate_image`
+widget. This MSI was extracted and exercised off screen; it was not installed
+on the host and has not yet replaced the older public Latest release.

@@ -274,7 +274,10 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           PowerShell 5.1/7 static validation covers that sequencing fix. Exact
           implementation commit <code>7029dccf4</code> then passed all five VS
           2026 native targets, full product/MSI regeneration, extraction, and
-          canonical MSI/checksum/manifest staging.
+          canonical MSI/checksum/manifest staging. Exact post-footer-removal
+          commit <code>393263ad9</code> then passed the same product/native/MSI
+          path; its 199,651,328-byte MSI and accepted light off-screen run show
+          Help and Extensions with no footer Donate control.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule
@@ -418,10 +421,12 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
             <p class="eyebrow">Verified visual record</p>
             <h2 id="evidence-title">The real Windows app, with its limits attached.</h2>
             <p>
-              The Start Center images come from corrected exact-source Windows
-              MSI payload <code>fbba560e27</code> and passed manifest, commit,
-              scenario, hash, cleanup, and sensitive-data review. Empty cards
-              remain evidence slots, not mocks.
+              The newest light Start Center images come from exact-source
+              Windows MSI payload <code>393263ad9</code>; dark and forced high
+              contrast remain accepted earlier-payload evidence. Every shown
+              image passed manifest, commit, scenario, hash, cleanup, and
+              sensitive-data review. Empty cards remain evidence slots, not
+              mocks.
             </p>
           </div>
           <a
@@ -433,14 +438,14 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         <div class="evidence-grid">
           <article class="evidence-card evidence-card-captured">
             <div class="evidence-captures">
-              <a href="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-light.png">
-                <img src="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-light.png" alt="Exact-build LibreOfficeDev light Start Center Home and Recent Documents view running off screen on Windows" loading="lazy">
+              <a href="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-light.png">
+                <img src="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-light.png" alt="Exact-build LibreOfficeDev light Start Center with Help and Extensions only in the footer" loading="lazy">
               </a>
-              <a href="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-light-keyboard-focus.png">
-                <img src="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-light-keyboard-focus.png" alt="Exact-build LibreOfficeDev light Start Center with visible keyboard focus on Open File" loading="lazy">
+              <a href="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-light-keyboard-focus.png">
+                <img src="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-light-keyboard-focus.png" alt="Exact-build LibreOfficeDev light Start Center with visible keyboard focus and no footer Donate button" loading="lazy">
               </a>
-              <a href="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-templates-light.png">
-                <img src="evidence/20260720-135505-7029dccf40-windows-headless-light/start-center-templates-light.png" alt="Exact-build LibreOfficeDev light Templates gallery after background navigation on the off-screen Windows desktop" loading="lazy">
+              <a href="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-templates-light.png">
+                <img src="evidence/20260720-143309-393263ad92-windows-headless-light/start-center-templates-light.png" alt="Exact-build LibreOfficeDev light Templates gallery with Help and Extensions only in the footer" loading="lazy">
               </a>
               <a href="evidence/20260720-140327-7029dccf40-windows-headless-dark/start-center-dark.png">
                 <img src="evidence/20260720-140327-7029dccf40-windows-headless-dark/start-center-dark.png" alt="Exact-build LibreOfficeDev dark Start Center running on an off-screen Windows desktop" loading="lazy">

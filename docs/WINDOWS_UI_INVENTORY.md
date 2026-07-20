@@ -34,17 +34,17 @@ Evidence keys:
 
 - `E-BLD` — the exact-source Windows MSI/installation set and five required
   native targets at
-  [`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3),
+  [`393263ad924eae8d64b4f9a35bd6486ef83578fc`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/393263ad924eae8d64b4f9a35bd6486ef83578fc),
   recorded in the [roadmap](../ROADMAP.md) and
   [local build record](LOCAL_WINDOWS_BUILD.md). This proves compilation and
   focused source tests, not a rendered component.
 - `E-SC` — nine accepted Start Center images plus bounded UNO trees: light,
   dark, and forced high contrast, each at Home, visible Tab focus, and
   Templates. The light trio is from exact source
-  [`7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3);
-  dark also comes from `7029dccf4`, while high contrast remains from
+  [`393263ad924eae8d64b4f9a35bd6486ef83578fc`](https://github.com/Ding-Ding-Projects/libreoffice-material/commit/393263ad924eae8d64b4f9a35bd6486ef83578fc);
+  dark remains from `7029dccf4`, while high contrast remains from
   `fbba560e27`. Exact run manifests:
-  [light](evidence/runs/20260720-135505-7029dccf40-windows-headless-light/manifest.json),
+  [light](evidence/runs/20260720-143309-393263ad92-windows-headless-light/manifest.json),
   [dark](evidence/runs/20260720-140327-7029dccf40-windows-headless-dark/manifest.json),
   and [forced high contrast](evidence/runs/20260720-033338-fbba560e27-windows-headless-highcontrast/manifest.json).
   See also the [screenshot index](SCREENSHOTS.md) and
@@ -144,7 +144,7 @@ The design owners are chapters [08](design/08-dialogs.md) and
 | WIN-DLG-003 | Save As and Windows file picker | `sfx2/source/dialog/filedlghelper.cxx`, `fpicker/source/win32` | upstream Windows flow exists; Material/fallback contract unverified | E-PROT | SRC, PX, MATRIX, FLOW, A11Y, LOC, COMPAT | `✓ · · · · · · · ·` |
 | WIN-DLG-004 | Print dialog | `vcl/uiconfig/ui/printdialog.ui`, `sfx2/source/doc/printhelper.cxx` | upstream dialog exists; Material composition target only | E-PROT | SRC, PX, MATRIX, FLOW, A11Y, LOC, PERF, COMPAT | `✓ · · · · · · · ·` |
 | WIN-DLG-005 | Find & Replace dialog + regex builder | `svx/uiconfig/ui/findreplacedialog.ui`, `svx/source/dialog`; builder unassigned | upstream dialog exists; redesign/builder target only | E-PROT | SRC, PX, MATRIX, FLOW, A11Y, LOC, PERF, COMPAT | `✓ · · · · · · · ·` |
-| WIN-SC-001 | Start Center Home/shared shell | `sfx2/source/dialog/backingwindow.cxx`, `sfx2/uiconfig/ui/startcenter.ui` | Prior Material source/runtime accepted; current Help/Extensions-only footer source validates, but its rebuild/capture is pending | E-BLD, E-SC | current footer B/V/I/A, SC-01 dimensions, width/scale/render MATRIX, PX, FLOW, LOC, PERF, COMPAT | `✓ ✓ △ △ △ △ · · ·` |
+| WIN-SC-001 | Start Center Home/shared shell | `sfx2/source/dialog/backingwindow.cxx`, `sfx2/uiconfig/ui/startcenter.ui` | Current Help/Extensions-only footer built and accepted in light; dark/high-contrast refresh pending | E-BLD, E-SC | current footer dark/high-contrast V/I/A, SC-01 dimensions, width/scale/render MATRIX, PX, FLOW, LOC, PERF, COMPAT | `✓ ✓ ✓ △ △ △ · · ·` |
 | WIN-SC-002 | Open File focus/action flow | same `sfx2` source + `vcl` builder | visible Tab focus and UNO node accepted; hover/press/activation open flow absent | E-SC | SC-02 complete states, file-dialog FLOW, MATRIX, A11Y | `✓ ✓ ✓ △ △ △ · · ·` |
 | WIN-SC-003 | Recent ↔ Templates navigation | `sfx2` recent/template views | Home/Templates states accepted; transition coverage partial | E-SC | SC-03 pointer+keyboard transition, selection semantics, MATRIX | `✓ ✓ ✓ △ △ △ · · ·` |
 | WIN-SC-004 | filter combo, search and actions | `sfx2` combo/actions; search redesign unassigned | closed combo visible; popup/search/builder target unimplemented | E-SC, E-PROT | SRC, SC-04, PX, MATRIX, FLOW, A11Y, LOC | `✓ △ △ △ · △ · · ·` |

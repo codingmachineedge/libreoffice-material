@@ -14,11 +14,13 @@ Current delivery and verification scope is Windows. Cross-platform acceptance
 gates remain documented as deferred future work rather than being removed or
 counted as current evidence.
 
-The current unbuilt Start Center source removes the bottom Donate button,
-member, icon constant, conditional substitution, and donation URL dispatch from
-the footer. Help and Extensions remain, and a focused validator plus six tests
-pass. Existing accepted screenshots still show the old button and remain
-historical evidence until a fresh native build and capture replace them.
+Exact source `393263ad924eae8d64b4f9a35bd6486ef83578fc` removes the bottom
+Donate button, member, icon constant, conditional substitution, and donation
+URL dispatch from the footer. Help and Extensions remain. Its focused validator
+and six tests, VS 2026 product build, five-target native regression phase, MSI
+staging/extraction, and accepted light UI/accessibility smoke pass. Earlier
+screenshots that show the old button remain immutable historical evidence;
+dark and high-contrast refreshes from the current source are still required.
 
 ## Current milestone
 
@@ -402,8 +404,8 @@ Public assetless release/tag `e` remains non-evidence.
   `03C6A068ACAAB96579621CE0BFC4F447C0F43E8EB23DDB5B8665A580E062BFA3`;
   it was not retained because it was unrelated to LibreOffice.
 - Canonical verified exact-source Start Center gallery captures: **9**: three
-  light-profile files from committed-harness run
-  `20260720-135505-7029dccf40-windows-headless-light`, three dark files from
+  Help/Extensions-only light-profile files from committed-harness run
+  `20260720-143309-393263ad92-windows-headless-light`, three dark files from
   `20260720-140327-7029dccf40-windows-headless-dark`, and three
   forced-high-contrast files from
   `20260720-033338-fbba560e27-windows-headless-highcontrast`. Every appearance
@@ -412,12 +414,12 @@ Public assetless release/tag `e` remains non-evidence.
   run `20260720-112425-fbba560e27-windows-headless-light`, earlier corrected light run
   `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression` and older
   `20260720-012853-577059e274-vs2026-msi-raster` pair remain historical accepted
-  proof. The newest light and dark runs used exact source
-  `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`,
-  committed harnesses `861555ee914178cf05f9e39362f6b58bd6d1990f` and
-  `c61a423cd5a764686d703e57a7a6d5889903ba1e`,
-  clean dedicated same-token driver
-  `547a102a49169d41da876de217856229ab7c03a1`, atomically bound HWND/PID/thread/DPI
+  proof. The newest light run used exact source
+  `393263ad924eae8d64b4f9a35bd6486ef83578fc` and that same clean harness
+  revision; the dark run used `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`
+  with harness `c61a423cd5a764686d703e57a7a6d5889903ba1e`. Both used clean,
+  dedicated same-token driver `547a102a49169d41da876de217856229ab7c03a1`,
+  atomically bound HWND/PID/thread/DPI
   inside the off-screen desktop enumeration callback, and ended with normal UNO
   termination, zero exact-payload processes/windows, a closed desktop, and a
   stopped driver. The corrected extracted runtime launched with

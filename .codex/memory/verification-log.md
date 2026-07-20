@@ -1567,3 +1567,24 @@ build or runtime evidence.
   `RemoveExistingProducts` sequence 675, and no `ForceReboot` or
   `ScheduleReboot` action. This closes local build/package provenance, not
   install/update/repair/uninstall or hosted release acceptance.
+
+## 2026-07-20 — footer Donate removal built and accepted in light
+
+- Exact source `393263ad924eae8d64b4f9a35bd6486ef83578fc` passed the focused
+  six-test footer validator, VS 2026 `make build`, all five wrapper native test
+  targets plus CLI payload checks, MSI staging, and administrative extraction.
+- The new unsigned 199,651,328-byte MSI has SHA-256
+  `7e8b10575d3a70f8a09f8e5a2f9dcd911b890441fa2493670c4721fa18fd00e9`.
+  Its manifest and embedded `program/version.ini` build ID both bind to the
+  exact source commit; the extracted `startcenter.ui` contains Help and
+  Extensions and contains neither footer `donate` nor `donate_image` IDs.
+- Accepted off-screen run
+  `20260720-143309-393263ad92-windows-headless-light` captured Home, visible
+  `Open File` Tab focus, and Templates at `1920×1117`. Its complete UNO trees
+  contain 93/46, 93/46, and 108/61 total/visible nodes with zero errors and no
+  truncation. All three reviewed screenshots visibly omit the footer Donate
+  control. Normal UNO termination and every process/window/desktop/driver
+  cleanup gate passed without forced payload cleanup.
+- This is light-profile runtime evidence only. Dark and forced-high-contrast
+  post-removal refreshes, broader dialogs/suite surfaces, updater UI, and MSI
+  lifecycle acceptance remain open.

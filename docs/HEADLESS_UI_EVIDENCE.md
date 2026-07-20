@@ -114,22 +114,23 @@ exercised in accepted light run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/),
 whose two captures remain immutable historical proof.
 
-A fresh run of the newest exact `7029dccf40b4d9851e0ea9f9bb2c03ad5ae405b3`
-MSI payload used committed harness
-`861555ee914178cf05f9e39362f6b58bd6d1990f`, clean driver commit
+A fresh run of the newest exact `393263ad924eae8d64b4f9a35bd6486ef83578fc`
+MSI payload used that same committed harness revision, clean driver commit
 `547a102a49169d41da876de217856229ab7c03a1`, and a dedicated same-token MCP
 session. The driver sampled HWND/PID/thread/DPI atomically inside its off-screen
-desktop enumeration callback. This run supplies the canonical light gallery trio:
+desktop enumeration callback. This run supplies the canonical light gallery
+trio and visibly verifies that the Start Center footer contains Help and
+Extensions but no Donate control:
 
-- Home/Recent Documents captured at `1920×1117`, 203,493 bytes, SHA-256
-  `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`;
+- Home/Recent Documents captured at `1920×1117`, 201,423 bytes, SHA-256
+  `c339a8516ca84489f3a96b53cf63b5e448692cc327c3a7683622d2fa64f5ee84`;
 - one background Tab transition exposed a visible `Open File` focus ring in a
-  203,741-byte `1920×1117` capture, SHA-256
-  `1039f641b724a1b6776f6773e740ce8a81163286439615830f8f5ada16e3ab13`;
-- background pointer navigation reached Templates, whose 211,139-byte
+  201,691-byte `1920×1117` capture, SHA-256
+  `b799b696902744cbb80be340c6319cfa899308031d019bddfa6cd06d2476427b`;
+- background pointer navigation reached Templates, whose 209,254-byte
   `1920×1117` capture has SHA-256
-  `6fd05519a89c9b962fcc980f60a6efcc4e176e3b523e0790e0eec00f27066e5f`;
-- the three bounded UNO trees reported 96/49, 96/49, and 111/64 total/visible
+  `11e3762201ee5b8e516a4cd32b94092491269e1c9415d4d8c181feaa97fc759c`;
+- the three bounded UNO trees reported 93/46, 93/46, and 108/61 total/visible
   nodes, zero errors, and `partial=false`; the focus tree exposes `Open File` as
   its sole `FOCUSED` node;
 - normal UNO termination succeeded without forced process cleanup, exact-payload
@@ -137,7 +138,7 @@ desktop enumeration callback. This run supplies the canonical light gallery trio
   dedicated driver stopped.
 
 The accepted manifest and results are under
-[`20260720-135505-7029dccf40-windows-headless-light`](evidence/runs/20260720-135505-7029dccf40-windows-headless-light/).
+[`20260720-143309-393263ad92-windows-headless-light`](evidence/runs/20260720-143309-393263ad92-windows-headless-light/).
 This verifies only that exact extracted runtime UI. It does not execute or
 prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
 behavior.

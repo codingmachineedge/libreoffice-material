@@ -179,7 +179,7 @@ forced-high-contrast Start Center runs collected nine complete bounded trees
 with no collector errors; this is a
 collector smoke result, not a full accessibility audit.
 The required native targets, local Windows MSI, and newest light Start Center
-headless smoke have completed for exact source `7029dccf4`; the older normal
+headless smoke have completed for exact source `393263ad9`; the older normal
 release and four public Latest assets are also verified. The launch fix at `fbba560e2` passed
 `CppunitTest_extensions_test_update`, an incremental full product/MSI build, and
 Windows Installer administrative extraction. Its corrected unsigned
@@ -190,10 +190,10 @@ Home/Recent Documents, Tab-focus, and Templates smoke with three complete
 bounded UNO trees: 96/49, 96/49, and 111/64 total/visible nodes, zero collector
 errors, no partial capture, normal termination, zero remaining matching
 processes/windows, and closed desktop/driver handles. The newest exact build
-repeated those three states with atomic driver-side HWND/PID/thread/DPI
-ownership proof, normal termination, and complete cleanup; its canonical light
-run is
-[`20260720-135505-7029dccf40-windows-headless-light`](docs/evidence/runs/20260720-135505-7029dccf40-windows-headless-light/results.json).
+removes the footer Donate action, retains Help/Extensions, and repeated those
+three states with atomic driver-side HWND/PID/thread/DPI ownership proof,
+normal termination, and complete cleanup; its canonical light run is
+[`20260720-143309-393263ad92-windows-headless-light`](docs/evidence/runs/20260720-143309-393263ad92-windows-headless-light/results.json).
 The former canonical Home/Templates-only run
 [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/)
 remains historical evidence.
@@ -208,8 +208,8 @@ and
 The corrected normal release and its four public Latest assets are verified.
 Updater download/stage/consent flow, MSI install/repair/upgrade/uninstall and
 restart-suppression lifecycle proof and the remaining UI/accessibility matrix
-remain pending. The wrapper's final dist staging phase passed later at exact
-implementation commit `7029dccf4`. This scoped runtime smoke
+remain pending. The wrapper's final dist staging phase passed again at exact
+implementation commit `393263ad9`. This scoped runtime smoke
 does not prove any MSI lifecycle behavior.
 A fresh exact-tag Sandbox input run
 `20260720-041140-7240676-b3777205bfb344a2977090ba35d643c3` now passes the
@@ -384,8 +384,11 @@ in every appearance profile. Deeper keyboard traversal, visible action-state
 exercise, and broader shared shell scenarios remain open.
 Current source also removes the bottom Donate action and its native/accessibility
 wiring, leaving the Help and Extensions footer actions in contiguous positions;
-a focused source validator and six tests pass. Existing captures predate that
-removal, so native build and refreshed runtime/a11y evidence remain required.
+a focused source validator and six tests pass. Exact commit `393263ad9` also
+passed the VS 2026 product build, five-target native regression phase, MSI
+staging/extraction, and accepted light Home/focus/Templates UI and accessibility
+smoke. Dark and high-contrast refreshes from this exact footer source remain
+open.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
