@@ -12,6 +12,11 @@
 #include <QtInstancePopover.hxx>
 #include <QtInstancePopover.moc>
 
+#include <QtGui/QGuiApplication>
+#include <QtGui/QScreen>
+
+#include <algorithm>
+
 QtInstancePopover::QtInstancePopover(QWidget* pWidget)
     : QtInstanceContainer(pWidget)
 {
@@ -27,10 +32,37 @@ void QtInstancePopover::popup_at_rect(weld::Widget* pParent, const tools::Rectan
 
     GetQtInstance().RunInMainThread([&] {
         QWidget* pPopoverWidget = getQWidget();
-        pPopoverWidget->adjustSize();
         QWidget* pParentWidget = QtInstance::GetQWidget(pParent);
-        QPoint aPos = pParentWidget->mapToGlobal(toQPoint(rRect.BottomLeft()));
+        const QPoint aAnchor = pParentWidget->mapToGlobal(toQPoint(rRect.BottomLeft()));
+        QScreen* pScreen = QGuiApplication::screenAt(aAnchor);
+        if (!pScreen)
+            pScreen = pParentWidget->screen();
+        if (!pScreen)
+            pScreen = QGuiApplication::primaryScreen();
+
+        QRect aWorkArea;
+        if (pScreen)
+        {
+            aWorkArea = pScreen->availableGeometry();
+            const QSize aAvailable = aWorkArea.size();
+            pPopoverWidget->setMinimumSize(pPopoverWidget->minimumSize().boundedTo(aAvailable));
+            pPopoverWidget->setMaximumSize(aAvailable);
+        }
+        pPopoverWidget->adjustSize();
+        if (pScreen)
+            pPopoverWidget->resize(pPopoverWidget->size().boundedTo(aWorkArea.size()));
+
+        QPoint aPos = aAnchor;
         aPos.setX(aPos.x() + rRect.GetWidth() - pPopoverWidget->width() / 2);
+        if (pScreen)
+        {
+            const int nMaximumX
+                = std::max(aWorkArea.left(), aWorkArea.right() - pPopoverWidget->width() + 1);
+            const int nMaximumY
+                = std::max(aWorkArea.top(), aWorkArea.bottom() - pPopoverWidget->height() + 1);
+            aPos.setX(std::clamp(aPos.x(), aWorkArea.left(), nMaximumX));
+            aPos.setY(std::clamp(aPos.y(), aWorkArea.top(), nMaximumY));
+        }
 
         pPopoverWidget->move(aPos);
         pPopoverWidget->show();

@@ -132,7 +132,13 @@ def repository_ui_paths(repo_root: Path) -> list[Path]:
     paths: list[Path] = []
     for raw_path in completed.stdout.decode("utf-8", errors="surrogateescape").split("\0"):
         if raw_path:
-            paths.append(repo_root / PurePosixPath(raw_path))
+            path = repo_root / PurePosixPath(raw_path)
+            # ``git ls-files --cached`` intentionally reports tracked files that
+            # are deleted in the working tree. Treat those as absent so --update
+            # can remove their stale policy rows; compare_contract still fails
+            # closed until the registry is regenerated.
+            if path.is_file():
+                paths.append(path)
     return sorted(paths, key=lambda path: path.relative_to(repo_root).as_posix())
 
 

@@ -136,8 +136,6 @@ constexpr auto SUPPORTED_UI_FILES = frozen::make_unordered_set<std::u16string_vi
     u"cui/ui/tsaurldialog.ui",
     u"cui/ui/uipickerdialog.ui",
     u"cui/ui/uitabpage.ui",
-    u"cui/ui/welcomedialog.ui",
-    u"cui/ui/whatsnewtabpage.ui",
     u"cui/ui/widgettestdialog.ui",
     u"cui/ui/zoomdialog.ui",
     u"dbaccess/ui/advancedsettingsdialog.ui",

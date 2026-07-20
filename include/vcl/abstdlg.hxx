@@ -216,11 +216,6 @@ public:
         const OUString& sTitle, const OUString& sText, const OUString& sQuestion,
         bool bShowAgain) = 0;
 
-#ifdef _WIN32
-    virtual VclPtr<VclAbstractDialog>
-    CreateFileExtCheckDialog(weld::Window* _pParent, const OUString& sTitle, const OUString& sMsg)
-        = 0;
-#endif
 };
 
 #endif

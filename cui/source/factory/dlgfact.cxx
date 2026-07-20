@@ -95,10 +95,8 @@
 #include <uipickerdlg.hxx>
 #include <hyperlinkdlg.hxx>
 #include <DiagramDialog.hxx>
-#include <fileextcheckdlg.hxx>
 #include <TextColumnsPage.hxx>
 #include <querydialog.hxx>
-#include <welcomedlg.hxx>
 
 #include <MacroManagerDialog.hxx>
 
@@ -1330,11 +1328,6 @@ public:
 };
 }
 
-VclPtr<SfxAbstractTabDialog> AbstractDialogFactory_Impl::CreateWelcomeDialog(weld::Window* pParent, const bool bIsFirstStart)
-{
-    return VclPtr<CuiAbstractTabController_Impl<WelcomeDialog>>::Create(pParent, bIsFirstStart);
-}
-
 VclPtr<SfxAbstractPasteDialog> AbstractDialogFactory_Impl::CreatePasteDialog(weld::Window* pParent)
 {
     return VclPtr<AbstractPasteDialog_Impl>::Create(pParent);
@@ -1540,15 +1533,6 @@ AbstractDialogFactory_Impl::CreateDiagramDialog(
         = vcl::AbstractDialogImpl_Async<AbstractDiagramDialog, DiagramDialog>;
     return VclPtr<AbstractDiagramDialog_Impl>::Create(pParent, rDiagram);
 }
-
-#ifdef _WIN32
-VclPtr<VclAbstractDialog>
-AbstractDialogFactory_Impl::CreateFileExtCheckDialog(weld::Window* pParent, const OUString& sTitle,
-                                                     const OUString& sMsg)
-{
-    return VclPtr<CuiAbstractController_Impl<FileExtCheckDialog>>::Create(pParent, sTitle, sMsg);
-}
-#endif
 
 namespace
 {

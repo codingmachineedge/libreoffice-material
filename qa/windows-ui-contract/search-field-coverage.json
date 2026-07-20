@@ -6,7 +6,7 @@
   "expected_counts": {
     "shipping_fields": 26,
     "planned_fields": 1,
-    "excluded_candidates": 15
+    "excluded_candidates": 16
   },
   "scanner_contract": {
     "widget_classes": [
@@ -252,6 +252,13 @@
     }
   ],
   "excluded_candidates": [
+    {
+      "coverage_id": "exclude.regex-builder-pattern-editor",
+      "ui_file": "sfx2/uiconfig/ui/regexbuilder.ui",
+      "widget_id": "pattern",
+      "category": "search-builder-input",
+      "reason": "Edits the expression for an already-classified adjacent search control; it is part of the shared builder rather than a separate application search surface."
+    },
     {
       "coverage_id": "exclude.base-generated-values-query",
       "ui_file": "dbaccess/uiconfig/ui/generatedvaluespage.ui",

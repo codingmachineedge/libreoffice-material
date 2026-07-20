@@ -19,7 +19,6 @@
 #pragma once
 
 #include <vcl/weld/Button.hxx>
-#include <vcl/weld/CheckButton.hxx>
 #include <vcl/weld/DialogController.hxx>
 #include <vcl/weld/Label.hxx>
 #include <vcl/weld/LinkButton.hxx>
@@ -35,7 +34,6 @@ private:
     css::uno::Reference<css::awt::XWindow> m_xParent;
 
     std::unique_ptr<weld::Label> m_pText;
-    std::unique_ptr<weld::CheckButton> m_pShowTip;
     std::unique_ptr<weld::Button> m_pNext;
     std::unique_ptr<weld::LinkButton> m_pLink;
     std::unique_ptr<weld::CustomWeld> m_pPreview;

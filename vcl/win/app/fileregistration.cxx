@@ -9,22 +9,13 @@
 
 #include <sal/config.h>
 
-#include <comphelper/scopeguard.hxx>
 #include <o3tl/char16_t2wchar_t.hxx>
-#include <officecfg/Office/Common.hxx>
 #include <unotools/resmgr.hxx>
-#include <vcl/abstdlg.hxx>
 #include <vcl/fileregistration.hxx>
-
-#include <strings.hrc>
-#include <svdata.hxx>
-
-#include <utility>
 
 #include <prewin.h>
 #include <Shobjidl.h>
 #include <systools/win32/comtools.hxx>
-#include <systools/win32/extended_max_path.hxx>
 #include <versionhelpers.h>
 #include <postwin.h>
 
@@ -51,56 +42,6 @@ static void LaunchModernSettingsDialogDefaultApps()
     }
 }
 
-static HRESULT
-IsPathDefaultForClass(sal::systools::COMReference<IApplicationAssociationRegistration>& pAAR,
-                      LPCWSTR aClassName, LPCWSTR progID)
-{
-    // Make sure the Prog ID matches what we have
-    sal::systools::CoTaskMemAllocated<wchar_t> registeredApp;
-    HRESULT hr
-        = pAAR->QueryCurrentDefault(aClassName, AT_FILEEXTENSION, AL_EFFECTIVE, &registeredApp);
-    if (SUCCEEDED(hr))
-    {
-        if (wcsnicmp(registeredApp, progID, wcslen(progID)) == 0)
-            hr = S_OK;
-        else
-            hr = S_FALSE;
-    }
-
-    return hr;
-}
-
-static bool IsDefaultAppInstalledInReg()
-{
-    const wchar_t* keyPath = L"SOFTWARE\\LibreOffice\\UNO\\InstallPath";
-
-    WCHAR szRegPath[EXTENDED_MAX_PATH];
-    DWORD cbData = sizeof(szRegPath);
-    auto rc = RegGetValueW(HKEY_LOCAL_MACHINE, keyPath, nullptr, RRF_RT_REG_SZ, nullptr, szRegPath,
-                           &cbData);
-    if (rc != ERROR_SUCCESS)
-        return false;
-
-    WCHAR szProcPath[EXTENDED_MAX_PATH];
-    if (!GetModuleFileNameW(nullptr, szProcPath, EXTENDED_MAX_PATH))
-        return false;
-
-    WCHAR szFullProcPath[EXTENDED_MAX_PATH];
-    if (!GetFullPathNameW(szProcPath, EXTENDED_MAX_PATH, szFullProcPath, nullptr))
-        return false;
-
-    if (!GetLongPathNameW(szFullProcPath, szFullProcPath, EXTENDED_MAX_PATH))
-        return false;
-
-    if (!GetLongPathNameW(szRegPath, szRegPath, EXTENDED_MAX_PATH))
-        return false;
-
-    if (wcslen(szRegPath) > 0 && wcsstr(szFullProcPath, szRegPath) != nullptr)
-        return true;
-
-    return false;
-}
-
 void LaunchRegistrationUI()
 {
     try
@@ -124,52 +65,6 @@ void LaunchRegistrationUI()
     catch (...)
     {
         // Just ignore any error here: this is not something we need to make sure to succeed
-    }
-}
-
-void CheckFileExtRegistration(weld::Window* pDialogParent)
-{
-    if (!officecfg::Office::Common::Misc::PerformFileExtCheck::get())
-        return;
-
-    if (!IsDefaultAppInstalledInReg())
-        return;
-
-    sal::systools::CoInitializeGuard aGuard(COINIT_APARTMENTTHREADED, false,
-                                            sal::systools::CoInitializeGuard::WhenFailed::NoThrow);
-    sal::systools::COMReference<IApplicationAssociationRegistration> pAAR;
-    try
-    {
-        sal::systools::ThrowIfFailed(pAAR.CoCreateInstance(CLSID_ApplicationAssociationRegistration,
-                                                           nullptr, CLSCTX_INPROC_SERVER));
-    }
-    catch (...)
-    {
-        // Just return on any error here: this is not something we need to make sure to succeed
-        return;
-    }
-
-    static const std::pair<LPCWSTR, LPCWSTR> formats[] = {
-        { L".odp", L"LibreOffice.ImpressDocument.1" },
-        { L".odt", L"LibreOffice.WriterDocument.1" },
-        { L".ods", L"LibreOffice.CalcDocument.1" },
-    };
-    OUString aNonDefaults;
-
-    for (const auto & [ szExt, szProgId ] : formats)
-    {
-        if (IsPathDefaultForClass(pAAR, szExt, szProgId) == S_FALSE)
-            aNonDefaults += OUString::Concat(o3tl::toU(szExt)) + "\n";
-    }
-
-    if (!aNonDefaults.isEmpty())
-    {
-        OUString aMsg(VclResId(STR_FILEEXT_NONDEFAULT_ASK_MSG).replaceFirst("$1", aNonDefaults));
-
-        VclAbstractDialogFactory* pFact = VclAbstractDialogFactory::Create();
-        ScopedVclPtr<VclAbstractDialog> pDlg(pFact->CreateFileExtCheckDialog(
-            pDialogParent, VclResId(STR_FILEEXT_NONDEFAULT_ASK_TITLE), aMsg));
-        pDlg->Execute();
     }
 }
 }

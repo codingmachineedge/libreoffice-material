@@ -86,9 +86,33 @@ placement seam (D-028). After final VCL `InitShow` layout, Windows `Dialog`
 instances are anchored to the bottom-right of the visible owner/work area with
 a bounded 16 px inset and decorated-extent clamping. LibreOfficeKit and
 non-Windows geometry remain unchanged. Its static contract and eleven mutation
-regressions pass; notification composition, persistence, customization,
-stacking, Git-backed history/undo, bulk management, and current-build runtime
-proof remain open.
+regressions pass; notification composition, producer routing, customization,
+stacking, visible bulk management, and current-build runtime proof remain open.
+The source-only notification history foundation (D-031) now supplies a genuine
+local bare Git repository, metadata-only default, process mutex plus permanent
+OS-held cross-process guard, CAS `main`, atomic bulk state changes, recoverable
+tombstones, history, inverse-commit undo, and bounded parentless checkpoints.
+A durable pending gate blocks user writes after prune failure, while validated
+retry reuses the installed checkpoint without object or ref growth. Its source
+contract and all 15 mutation tests pass; thirteen native CppUnit cases are wired
+but not compiled, and no visible notification host/manager or configuration
+binding is claimed.
+The shared search foundation (D-030) now provides ICU/LibreOffice literal and
+regex evaluation, `i/g/m/s`, live validation, zero-width progress, bounded
+matching, token insertion, and embedded advanced documentation in an anchored
+non-modal popover. Its source contract and eight mutations plus UI/accessibility
+lint pass; twelve native tests are wired but not yet compiled. The 26 existing
+and one planned search-field registry entries still require actual integration
+and runtime proof.
+The same source line implements D-029: automatic Welcome/What’s New, Tip,
+Windows file-association, donation/Get Involved, AutoCorrect-explanation, and
+crash-report submission prompts plus their dead configuration/UI and misleading
+crash-report opt-in are removed.
+Explicit Help/association actions and recovery, Safe Mode, extension,
+macro/security, metadata, read-only, and credential warnings remain. The
+no-nag contract passes 35 forbidden markers, nine deleted surfaces, sixteen
+required suppressions/safeguards/manual actions, and four mutation tests;
+current-build fresh/legacy-profile startup proof remains open.
 The same slice removes the Windows MSI workflow's contradictory `--disable-cli`
 switch, asserts `ENABLE_CLI=TRUE`, and prebuilds the CLI payload that MSI
 manifests require. These changes are included in the exact-source local VS 2026

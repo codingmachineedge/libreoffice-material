@@ -85,10 +85,6 @@ $(eval $(call gb_Library_use_system_win32_libs,cui,\
     advapi32 \
     shlwapi \
 ))
-
-$(eval $(call gb_Library_add_exception_objects,cui,\
-    cui/source/dialogs/fileextcheckdlg \
-))
 endif
 
 ifneq ($(ENABLE_WASM_STRIP_PINGUSER),TRUE)
@@ -159,10 +155,8 @@ $(eval $(call gb_Library_add_exception_objects,cui,\
     cui/source/dialogs/srchxtra \
     cui/source/dialogs/thesdlg \
     cui/source/dialogs/uipickerdlg \
-    cui/source/dialogs/whatsnewtabpage \
     cui/source/dialogs/uitabpage \
     cui/source/dialogs/toolbartabpage \
-    cui/source/dialogs/welcomedlg \
     cui/source/dialogs/zoom \
     cui/source/factory/cuiexp \
     cui/source/factory/cuiresmgr \

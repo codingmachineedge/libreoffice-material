@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of the LibreOffice project.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+-->
+<!DOCTYPE oor:component-schema SYSTEM "../../../../../component-schema.dtd">
+<oor:component-schema xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oor:name="NotificationCenter" oor:package="org.openoffice.Office.UI" xml:lang="en-US">
+  <info>
+    <desc>Notification center appearance and local history configuration.</desc>
+  </info>
+  <templates/>
+  <component>
+    <group oor:name="Display">
+      <info>
+        <desc>Controls the presentation of notifications.</desc>
+      </info>
+      <prop oor:name="Enabled" oor:type="xs:boolean" oor:nillable="false">
+        <info>
+          <desc>Whether optional notification-center presentation is enabled. Notifications that require a user decision remain enabled.</desc>
+        </info>
+        <value>true</value>
+      </prop>
+      <prop oor:name="MaxVisible" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Maximum number of notifications visible at the same time.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="1">
+            <info>
+              <desc>At least one notification remains visible.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="10">
+            <info>
+              <desc>No more than ten notifications are shown at once.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>3</value>
+      </prop>
+      <prop oor:name="Width" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Preferred notification width in logical pixels.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="320">
+            <info>
+              <desc>The minimum notification width is 320 logical pixels.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="720">
+            <info>
+              <desc>The maximum notification width is 720 logical pixels.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>420</value>
+      </prop>
+      <prop oor:name="TimeoutSeconds" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Default informational-notification timeout in seconds; zero keeps notifications visible until dismissed.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="0">
+            <info>
+              <desc>Zero selects a persistent notification.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="60">
+            <info>
+              <desc>The maximum automatic-dismiss timeout is 60 seconds.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>8</value>
+      </prop>
+      <prop oor:name="HorizontalInset" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Horizontal distance from the usable screen edge in logical pixels.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="0">
+            <info>
+              <desc>The notification may touch the horizontal screen edge.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="64">
+            <info>
+              <desc>The horizontal inset is limited to 64 logical pixels.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>16</value>
+      </prop>
+      <prop oor:name="VerticalInset" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Vertical distance from the usable screen edge in logical pixels.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="0">
+            <info>
+              <desc>The notification may touch the vertical screen edge.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="64">
+            <info>
+              <desc>The vertical inset is limited to 64 logical pixels.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>16</value>
+      </prop>
+      <prop oor:name="CornerRadius" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Notification corner radius in logical pixels.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="0">
+            <info>
+              <desc>Zero selects square corners.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="24">
+            <info>
+              <desc>The corner radius is limited to 24 logical pixels.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>12</value>
+      </prop>
+      <prop oor:name="OpacityPercent" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Notification surface opacity as a percentage.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="70">
+            <info>
+              <desc>The minimum opacity is 70 percent.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="100">
+            <info>
+              <desc>The maximum opacity is 100 percent.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>100</value>
+      </prop>
+      <prop oor:name="UseThemeColors" oor:type="xs:boolean" oor:nillable="false">
+        <info>
+          <desc>Whether notification colors follow the active application theme.</desc>
+        </info>
+        <value>true</value>
+      </prop>
+      <prop oor:name="AccentColor" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Notification accent color as an RGB integer, or -1 to use the theme accent.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="-1">
+            <info>
+              <desc>Minus one selects the theme accent color.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="16777215">
+            <info>
+              <desc>The highest value is the largest 24-bit RGB color.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>-1</value>
+      </prop>
+      <prop oor:name="Animations" oor:type="xs:boolean" oor:nillable="false">
+        <info>
+          <desc>Whether notification transitions are animated when system accessibility settings permit animation.</desc>
+        </info>
+        <value>true</value>
+      </prop>
+    </group>
+    <group oor:name="History">
+      <info>
+        <desc>Controls retention of the local notification history.</desc>
+      </info>
+      <prop oor:name="RetentionDays" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Number of days deleted notification tombstones remain restorable.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="1">
+            <info>
+              <desc>Tombstones remain restorable for at least one day.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="365">
+            <info>
+              <desc>Tombstone retention is limited to one year.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>30</value>
+      </prop>
+      <prop oor:name="Limit" oor:type="xs:int" oor:nillable="false">
+        <info>
+          <desc>Maximum number of notification records retained in the current history view.</desc>
+        </info>
+        <constraints>
+          <minInclusive oor:value="100">
+            <info>
+              <desc>The history retains at least 100 records.</desc>
+            </info>
+          </minInclusive>
+          <maxInclusive oor:value="5000">
+            <info>
+              <desc>The current history view retains no more than 5000 records.</desc>
+            </info>
+          </maxInclusive>
+        </constraints>
+        <value>2000</value>
+      </prop>
+    </group>
+  </component>
+</oor:component-schema>

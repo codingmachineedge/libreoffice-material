@@ -58,14 +58,12 @@ TipOfTheDayDialog::TipOfTheDayDialog(weld::Window* pParent)
                               u"TipOfTheDayDialog"_ustr)
     , m_xParent(pParent ? pParent->GetXWindow() : nullptr)
     , m_pText(m_xBuilder->weld_label(u"lbText"_ustr))
-    , m_pShowTip(m_xBuilder->weld_check_button(u"cbShowTip"_ustr))
     , m_pNext(m_xBuilder->weld_button(u"btnNext"_ustr))
     , m_pLink(m_xBuilder->weld_link_button(u"btnLink"_ustr))
     , m_pPreview(new weld::CustomWeld(*m_xBuilder, u"imPreview"_ustr, m_aPreview))
 {
-    m_pShowTip->set_active(officecfg::Office::Common::Misc::ShowTipOfTheDay::get());
     m_pNext->connect_clicked(LINK(this, TipOfTheDayDialog, OnNextClick));
-    m_nCurrentTip = officecfg::Office::Common::Misc::LastTipOfTheDayID::get();
+    m_nCurrentTip = officecfg::Office::Common::Misc::LastTipOfTheDayID::get() + 1;
     m_pPreview->set_size_request(ThumbSize.Width(), ThumbSize.Height());
 
     if (m_xParent.is())
@@ -74,20 +72,6 @@ TipOfTheDayDialog::TipOfTheDayDialog(weld::Window* pParent)
         if (xVclWin != nullptr)
             xVclWin->AddEventListener(LINK(this, TipOfTheDayDialog, Terminated));
     }
-
-    const auto t0 = std::chrono::system_clock::now().time_since_epoch();
-    sal_Int32 nDay = std::chrono::duration_cast<std::chrono::hours>(t0).count() / 24;
-    //show next tip after one day
-    if (nDay > officecfg::Office::Common::Misc::LastTipOfTheDayShown::get())
-        m_nCurrentTip++;
-
-    // save this time to the config now instead of in the dtor otherwise we
-    // end up with multiple copies of this dialog every time we open a new
-    // document if the first one isn't closed
-    std::shared_ptr<comphelper::ConfigurationChanges> xChanges(
-        comphelper::ConfigurationChanges::create());
-    officecfg::Office::Common::Misc::LastTipOfTheDayShown::set(nDay, xChanges);
-    xChanges->commit();
 
     UpdateTip();
 }
@@ -108,10 +92,6 @@ TipOfTheDayDialog::~TipOfTheDayDialog()
     if (!officecfg::Office::Common::Misc::LastTipOfTheDayID::isReadOnly())
     {
         officecfg::Office::Common::Misc::LastTipOfTheDayID::set(m_nCurrentTip, xChanges);
-    }
-    if (!officecfg::Office::Common::Misc::ShowTipOfTheDay::isReadOnly())
-    {
-        officecfg::Office::Common::Misc::ShowTipOfTheDay::set(m_pShowTip->get_active(), xChanges);
     }
     xChanges->commit();
 

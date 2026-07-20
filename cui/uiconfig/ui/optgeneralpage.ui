@@ -23,7 +23,7 @@
         <property name="label-xalign">0</property>
         <property name="shadow-type">none</property>
         <child>
-          <!-- n-columns=2 n-rows=3 -->
+          <!-- n-columns=2 n-rows=2 -->
           <object class="GtkGrid" id="grid2">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -63,20 +63,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="cbShowTipOfTheDay">
-                <property name="label" translatable="yes" context="optgeneralpage|TipOfTheDayCheckbox">Show "Tip of the Day" dialog on start-up</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkImage" id="lockexthelp">
                 <property name="can-focus">False</property>
                 <property name="no-show-all">True</property>
@@ -100,19 +86,6 @@
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkImage" id="lockcbShowTipOfTheDay">
-                <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="icon-name">res/lock.png</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
               </packing>
             </child>
           </object>
@@ -334,6 +307,11 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optgeneralpage|toyear">and </property>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="toyear-atkobject">
+                    <property name="AtkObject::accessible-role" translatable="no">static</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">3</property>
@@ -347,6 +325,11 @@
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="icon-name">res/lock.png</property>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="lockyears-atkobject">
+                    <property name="AtkObject::accessible-name" translatable="yes" context="optgeneralpage|lockyears">Two-digit year range is locked</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -369,72 +352,6 @@
       <packing>
         <property name="left-attach">0</property>
         <property name="top-attach">4</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkFrame" id="privacyframe">
-        <property name="can-focus">False</property>
-        <property name="label-xalign">0</property>
-        <property name="shadow-type">none</property>
-        <child>
-          <!-- n-columns=2 n-rows=2 -->
-          <object class="GtkGrid" id="grid10">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-start">12</property>
-            <property name="margin-top">6</property>
-            <property name="column-spacing">6</property>
-            <child>
-              <object class="GtkCheckButton" id="crashreport">
-                <property name="label" translatable="yes" context="optgeneralpage|crashreport">Sen_d crash reports to The Document Foundation</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="halign">start</property>
-                <property name="use-underline">True</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkImage" id="lockcrashreport">
-                <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="icon-name">res/lock.png</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-        </child>
-        <child type="label">
-          <object class="GtkLabel" id="label7">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label" translatable="yes" context="optgeneralpage|label7">Help Improve %PRODUCTNAME</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name="left-attach">0</property>
-        <property name="top-attach">5</property>
       </packing>
     </child>
     <child>
@@ -494,7 +411,7 @@
       </object>
       <packing>
         <property name="left-attach">0</property>
-        <property name="top-attach">6</property>
+        <property name="top-attach">5</property>
       </packing>
     </child>
     <child>
@@ -503,7 +420,7 @@
         <property name="label-xalign">0</property>
         <property name="shadow-type">none</property>
         <child>
-          <!-- n-columns=2 n-rows=2 -->
+          <!-- n-columns=2 n-rows=1 -->
           <object class="GtkGrid" id="grid8">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -526,33 +443,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="cbPerformFileExtCheck">
-                <property name="label" translatable="yes" context="optgeneralpage|FileExtCheckCheckbox">Perform check for default file associations on start-up</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkImage" id="lockcbPerformFileExtCheck">
-                <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="icon-name">res/lock.png</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
               <placeholder/>
             </child>
           </object>
@@ -570,7 +460,7 @@
       </object>
       <packing>
         <property name="left-attach">0</property>
-        <property name="top-attach">7</property>
+        <property name="top-attach">6</property>
       </packing>
     </child>
     <child>

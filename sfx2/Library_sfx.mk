@@ -79,6 +79,7 @@ $(eval $(call gb_Library_use_externals,sfx,\
     icui18n \
     icuuc \
     libxml2 \
+    zlib \
 ))
 
 ifneq ($(ENABLE_WASM_STRIP_RECENT),TRUE)
@@ -196,6 +197,7 @@ $(eval $(call gb_Library_add_exception_objects,sfx,\
     sfx2/source/dialog/partwnd \
     sfx2/source/dialog/passwd \
     sfx2/source/dialog/printopt \
+    sfx2/source/dialog/RegexSearchController \
     sfx2/source/dialog/recfloat \
     sfx2/source/dialog/securitypage \
     sfx2/source/dialog/sfxdlg \
@@ -259,6 +261,9 @@ $(eval $(call gb_Library_add_exception_objects,sfx,\
     sfx2/source/notify/globalevents \
     sfx2/source/notify/hintpost \
     sfx2/source/notify/openurlhint \
+    sfx2/source/notification/LocalGitRepository \
+    sfx2/source/notification/NotificationJson \
+    sfx2/source/notification/NotificationStore \
     sfx2/source/safemode/safemode \
     sfx2/source/sidebar/Sidebar \
     sfx2/source/sidebar/SidebarChildWindow \

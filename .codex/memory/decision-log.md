@@ -494,3 +494,64 @@
   modeless, and derived dialog paths while keeping the current change limited to
   positioning. Form composition, customization, persistence, Git history, bulk
   management, stacking, accessibility, and visual proof remain later gates.
+
+## D-029 — remove automatic solicitations while retaining explicit and safety UI
+
+- Date: 2026-07-20
+- State: implemented in source; focused validation passed; build/runtime proof pending
+- Context: hiding startup prompts would leave dormant factories, profile flags,
+  and legacy settings able to restore them, while deleting every warning would
+  also suppress recovery, security, compatibility, and credential decisions.
+- Decision: delete the automatic Welcome/What’s New, Tip scheduling, Windows
+  file-association check, donation/Get Involved recurrence, AutoCorrect
+  explanation, and crash-report modal launch paths together with dead UI,
+  factories, options (including the unreachable crash-report opt-in), resources,
+  and configuration. Keep explicit Tip, What’s
+  New, feedback, and Windows association actions. Keep crash dumps and the
+  explicit crash-report service, and require recovery, Safe Mode, incompatible
+  extension, read-only, macro, metadata, and credential safeguards in the
+  fail-closed validator.
+- Reason: this prevents legacy profiles or later refactors from silently
+  restoring unsolicited UI without weakening required user decisions. Source
+  and mutation validation are not substitutes for a current build and seeded
+  startup interaction proof.
+
+## D-030 — use one adjacent ICU regex-builder popover across search surfaces
+
+- Date: 2026-07-20
+- State: shared source foundation implemented; per-field integration and build/runtime pending
+- Context: a full advanced builder must be beside every app-owned search field.
+  A modal dialog would both violate that anchoring requirement and be captured
+  by the bottom-right dialog-placement seam; independent regex engines would
+  also diverge on Unicode and document-search semantics.
+- Decision: expose one `sfx2::RegexSearchController` and service using
+  `i18nutil::SearchOptions2`, `utl::TextSearch`, and ICU validation. Support
+  literal/regex modes, `i/g/m/s`, live errors, zero-width progress, bounded
+  previews, token insertion, and embedded Build/Test/Reference/Examples. Host
+  the builder in a `GtkPopover` anchored to the adjacent button with explicit
+  Apply, Cancel, and click-away behavior.
+- Reason: the shared controller supplies consistent Unicode behavior and a
+  reusable accessible surface without conflating the builder with application
+  dialogs. The exhaustive registry remains fail-closed until every field is
+  integrated and exercised.
+
+## D-031 — make notification history a bounded local bare Git repository
+
+- Date: 2026-07-20
+- State: source foundation implemented; focused static/syntax validation passed; native build/runtime pending
+- Context: notification deletion must be recoverable and bulk actions undoable,
+  but a UI-thread store, ad-hoc JSON log, PID lock, or unbounded snapshot walk
+  would make crash recovery, concurrency, privacy, and retention unreliable.
+- Decision: persist deterministic redacted snapshots as standard loose Git
+  blob/tree/commit objects under one local-only bare repository and fixed
+  `main`. Serialize every operation with a process mutex plus permanent OS-held
+  guard, install refs with CAS, traverse history using commit metadata, and
+  decompress objects only after their declared type/size passes strict bounds.
+  Compact before a user action into a parentless checkpoint; keep a durable
+  pending gate through prune, and on retry validate/reuse the installed
+  checkpoint without creating another object or advancing the ref.
+- Reason: this gives bulk state changes one auditable commit, preserves exact
+  inverse-commit undo for the action after compaction, prevents stale-lock and
+  same-process races, bounds reachable history and retry growth, and keeps
+  persisted display text opt-in. The visible host, manager, producer routing,
+  preference binding, and worker integration remain separate acceptance gates.

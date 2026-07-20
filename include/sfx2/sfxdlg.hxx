@@ -182,7 +182,6 @@ public:
 
     virtual VclPtr<VclAbstractDialog> CreateWidgetTestDialog(weld::Window* _pParent) = 0;
 
-    virtual VclPtr<SfxAbstractTabDialog> CreateWelcomeDialog(weld::Window* pParent, const bool bIsFirstStart) =0;
 };
 
 #endif

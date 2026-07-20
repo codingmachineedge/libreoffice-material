@@ -135,8 +135,8 @@ class SearchFieldCoverageTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertEqual(26, stats.shipping_fields)
         self.assertEqual(1, stats.planned_fields)
-        self.assertEqual(15, stats.excluded_candidates)
-        self.assertEqual(37, stats.discovered_candidates)
+        self.assertEqual(16, stats.excluded_candidates)
+        self.assertEqual(38, stats.discovered_candidates)
 
     def test_duplicate_control_coverage_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

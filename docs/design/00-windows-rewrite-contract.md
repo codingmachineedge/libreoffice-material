@@ -66,10 +66,18 @@ archive:
 
 The exhaustive dialog registry is
 [`qa/windows-ui-contract/dialog-notification-policy.csv`](../../qa/windows-ui-contract/dialog-notification-policy.csv).
-It currently assigns an explicit migration policy to all 599 discovered
-top-level dialog roots. Registration is coverage, not implementation or runtime
+It currently assigns an explicit migration policy to all 597 discovered
+top-level dialog roots; the automatic file-association and Welcome dialogs were
+removed by the no-nag source slice. Registration is coverage, not implementation or runtime
 proof. Search-field coverage is governed by the companion registry in the same
 directory.
+
+The shared regex source foundation implements ICU/LibreOffice literal and
+regular-expression evaluation, `i/g/m/s`, bounded live match testing, token
+insertion, and embedded Build/Test/Reference/Examples documentation. It is an
+anchored `GtkPopover` owned by the adjacent builder button rather than a modal
+dialog. This does not yet integrate the controller with each registered field
+or provide build/runtime proof.
 
 The first shared native implementation seam is now present in source: after
 final VCL `InitShow` layout, Windows `Dialog` instances are positioned at the
@@ -86,10 +94,30 @@ redacted structured records, create one atomic commit per user-visible bulk
 operation, and never configure remotes or put notification content in commit
 messages.
 
+The first source-only storage foundation now implements that local bare Git
+model: metadata-only by default, fixed `main`, same-process mutex plus permanent
+OS-held cross-process operation locking, CAS updates, atomic bulk transitions,
+recoverable tombstones, bounded pre-mutation checkpoints, history, and
+inverse-commit undo. Compaction expires older commit IDs intentionally while
+preserving current records and uses a durable pending marker so later writes
+fail closed until pruning completes. Retry validates and reuses an already
+installed checkpoint without adding objects or advancing the ref. It is not yet
+connected to dialog producers or a visible form,
+manager, preference binding, or notification stack, and has no build/runtime
+evidence.
+
 Promotional or recurring nags are not part of the rewritten product. Donation,
 support, survey, first-run welcome, tip, and opt-in solicitation prompts are
 removed or default-off. Safety-critical confirmations for data loss, security,
 credentials, destructive actions, and required compatibility decisions remain.
+
+Current source removes the automatic donation/Get Involved/What’s New,
+Welcome, Tip, Windows file-association, AutoCorrect-explanation, and crash-report
+submission paths, including their dead startup UI/configuration and the
+unreachable crash-report opt-in. Manual Help and file-association actions
+remain. The source contract explicitly requires the
+recovery, Safe Mode, extension-compatibility, macro, metadata, read-only, and
+credential paths; exact-build startup/runtime evidence is still pending.
 
 ## Honest completion rule
 

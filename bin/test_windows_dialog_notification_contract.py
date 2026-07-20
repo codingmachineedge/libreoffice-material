@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import csv
 import importlib.util
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -69,15 +70,15 @@ class WindowsDialogNotificationContractTest(unittest.TestCase):
 
     def test_production_contract_covers_every_dialog_root(self) -> None:
         report = VALIDATOR.validate_contract(REPOSITORY, REGISTRY_PATH)
-        self.assertEqual(599, report.total)
+        self.assertEqual(597, report.total)
         self.assertEqual(
-            {"GtkDialog": 523, "GtkMessageDialog": 75, "GtkAssistant": 1},
+            {"GtkDialog": 521, "GtkMessageDialog": 75, "GtkAssistant": 1},
             dict(report.classes),
         )
         self.assertEqual(
-            {VALIDATOR.NOTIFICATION_POLICY: 599}, dict(report.policies)
+            {VALIDATOR.NOTIFICATION_POLICY: 597}, dict(report.policies)
         )
-        self.assertEqual({"default": 599}, dict(report.profiles))
+        self.assertEqual({"default": 597}, dict(report.profiles))
 
     def test_discovery_selects_only_top_level_dialog_classes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -111,6 +112,21 @@ class WindowsDialogNotificationContractTest(unittest.TestCase):
             ],
             discovered,
         )
+
+    def test_worktree_deletion_is_absent_during_registry_update(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "--quiet", str(root)], check=True)
+            deleted = root / "deleted.ui"
+            deleted.write_text(
+                '<interface><object class="GtkDialog" id="Deleted"/></interface>',
+                encoding="utf-8",
+            )
+            subprocess.run(
+                ["git", "-C", str(root), "add", "--", "deleted.ui"], check=True
+            )
+            deleted.unlink()
+            self.assertEqual([], VALIDATOR.repository_ui_paths(root))
 
     def test_rejects_source_addition_missing_from_registry(self) -> None:
         key = VALIDATOR.DialogKey("module/uiconfig/ui/new.ui", "New", "GtkDialog")

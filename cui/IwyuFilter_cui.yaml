@@ -20,9 +20,6 @@ excludelist:
     # Actually used
     - com/sun/star/graphic/XGraphic.hpp
     - com/sun/star/security/XCertificate.hpp
-    cui/source/factory/dlgfact.cxx:
-    # Needed on WIN
-    - fileextcheckdlg.hxx
     cui/source/dialogs/thesdlg.cxx:
     # Actually used
     - com/sun/star/linguistic2/XMeaning.hpp

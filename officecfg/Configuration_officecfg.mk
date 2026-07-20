@@ -125,7 +125,6 @@ $(eval $(call gb_Configuration_add_spool_modules,registry,officecfg/registry/dat
 	$(call gb_Helper_optional,REPORTBUILDER, \
 		org/openoffice/Office/UI/Controller-reportbuilder.xcu \
 	) \
-	org/openoffice/Office/UI/Infobar-macosxsandbox.xcu \
 	org/openoffice/TypeDetection/UISort-writer.xcu \
 	org/openoffice/TypeDetection/UISort-calc.xcu \
 	org/openoffice/TypeDetection/UISort-draw.xcu \

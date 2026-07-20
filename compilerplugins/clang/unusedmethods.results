@@ -122,12 +122,6 @@ cui/source/dialogs/SpellAttrib.hxx:73
     _Bool svx::SpellErrorDescription::operator==(const struct svx::SpellErrorDescription &) const
 cui/source/inc/CustomNotebookbarGenerator.hxx:30
      CustomNotebookbarGenerator::CustomNotebookbarGenerator()
-cui/source/inc/fileextcheckdlg.hxx:32
-    void FileExtCheckDialog::LinkStubOnOkClick(void *,weld::Button &)
-cui/source/inc/fileextcheckdlg.hxx:32
-    void FileExtCheckDialog::OnOkClick(weld::Button &)
-cui/source/inc/fileextcheckdlg.hxx:35
-     FileExtCheckDialog::FileExtCheckDialog(weld::Window *,const rtl::OUString &,const rtl::OUString &)
 cui/source/inc/GraphicsTestsDialog.hxx:48
     void GraphicsTestsDialog::HandleResultViewRequest(weld::Button &)
 cui/source/inc/GraphicsTestsDialog.hxx:48

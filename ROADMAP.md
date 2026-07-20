@@ -399,7 +399,8 @@ The next source slice removes the archive-external periodic donation banner and
 clickable legacy brand artwork as well. This newer source has focused validator
 coverage but does not inherit the earlier `393263ad9` build or screenshot proof.
 
-An exhaustive Windows dialog contract now registers all 599 top-level
+After the no-nag slice removes the file-association and Welcome dialog roots,
+the exhaustive Windows dialog contract registers all 597 remaining top-level
 `GtkDialog`, `GtkMessageDialog`, and `GtkAssistant` roots for migration to a
 customizable bottom-right notification form. The registry validator fails on
 new, removed, duplicated, reclassified, or implicitly governed roots. Current
@@ -408,21 +409,51 @@ every VCL `Dialog` reaching final `InitShow` is anchored to the bottom-right of
 the visible owner/work area with a bounded 16 px inset and decorated-window
 clamping; LibreOfficeKit and other operating systems are unchanged. Its source
 contract and eleven mutation regressions pass. This is placement infrastructure,
-not a complete notification form: hosting, customization, stacking, persistence,
-local Git-backed undo/history, bulk management, and exact-build runtime proof
-remain open.
+not a complete notification form: hosting, event routing, customization,
+stacking, visible management, and exact-build runtime proof remain open.
+
+The source-only storage layer now provides a local bare Git notification
+repository with a fixed `main` ref, a process mutex plus permanent OS-held
+cross-process operation guard, CAS ref updates, metadata-only privacy default,
+bulk read/archive/delete/restore transitions, pinning, deduplication,
+purge/empty-trash maintenance, history, and inverse-commit undo. Parentless
+checkpoints compact before a user mutation; their durable pending gate blocks
+later writes until pruning succeeds, bounds reachable history, and preserves
+the exact action commit for undo. A failed-prune retry validates and reuses the
+installed checkpoint, so repeated failure neither advances `main` nor adds
+objects. Thirteen native CppUnit cases cover the model, privacy,
+initialization/races, permanent-lock contention, the 129-commit threshold,
+forced repeated prune failure, crash recovery, reload, and exact undo; they are
+wired but not yet compiled. The static contract and all 15 Python mutation tests
+pass.
 
 The companion search contract registers 26 audited shipping text-query fields,
-one planned Start Center field, and 15 explicit non-search exclusions. It fails
+one planned Start Center field, and 16 explicit non-search exclusions. It fails
 on missing, duplicated, stale, or newly unclassified candidates and requires an
-adjacent advanced builder policy on every shipping field. This closes the
-coverage audit only; reusable native controller/UI implementation and per-field
-behavior proof remain open.
+adjacent advanced builder policy on every shipping field. The reusable native
+foundation now supplies ICU/LibreOffice literal and regex evaluation, `i/g/m/s`,
+live syntax/error and bounded match testing, token insertion, embedded
+Build/Test/Reference/Examples guidance, and Apply/Cancel/click-away semantics in
+a `GtkPopover` anchored to the adjacent builder button. Its source contract,
+eight mutation tests, UI lint, and accessibility lint pass; twelve native
+CppUnit cases are wired but not yet compiled. Build/Test/Reference/Examples are
+scroll-backed, close cancellation is backend-independent, and Qt placement is
+work-area clamped. Per-field integration and behavior proof across the registry
+remain open.
 
-The rewrite also removes promotional and recurring nagging prompts while
-preserving data-loss, security, credential, destructive-action, and required
-compatibility confirmations. An audited source inventory and regression policy
-must land before this requirement can be marked implemented.
+The rewrite now removes automatic donation/Get Involved/What’s New promotion,
+first-start Welcome, Tip scheduling, Windows file-association solicitation,
+AutoCorrect explanation, and crash-report submission prompts in source. Dead
+prompt controllers, factories, options (including the now-unreachable
+crash-report opt-in), resources, and configuration are
+removed rather than hidden. Explicit Tip/What’s New/file-association commands
+remain, crash dumps remain available to the explicit crash-report service, and
+document recovery, Safe Mode, incompatible-extension, macro/security,
+hidden-metadata, signature, read-only, and credential warnings remain intact.
+The fail-closed validator covers 35 forbidden prompt markers, nine removed
+surfaces, and 16 required suppressions/safeguards/manual actions; all four
+mutation tests pass. A current native build and fresh plus seeded legacy-profile startup smoke
+remain open, so this source result is not yet runtime acceptance.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

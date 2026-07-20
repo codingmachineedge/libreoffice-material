@@ -463,18 +463,16 @@ void SfxInfoBarContainerWindow::removeInfoBar(VclPtr<SfxInfoBarWindow> const& pI
 
 bool SfxInfoBarContainerWindow::isInfobarEnabled(std::u16string_view sId)
 {
+    // Promotional infobars are never shown automatically.
+    if (sId == u"donate" || sId == u"getinvolved" || sId == u"whatsnew")
+        return false;
+
     if (sId == u"readonly")
         return officecfg::Office::UI::Infobar::Enabled::Readonly::get();
     if (sId == u"signature")
         return officecfg::Office::UI::Infobar::Enabled::Signature::get();
-    if (sId == u"donate")
-        return officecfg::Office::UI::Infobar::Enabled::Donate::get();
-    if (sId == u"getinvolved")
-        return officecfg::Office::UI::Infobar::Enabled::GetInvolved::get();
     if (sId == u"hyphenationmissing")
         return officecfg::Office::UI::Infobar::Enabled::HyphenationMissing::get();
-    if (sId == u"whatsnew")
-        return officecfg::Office::UI::Infobar::Enabled::WhatsNew::get();
     if (sId == u"hiddentrackchanges")
         return officecfg::Office::UI::Infobar::Enabled::HiddenTrackChanges::get();
     if (sId == u"macro")
@@ -487,7 +485,7 @@ bool SfxInfoBarContainerWindow::isInfobarEnabled(std::u16string_view sId)
                || officecfg::Office::Common::Security::Scripting::WarnCreatePDF::get();
     }
     if (sId == u"autocorr_leadtrail")
-        return officecfg::Office::UI::Infobar::Enabled::AutoCorrLeadTrail::get();
+        return false;
     if (sId == u"VCL_gen")
         return officecfg::Office::UI::Infobar::Enabled::WarnGenericVCL::get();
 

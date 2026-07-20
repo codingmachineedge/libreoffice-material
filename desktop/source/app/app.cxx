@@ -143,7 +143,6 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <vcl/fileregistration.hxx>
 #endif
 
 #if defined(_WIN32)
@@ -945,27 +944,6 @@ void Desktop::HandleBootstrapErrors(
 
 namespace {
 
-
-#if HAVE_FEATURE_BREAKPAD
-void handleCrashReport()
-{
-    static constexpr OUStringLiteral SERVICENAME_CRASHREPORT = u"com.sun.star.comp.svx.CrashReportUI";
-
-    css::uno::Reference< css::uno::XComponentContext > xContext = ::comphelper::getProcessComponentContext();
-
-    Reference< css::frame::XSynchronousDispatch > xRecoveryUI(
-        xContext->getServiceManager()->createInstanceWithContext(SERVICENAME_CRASHREPORT, xContext),
-        css::uno::UNO_QUERY_THROW);
-
-    Reference< css::util::XURLTransformer > xURLParser =
-        css::util::URLTransformer::create(::comphelper::getProcessComponentContext());
-
-    css::util::URL aURL;
-    css::uno::Any aRet = xRecoveryUI->dispatchWithReturnValue(aURL, css::uno::Sequence< css::beans::PropertyValue >());
-    bool bRet = false;
-    aRet >>= bRet;
-}
-#endif
 
 #if !defined ANDROID
 void handleSafeMode()
@@ -1981,15 +1959,6 @@ IMPL_LINK_NOARG(Desktop, OpenClients_Impl, void*, void)
     CloseSplashScreen();
     CheckFirstRun( );
 #ifdef _WIN32
-    bool bDontShowDialogs
-        = Application::IsHeadlessModeEnabled(); // uitest.uicheck fails when the dialog is open
-    for (sal_uInt16 i = 0; !bDontShowDialogs && i < Application::GetCommandLineParamCount(); i++)
-    {
-        if (Application::GetCommandLineParam(i) == "--nologo")
-            bDontShowDialogs = true;
-    }
-    if (!bDontShowDialogs)
-        vcl::fileregistration::CheckFileExtRegistration(SfxGetpApp()->GetTopWindow());
     // Registers a COM class factory of the service manager with the windows operating system.
     Reference< XMultiServiceFactory > xSMgr=  comphelper::getProcessServiceFactory();
     xSMgr->createInstance("com.sun.star.bridge.OleApplicationRegistration");
@@ -2055,11 +2024,6 @@ void Desktop::OpenClients()
     if (Application::IsSafeModeEnabled()) {
         handleSafeMode();
     }
-#endif
-
-#if HAVE_FEATURE_BREAKPAD
-    if (officecfg::Office::Common::Misc::CrashReport::get() && CrashReporter::crashReportInfoExists())
-        handleCrashReport();
 #endif
 
     if ( ! bAllowRecoveryAndSessionManagement )

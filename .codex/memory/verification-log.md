@@ -1604,3 +1604,48 @@ build or runtime evidence.
 - This is source/static evidence only. No current VS 2026 build, dialog capture,
   keyboard flow, accessibility audit, scaling/multi-monitor test, or
   notification-manager behavior is claimed.
+
+## 2026-07-20 — Windows unsolicited-prompt removal source contract
+
+- `bin/check-windows-no-nag-contract.py` passed with nine deleted prompt
+  surfaces, 35 forbidden automatic/promotion markers, and 16 retained
+  suppressions, safeguards, or manual actions.
+- `bin/test_windows_no_nag_contract.py` passed all four mutation families; the
+  Start Center no-donate validator and all eight regressions also passed.
+- Modified UI, configuration, and test-profile XML parsed successfully; deleted
+  controller/UI build references are absent; `git diff --check` passed. The
+  retained modified Options and manual Tip UIs now pass `gla11y` with zero
+  warnings after the dead crash-report opt-in was removed and their static,
+  year-range, and illustration semantics were made explicit.
+- No current native compile or startup run is claimed. Fresh and seeded legacy
+  profiles must prove zero unsolicited UI while retained safety/manual flows
+  remain actionable.
+
+## 2026-07-20 — shared anchored regex-builder source foundation
+
+- `bin/check-windows-regex-builder-foundation.py` passed the shared
+  ICU/LibreOffice engine, literal/regex modes, `i/g/m/s`, bounded and zero-width
+  matching, anchored `GtkPopover`, Apply/Cancel/click-away behavior, and native
+  test/build wiring contract; all eight mutation regressions passed.
+- `bin/lint-ui.py` and `bin/gla11y` passed the new builder with zero warnings.
+  The existing search-field registry still passes independently.
+- Twelve focused native CppUnit cases are registered but not yet compiled or run.
+  No per-field integration, visible builder interaction, accessibility runtime,
+  performance limit, or exact-build proof is claimed.
+
+## 2026-07-20 — local Git notification-history source foundation
+
+- `bin/check-notification-store-contract.py` passed the public state model,
+  deterministic metadata-only redaction, genuine bare loose-object Git format,
+  fixed local `main`, permanent process/OS operation guard, lock/CAS ordering,
+  recoverable tombstones, inverse-commit undo, bounded preferences, schema, and
+  focused native-test wiring contract.
+- `bin/test_notification_store_contract.py` passed all 15 mutations, including
+  guard lifetime, metadata-only history traversal, type-specific streaming
+  inflate limits, pre-mutation compaction, pending-marker validation, and
+  installed-checkpoint reuse after repeated prune failure.
+- Thirteen native CppUnit cases are wired for model/bulk behavior, privacy,
+  reload/races/contention, 129-commit compaction, exact undo, crash recovery,
+  repeated forced prune failure, and preference bounds. The notification source
+  also passed a focused clang-cl syntax-only probe with temporary generated
+  header/zlib stubs; no repository-native compile or runtime behavior is claimed.

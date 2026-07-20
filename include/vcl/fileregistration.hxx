@@ -13,16 +13,9 @@
 
 #include <vcl/dllapi.h>
 
-namespace weld
-{
-class Window;
-}
-
 namespace vcl::fileregistration
 {
 VCL_DLLPUBLIC void LaunchRegistrationUI();
-
-VCL_DLLPUBLIC void CheckFileExtRegistration(weld::Window* pDialogParent);
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

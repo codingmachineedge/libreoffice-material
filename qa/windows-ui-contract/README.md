@@ -26,6 +26,9 @@ reviewable migration coverage. A separate source contract now guards the first
 shared implementation seam: Windows VCL dialogs are repositioned only after
 their final `InitShow` layout, relative to the visible owner/work area, with
 bounded Material inset and work-area clamping. That seam is geometry only.
+The current total is 597 roots (`GtkDialog` 521, `GtkMessageDialog` 75,
+`GtkAssistant` 1) after the no-nag source slice deleted the automatic Windows
+file-association and Welcome dialogs.
 
 `ui_path` plus `object_id` is the stable locator. The two source roots that do
 not define a GTK object ID use an empty `object_id`, so their repository path is
@@ -60,8 +63,9 @@ exclusion by editing that row and documenting a concrete rationale.
   `adjacent-advanced-builder` contract;
 - one planned Start Center `start_search` field, required to remain absent until
   it moves into shipping coverage; and
-- 15 explicit exclusions for categorical selectors, range inputs,
-  transformation parameters, object names, and non-shipping QA controls.
+- 16 explicit exclusions for categorical selectors, range inputs,
+  transformation parameters, object names, non-shipping QA controls, and the
+  shared builder's own pattern editor.
 
 The validator also scans `.ui` objects for search-like IDs, accessible text,
 placeholders, tooltips, and `gtk-find` icons. A new unclassified candidate,
@@ -71,9 +75,45 @@ or incomplete builder declaration fails the contract.
 ```sh
 python bin/check_search_field_coverage.py
 python bin/test_search_field_coverage.py
+python bin/check-windows-regex-builder-foundation.py
+python bin/test_windows_regex_builder_foundation.py
 ```
 
 This is the minimum audited native inventory, not permission to ignore a new
 app-owned search bar that the conservative scanner does not infer. Any newly
 identified search field must be added and receive the same adjacent advanced
 builder before its owning UI surface can close.
+
+The shared native foundation now provides an ICU/LibreOffice search service,
+literal and regex modes, `i/g/m/s`, bounded match testing, live errors, token
+insertion, and embedded Build/Test/Reference/Examples content. Its
+`GtkPopover` is anchored to the adjacent builder button and deliberately is not
+a modal or bottom-right dialog. Per-field integration across the registry and
+native runtime proof remain open.
+
+## No unsolicited startup or promotion prompts
+
+The Windows no-nag contract forbids the automatic file-association, Welcome /
+What’s New, Tip, donation/Get Involved, AutoCorrect-explanation, and
+crash-report submission paths and the misleading crash-report opt-in. It also
+requires the explicit Tip, What’s New,
+feedback, and Windows association actions plus recovery, Safe Mode, incompatible
+extension, read-only, macro, metadata, and credential safeguards to remain.
+Mutation tests exercise every forbidden marker, removed surface, and retained
+safeguard. This is source evidence; only a current native build and fresh plus
+seeded legacy-profile startup runs can establish runtime behavior.
+
+```sh
+python bin/check-windows-no-nag-contract.py
+python bin/test_windows_no_nag_contract.py
+python bin/check-notification-store-contract.py
+python bin/test_notification_store_contract.py
+```
+
+The notification-store contract covers the public state model, metadata-only
+privacy default, deterministic redaction, genuine bare loose-object Git format,
+fixed local `main`, process plus OS-held operation guarding, lock/CAS behavior,
+atomic bulk transitions, recoverable tombstones, inverse-commit undo, bounded
+preferences, pending-checkpoint retry without ref/object growth, schema
+registration, and focused CppUnit wiring. It does not claim a visible manager
+or runtime proof.

@@ -1202,7 +1202,9 @@ for target in \
   CppunitTest_extensions_test_update \
   CppunitTest_vcl_widget_definition_reader_test \
   CppunitTest_vcl_file_definition_widget_draw_test \
-  CppunitTest_vcl_treeview
+  CppunitTest_vcl_treeview \
+  CppunitTest_sfx2_regexsearch \
+  CppunitTest_sfx2_notificationstore
 do
   /opt/lo/bin/make.exe -j"$BUILD_JOBS" "$target"
 done

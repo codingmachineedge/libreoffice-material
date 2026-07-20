@@ -34,3 +34,21 @@ jobs:
 
       - name: Run search-field coverage regressions
         run: python3 bin/test_search_field_coverage.py
+
+      - name: Validate shared anchored regex-builder foundation
+        run: python3 bin/check-windows-regex-builder-foundation.py
+
+      - name: Run regex-builder foundation mutations
+        run: python3 bin/test_windows_regex_builder_foundation.py
+
+      - name: Validate Windows no-nag startup contract
+        run: python3 bin/check-windows-no-nag-contract.py
+
+      - name: Run Windows no-nag mutation regressions
+        run: python3 bin/test_windows_no_nag_contract.py
+
+      - name: Validate local Git notification-store foundation
+        run: python3 bin/check-notification-store-contract.py
+
+      - name: Run notification-store mutation regressions
+        run: python3 bin/test_notification_store_contract.py

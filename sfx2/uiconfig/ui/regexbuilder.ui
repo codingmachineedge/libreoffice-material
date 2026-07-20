@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface domain="sfx">
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkPopover" id="RegexBuilderPopover">
+    <property name="can-focus">False</property>
+    <property name="position">bottom</property>
+    <property name="constrain-to">window</property>
+    <child>
+      <object class="GtkBox" id="builder_content">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="border-width">12</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
+        <child>
+          <object class="GtkButtonBox" id="builder_actions">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="apply">
+                <property name="label" translatable="yes" context="regexbuilder|apply">_Apply Pattern</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack-type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkNotebook" id="sections">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="scrollable">True</property>
+            <child>
+              <object class="GtkScrolledWindow" id="build_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <child>
+                  <object class="GtkViewport" id="build_viewport">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkBox" id="build_content">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <child>
+                  <object class="GtkLabel" id="build_intro">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="regexbuilder|build_intro">Build a Unicode-aware search pattern. Choose literal search for plain text, or enable regular expressions and insert ICU-compatible tokens below.</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="build_intro-atkobject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="pattern_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="regexbuilder|pattern_label">_Search pattern</property>
+                    <property name="use-underline">True</property>
+                    <property name="mnemonic-widget">pattern</property>
+                    <property name="xalign">0</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="pattern">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="direction">ltr</property>
+                    <property name="placeholder-text" translatable="yes" context="regexbuilder|pattern">Type a literal value or regular expression</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="pattern-atkobject">
+                        <property name="AtkObject::accessible-description" translatable="yes" context="regexbuilder|extended_tip|pattern">The pattern is interpreted from left to right with LibreOffice's ICU search engine.</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkGrid" id="mode_flags">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">18</property>
+                    <child>
+                      <object class="GtkCheckButton" id="regexmode">
+                        <property name="label" translatable="yes" context="regexbuilder|regexmode">Use _regular expressions</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="caseinsensitive">
+                        <property name="label" translatable="yes" context="regexbuilder|caseinsensitive">i · Ignore _case</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="global">
+                        <property name="label" translatable="yes" context="regexbuilder|global">g · _All matches</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="active">True</property>
+                        <property name="tooltip-text" translatable="yes" context="regexbuilder|extended_tip|global">When enabled, return every match up to the safety limit. When disabled, stop after the first match.</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="multiline">
+                        <property name="label" translatable="yes" context="regexbuilder|multiline">m · _Multiline anchors</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="dotall">
+                        <property name="label" translatable="yes" context="regexbuilder|dotall">s · Dot matches _newline</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="tokens_frame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
+                    <property name="shadow-type">none</property>
+                    <child>
+                      <object class="GtkGrid" id="tokens_grid">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">6</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">6</property>
+                        <property name="column-homogeneous">True</property>
+                        <child>
+                          <object class="GtkButton" id="insert_start">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_start">^ Start</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">0</property><property name="top-attach">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_end">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_end">$ End</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">1</property><property name="top-attach">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_any">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_any">. Any character</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">2</property><property name="top-attach">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_digit">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_digit">\d Digit</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">3</property><property name="top-attach">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_space">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_space">\s Space</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">0</property><property name="top-attach">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_word">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_word">\w Word</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">1</property><property name="top-attach">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_class">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_class">[...] Class</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">2</property><property name="top-attach">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_group">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_group">(...) Group</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">3</property><property name="top-attach">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_noncapture">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_noncapture">(?:...) Noncapturing</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">0</property><property name="top-attach">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_lookahead">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_lookahead">(?=...) Lookahead</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">1</property><property name="top-attach">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_lookbehind">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_lookbehind">(?&lt;=...) Lookbehind</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">2</property><property name="top-attach">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_escape">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_escape">\Q...\E Literal span</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">3</property><property name="top-attach">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_zero_more">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_zero_more">* Zero or more</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">0</property><property name="top-attach">3</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_one_more">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_one_more">+ One or more</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">1</property><property name="top-attach">3</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_optional">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_optional">? Optional</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">2</property><property name="top-attach">3</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="insert_range">
+                            <property name="label" translatable="yes" context="regexbuilder|insert_range">{n,m} Range</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                          </object>
+                          <packing><property name="left-attach">3</property><property name="top-attach">3</property></packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="tokens_label">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes" context="regexbuilder|tokens_label">Insert a Token</property>
+                        <attributes><attribute name="weight" value="bold"/></attributes>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="validity">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes" context="regexbuilder|validity">Enter a search pattern.</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="validity-atkobject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="build_tab">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes" context="regexbuilder|build_tab">Build</property>
+              </object>
+              <packing><property name="tab-fill">False</property></packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="test_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <child>
+                  <object class="GtkViewport" id="test_viewport">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkBox" id="test_content">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <child>
+                  <object class="GtkLabel" id="test_intro">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="regexbuilder|test_intro">Paste representative text below. Validation and the match count update immediately while you edit the pattern, mode, flags, or sample.</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="test_intro-atkobject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing><property name="expand">False</property><property name="fill">True</property><property name="position">0</property></packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="testtext_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="regexbuilder|testtext_label">_Test text</property>
+                    <property name="use-underline">True</property>
+                    <property name="mnemonic-widget">testtext</property>
+                    <property name="xalign">0</property>
+                  </object>
+                  <packing><property name="expand">False</property><property name="fill">True</property><property name="position">1</property></packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="test_scroll">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkTextView" id="testtext">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="direction">ltr</property>
+                        <property name="wrap-mode">word-char</property>
+                        <property name="monospace">True</property>
+                        <property name="left-margin">8</property>
+                        <property name="right-margin">8</property>
+                        <property name="top-margin">8</property>
+                        <property name="bottom-margin">8</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing><property name="expand">True</property><property name="fill">True</property><property name="position">2</property></packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="matchsummary">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="regexbuilder|matchsummary">No matches in the test text.</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="matchsummary-atkobject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing><property name="expand">False</property><property name="fill">True</property><property name="position">3</property></packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing><property name="position">1</property></packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="test_tab">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes" context="regexbuilder|test_tab">Test</property>
+              </object>
+              <packing><property name="position">1</property><property name="tab-fill">False</property></packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="reference_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkViewport" id="reference_viewport">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkBox" id="reference_content">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <property name="margin-start">16</property>
+                        <property name="margin-end">16</property>
+                        <property name="margin-top">16</property>
+                        <property name="margin-bottom">16</property>
+                        <child>
+                          <object class="GtkLabel" id="reference_title">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_title">ICU regular expression reference</property>
+                            <property name="xalign">0</property>
+                            <attributes><attribute name="weight" value="bold"/><attribute name="scale" value="1.2"/></attributes>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_title-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_anchors">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_anchors">Anchors
+^ starts the text or line; $ ends the text or line. Enable m to make both anchors apply at every line boundary. \b is a Unicode word boundary.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_anchors-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_classes">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_classes">Characters and classes
+. matches any character except a newline unless s is enabled. \d matches a decimal digit, \s whitespace, and \w a Unicode word character. [abc] includes characters; [^abc] excludes them; [a-z] defines a range. Unicode properties use forms such as \p{Letter} and \p{Script=Greek}.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_classes-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_groups">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_groups">Groups and alternatives
+(...) captures a group; (?:...) groups without capturing; a|b matches either branch. Refer to an earlier capture inside the pattern with \1. Use (?&lt;name>...) for a named capture where the consuming search surface supports named groups.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_groups-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">3</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_lookaround">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_lookaround">Lookaround
+(?=...) requires a following match and (?!...) rejects it without consuming text. (?&lt;=...) and (?&lt;!...) do the same behind the current position. Keep lookbehind alternatives to bounded lengths accepted by ICU.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_lookaround-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">4</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_quantifiers">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_quantifiers">Quantifiers
+* repeats zero or more times, + one or more, and ? zero or one. {n}, {n,}, and {n,m} set explicit bounds. Add ? for lazy matching or + for possessive matching, for example *? or *+.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_quantifiers-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">5</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_escaping">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_escaping">Escaping
+Prefix a metacharacter with \ to search for it literally, such as \. or \[. Enclose a longer literal span in \Q and \E. Newline, tab, and a Unicode code point can be written as \n, \t, and \x{1F600}.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_escaping-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">6</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_flags">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_flags">Flags
+i performs Unicode-aware case-insensitive matching. g returns all matches up to the safety limit; turn it off to stop after the first match. m makes ^ and $ recognize line boundaries. s lets . include newline characters. Literal mode supports i and g; m and s apply only to regular expressions.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_flags-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">7</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_replacement">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_replacement">Replacement backreferences
+In search surfaces that provide replacement, $1 inserts the first captured group, $2 the second, and so on. Use a backslash to escape a literal dollar sign according to that surface's replacement rules. Search-only fields ignore replacement syntax.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_replacement-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">8</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="reference_icu">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|reference_icu">ICU and LibreOffice notes
+Applied searches use LibreOffice SearchOptions2 and TextSearch with ICU Unicode semantics, not the C++ standard-library engine. The separate live Test preview waits 200 ms after typing and then accepts at most 1,024 pattern code units, searches the first 16,384 UTF-16 code units, reports 256 matches, and limits ICU to 2,000 processing steps, 1 MiB of backtracking stack, and a 100 ms wall-clock callback deadline. It also expands LibreOffice's legacy \&lt; and \&gt; word-boundary forms. A clipped preview can differ at its boundary; Apply keeps the complete pattern and document search does not use these preview limits.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="reference_icu-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">9</property></packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing><property name="position">2</property></packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="reference_tab">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes" context="regexbuilder|reference_tab">Reference</property>
+              </object>
+              <packing><property name="position">2</property><property name="tab-fill">False</property></packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="examples_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkViewport" id="examples_viewport">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkBox" id="examples_content">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <property name="margin-start">16</property>
+                        <property name="margin-end">16</property>
+                        <property name="margin-top">16</property>
+                        <property name="margin-bottom">16</property>
+                        <child>
+                          <object class="GtkLabel" id="examples_intro">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|examples_intro">Copy an example into Build, then adjust it and verify the result in Test. Pattern text is always interpreted left to right.</property>
+                            <property name="wrap">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="examples_intro-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">0</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_email">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_email">Email-like address
+\b[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}\b
+Finds common email-style addresses. It is intentionally practical rather than a complete address validator.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_email-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">1</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_date">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_date">ISO date
+\b\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b
+Finds YYYY-MM-DD-shaped dates and bounds month and day values.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_date-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">2</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_whitespace">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_whitespace">Repeated horizontal whitespace
+[\p{Zs}\t]{2,}
+Finds two or more Unicode space separators or tab characters.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_whitespace-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">3</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_duplicate">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_duplicate">Repeated adjacent word
+\b(\w+)\s+\1\b
+Finds a word repeated after whitespace. Enable i to ignore case.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_duplicate-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">4</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_lines">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_lines">Lines beginning with a marker
+^\s*(?:TODO|FIXME):.*$
+Enable m to find each marked line. Enable i if marker case should not matter.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_lines-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">5</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_unicode">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_unicode">Unicode letters
+\p{Letter}+(?:['’\-]\p{Letter}+)*
+Finds runs of letters with optional apostrophes or hyphens across writing systems.</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_unicode-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">6</property></packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="example_caution">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes" context="regexbuilder|example_caution">Performance tip
+Prefer bounded quantifiers and specific character classes. Avoid deeply nested ambiguous repetitions such as (.*)+. LibreOffice limits regex execution, but a simpler pattern is easier to review and reuse.</property>
+                            <property name="wrap">True</property>
+                            <property name="xalign">0</property>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="example_caution-atkobject">
+                                <property name="AtkObject::accessible-role">static</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing><property name="expand">False</property><property name="fill">True</property><property name="position">7</property></packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing><property name="position">3</property></packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="examples_tab">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes" context="regexbuilder|examples_tab">Examples</property>
+              </object>
+              <packing><property name="position">3</property><property name="tab-fill">False</property></packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child internal-child="accessible">
+      <object class="AtkObject" id="RegexBuilderPopover-atkobject">
+        <property name="AtkObject::accessible-name" translatable="yes" context="regexbuilder|RegexBuilderPopover">Advanced Regular Expression Builder</property>
+        <property name="AtkObject::accessible-description" translatable="yes" context="regexbuilder|extended_tip|RegexBuilderPopover">Build, validate, test, and learn ICU-compatible regular expressions without leaving the current search field.</property>
+      </object>
+    </child>
+  </object>
+</interface>

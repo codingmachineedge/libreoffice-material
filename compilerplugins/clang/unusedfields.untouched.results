@@ -34,12 +34,6 @@ cui/source/inc/AdditionsDialog.hxx:46
     AdditionInfo sReleaseVersion OUString
 cui/source/inc/AdditionsDialog.hxx:73
     AdditionsDialog m_xContentWindow std::unique_ptr<weld::ScrolledWindow>
-cui/source/inc/fileextcheckdlg.hxx:28
-    FileExtCheckDialog m_pText std::unique_ptr<weld::Label>
-cui/source/inc/fileextcheckdlg.hxx:29
-    FileExtCheckDialog m_pPerformCheck std::unique_ptr<weld::CheckButton>
-cui/source/inc/fileextcheckdlg.hxx:30
-    FileExtCheckDialog m_pOk std::unique_ptr<weld::Button>
 cui/source/inc/paragrph.hxx:73
     SvxStdParagraphTabPage m_xAbsDist std::unique_ptr<weld::Label>
 cui/source/inc/uipickerdlg.hxx:20
