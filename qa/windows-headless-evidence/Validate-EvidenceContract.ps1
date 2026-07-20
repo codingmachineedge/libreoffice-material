@@ -493,6 +493,70 @@ try {
         throw 'Runner must not enumerate and latch an arbitrary payload process during ownership establishment.'
     }
 
+    $stableThresholdIndex = $runnerText.IndexOf(
+        'if ($ownedPid -and $pidFilePid -and $stableCount -ge 3)',
+        $ownershipLoopIndex
+    )
+    $windowPidProbeIndex = $runnerText.IndexOf(
+        '$candidateWindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(',
+        $stableThresholdIndex
+    )
+    $invalidWindowPidIndex = $runnerText.IndexOf(
+        'if ($candidateWindowProcessId -eq 0)',
+        $windowPidProbeIndex
+    )
+    $wrongWindowPidIndex = $runnerText.IndexOf(
+        'if ($candidateWindowProcessId -ne [int]$ownedPid)',
+        $invalidWindowPidIndex
+    )
+    $windowDpiProbeIndex = $runnerText.IndexOf(
+        '$candidateWindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(',
+        $wrongWindowPidIndex
+    )
+    $invalidWindowDpiIndex = $runnerText.IndexOf(
+        'if ($candidateWindowDpi -eq 0)',
+        $windowDpiProbeIndex
+    )
+    $acceptedWindowIndex = $runnerText.IndexOf(
+        '$script:WindowHandle = $candidateWindowHandle',
+        $invalidWindowDpiIndex
+    )
+    if ($stableThresholdIndex -le $ownedPidLatchIndex -or
+        $windowPidProbeIndex -le $stableThresholdIndex -or
+        $invalidWindowPidIndex -le $windowPidProbeIndex -or
+        $wrongWindowPidIndex -le $invalidWindowPidIndex -or
+        $windowDpiProbeIndex -le $wrongWindowPidIndex -or
+        $invalidWindowDpiIndex -le $windowDpiProbeIndex -or
+        $acceptedWindowIndex -le $invalidWindowDpiIndex) {
+        throw 'Runner must reject transient, wrong-owner, and zero-DPI HWNDs before accepting a stable window.'
+    }
+
+    $windowProcessHelperIndex = $runnerText.IndexOf(
+        'public static uint WindowProcessId(IntPtr hwnd)'
+    )
+    $invalidHandleConstantIndex = $runnerText.IndexOf(
+        'ErrorInvalidWindowHandle = 1400',
+        $windowProcessHelperIndex
+    )
+    $invalidHandleReturnIndex = $runnerText.IndexOf(
+        'return 0;',
+        $invalidHandleConstantIndex
+    )
+    $unexpectedWindowErrorIndex = $runnerText.IndexOf(
+        'throw new Win32Exception(error);',
+        $invalidHandleReturnIndex
+    )
+    if ($windowProcessHelperIndex -lt 0 -or
+        $invalidHandleConstantIndex -le $windowProcessHelperIndex -or
+        $invalidHandleReturnIndex -le $invalidHandleConstantIndex -or
+        $unexpectedWindowErrorIndex -le $invalidHandleReturnIndex) {
+        throw 'C# HWND helper must return zero for invalid handles and preserve unexpected Win32 failures.'
+    }
+    if ($runnerText.Contains(
+        'SALFRAME HWND belongs to PID $($script:WindowProcessId)')) {
+        throw 'Runner must retry a wrong-owner transient HWND instead of failing immediately.'
+    }
+
     foreach ($needle in @(
         "Join-Path `$programRoot 'version.ini'",
         'upstream_baseline',
@@ -512,6 +576,11 @@ try {
         'The pidfile PID is the sole ownership authority',
         'not the required soffice.bin GUI runtime',
         'PID-file process identity changed after ownership was established',
+        'return GetDpiForWindow(hwnd);',
+        'window_handoff_diagnostics',
+        'became invalid before owner resolution',
+        'not pidfile-owned PID',
+        'became invalid before DPI resolution',
         'expected_checkpoints',
         "Join-Path `$runRoot 'manifest.json'",
         '& $evidenceValidatorPath -Path $manifestPath -RequirePassed'

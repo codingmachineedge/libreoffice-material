@@ -53,6 +53,9 @@ public static class LibreOfficeMaterialProcessPath
     [DllImport("user32.dll", SetLastError = true)]
     private static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
 
+    [DllImport("kernel32.dll")]
+    private static extern void SetLastError(uint errorCode);
+
     public static string Get(uint processId)
     {
         const uint QueryLimitedInformation = 0x1000;
@@ -75,17 +78,24 @@ public static class LibreOfficeMaterialProcessPath
 
     public static uint WindowDpi(IntPtr hwnd)
     {
-        uint dpi = GetDpiForWindow(hwnd);
-        if (dpi == 0)
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-        return dpi;
+        // GetDpiForWindow documents zero for an invalid HWND and does not
+        // provide a last-error contract that can distinguish other failures.
+        return GetDpiForWindow(hwnd);
     }
 
     public static uint WindowProcessId(IntPtr hwnd)
     {
+        const int ErrorInvalidWindowHandle = 1400;
+        SetLastError(0);
         uint processId;
-        if (GetWindowThreadProcessId(hwnd, out processId) == 0 || processId == 0)
-            throw new Win32Exception(Marshal.GetLastWin32Error());
+        uint threadId = GetWindowThreadProcessId(hwnd, out processId);
+        if (threadId == 0 || processId == 0)
+        {
+            int error = Marshal.GetLastWin32Error();
+            if (error == 0 || error == ErrorInvalidWindowHandle)
+                return 0;
+            throw new Win32Exception(error);
+        }
         return processId;
     }
 }
@@ -1043,6 +1053,7 @@ $results = [ordered]@{
     }
     process = $null
     window = $null
+    window_handoff_diagnostics = @()
     scenarios = @()
     review = [ordered]@{
         status = 'pending'
@@ -1073,6 +1084,7 @@ $ownedPid = $null
 $ownedProcessStartTimeUtcTicks = $null
 $pidFilePid = $null
 $pidFileResolutionError = $null
+$windowHandoffDiagnostics = [System.Collections.Generic.List[string]]::new()
 $normalTermination = $false
 $fatal = $null
 $script:WindowHandle = $null
@@ -1258,16 +1270,48 @@ try {
             $stableCount = 0
         }
         if ($ownedPid -and $pidFilePid -and $stableCount -ge 3) {
-            $script:WindowHandle = $stableHandle
-            $script:WindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(
-                [IntPtr]$script:WindowHandle
+            $candidateWindowHandle = [long]$stableHandle
+            $candidateWindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(
+                [IntPtr]$candidateWindowHandle
             )
-            if ($script:WindowProcessId -ne [int]$ownedPid) {
-                throw "SALFRAME HWND belongs to PID $($script:WindowProcessId), not exact owned payload PID $ownedPid."
+            if ($candidateWindowProcessId -eq 0) {
+                $windowHandoffDiagnostics.Add(
+                    "Transient SALFRAME HWND $candidateWindowHandle became invalid before owner resolution."
+                )
+                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
+                $stableHandle = $null
+                $stableCount = 0
+                Start-Sleep -Milliseconds 250
+                continue
             }
-            $script:WindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(
-                [IntPtr]$script:WindowHandle
+            if ($candidateWindowProcessId -ne [int]$ownedPid) {
+                $windowHandoffDiagnostics.Add(
+                    "Transient SALFRAME HWND $candidateWindowHandle belongs to PID $candidateWindowProcessId, not pidfile-owned PID $ownedPid."
+                )
+                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
+                $stableHandle = $null
+                $stableCount = 0
+                Start-Sleep -Milliseconds 250
+                continue
+            }
+
+            $candidateWindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(
+                [IntPtr]$candidateWindowHandle
             )
+            if ($candidateWindowDpi -eq 0) {
+                $windowHandoffDiagnostics.Add(
+                    "Transient SALFRAME HWND $candidateWindowHandle became invalid before DPI resolution."
+                )
+                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
+                $stableHandle = $null
+                $stableCount = 0
+                Start-Sleep -Milliseconds 250
+                continue
+            }
+
+            $script:WindowHandle = $candidateWindowHandle
+            $script:WindowProcessId = $candidateWindowProcessId
+            $script:WindowDpi = $candidateWindowDpi
             $results.host.display_scale.dpi = $script:WindowDpi
             $results.host.display_scale.percent = [int][Math]::Round(
                 ($script:WindowDpi * 100.0) / 96.0
