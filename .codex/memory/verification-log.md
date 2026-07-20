@@ -1123,3 +1123,92 @@ build or runtime evidence.
   assertions passed locally. This is workflow-source validation; no canonical
   public release existed at the time of this entry, so the first pushed run must
   still be followed through build, publication, Latest, and public asset checks.
+
+## 2026-07-20 — running-app evidence push and Pages publication
+
+- Screenshot/docs commit `b0e3ea76639796aa5612dbce0333e394a5073f4c` was pushed
+  to `origin/main`. It registers and embeds the two accepted off-screen Windows
+  Start Center captures from run
+  `20260720-012853-577059e274-vs2026-msi-raster` without altering their pixels.
+- Pages run
+  [`29720519782`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519782)
+  completed successfully for that exact commit. The published inputs retain
+  SHA-256
+  `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`
+  for Home/Recent Documents and
+  `30667f9c9c8163183dc6f7d780113e52b90d710dca0ac64044afd5b5243ef378`
+  for Templates.
+
+## 2026-07-20 — first normal public Windows release and Latest-byte proof
+
+- A normal public, non-draft, non-prerelease release was published at
+  [`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
+  on 2026-07-20 at 06:06:42 UTC. It targets product source
+  `577059e2741185b512c184c64685c16d335d10ea` and contains exactly four uploaded
+  assets: `LibreOfficeMaterial-Windows-x64.msi`, its `.sha256` sidecar,
+  `windows-msi-manifest.json`, and `windows-update-manifest.xml`.
+- After an initial propagation 404, cache-busted unauthenticated downloads
+  through the public Latest route succeeded for all four assets and matched the
+  local release bytes and SHA-256 values exactly: XML 976 bytes,
+  `08bb30f0f0a6a9c11d5845367f3dedf2189079758fd6ae2d4b288ce6d8591465`;
+  JSON manifest 943 bytes,
+  `8f720b8f7552905a0375dc1ef900d3ea114e9b1518e2281ddc45a2ac4815d04c`;
+  sidecar 102 bytes,
+  `79d6d0be5c4bf57954cd047421bf8bacd6b33b2c6d2cad6bfe4a0096fdc102a5`;
+  and MSI 199,692,288 bytes,
+  `437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`.
+- Hosted per-push Windows run
+  [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
+  for `b0e3ea76639796aa5612dbce0333e394a5073f4c` remains in progress and has not
+  published its own per-push release. The release above is real public release
+  proof, but it is the older binary described in the next entry.
+
+## 2026-07-20 — updater launch-argument omission and corrected VS 2026 candidate
+
+- A launch-site audit found that `buildWindowsInstallerCommand` generated five
+  installer arguments but `UpdateCheck::install()` passed only the first four to
+  `osl_executeProcess`. The fifth argument, `REBOOT=ReallySuppress`, was therefore
+  absent from the launched command in source/product commit `577059e274`. The
+  already-published release must not be treated as restart-suppression or updater
+  runtime proof.
+- Local commit `fbba560e27db26de605c40aa237c554c1f0744b1` replaces the
+  fixed four-pointer list with an array sized from the command's argument array
+  and forwards all five entries. The focused Visual Studio 2026
+  `CppunitTest_extensions_test_update` target passed, followed by a successful
+  incremental full LibreOfficeDev product and MSI build.
+- The corrected unsigned MSI is 199,688,192 bytes with SHA-256
+  `180e511c065f3e21cd9e4fd0abe31f8886b0cc5ce5ce27a48f2890f83d1afeea`.
+  Windows Installer administrative extraction returned `0`; the payload contains
+  4,885 files and 603,901,200 bytes. Extracted `program\updchklo.dll` is 571,392
+  bytes and exactly matches the built DLL at SHA-256
+  `32f80adfcd5097ef54f13951b748a5703439aef0dbb751d6a4c5d3e6102446a3`.
+- The corrected MSI's low-level headless UI/UNO rerun passed as recorded below;
+  its corrected normal release remains pending. No updater download,
+  protected-stage, consent, installer launch, restart-suppression runtime,
+  install, repair, upgrade, or uninstall result is claimed.
+
+## 2026-07-20 — corrected extracted-runtime headless UI and UNO proof
+
+- Corrected source commit `fbba560e27db26de605c40aa237c554c1f0744b1`
+  supplied accepted run
+  `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression` through
+  clean low-level driver commit
+  `beed66ca6ed2503e6170ee1e1158247f1c2f0140`. The isolated off-screen Windows
+  run requested the Material file-widget profile and used Skia software raster.
+- Home/Recent Documents is 203,493 bytes at `1920×1117`, SHA-256
+  `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`.
+  Templates after background navigation is 212,506 bytes at `1920×1117`,
+  SHA-256
+  `1f9f0e9614c0eb6bd0c0e9cea6909982a8900ed532e03f7bbdd72751a87294ab`.
+  Both passed nonblank, occlusion/staleness/stretch, and sensitive-content review.
+- The paired bounded UNO trees contain 96/49 and 111/64 total/visible nodes,
+  report zero collector errors, and are not partial. Normal UNO termination
+  succeeded; matching run-scoped processes and headless windows both reached
+  zero, and the off-screen desktop closed.
+- These two corrected images now supply the canonical README, screenshot
+  registry, and Pages gallery. The earlier accepted
+  `20260720-012853-577059e274-vs2026-msi-raster` run remains historical proof.
+  This corrected result verifies only extracted-runtime Start Center UI/UNO
+  smoke; it does not execute MSI install, repair, upgrade, uninstall, or
+  restart-suppression lifecycle behavior. Corrected release publication remains
+  pending.

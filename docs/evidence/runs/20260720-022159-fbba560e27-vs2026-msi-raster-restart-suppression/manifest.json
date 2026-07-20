@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-07-20T06:29:32Z",
+  "run_id": "20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression",
+  "status": "accepted",
+  "source": {
+    "repository": "https://github.com/Ding-Ding-Projects/libreoffice-material.git",
+    "commit": "fbba560e27db26de605c40aa237c554c1f0744b1",
+    "payload_description": "corrected administrative-extraction candidate supplied for restart-suppression verification"
+  },
+  "runtime": {
+    "payload_root": "C:\\Users\\cntow\\lo-material-vs2026-577059e27\\msi-check\\20260720-021814-9378266-fbba560e2-restart-suppression",
+    "soffice_exe": {
+      "bytes": 537600,
+      "sha256": "a0ac5360f303435ca89406fd8e648affc30a6e53382af0b901a85f3a5a45c410"
+    },
+    "soffice_bin": {
+      "bytes": 2719744,
+      "sha256": "beb398080f8ed27c44c9425499c1fdd0171648751253c9f2c176943a7fb330ea"
+    },
+    "python_exe": {
+      "bytes": 258048,
+      "sha256": "39ce7553f6ba806eb78f555cf36643c6184b0ef63cf349e9cbf3b61575c88f91"
+    },
+    "launch_wrapper": "launch-headless.cmd",
+    "launcher_command": "cmd.exe /d /c call \"C:\\Users\\cntow\\AppData\\Local\\Temp\\LibreOfficeMaterialQA\\20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression\\launch-headless.cmd\"",
+    "launcher_pid": 35756,
+    "application_arguments": [
+      "-env:UserInstallation=file:///C:/Users/cntow/AppData/Local/Temp/LibreOfficeMaterialQA/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/profile",
+      "--nologo",
+      "--norestore",
+      "--quickstart=no",
+      "--language=en-US",
+      "--pidfile=C:\\Users\\cntow\\AppData\\Local\\Temp\\LibreOfficeMaterialQA\\20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression\\soffice.pid",
+      "--accept=pipe,name=LibreOfficeMaterialQA-20260720-022159-fbba560e27;urp"
+    ],
+    "isolated_profile": "C:\\Users\\cntow\\AppData\\Local\\Temp\\LibreOfficeMaterialQA\\20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression\\profile",
+    "uno_pipe": "LibreOfficeMaterialQA-20260720-022159-fbba560e27",
+    "environment": {
+      "VCL_DRAW_WIDGETS_FROM_FILE": "1",
+      "VCL_FILE_WIDGET_THEME": "material",
+      "SAL_SKIA": "raster",
+      "SAL_DISABLEGL": "1",
+      "SAL_LOG": "+WARN.vcl.gdi"
+    },
+    "stdout_log": {
+      "file": "soffice.stdout.log",
+      "bytes": 0
+    },
+    "stderr_log": {
+      "file": "soffice.stderr.log",
+      "bytes": 0
+    },
+    "verification_boundary": "This run verifies the corrected extracted runtime UI. It does not execute MSI install, repair, upgrade, or uninstall and therefore does not independently prove restart-suppression behavior."
+  },
+  "host": {
+    "operating_system": "Microsoft Windows 11 Pro",
+    "version": "10.0.26200",
+    "build": "26200",
+    "architecture": "64-bit",
+    "host_locale": "en-CA",
+    "ui_locale": "en-US",
+    "appearance": "light",
+    "renderer": "Skia software raster",
+    "desktop_backend": "Win32 off-screen desktop with per-window PrintWindow capture",
+    "font_configuration": "native Windows system fonts; no run-specific override"
+  },
+  "driver": {
+    "repository": "https://github.com/cafepromenade/lowlevel-computer-use-mcp.git",
+    "commit": "beed66ca6ed2503e6170ee1e1158247f1c2f0140",
+    "checkout_clean": true,
+    "branch": "main",
+    "desktop_name": "LOMaterialQA-20260720-022159-fbba560e27"
+  },
+  "observed_window": {
+    "title": "LibreOfficeDev",
+    "class": "SALFRAME",
+    "width": 1920,
+    "height": 1117,
+    "stable_poll_count": 4,
+    "observed_hwnd": 920066
+  },
+  "scenarios": [
+    {
+      "id": "E-START-CORRECTED-LIGHT",
+      "name": "Corrected payload Start Center Home and Recent Documents",
+      "result": "pass",
+      "reviewer": "Codex",
+      "checkpoints": [
+        "stable run-scoped LibreOfficeDev SALFRAME",
+        "nonblank Home and Recent Documents surface",
+        "no personal documents or unrelated windows"
+      ]
+    },
+    {
+      "id": "E-START-CORRECTED-TEMPLATES",
+      "name": "Background navigation to Templates",
+      "result": "pass",
+      "reviewer": "Codex",
+      "input": "low-level MCP background left click at client coordinates (140, 330) on the runtime-resolved SALFRAME",
+      "checkpoints": [
+        "background input succeeds without switching the live desktop",
+        "Templates navigation state is selected",
+        "bundled template gallery is nonblank"
+      ]
+    },
+    {
+      "id": "E-A11Y-CORRECTED-START",
+      "name": "Bounded read-only UNO accessibility trees",
+      "result": "pass",
+      "reviewer": "Codex",
+      "limits": {
+        "max_nodes": 5000,
+        "max_children": 500,
+        "max_depth": 32,
+        "max_text": 256
+      }
+    }
+  ],
+  "document_fixtures": [],
+  "screenshots": [
+    {
+      "file": "screenshots/start-center-light.png",
+      "bytes": 203493,
+      "sha256": "e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501",
+      "width": 1920,
+      "height": 1117,
+      "capture_api": "PrintWindow through low-level computer-use MCP",
+      "rendered_ok": true,
+      "nonblank": true,
+      "visual_review": "pass; complete Home/Recent surface; not occluded, stale, cropped, or stretched; no personal documents or unrelated windows"
+    },
+    {
+      "file": "screenshots/start-center-templates-light.png",
+      "bytes": 212506,
+      "sha256": "1f9f0e9614c0eb6bd0c0e9cea6909982a8900ed532e03f7bbdd72751a87294ab",
+      "width": 1920,
+      "height": 1117,
+      "capture_api": "PrintWindow through low-level computer-use MCP",
+      "rendered_ok": true,
+      "nonblank": true,
+      "visual_review": "pass; Templates selected and bundled gallery visible; not occluded, stale, cropped, or stretched; no personal documents or unrelated windows"
+    }
+  ],
+  "accessibility": [
+    {
+      "file": "logs/a11y.json",
+      "file_bytes": 56530,
+      "file_sha256": "cedf316ffabb5c1868085c3eb3425d14cb96463656922b04d724fce4d0f12621",
+      "captured_at": "2026-07-20T02:26:22-04:00",
+      "screenshot_sha256": "e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501",
+      "node_count": 96,
+      "visible_nodes": 49,
+      "errors": 0,
+      "partial": false,
+      "result": "pass"
+    },
+    {
+      "file": "logs/a11y-templates.json",
+      "file_bytes": 67007,
+      "file_sha256": "a6e365537864b473e348c88ba24888bbf90b2f0693599d3330500dfb7b2bfb57",
+      "captured_at": "2026-07-20T02:28:01-04:00",
+      "screenshot_sha256": "1f9f0e9614c0eb6bd0c0e9cea6909982a8900ed532e03f7bbdd72751a87294ab",
+      "node_count": 111,
+      "visible_nodes": 64,
+      "errors": 0,
+      "partial": false,
+      "result": "pass"
+    }
+  ],
+  "cleanup": {
+    "normal_uno_termination": true,
+    "matching_run_scoped_processes_after_termination": 0,
+    "headless_window_count_after_termination": 0,
+    "headless_desktop_closed": true
+  },
+  "review": {
+    "reviewer": "Codex",
+    "review_date": "2026-07-20",
+    "sensitive_data_review": "pass",
+    "limitations": "Start Center only, light appearance, software raster renderer. This run does not cover dark/high-contrast, keyboard-only, accelerated rendering, documents, updater UI, or MSI lifecycle behavior."
+  }
+}

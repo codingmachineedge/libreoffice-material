@@ -13,8 +13,9 @@ licensing and provenance.
 ## Current milestone
 
 **Phase 1 — tenth Material VCL and Windows updater source milestones published;
-exact-source local MSI and light Start Center smoke recorded; suite-wide work
-continues. Phase 0's full reproducibility/release gate remains open.**
+corrected exact-source local MSI and canonical light Start Center smoke recorded;
+suite-wide work continues. The older normal release is public, while the
+corrected release and Phase 0's full reproducibility gate remain open.**
 
 The repository contains an imported LibreOffice source baseline, ten native
 Material source milestones, a design contract, roadmap, published GitHub Pages
@@ -23,7 +24,8 @@ matched light/dark profiles, source-level high-contrast fallback routing,
 native-style restoration and dynamic focus-policy refreshes, explicit headless
 dark selection, standalone spin controls, and a dedicated headless drawing test
 target. The automation harness has advanced from its Notepad preflight to an
-accepted exact-source LibreOfficeDev Start Center run.
+accepted exact-source LibreOfficeDev Start Center run, with the corrected
+`fbba560e27` run now supplying the canonical gallery.
 The fourth milestone adds strict semantic typography roles that derive from the
 captured native font baseline instead of replacing platform/user fonts.
 The fifth milestone closes all 72 `StyleSettings` color slots with exact
@@ -85,12 +87,12 @@ retained. It uploads the validated MSI and update metadata directly to a draft,
 verifies the exact target, asset names, upload states, sizes, and digests before
 promoting the draft to a normal public non-prerelease Latest release, verifies
 the public Latest feed, and removes a failed draft. Only diagnostics use an
-Actions artifact. This is implemented automation source, not a
-successful-release claim.
+Actions artifact. A normal older `577059e274` release has four publicly verified
+assets; publication of the corrected `fbba560e27` candidate remains pending.
 
-The exact-source local build and light Start Center smoke do not prove a
-whole-GUI rewrite, updater runtime, installer lifecycle, release, or any
-completed application surface.
+The exact-source local builds and light Start Center smoke do not prove a
+whole-GUI rewrite, updater runtime, installer lifecycle, corrected release, or
+any completed application surface.
 
 Preceding Windows Actions run `29678095646` at
 `937b61fd3ad7c83fba2714b6341118e0b778c252` passed configure, `Library_svxcore`,
@@ -277,6 +279,13 @@ Public assetless release/tag `e` remains non-evidence.
   199,692,288-byte MSI (SHA `437b059c…54a43`). Administrative extraction
   returned `0` with one `soffice.exe`. The wrapper parent exited before final
   dist staging/manifest copy, so that final phase still needs a clean rerun.
+- Corrected commit `fbba560e27db26de605c40aa237c554c1f0744b1` produced an
+  administratively extracted runtime candidate whose canonical off-screen Home
+  and Templates smoke passed. Its bounded UNO trees report 96/49 and 111/64
+  total/visible nodes, zero errors, and no partial capture; termination was
+  normal, matching process/window counts reached zero, and the desktop closed.
+  This is runtime-only proof and does not cover MSI install, repair, upgrade,
+  uninstall, or restart suppression.
 - UI driver: sibling repository `lowlevel-computer-use-mcp`, accepted-run commit
   `beed66ca6ed2503e6170ee1e1158247f1c2f0140` (clean `main`, 0/0 from origin).
 - A read-only driver audit found the same clean commit serving MCP on
@@ -292,12 +301,14 @@ Public assetless release/tag `e` remains non-evidence.
 - Temporary preflight capture SHA-256:
   `03C6A068ACAAB96579621CE0BFC4F447C0F43E8EB23DDB5B8665A580E062BFA3`;
   it was not retained because it was unrelated to LibreOffice.
-- Verified exact-source Start Center captures with the Material opt-in requested:
-  **2**, both light-profile files from run
-  `20260720-012853-577059e274-vs2026-msi-raster`. This wording does not claim
-  that every visible control loaded the Material definition.
+- Canonical verified exact-source Start Center gallery captures with the Material
+  opt-in requested: **2**, both light-profile files from corrected run
+  `20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`. The earlier
+  `20260720-012853-577059e274-vs2026-msi-raster` pair remains historical accepted
+  proof. This wording does not claim that every visible control loaded the
+  Material definition.
 - GitHub Pages source: `site/`; public URL:
-  `https://codingmachineedge.github.io/libreoffice-material/`.
+  `https://ding-ding-projects.github.io/libreoffice-material/`.
 - Interactive Material design reference published at `site/prototype.html`, with
   a 2,433-command `site/prototype-features.json` mirror of the LibreOffice
   `.uno:` catalog. It is a self-contained, dependency-free HTML rendering of all
@@ -357,10 +368,10 @@ Public assetless release/tag `e` remains non-evidence.
 
 ## Required next gates
 
-1. complete the local wrapper's final dist staging/manifest phase and rerun the
-   hosted clean-LF Windows auto-release workflow;
-2. verify the public normal, non-prerelease release, exact four assets, Latest
-   feed, MSI hash, and updater XML;
+1. complete the local wrapper's final dist staging/manifest phase and the hosted
+   clean-LF Windows auto-release workflow for corrected source;
+2. publish and verify the corrected public normal, non-prerelease release, exact
+   four assets, Latest feed, MSI hash, and updater XML;
 3. build/runtime-verify dark, high contrast, accelerated rendering, keyboard
    focus, shape and metric geometry, and
    high-contrast routing; complete forced-color/platform signal coverage; and
@@ -376,8 +387,7 @@ Public assetless release/tag `e` remains non-evidence.
 - no updater download, protected-stage, consent, or MSI-launch flow has been
   runtime-verified;
 - the local wrapper did not complete final dist staging/manifest copy after the
-  successful MSI extraction; the hosted corrected staging and auto-release path
-  has not yet rerun;
+  successful MSI extraction; corrected release publication remains pending;
 - dark/high-contrast, accelerated, keyboard/focus, localization, installer,
   updater, and suite-wide runtime/accessibility coverage remain pending.
 

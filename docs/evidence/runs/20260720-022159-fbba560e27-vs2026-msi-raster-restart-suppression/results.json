@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression",
+  "source_commit": "fbba560e27db26de605c40aa237c554c1f0744b1",
+  "overall_result": "pass_with_scope_boundary",
+  "checks": {
+    "corrected_payload_launch": "pass",
+    "stable_owned_salframe_window": "pass",
+    "start_center_home_nonblank_capture": "pass",
+    "background_templates_navigation": "pass",
+    "templates_nonblank_capture": "pass",
+    "home_accessibility_tree": "pass",
+    "templates_accessibility_tree": "pass",
+    "sensitive_data_review": "pass",
+    "normal_app_shutdown": "pass",
+    "headless_desktop_cleanup": "pass"
+  },
+  "accessibility_summary": {
+    "captures": 2,
+    "total_reported_errors": 0,
+    "partial_captures": 0
+  },
+  "accepted_screenshot_count": 2,
+  "rejected_screenshot_count": 0,
+  "scope_boundary": "The corrected extracted runtime passed UI smoke and UNO accessibility checks. MSI restart-suppression itself requires a separate install/repair/upgrade/uninstall lifecycle exercise."
+}

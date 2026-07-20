@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          run_id='20260720-012853-577059e274-vs2026-msi-raster'
+          run_id='20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression'
           source_dir="docs/evidence/runs/$run_id/screenshots"
           publish_dir="site/evidence/$run_id"
           mkdir -p "$publish_dir"

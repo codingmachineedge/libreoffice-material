@@ -1,8 +1,8 @@
 # Headless UI evidence plan
 
 This plan defines how visible LibreOffice Material work will be exercised on a
-real GUI process without taking over the operator's desktop. It is a plan, not a
-claim that a Material UI test run has already passed.
+real GUI process without taking over the operator's desktop. Accepted runs below
+are narrow runtime claims; the remaining matrix stays a plan.
 
 ## Driver
 
@@ -65,7 +65,7 @@ The audited Windows contract has important boundaries:
 
 These are audited capabilities and constraints, not a LibreOffice run result.
 
-## Current LibreOffice build and accepted-run record — 2026-07-20
+## Current LibreOffice build and accepted-run records — 2026-07-20
 
 [`LOCAL_WINDOWS_BUILD.md`](LOCAL_WINDOWS_BUILD.md) defines the source-controlled
 one-click bootstrap and the explicit VS 2026 profile. A clean detached build at
@@ -76,9 +76,12 @@ LibreOfficeDev product, and produced
 `LibreOfficeDev_27.2.0.0.alpha0_Win_x86-64.msi` (199,692,288 bytes; SHA-256
 `437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`).
 Windows Installer administrative extraction completed with status `0` and
-yielded one `soffice.exe`. The package is unsigned and was not installed. The
+yielded one `soffice.exe`. The package was unsigned and was not installed during
+this run. The
 parent build script exited before its final dist copy/manifest step, so this is
-not recorded as an end-to-end wrapper success or a public release.
+not recorded as an end-to-end wrapper success. That older MSI was later
+published separately as a normal release; the publication does not change this
+run's build or installer-lifecycle boundary.
 
 The extracted MSI payload then supplied two off-screen runs through clean
 low-level driver commit `beed66ca6ed2503e6170ee1e1158247f1c2f0140`:
@@ -94,6 +97,29 @@ low-level driver commit `beed66ca6ed2503e6170ee1e1158247f1c2f0140`:
   over its unique UNO pipe and released the off-screen desktop. The accepted
   manifest and results are under
   [`20260720-012853-577059e274-vs2026-msi-raster`](evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/).
+
+That second run remains accepted historical proof. A later launch-site audit
+found that its product binary forwarded only four of five updater installer
+arguments and omitted `REBOOT=ReallySuppress`. Corrected source commit
+`fbba560e27db26de605c40aa237c554c1f0744b1` forwards all five arguments and
+produced a new extracted candidate. The corrected runtime was exercised through
+the same clean driver commit and is now the canonical gallery run:
+
+- Home/Recent Documents captured at `1920×1117`, 203,493 bytes, SHA-256
+  `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`;
+- background navigation reached Templates, whose `1920×1117`, 212,506-byte
+  capture has SHA-256
+  `1f9f0e9614c0eb6bd0c0e9cea6909982a8900ed532e03f7bbdd72751a87294ab`;
+- paired bounded UNO trees reported 96/49 and 111/64 total/visible nodes, zero
+  errors, and `partial=false`;
+- normal UNO termination succeeded, matching run-scoped processes and headless
+  windows both reached zero, and the off-screen desktop closed.
+
+Its manifest and results are under
+[`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/).
+This verifies only the corrected extracted runtime UI. It does not execute or
+prove MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle
+behavior.
 
 This closes only the light-profile Start Center launch/navigation smoke on
 software raster rendering. Dark, system/high contrast, accelerated capture,

@@ -66,10 +66,12 @@
             built the full LibreOfficeDev installation set and checked the
             legacy CLI payload. A later exact-source local VS 2026 build at
             <code>577059e274</code> passed those native targets, produced an
-            unsigned 199,692,288-byte MSI, and successfully extracted it. That
-            payload supplied two accepted light-profile Start Center captures
-            and two bounded UNO trees with no collector errors. The whole GUI is
-            incomplete, and no public downloadable package exists yet.
+            unsigned 199,692,288-byte MSI, and successfully extracted it.
+            Corrected source <code>fbba560e27</code> forwarded all five updater
+            launch arguments, and its extracted runtime supplied the two canonical
+            light-profile Start Center captures and two bounded UNO trees with no
+            collector errors. The whole GUI is incomplete. An older normal release
+            is public; the corrected release and MSI lifecycle proof remain pending.
           </p>
         </div>
 
@@ -100,11 +102,11 @@
             </div>
             <div>
               <dt>Build / installer</dt>
-              <dd><span class="state state-progress">Local MSI extracted; release pending</span></dd>
+              <dd><span class="state state-progress">Older release public; corrected pending</span></dd>
             </div>
             <div>
               <dt>Windows updater</dt>
-              <dd><span class="state state-progress">Source only</span></dd>
+              <dd><span class="state state-progress">Corrected source; lifecycle pending</span></dd>
             </div>
             <div>
               <dt>Whole-suite UI</dt>
@@ -209,9 +211,9 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
               bytes are copied with <code>CREATE_NEW</code> into protected
               LocalAppData staging with a user/Administrators/SYSTEM DACL,
               verified again, and held under a final read lock before a visible
-              Windows Installer launch. The launch includes
-              <code>REBOOT=ReallySuppress</code>, so it cannot request or force
-              a Windows restart.
+              Windows Installer launch. Corrected source forwards the generated
+              <code>REBOOT=ReallySuppress</code> argument. Runtime proof of MSI
+              restart suppression still requires lifecycle testing.
             </p>
             <p>
               Confirmation defaults to No; no silent install exists. Checks
@@ -224,18 +226,19 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
               read-only UNO accessibility-tree collector. With a matching
               built Python runtime it records roles, names, states, and bounds
               alongside a screenshot without reading document text or driving
-              the UI. The accepted light Start Center run exercised it twice
+              the UI. The corrected accepted light Start Center run exercised it twice
               with no collector errors; this is not a full accessibility audit.
             </p>
           </div>
           <p class="truth-note">
-            Native targets, a local exact-source MSI, and light Start Center
-            headless/UNO-tree smoke have completed, but updater runtime and a
-            normal public release are still pending. Every <code>main</code> push now starts the
+            Native targets, a corrected local exact-source MSI, and corrected
+            light Start Center headless/UNO-tree smoke have completed, but updater
+            and MSI install/repair/upgrade/restart-suppression runtime remain open.
+            An older normal public release exists; a corrected release is pending.
+            Every <code>main</code> push now starts the
             stable workflow, which uploads the validated MSI directly to an exact
             draft before promoting it to a normal public non-prerelease Latest
-            release. Only diagnostics use an Actions artifact; that publication
-            path has not completed.
+            release. Only diagnostics use an Actions artifact.
           </p>
         </div>
         <p class="blocker-note">
@@ -260,9 +263,11 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule
           recursively found two intermediate MSI databases alongside the final
-          installer, so no artifact was uploaded. The corrected final-directory
-          rule awaits a rerun. The local MSI/runtime evidence does not yet provide
-          a normal public release or updater/installer lifecycle result.
+          installer, so no artifact was uploaded. A separately published older
+          normal release has four byte-verified assets. Corrected source
+          <code>fbba560e27</code> produced and extracted a new MSI, and its runtime
+          passed scoped Start Center UI/UNO smoke. Its corrected release and
+          updater/installer lifecycle result remain pending.
         </p>
       </section>
 
@@ -391,9 +396,10 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
             <p class="eyebrow">Verified visual record</p>
             <h2 id="evidence-title">The real Windows app, with its limits attached.</h2>
             <p>
-              The Start Center images come from the exact-source Windows MSI
-              payload and passed manifest, commit, scenario, hash, cleanup, and
-              sensitive-data review. Empty cards remain evidence slots, not mocks.
+              The Start Center images come from corrected exact-source Windows
+              MSI payload <code>fbba560e27</code> and passed manifest, commit,
+              scenario, hash, cleanup, and sensitive-data review. Empty cards
+              remain evidence slots, not mocks.
             </p>
           </div>
           <a
@@ -405,14 +411,14 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
         <div class="evidence-grid">
           <article class="evidence-card evidence-card-captured">
             <div class="evidence-captures">
-              <a href="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-light.png">
-                <img src="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-light.png" alt="LibreOfficeDev Start Center Home and Recent Documents view running off screen on Windows" loading="lazy">
+              <a href="evidence/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/start-center-light.png">
+                <img src="evidence/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/start-center-light.png" alt="Corrected LibreOfficeDev Start Center Home and Recent Documents view running off screen on Windows" loading="lazy">
               </a>
-              <a href="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-templates-light.png">
-                <img src="evidence/20260720-012853-577059e274-vs2026-msi-raster/start-center-templates-light.png" alt="LibreOfficeDev Templates gallery after background navigation on the off-screen Windows desktop" loading="lazy">
+              <a href="evidence/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/start-center-templates-light.png">
+                <img src="evidence/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/start-center-templates-light.png" alt="Corrected LibreOfficeDev Templates gallery after background navigation on the off-screen Windows desktop" loading="lazy">
               </a>
             </div>
-            <div class="evidence-meta"><div><h3>Start center</h3><p>E-START-001 · light accepted; dark pending</p></div><span>2 files</span></div>
+            <div class="evidence-meta"><div><h3>Start center</h3><p>E-START-001 · corrected light accepted; dark pending</p></div><span>2 files</span></div>
           </article>
           <article class="evidence-card">
             <div class="evidence-slot" aria-label="No Writer screenshot committed">
@@ -488,17 +494,16 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           <p class="eyebrow">Headless proof loop</p>
           <h2 id="proof-title">A real desktop. Off screen. Fully attributable.</h2>
           <p>
-            The low-level driver has already passed a Notepad-only off-screen
-            create, enumerate, capture, and cleanup preflight. Once LibreOffice
-            can be built, the same mechanics will target the real binary and
-            record attributable checkpoints without disturbing the operator’s
-            session.
+            The low-level driver progressed from a Notepad-only preflight to real
+            exact-source LibreOffice runs. The corrected runtime was launched,
+            navigated, captured, UNO-inspected, shut down, and cleaned up without
+            disturbing the operator’s session.
           </p>
           <p class="preflight-note">
-            <strong>Harness proof, not UI proof:</strong> driver commit
-            <code>806d9ba85e4a…</code> passed on 2026-07-16. Its temporary Notepad
-            capture was discarded and the accepted Material evidence count
-            remains zero.
+            <strong>Scoped UI proof:</strong> corrected run
+            <code>20260720-022159-fbba560e27…</code> contributes two accepted
+            light Start Center captures and two complete bounded UNO trees. It
+            does not prove MSI lifecycle restart suppression or the broader UI.
           </p>
           <a
             class="button button-tonal"

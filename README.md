@@ -22,15 +22,31 @@ document engine, file-format support, and accessibility foundations.
 > 199,692,288-byte Windows x64 MSI, and successfully administratively extracted
 > its payload with Windows Installer status `0`.
 > The whole GUI has not been rewritten, and no application surface is
-> Material-complete. **There is no public downloadable build yet** — the earlier
-> hosted run found a staging-rule defect after building the MSI:
+> Material-complete. A normal public, non-prerelease release now exists at
+> [`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274).
+> It targets product source `577059e274`, contains exactly the MSI plus its
+> checksum and two update manifests, and was published on 2026-07-20 at
+> 06:06:42 UTC. Its unsigned 199,692,288-byte MSI has SHA-256
+> `437b059c7dd5ed7a60c2ae4f47f2a1905cf97ef4e136e98183e08658d7654a43`.
+> This is the older build used for the first accepted screenshots: a later audit found
+> that its updater launch forwarded only four of five generated arguments and
+> therefore omitted `REBOOT=ReallySuppress`. Do not treat that release as
+> restart-suppression or updater-runtime proof. Commit
+> `fbba560e27db26de605c40aa237c554c1f0744b1` forwards all five arguments; its
+> corrected MSI has been rebuilt and structurally checked, and its extracted
+> runtime passed the corrected headless UI/UNO rerun. A corrected release still
+> remains pending. After an initial propagation delay,
+> cache-busted unauthenticated Latest downloads for all four assets succeeded and
+> matched the release bytes and SHA-256 values exactly. The earlier hosted run
+> found a staging-rule defect after building the MSI:
 > recursive discovery included two retained intermediate MSI databases alongside
 > the final package. The workflow now scopes discovery to the final success-only
 > `install\en-US` directory. The local MSI is unsigned, and the local wrapper's
 > parent process exited after successful extraction but before final dist
 > staging, so it is not presented as an end-to-end wrapper success.
-> A real LibreOfficeDev Start Center run from that extracted MSI payload is now
-> accepted with two reviewed light-profile captures and two bounded UNO trees
+> A real LibreOfficeDev Start Center run from the corrected extracted MSI payload
+> is now the canonical gallery evidence, with two reviewed light-profile captures
+> and two bounded UNO trees
 > with no collector errors. The separate interactive
 > [design reference](https://ding-ding-projects.github.io/libreoffice-material/prototype.html)
 > is a mockup, not the app. To run the actual editor, install upstream LibreOffice
@@ -43,9 +59,13 @@ document engine, file-format support, and accessibility foundations.
 > packages pass structural validation. Run `29695815101` at
 > `e4dc8a850c982f33d8722fc203f86591b2993e8b` proves the repaired CLI payload,
 > required native targets and full installation-set build. The local VS 2026
-> run adds exact-source MSI, Start Center smoke, and bounded UNO-tree evidence, but
-> no public release or updater-runtime result is accepted yet. No
-> public release in the canonical repository has a validated installer asset.
+> run adds exact-source MSI, Start Center smoke, and bounded UNO-tree evidence.
+> The older normal release and its public Latest asset bytes are verified, but
+> updater-runtime proof and corrected-binary publication are not accepted yet.
+> Hosted Windows run
+> [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
+> for screenshot commit `b0e3ea766` remains in progress and has not yet published
+> its per-push release.
 
 [Project site](https://ding-ding-projects.github.io/libreoffice-material/) ·
 [Interactive preview](https://ding-ding-projects.github.io/libreoffice-material/prototype.html) ·
@@ -63,11 +83,11 @@ document engine, file-format support, and accessibility foundations.
 | Material design direction | Initial specification | [`MATERIAL_DESIGN.md`](MATERIAL_DESIGN.md) |
 | Material VCL implementation | Tenth milestone plus a native-test-backed Start Center follow-up | Light/dark profile routing, complete semantic `StyleSettings` color mapping, native-preserving type roles, semantic shape/metric roles, full-track progress and value-sensitive level indicators, native outlined frames and net-less tree connectors, disabled-affordance state completeness, strict source validation, high-contrast fallback, shared renderer fixes, and Start Center source changes are present. The standard `suggested-action` UI class reaches `PushButton::setAction(true)` through `VclBuilder`, selecting the existing Material `extra="action"` states; `CppunitTest_vcl_treeview` passed in current Linux and Windows runs, while runtime gates remain open |
 | Whole-suite implementation | Incomplete | Phased work remains in [`ROADMAP.md`](ROADMAP.md) |
-| Verified UI screenshots | 2 light-profile Start Center captures | The Home/Recent Documents baseline and background-navigated Templates gallery are registered under exact-source run [`20260720-012853-577059e274-vs2026-msi-raster`](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/); dark and the rest of the matrix remain open |
+| Verified UI screenshots | 2 canonical light-profile Start Center captures | The Home/Recent Documents baseline and background-navigated Templates gallery are registered under corrected exact-source run [`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/). The earlier `577059e274` run remains preserved as historical accepted proof; dark and the rest of the matrix remain open |
 | Headless harness | LibreOffice smoke and bounded UNO collection passed | The sibling low-level driver launched the MSI payload on an off-screen Windows desktop, resolved stable runtime ownership, captured both states, drove background navigation, collected two bounded UNO trees with no collector errors, shut down normally, and released the desktop; see [`docs/HEADLESS_UI_EVIDENCE.md`](docs/HEADLESS_UI_EVIDENCE.md) |
 | Interactive design reference | Published mockup | [`site/prototype.html`](site/prototype.html) — 11 suite surfaces, a regex builder on every search bar, and a Find & Replace dialog; guarded by [`bin/validate-prototype.mjs`](bin/validate-prototype.mjs) (7/7) and the `prototype-check` CI |
-| Windows updater | Source implemented; updater flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install; the Start Center runtime is proven, but updater download/stage/consent/install and a public release remain pending; see [Privacy](PRIVACY.md) |
-| Installer / release | Local MSI built and structurally extracted; public release pending | The exact-source VS 2026 build produced an unsigned 199,692,288-byte MSI (`437b059c…54a43`), Windows Installer administrative extraction returned `0`, and the extracted runtime supplied the accepted captures. The parent wrapper did not reach final dist staging. [`windows-installer.yml`](.github/workflows/windows-installer.yml) now starts on every `main` push and publishes only a verified normal, non-prerelease Release |
+| Windows updater | Corrected source rebuilt and UI-smoked; updater flow not yet exercised | Windows-only update source reads the exact GitHub Latest XML asset, rejects untrusted or legacy state, verifies the canonical MSI metadata and bytes, stages through protected LocalAppData, and requires default-No consent before a visible install. Commit `fbba560e2` fixed the launch site to forward all five generated arguments, including `REBOOT=ReallySuppress`; its focused VS 2026 updater test and incremental product/MSI build passed, and the corrected extracted runtime passed the scoped headless Start Center/UNO smoke. Download/stage/consent/install and MSI install/repair/upgrade/restart-suppression lifecycle proof remain pending; see [Privacy](PRIVACY.md) |
+| Installer / release | Older normal release and public bytes verified; corrected release pending | The public, normal, non-prerelease `windows-msi-local-20260720-577059e274` release targets `577059e274` and has exactly four assets. Cache-busted Latest downloads matched all release bytes and hashes; its unsigned 199,692,288-byte MSI is `437b059c…54a43`. This older binary omits the fifth updater launch argument. The corrected unsigned MSI is 199,688,192 bytes (`180e511c…afeea`); administrative extraction returned `0`, the extracted updater DLL matches the built DLL (`32f80a…46a3`), and its extracted runtime passed the scoped headless UI/UNO rerun. A corrected normal release remains pending |
 
 This table is deliberately conservative. A roadmap item changes state only when
 its code, build result, interaction checks, and committed visual evidence agree.
@@ -75,21 +95,28 @@ its code, build result, interaction checks, and committed visual evidence agree.
 ## Running Windows app — exact-source VS 2026/MSI evidence
 
 <p align="center">
-  <a href="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-light.png"><img src="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-light.png" alt="LibreOfficeDev Start Center Home and Recent Documents view running on an off-screen Windows desktop" width="49%"></a>
-  <a href="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-templates-light.png"><img src="docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/screenshots/start-center-templates-light.png" alt="LibreOfficeDev Start Center Templates gallery after a background navigation smoke action" width="49%"></a>
+  <a href="docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/screenshots/start-center-light.png"><img src="docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/screenshots/start-center-light.png" alt="Corrected LibreOfficeDev Start Center Home and Recent Documents view running on an off-screen Windows desktop" width="49%"></a>
+  <a href="docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/screenshots/start-center-templates-light.png"><img src="docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/screenshots/start-center-templates-light.png" alt="Corrected LibreOfficeDev Start Center Templates gallery after a background navigation smoke action" width="49%"></a>
 </p>
 
-These are unedited `1920×1117` captures of the actual Windows binary extracted
-from the MSI built at source commit `577059e274`. The run used the Material
+These are unedited `1920×1117` captures of the actual corrected Windows binary
+extracted from the MSI built at source commit `fbba560e27`. The run used the Material
 file-widget opt-in and software-raster fallback because the default-GPU
 `PrintWindow` path produced a preserved blank capture. The accepted run proves
 stable launch, visible Start Center rendering, background navigation to
 Templates, two nonempty bounded UNO trees (96/49 and 111/64 total/visible
 nodes, no collector errors), normal shutdown, and desktop cleanup. It does not
 yet prove dark/high-contrast, accelerated rendering, updater behavior, or the
-whole-suite matrix. See the [manifest](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/manifest.json),
-[results](docs/evidence/runs/20260720-012853-577059e274-vs2026-msi-raster/results.json),
-and [screenshot registry](docs/SCREENSHOTS.md).
+whole-suite matrix. It also does not execute MSI install, repair, upgrade,
+uninstall, or restart-suppression lifecycle scenarios. See the
+[manifest](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/manifest.json),
+[results](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/results.json),
+and [screenshot registry](docs/SCREENSHOTS.md). The canonical image SHA-256
+values are `e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`
+for Home/Recent Documents and
+`1f9f0e9614c0eb6bd0c0e9cea6909982a8900ed532e03f7bbdd72751a87294ab`
+for Templates. The earlier accepted `577059e274` software-raster run remains in
+the evidence archive as historical proof, but is no longer the canonical gallery.
 
 ## Material VCL source milestones
 
@@ -234,18 +261,34 @@ runtime and is paired with off-screen screenshots; it records roles, names,
 states, and bounds without extracting document text or driving the UI.
 The Start Center headless UI and bounded UNO-tree collection now have runtime
 proof, but they do not constitute a full accessibility audit and do not exercise
-the updater. The published-release path,
-download/protected-stage/consent/install flow, installer lifecycle, and broader
-UI/accessibility matrix are still pending.
+the updater. A launch-site audit after publishing the older `577059e274` MSI
+found that only four of the command builder's five generated arguments reached
+`osl_executeProcess`, dropping `REBOOT=ReallySuppress`. Commit `fbba560e2`
+replaced that fixed four-element list with an array sized from the command and
+forwards all five entries. `CppunitTest_extensions_test_update`, the incremental
+full product build, and MSI creation passed with Visual Studio 2026. The corrected
+unsigned MSI is 199,688,192 bytes with SHA-256 `180e511c…afeea`; administrative
+extraction returned `0` with 4,885 files and 603,901,200 bytes, and the extracted
+updater DLL exactly matches the built DLL at SHA-256 `32f80a…46a3`. Its corrected
+extracted runtime passed the canonical light Start Center UI/UNO smoke. The
+download/protected-stage/consent/install flow, MSI install/repair/upgrade/
+restart-suppression lifecycle, and broader UI/accessibility matrix are still pending.
 
-The stable release workflow is likewise source-only at this point. Every push to
-`main` starts an exact-commit Windows build (manual dispatch remains available),
-creates a draft release, uploads the validated MSI and update metadata directly
-to that release, and checks the exact target, asset names, upload states, sizes,
-and digests. It then promotes the verified draft to a normal public,
-non-prerelease Latest release and checks the public Latest feed. Only diagnostics
-use an Actions artifact, and a failed draft is cleaned up. No run has yet
-completed that path.
+The stable release workflow starts on every push to `main` (manual dispatch
+remains available), creates a draft release, uploads the validated MSI and update
+metadata directly to that release, and checks the exact target, asset names,
+upload states, sizes, and digests. It then promotes the verified draft to a normal
+public, non-prerelease Latest release and checks the public Latest feed. Only
+diagnostics use an Actions artifact, and a failed draft is cleaned up. An
+independently staged normal release now exists at
+`windows-msi-local-20260720-577059e274` with the expected four assets, but the
+workflow run for `b0e3ea766` is still in progress and has not published its
+per-push release. After an initial propagation 404, cache-busted unauthenticated
+Latest downloads for the XML (976 bytes), JSON manifest (943 bytes), checksum
+sidecar (102 bytes), and MSI (199,692,288 bytes) all matched the release assets
+and their SHA-256 values exactly. The existing release contains the older launch
+omission; the corrected `fbba560e2` MSI has completed the scoped headless UI/UNO
+verification but must receive its own release before it replaces that candidate.
 
 ## Product direction
 
@@ -355,9 +398,13 @@ and the imported build files before configuring a machine.
 > claimed as an end-to-end success. This local result complements the hosted result:
 > current-source Linux run `29695793821` and Windows run `29695815101` passed
 > all five required native C++ targets, and the Windows run built the full
-> installation set but stopped at MSI staging. The corrected final-directory
-> rule awaits its hosted rerun. No normal public release or updater-runtime result
-> is claimed yet.
+> installation set but stopped at MSI staging. Hosted run `29720519794` is now
+> exercising the corrected final-directory rule at pushed commit `b0e3ea766` and
+> remains in progress. A separate normal public, non-prerelease release exists at
+> `windows-msi-local-20260720-577059e274`, but its older MSI predates the corrected
+> five-argument updater launch. Its four public Latest assets have now been
+> independently downloaded and matched byte-for-byte. No updater-runtime result
+> is claimed.
 
 > **Optional local VS 2026 profile:** Visual Studio 2022 remains the default
 > and the profile that matches the current Windows CI workflow. To select VS
@@ -385,7 +432,13 @@ and the imported build files before configuring a machine.
 > narrowly scoped v145 C++20 compatibility patch. On 2026-07-20, a fresh build
 > at `577059e274` completed the native targets, product, and final MSI; its
 > extracted runtime passed the linked light-profile Start Center UI and bounded
-> UNO-tree smoke. Remaining gates are stated in the evidence manifest.
+> UNO-tree smoke. A later launch-site audit found that binary omitted the fifth
+> generated updater argument. Commit `fbba560e2` forwards all five, including
+> `REBOOT=ReallySuppress`; its focused updater target, incremental product build,
+> corrected 199,688,192-byte MSI, administrative extraction, and updater-DLL hash
+> match and corrected scoped headless UI/UNO rerun passed. Its corrected release
+> and MSI lifecycle proof remain open. Remaining
+> gates are stated in the evidence manifest.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing
 the development checkout. It checks root safety, free space, and (when Git is

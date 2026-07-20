@@ -79,16 +79,33 @@ bounded v145 C++20 workaround. A fresh exact-source build at
 native targets, validated the legacy CLI payload, completed the product, and
 produced an unsigned 199,692,288-byte MSI. Windows Installer administrative
 extraction returned status `0` with one `soffice.exe`, and that extracted
-runtime supplied the accepted Start Center UI and bounded UNO-tree smoke.
+runtime supplied the first accepted Start Center UI and bounded UNO-tree smoke,
+which remains retained as historical accepted proof.
+Screenshot/docs commit `b0e3ea76639796aa5612dbce0333e394a5073f4c` is pushed,
+and Pages run
+[`29720519782`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519782)
+succeeded for that exact commit. Its two published image inputs retain SHA-256
+`e4a21bd16c99ef360749dd72557a8d5a9df7c38d0a51122e8ca0058c57464501`
+and `30667f9c9c8163183dc6f7d780113e52b90d710dca0ac64044afd5b5243ef378`.
 
 Run `29695815101` did not upload an MSI: its staging script recursively matched
 two retained LibreOffice working databases as well as the final installer. The
 workflow now inspects only the success-only final `LibreOfficeDev\msi\install\en-US`
 directory and still requires exactly one MSI plus administrative extraction and
-`soffice.exe` validation. That corrected staging rule needs a hosted rerun. The
+`soffice.exe` validation. Hosted run
+[`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
+is exercising that corrected rule at `b0e3ea766` and remains in progress. The
 local wrapper's parent process exited after successful extraction but before its
-final dist staging/manifest copy, so an end-to-end wrapper run and public normal
-release remain open.
+final dist staging/manifest copy, so an end-to-end wrapper run remains open.
+
+A separate normal public, non-prerelease release was published at
+[`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
+on 2026-07-20 at 06:06:42 UTC. It targets product source `577059e274`, contains
+exactly the MSI, checksum sidecar, JSON build manifest, and XML update manifest,
+and its unsigned 199,692,288-byte MSI has SHA-256 `437b059c…54a43`. After an
+initial propagation delay, cache-busted unauthenticated Latest downloads for all
+four assets matched the release sizes and SHA-256 values exactly. This is a real
+release, but not the corrected updater candidate described below.
 
 The local script is intentionally non-destructive: it checks safe short roots,
 both tool/build-drive free space, and a clean checkout before installing
@@ -109,9 +126,12 @@ checks the completed download, and on confirmation copies it with `CREATE_NEW`
 into protected LocalAppData staging with a user/Administrators/SYSTEM DACL,
 re-verifies it, and retains a final read lock against write/delete replacement.
 The visible MSI launch requires explicit default-No consent; silent install is
-not implemented, and it passes `REBOOT=ReallySuppress` so it cannot request or
-force a Windows restart. Automatic checks default on weekly, while automatic
-download is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
+not implemented. An audit found that the `577059e274` binary forwarded only four
+of its five generated installer arguments and omitted `REBOOT=ReallySuppress`.
+Commit `fbba560e27db26de605c40aa237c554c1f0744b1` now sizes the launch array from
+the command and forwards all five entries, including restart suppression.
+Automatic checks default on weekly, while automatic download is off and
+download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
 A bounded read-only UNO accessibility-tree collector now accompanies the
 off-screen desktop plan. It runs with the matching built Python runtime and
 records window roles, names, states, child counts, and optional bounds without
@@ -119,9 +139,22 @@ reading document text or invoking UI actions. The accepted light Start Center
 run collected two complete bounded trees with no collector errors; this is a
 collector smoke result, not a full accessibility audit.
 The required native targets, local Windows MSI, and light Start Center headless
-smoke have completed for exact source `577059e274`. Public release, updater and
-installer lifecycle, the remaining UI/accessibility matrix, and the wrapper's
-final dist staging phase remain pending.
+smoke have completed for exact source `577059e274`; its older normal release and
+four public Latest assets are also verified. The launch fix at `fbba560e2` passed
+`CppunitTest_extensions_test_update`, an incremental full product/MSI build, and
+Windows Installer administrative extraction. Its corrected unsigned
+199,688,192-byte MSI is `180e511c…afeea`; the 4,885-file, 603,901,200-byte
+extraction returned `0`, and its updater DLL matches the built DLL at
+`32f80a…46a3`. The corrected extracted runtime then passed canonical off-screen
+Home/Recent Documents and Templates smoke with two complete bounded UNO trees:
+96/49 and 111/64 total/visible nodes, zero collector errors, no partial capture,
+normal termination, zero remaining matching processes/windows, and a closed
+desktop. The accepted run is
+[`20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression`](docs/evidence/runs/20260720-022159-fbba560e27-vs2026-msi-raster-restart-suppression/).
+A corrected normal release, updater download/stage/consent flow, MSI
+install/repair/upgrade/restart-suppression lifecycle proof, the remaining
+UI/accessibility matrix, and the wrapper's final dist staging phase remain
+pending. This scoped runtime smoke does not prove any MSI lifecycle behavior.
 
 An interactive, dependency-free Material design reference for the whole suite is
 published at [`site/prototype.html`](site/prototype.html): a hand-built HTML
@@ -135,10 +168,12 @@ every search bar, and a Find & Replace dialog. Its tokens mirror
 (7/7). It specifies the design the native work targets and is **not** a capture
 of a compiled build, so it does not advance any acceptance gate or the
 verified-capture count. The exact-source local MSI and Start Center evidence are
-tracked separately; no validated public installer release exists. The historical
-assetless release/tag `e` contains no build and does not satisfy any
-release or evidence gate. Neither package workflow publishes unless a real
-package is produced and validated.
+tracked separately. The normal `windows-msi-local-20260720-577059e274` release
+has four byte-verified public assets, but its MSI predates the five-argument
+updater-launch correction and therefore does not close the updater runtime or
+restart-suppression gate. The historical assetless release/tag `e` contains no
+build and does not satisfy any release or evidence gate. Neither package workflow
+publishes unless a real package is produced and validated.
 
 Exit gate:
 
@@ -356,8 +391,8 @@ Exit gate:
 
 ## Phase 8 — release readiness and upstreamability
 
-**Status: in progress — updater and stable-release automation source only;
-native and release proof pending**
+**Status: in progress — older normal release and public assets verified;
+corrected updater release and runtime proof pending**
 
 - complete native validation of the Windows updater and stable packaging path;
 - preserve the exact GitHub Latest XML, strict MSI metadata/hash checks,

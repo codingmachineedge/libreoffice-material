@@ -199,6 +199,11 @@ Windows Installer administrative extraction completed with status `0`; the
 extracted runtime supplied the registered light Start Center UI and bounded UNO
 tree smoke. The wrapper's parent process exited before the final dist copy and
 manifest stage, so a fully completed one-click wrapper rerun remains required.
-The MSI was not installed, and no public release or installer lifecycle result
-is implied. Exact runtime boundaries are in
+The MSI was not installed during this build run. It was later published as the
+normal, non-prerelease `windows-msi-local-20260720-577059e274` release and all
+four public Latest assets were byte-verified, but that older binary omitted the
+fifth generated updater launch argument. Commit `fbba560e2` corrects the launch,
+and its incremental VS 2026 product/MSI rebuild, administrative extraction, and
+headless UI/UNO rerun passed. No installer lifecycle or restart-suppression
+runtime result is implied. Exact runtime boundaries are in
 [`HEADLESS_UI_EVIDENCE.md`](HEADLESS_UI_EVIDENCE.md).
