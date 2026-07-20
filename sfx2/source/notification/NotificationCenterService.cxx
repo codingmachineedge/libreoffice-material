@@ -22,6 +22,7 @@
 #include <deque>
 #include <exception>
 #include <mutex>
+#include <stdexcept>
 #include <utility>
 
 namespace sfx2
@@ -42,7 +43,9 @@ NotificationCenterSnapshot::NotificationCenterSnapshot(
 
 namespace
 {
-class UiCompletionQueue final
+thread_local const void* g_pNotificationWorkerIdentity = nullptr;
+
+class UiCompletionQueue final : public std::enable_shared_from_this<UiCompletionQueue>
 {
 public:
     ~UiCompletionQueue() { shutdown(); }
@@ -51,29 +54,78 @@ public:
     {
         std::scoped_lock aGuard(m_aMutex);
         if (!m_bAccepting)
+        {
+            // Main-thread shutdown disposes these after the worker join. Off-main shutdown cannot
+            // touch ImplSVEvent safely, so retain the closures for disposal by a VCL event.
+            m_aCompletions.push_back(std::move(aCompletion));
+            if (m_bDisposeCancelledOnUi && !m_pEvent)
+            {
+                m_xEventKeepAlive = shared_from_this();
+                m_pEvent = Application::PostUserEvent(LINK(this, UiCompletionQueue, handleEvent));
+                if (!m_pEvent)
+                    SAL_WARN("sfx.notification",
+                             "Could not marshal cancelled notification callbacks to VCL");
+            }
             return;
+        }
         m_aCompletions.push_back(std::move(aCompletion));
         if (!m_pEvent)
         {
+            // Application::PostUserEvent retains only the raw Link instance. Keep this queue
+            // alive until the event is either handled or explicitly cancelled, including when a
+            // completion destroys the owning NotificationCenterService from inside handleEvent.
+            m_xEventKeepAlive = shared_from_this();
             m_pEvent = Application::PostUserEvent(LINK(this, UiCompletionQueue, handleEvent));
             if (!m_pEvent)
-                m_aCompletions.clear();
+            {
+                m_xEventKeepAlive.reset();
+                SAL_WARN("sfx.notification",
+                         "Could not post notification completion event; retaining callbacks");
+            }
         }
     }
 
     void shutdown()
     {
+        const bool bCanCancelEvent = Application::IsMainThread();
         ImplSVEvent* pEvent = nullptr;
+        std::shared_ptr<UiCompletionQueue> xKeepAlive;
         {
             std::scoped_lock aGuard(m_aMutex);
-            if (!m_bAccepting && !m_pEvent)
+            if (!m_bAccepting && (!bCanCancelEvent || !m_pEvent))
                 return;
             m_bAccepting = false;
-            m_aCompletions.clear();
+            m_bDisposeCancelledOnUi = !bCanCancelEvent;
+            if (!bCanCancelEvent)
+            {
+                if (!m_pEvent && !m_aCompletions.empty())
+                {
+                    m_xEventKeepAlive = shared_from_this();
+                    m_pEvent
+                        = Application::PostUserEvent(LINK(this, UiCompletionQueue, handleEvent));
+                    if (!m_pEvent)
+                        SAL_WARN("sfx.notification",
+                                 "Could not marshal retained notification callbacks to VCL");
+                }
+                return;
+            }
             pEvent = std::exchange(m_pEvent, nullptr);
+            xKeepAlive = std::move(m_xEventKeepAlive);
         }
         if (pEvent)
             Application::RemoveUserEvent(pEvent);
+    }
+
+    void finishShutdown()
+    {
+        if (!Application::IsMainThread())
+            return;
+        std::deque<std::function<void()>> aCancelled;
+        {
+            std::scoped_lock aGuard(m_aMutex);
+            m_bDisposeCancelledOnUi = false;
+            aCancelled.swap(m_aCompletions);
+        }
     }
 
 private:
@@ -82,18 +134,24 @@ private:
     std::mutex m_aMutex;
     std::deque<std::function<void()>> m_aCompletions;
     ImplSVEvent* m_pEvent = nullptr;
+    std::shared_ptr<UiCompletionQueue> m_xEventKeepAlive;
     bool m_bAccepting = true;
+    bool m_bDisposeCancelledOnUi = false;
 };
 
 IMPL_LINK_NOARG(UiCompletionQueue, handleEvent, void*, void)
 {
+    // The member self-lease makes shared_from_this valid on entry. This local lease then keeps the
+    // handler alive if a completion synchronously shuts down and destroys its owning service.
+    auto xKeepAlive = shared_from_this();
     std::deque<std::function<void()>> aCompletions;
     {
         std::scoped_lock aGuard(m_aMutex);
         m_pEvent = nullptr;
+        m_xEventKeepAlive.reset();
         if (!m_bAccepting)
         {
-            m_aCompletions.clear();
+            aCompletions.swap(m_aCompletions);
             return;
         }
         aCompletions.swap(m_aCompletions);
@@ -109,9 +167,17 @@ IMPL_LINK_NOARG(UiCompletionQueue, handleEvent, void*, void)
         {
             rCompletion();
         }
+        catch (const css::uno::Exception& rError)
+        {
+            SAL_WARN("sfx.notification", "Notification UI completion failed: " << rError.Message);
+        }
         catch (const std::exception& rError)
         {
             SAL_WARN("sfx.notification", "Notification UI completion failed: " << rError.what());
+        }
+        catch (...)
+        {
+            SAL_WARN("sfx.notification", "Notification UI completion failed with an unknown error");
         }
     }
 }
@@ -172,13 +238,22 @@ public:
         , m_aClock(std::move(aClock))
         , m_aIdProvider(std::move(aIdProvider))
         , m_aDispatcher(std::move(aDispatcher))
+        , m_xWorkerIdentity(std::make_shared<const int>(0))
         , m_bPersistPreferences(bPersistPreferences)
     {
         if (!m_aDispatcher)
-            m_aDispatcher = [](std::function<void()> aCompletion) { aCompletion(); };
+            throw std::invalid_argument(
+                "notification completion dispatcher must queue work off the store worker without "
+                "waiting");
     }
 
-    ~NotificationWorker() override { assert(m_bJoined); }
+    ~NotificationWorker() override { assert(!m_bLaunched || m_bJoined); }
+
+    void start()
+    {
+        launch();
+        m_bLaunched = true;
+    }
 
     sal_uInt64 enqueue(Request aRequest)
     {
@@ -195,17 +270,22 @@ public:
         return nId;
     }
 
-    void shutdown()
+    void stopAccepting()
     {
-        std::scoped_lock aShutdownGuard(m_aShutdownMutex);
-        if (m_bJoined)
-            return;
         {
             std::scoped_lock aGuard(m_aMutex);
             m_bAccepting = false;
             m_bStopWhenDrained = true;
         }
         m_aWorkAvailable.notify_one();
+    }
+
+    void shutdown()
+    {
+        std::scoped_lock aShutdownGuard(m_aShutdownMutex);
+        if (m_bJoined)
+            return;
+        stopAccepting();
         join();
         m_bJoined = true;
     }
@@ -213,6 +293,8 @@ public:
 private:
     void execute() override
     {
+        assert(g_pNotificationWorkerIdentity == nullptr);
+        g_pNotificationWorkerIdentity = m_xWorkerIdentity.get();
         std::unique_ptr<NotificationStore> pStore = std::make_unique<NotificationStore>(
             m_aRepositoryURL, std::move(m_aClock), std::move(m_aIdProvider));
         pStore->setPreferences(m_aPreferences);
@@ -239,6 +321,7 @@ private:
         // NotificationStore owns the repository handle and is deliberately destroyed here, on the
         // same worker that constructed and used it.
         pStore.reset();
+        g_pNotificationWorkerIdentity = nullptr;
     }
 
     void process(NotificationStore& rStore, Request aRequest)
@@ -312,15 +395,34 @@ private:
         if (!aRequest.Completion)
             return;
         auto aCompletion = std::move(aRequest.Completion);
+        auto xWorkerIdentity = m_xWorkerIdentity;
         try
         {
             m_aDispatcher(
-                [aCompletion = std::move(aCompletion), aResult = std::move(aResult)]() mutable
-                { aCompletion(std::move(aResult)); });
+                [aCompletion = std::move(aCompletion), aResult = std::move(aResult),
+                 xWorkerIdentity = std::move(xWorkerIdentity)]() mutable
+                {
+                    if (g_pNotificationWorkerIdentity == xWorkerIdentity.get())
+                    {
+                        SAL_WARN("sfx.notification",
+                                 "Completion dispatcher ran on the store worker; "
+                                 "suppressing callback");
+                        return;
+                    }
+                    aCompletion(std::move(aResult));
+                });
+        }
+        catch (const css::uno::Exception& rError)
+        {
+            SAL_WARN("sfx.notification", "Notification completion failed: " << rError.Message);
         }
         catch (const std::exception& rError)
         {
             SAL_WARN("sfx.notification", "Notification completion failed: " << rError.what());
+        }
+        catch (...)
+        {
+            SAL_WARN("sfx.notification", "Notification completion failed with an unknown error");
         }
     }
 
@@ -329,6 +431,7 @@ private:
     NotificationStore::Clock m_aClock;
     NotificationStore::IdProvider m_aIdProvider;
     NotificationCenterService::CompletionDispatcher m_aDispatcher;
+    const std::shared_ptr<const int> m_xWorkerIdentity;
     const bool m_bPersistPreferences;
 
     std::mutex m_aMutex;
@@ -340,6 +443,7 @@ private:
     sal_uInt64 m_nGeneration = 0;
 
     std::mutex m_aShutdownMutex;
+    bool m_bLaunched = false;
     bool m_bJoined = false;
 };
 }
@@ -355,25 +459,21 @@ struct NotificationCenterService::Impl
                                            std::move(aClock), std::move(aIdProvider),
                                            std::move(aDispatcher), bPersistPreferences))
     {
-        m_xWorker->launch();
+        m_xWorker->start();
     }
 
     ~Impl() { shutdown(); }
 
-    sal_uInt64 enqueue(Request aRequest)
-    {
-        return m_xWorker.is() ? m_xWorker->enqueue(std::move(aRequest)) : 0;
-    }
+    sal_uInt64 enqueue(Request aRequest) { return m_xWorker->enqueue(std::move(aRequest)); }
 
     void shutdown()
     {
-        if (!m_xWorker.is())
-            return;
+        m_xWorker->stopAccepting();
         if (m_xUiCompletions)
             m_xUiCompletions->shutdown();
         m_xWorker->shutdown();
-        m_xWorker.clear();
-        m_xUiCompletions.reset();
+        if (m_xUiCompletions)
+            m_xUiCompletions->finishShutdown();
     }
 
     std::shared_ptr<UiCompletionQueue> m_xUiCompletions;

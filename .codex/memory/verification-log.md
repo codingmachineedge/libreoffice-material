@@ -1667,3 +1667,21 @@ build or runtime evidence.
   `CppunitTest_sfx2_notificationstore` but were not compiled or run. No shared
   retained build directory was used, and no application/runtime proof is
   claimed for this source checkpoint.
+
+## 2026-07-20 — adversarial notification-service lifecycle review
+
+- Compared the branch against requested `origin/main` `e439db6f8`, then
+  rechecked after the remote advanced to `01bed9c7d`. The in-tree
+  `salhelper::Thread`, VCL user-event, application-lifetime, generated
+  configuration, and CppUnit build APIs were inspected without using a retained
+  build root; the later standalone C++20 notification-test corrections were
+  mirrored without rebasing or merging.
+- Fixed raw VCL Link lifetime during reentrant destruction, concurrent
+  enqueue/shutdown owner races, launch-failure teardown, worker admission order,
+  off-main event cancellation, and the former inline-dispatch Windows self-join
+  path. Cancelled callback closures now remain owned for main/VCL-side disposal.
+- `python bin/check-notification-store-contract.py` and all 24 mutation tests
+  pass. Twenty-one native notification CppUnit cases are wired, including
+  concurrent admission, completion-side service destruction, and
+  missing-dispatcher rejection, but are not compiled or run in this source-only
+  review.

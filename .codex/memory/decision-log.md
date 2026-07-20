@@ -568,11 +568,33 @@
   destroy `NotificationStore` on one FIFO worker; return only immutable
   generation-stamped snapshots; marshal production completions through a
   cancellable VCL queue; refresh snapshots after CAS conflicts; close UI delivery
-  before draining accepted shutdown work; and pass each bulk selection to one
-  store call. Use a typed generated-configuration adapter, with profile writes
-  disabled by the injectable repository test factory.
+  only after worker admission closes, then drain accepted shutdown work; and pass
+  each bulk selection to one store call. Use a typed generated-configuration
+  adapter, with profile writes disabled by the injectable repository test
+  factory.
 - Reason: this creates an explicit non-blocking UI boundary, deterministic
-  mutation/completion order, durable teardown, and one-commit bulk behavior
-  without weakening metadata-only privacy or exposing the synchronous store to
-  future UI consumers. Visible cards, the bulk manager, and dialog producer
-  migration remain later checkpoints.
+  mutation/completion order, durable teardown, and one user-action commit per
+  effecting bulk request (after any required maintenance checkpoint) without
+  weakening metadata-only privacy or exposing the synchronous store to future UI
+  consumers. Visible cards, the bulk manager, and dialog producer migration
+  remain later checkpoints.
+
+## D-033 — make completion ownership and shutdown linearization explicit
+
+- Date: 2026-07-20
+- State: source implemented and statically validated; native/runtime proof pending
+- Context: VCL stores a raw `PostUserEvent` Link, the repository factory formerly
+  ran callbacks inline on the store worker, and shutdown cleared owning
+  references while admission and dispatch could still race. Reentrant callback
+  destruction could therefore use a freed queue or self-join indefinitely on
+  Windows.
+- Decision: self-retain each pending VCL event and active handler; defer off-main
+  cancellation to VCL; close worker admission before delivery cancellation;
+  retain the joined worker reference through facade destruction; require
+  repository completions to use a non-blocking off-worker queue and suppress
+  inline violations; and dispose cancelled closures on the main/VCL thread after
+  drain.
+- Reason: the service can now drain durable accepted work without a dangling raw
+  event owner, Windows self-join, callback-affinity destruction, or concurrent
+  owner clear. This is source/static evidence until the 21-case native target is
+  compiled and run.

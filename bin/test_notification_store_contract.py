@@ -113,6 +113,14 @@ class NotificationStoreContractTest(unittest.TestCase):
         mutated[path] = mutated[path].replace("        LIFETIME_MARKER", process, 1)
         self.assertIn("worker-store-lifetime-order", self.violation_ids(mutated))
 
+        mutated = dict(self.contents)
+        launch = "        launch();\n        m_bLaunched = true;"
+        self.assertIn(launch, mutated[path])
+        mutated[path] = mutated[path].replace(
+            launch, "        m_bLaunched = true;\n        launch();", 1
+        )
+        self.assertIn("salhelper-worker-lifecycle-shape", self.violation_ids(mutated))
+
     def test_rejects_looped_bulk_store_dispatch(self) -> None:
         path = "sfx2/source/notification/NotificationCenterService.cxx"
         mutated = dict(self.contents)
@@ -131,6 +139,102 @@ class NotificationStoreContractTest(unittest.TestCase):
         mutated[path] = mutated[path].replace(accessor, "false", 1)
         self.assertIn(
             "complete-generated-configuration-adapter", self.violation_ids(mutated)
+        )
+
+    def test_rejects_vcl_callback_without_active_owner_lease(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        block = VALIDATOR._extract_braced_block(
+            mutated[path], "IMPL_LINK_NOARG(UiCompletionQueue, handleEvent"
+        )
+        lease = "auto xKeepAlive = shared_from_this();"
+        callback = "rCompletion();"
+        self.assertIn(lease, block)
+        self.assertIn(callback, block)
+        changed = block.replace(lease, "CALLBACK_MARKER", 1)
+        changed = changed.replace(callback, lease, 1)
+        changed = changed.replace("CALLBACK_MARKER", callback, 1)
+        mutated[path] = mutated[path].replace(block, changed, 1)
+        self.assertIn(
+            "vcl-completion-cancellation-ownership", self.violation_ids(mutated)
+        )
+
+    def test_rejects_worker_side_callback_disposal_after_post_failure(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        marker = "                m_xEventKeepAlive.reset();"
+        self.assertIn(marker, mutated[path])
+        mutated[path] = mutated[path].replace(
+            marker, marker + "\n                m_aCompletions.clear();", 1
+        )
+        self.assertIn(
+            "vcl-completion-cancellation-ownership", self.violation_ids(mutated)
+        )
+
+        mutated = dict(self.contents)
+        shutdown = VALIDATOR._extract_braced_block(
+            mutated[path], "class UiCompletionQueue final"
+        )
+        marker = "            m_bAccepting = false;"
+        self.assertIn(marker, shutdown)
+        changed = shutdown.replace(
+            marker, marker + "\n            m_aCompletions.clear();", 1
+        )
+        mutated[path] = mutated[path].replace(shutdown, changed, 1)
+        self.assertIn(
+            "vcl-completion-cancellation-ownership", self.violation_ids(mutated)
+        )
+
+    def test_rejects_worker_reference_clear_during_shutdown(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        shutdown = VALIDATOR._extract_braced_block(
+            mutated[path], "struct NotificationCenterService::Impl"
+        )
+        marker = "        m_xWorker->shutdown();"
+        self.assertIn(marker, shutdown)
+        changed = shutdown.replace(marker, marker + "\n        m_xWorker.clear();", 1)
+        mutated[path] = mutated[path].replace(shutdown, changed, 1)
+        ids = self.violation_ids(mutated)
+        self.assertIn("worker-reference-cleared-during-shutdown", ids)
+        self.assertIn("stable-worker-reference-through-shutdown", ids)
+
+    def test_rejects_inline_completion_dispatch(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        guard = "g_pNotificationWorkerIdentity == xWorkerIdentity.get()"
+        self.assertIn(guard, mutated[path])
+        mutated[path] = mutated[path].replace(guard, "false", 1)
+        self.assertIn("off-worker-completion-dispatch", self.violation_ids(mutated))
+
+    def test_rejects_callback_close_before_worker_admission_close(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        block = VALIDATOR._extract_braced_block(
+            mutated[path], "struct NotificationCenterService::Impl"
+        )
+        admission = "m_xWorker->stopAccepting();"
+        delivery = "m_xUiCompletions->shutdown();"
+        self.assertIn(admission, block)
+        self.assertIn(delivery, block)
+        changed = block.replace(admission, "ORDER_MARKER", 1)
+        changed = changed.replace(delivery, admission, 1)
+        changed = changed.replace("ORDER_MARKER", delivery, 1)
+        mutated[path] = mutated[path].replace(block, changed, 1)
+        self.assertIn(
+            "stable-worker-reference-through-shutdown", self.violation_ids(mutated)
+        )
+
+    def test_rejects_generated_schema_adapter_drift(self) -> None:
+        path = "officecfg/registry/schema/org/openoffice/Office/UI/NotificationCenter.xcs"
+        mutated = dict(self.contents)
+        field = '<prop oor:name="Animations"'
+        self.assertIn(field, mutated[path])
+        mutated[path] = mutated[path].replace(
+            field, '<prop oor:name="MotionAnimations"', 1
+        )
+        self.assertIn(
+            "generated-configuration-schema-shape", self.violation_ids(mutated)
         )
 
     def test_rejects_post_mutation_compaction(self) -> None:

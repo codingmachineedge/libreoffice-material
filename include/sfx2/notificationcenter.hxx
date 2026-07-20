@@ -270,10 +270,11 @@ struct SFX2_DLLPUBLIC NotificationCenterResult
  *
  * The store is constructed, used and destroyed exclusively on one worker. The profile factory
  * delivers callbacks through the VCL event queue. The injectable repository factory is intended
- * for focused tests and embedders and uses the supplied completion dispatcher; an empty dispatcher
- * invokes completions on the worker.
+ * for focused tests and embedders and requires a non-blocking dispatcher that queues completions
+ * off the store worker and returns without waiting for them. An inline dispatcher is a contract
+ * violation and its completion is suppressed.
  *
- * shutdown() stops profile callback delivery, stops accepting requests, drains every request
+ * shutdown() stops accepting requests, stops profile callback delivery, drains every request
  * already accepted, and then joins the worker. Cancelled callbacks do not affect the durability of
  * their already-accepted mutations.
  */
@@ -310,7 +311,10 @@ public:
     sal_uInt64 undo(OString aCommitId, Completion aCompletion);
     sal_uInt64 setPreferences(NotificationPreferences aPreferences, Completion aCompletion);
 
-    /** Idempotent. No new request is accepted after this call begins. */
+    /**
+     * Idempotent. Admission closes before callback cancellation and drain; a concurrent request is
+     * accepted only if it linearizes before that close.
+     */
     void shutdown();
 
 private:

@@ -425,15 +425,17 @@ objects. A lazy application-owned asynchronous facade now constructs, accesses,
 and destroys the store only on one serialized worker. Requests receive monotonic
 IDs, UI consumers receive immutable generation-stamped record/history snapshots,
 profile completions return through a cancellable VCL event queue, conflict
-results refresh to the winning ref, and shutdown drains accepted mutations
-before joining. A generated office-configuration adapter maps all display and
-retention preferences; the injectable repository factory keeps focused tests
-independent of the user profile. Eighteen native CppUnit cases cover the model,
-service ordering/shutdown/conflict/bulk-commit/privacy behavior,
-initialization/races, permanent-lock contention, the 129-commit threshold,
-forced repeated prune failure, crash recovery, reload, and exact undo; they are
-wired but not yet compiled. The static contract and all 18 Python mutation tests
-pass. See
+results refresh to the winning ref, and shutdown closes admission before it
+cancels callbacks, drains accepted mutations, and joins. Pending raw VCL events
+self-retain their queue, and the injectable repository factory requires
+off-worker completion dispatch while keeping focused tests independent of the
+user profile. A generated office-configuration adapter maps all display and
+retention preferences. Twenty-one native CppUnit cases cover the model, service
+ordering/shutdown/reentrant destruction/conflict/bulk-action-commit/privacy
+behavior, initialization/races, permanent-lock contention, the 129-commit
+threshold, forced repeated prune failure, crash recovery, reload, and exact
+undo; they are wired but not yet compiled. The static contract and all 24 Python
+mutation tests pass. See
 [`docs/design/02-notification-service-architecture.md`](docs/design/02-notification-service-architecture.md).
 The visible card stack, manager, producer routing, and customization controls
 remain open.

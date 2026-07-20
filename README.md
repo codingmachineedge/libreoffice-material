@@ -385,9 +385,12 @@ the installed checkpoint without growing objects or advancing `main`. A lazy
 application-owned `NotificationCenterService` now constructs, uses, and destroys
 that store on one serialized worker, returns immutable generation-stamped
 snapshots, refreshes after CAS conflicts, drains accepted mutations at shutdown,
-and marshals profile completions through the VCL event queue. A typed adapter
-reads and writes every generated `Office.UI.NotificationCenter` preference.
-Eighteen native CppUnit cases are wired and all 18 source mutation tests pass.
+and marshals profile completions through a self-retaining VCL event queue. Worker
+admission closes before callback cancellation, repository-test dispatch must
+transfer completions off-worker, and the stable joined worker owner is retained
+through repeated shutdown. A typed adapter reads and writes every generated
+`Office.UI.NotificationCenter` preference. Twenty-one native CppUnit cases are
+wired and all 24 source mutation tests pass.
 The service architecture is recorded in
 [`docs/design/02-notification-service-architecture.md`](docs/design/02-notification-service-architecture.md).
 No dialog producer, visible notification form/manager, stack, compiled service

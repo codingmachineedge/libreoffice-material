@@ -18,9 +18,12 @@
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
+#include <deque>
 #include <mutex>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -29,6 +32,13 @@ namespace
 {
 static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::Records)>);
 static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::History)>);
+static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::Generation)>);
+static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::Health)>);
+static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::Error)>);
+static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::HeadCommitId)>);
+static_assert(std::is_const_v<decltype(sfx2::NotificationCenterSnapshot::Preferences)>);
+static_assert(std::is_same_v<sfx2::NotificationCenterSnapshotRef,
+                             std::shared_ptr<const sfx2::NotificationCenterSnapshot>>);
 
 class TemporaryRepository
 {
@@ -97,32 +107,98 @@ private:
     std::vector<sfx2::NotificationCenterResult> m_aResults;
 };
 
+class CompletionThread
+{
+public:
+    CompletionThread()
+        : m_aThread([this] { run(); })
+    {
+    }
+
+    ~CompletionThread()
+    {
+        {
+            std::scoped_lock aGuard(m_aMutex);
+            m_bStopping = true;
+        }
+        m_aChanged.notify_one();
+        m_aThread.join();
+    }
+
+    sfx2::NotificationCenterService::CompletionDispatcher dispatcher()
+    {
+        return [this](std::function<void()> aCompletion)
+        {
+            {
+                std::scoped_lock aGuard(m_aMutex);
+                m_aCompletions.push_back(std::move(aCompletion));
+            }
+            m_aChanged.notify_one();
+        };
+    }
+
+private:
+    void run()
+    {
+        for (;;)
+        {
+            std::function<void()> aCompletion;
+            {
+                std::unique_lock aGuard(m_aMutex);
+                m_aChanged.wait(aGuard, [this] { return m_bStopping || !m_aCompletions.empty(); });
+                if (m_aCompletions.empty())
+                {
+                    if (m_bStopping)
+                        return;
+                    continue;
+                }
+                aCompletion = std::move(m_aCompletions.front());
+                m_aCompletions.pop_front();
+            }
+            aCompletion();
+        }
+    }
+
+    std::mutex m_aMutex;
+    std::condition_variable m_aChanged;
+    std::deque<std::function<void()>> m_aCompletions;
+    bool m_bStopping = false;
+    std::thread m_aThread;
+};
+
 class NotificationCenterServiceTest final : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(NotificationCenterServiceTest);
     CPPUNIT_TEST(testSerializedOrderingAndImmutableSnapshots);
     CPPUNIT_TEST(testShutdownDrainsAcceptedMutations);
+    CPPUNIT_TEST(testConcurrentAdmissionAndShutdownLinearize);
+    CPPUNIT_TEST(testCompletionCanDestroyService);
+    CPPUNIT_TEST(testRepositoryFactoryRequiresAsyncDispatcher);
     CPPUNIT_TEST(testConflictRefreshesReturnedSnapshot);
-    CPPUNIT_TEST(testBulkOperationCreatesExactlyOneCommit);
+    CPPUNIT_TEST(testBulkOperationCreatesOneActionCommitBelowCompaction);
     CPPUNIT_TEST(testMetadataOnlyTextRemainsRedacted);
     CPPUNIT_TEST_SUITE_END();
 
 public:
     void testSerializedOrderingAndImmutableSnapshots();
     void testShutdownDrainsAcceptedMutations();
+    void testConcurrentAdmissionAndShutdownLinearize();
+    void testCompletionCanDestroyService();
+    void testRepositoryFactoryRequiresAsyncDispatcher();
     void testConflictRefreshesReturnedSnapshot();
-    void testBulkOperationCreatesExactlyOneCommit();
+    void testBulkOperationCreatesOneActionCommitBelowCompaction();
     void testMetadataOnlyTextRemainsRedacted();
 };
 
 void NotificationCenterServiceTest::testSerializedOrderingAndImmutableSnapshots()
 {
     TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
     unsigned int nNextId = 1;
     sal_Int64 nNow = 100;
     auto xService = sfx2::NotificationCenterService::createForRepository(
         aRepository.url(), sfx2::NotificationPreferences(), [&nNow] { return nNow++; },
-        [&nNextId] { return sequentialId(nNextId++); });
+        [&nNextId] { return sequentialId(nNextId++); }, aDispatcher.dispatcher());
     CompletionCollector aCompletions;
 
     CPPUNIT_ASSERT_EQUAL(sal_uInt64(1), xService->add(draft(u"First"), aCompletions.callback()));
@@ -145,10 +221,11 @@ void NotificationCenterServiceTest::testSerializedOrderingAndImmutableSnapshots(
 void NotificationCenterServiceTest::testShutdownDrainsAcceptedMutations()
 {
     TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
     unsigned int nNextId = 1;
     auto xService = sfx2::NotificationCenterService::createForRepository(
         aRepository.url(), sfx2::NotificationPreferences(), [] { return sal_Int64(200); },
-        [&nNextId] { return sequentialId(nNextId++); });
+        [&nNextId] { return sequentialId(nNextId++); }, aDispatcher.dispatcher());
     CompletionCollector aCompletions;
 
     constexpr std::size_t RequestCount = 24;
@@ -167,9 +244,115 @@ void NotificationCenterServiceTest::testShutdownDrainsAcceptedMutations()
     CPPUNIT_ASSERT_EQUAL(RequestCount, aReloaded.history(100).size());
 }
 
+void NotificationCenterServiceTest::testConcurrentAdmissionAndShutdownLinearize()
+{
+    TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
+    unsigned int nNextId = 1;
+    sal_Int64 nNow = 225;
+    auto xService = sfx2::NotificationCenterService::createForRepository(
+        aRepository.url(), sfx2::NotificationPreferences(), [&nNow] { return nNow++; },
+        [&nNextId] { return sequentialId(nNextId++); }, aDispatcher.dispatcher());
+    std::mutex aGateMutex;
+    std::condition_variable aGateChanged;
+    bool bFirstAccepted = false;
+    bool bContinue = false;
+    std::size_t nAccepted = 0;
+
+    std::thread aProducer(
+        [&]
+        {
+            for (std::size_t i = 0; i < 64; ++i)
+            {
+                if (i == 1)
+                {
+                    std::unique_lock aGuard(aGateMutex);
+                    aGateChanged.wait(aGuard, [&] { return bContinue; });
+                }
+                sal_uInt64 nRequest = xService->add(draft(u"Concurrent"),
+                                                    sfx2::NotificationCenterService::Completion());
+                if (nRequest == 0)
+                    return;
+                ++nAccepted;
+                if (i == 0)
+                {
+                    {
+                        std::scoped_lock aGuard(aGateMutex);
+                        bFirstAccepted = true;
+                    }
+                    aGateChanged.notify_one();
+                }
+            }
+        });
+    {
+        std::unique_lock aGuard(aGateMutex);
+        aGateChanged.wait(aGuard, [&] { return bFirstAccepted; });
+    }
+    std::thread aShutdown([&] { xService->shutdown(); });
+    {
+        std::scoped_lock aGuard(aGateMutex);
+        bContinue = true;
+    }
+    aGateChanged.notify_one();
+    aProducer.join();
+    aShutdown.join();
+
+    CPPUNIT_ASSERT(nAccepted >= 1);
+    CPPUNIT_ASSERT_EQUAL(
+        sal_uInt64(0),
+        xService->add(draft(u"Rejected"), sfx2::NotificationCenterService::Completion()));
+    sfx2::NotificationStore aReloaded(aRepository.url());
+    CPPUNIT_ASSERT_EQUAL(static_cast<sal_uInt32>(nAccepted),
+                         aReloaded.count(sfx2::NotificationView::Inbox));
+}
+
+void NotificationCenterServiceTest::testCompletionCanDestroyService()
+{
+    TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
+    auto xService = sfx2::NotificationCenterService::createForRepository(
+        aRepository.url(), sfx2::NotificationPreferences(), [] { return sal_Int64(250); },
+        [] { return fixedId('9'); }, aDispatcher.dispatcher());
+    std::mutex aMutex;
+    std::condition_variable aChanged;
+    bool bCompleted = false;
+    bool bMutationSucceeded = false;
+
+    CPPUNIT_ASSERT(xService->add(draft(u"Reentrant shutdown"),
+                                 [&](sfx2::NotificationCenterResult aResult)
+                                 {
+                                     bMutationSucceeded = aResult.Mutation.Success;
+                                     xService.reset();
+                                     {
+                                         std::scoped_lock aGuard(aMutex);
+                                         bCompleted = true;
+                                     }
+                                     aChanged.notify_one();
+                                 })
+                   != 0);
+    {
+        std::unique_lock aGuard(aMutex);
+        CPPUNIT_ASSERT(
+            aChanged.wait_for(aGuard, std::chrono::seconds(10), [&] { return bCompleted; }));
+    }
+    CPPUNIT_ASSERT(bMutationSucceeded);
+    CPPUNIT_ASSERT(!xService);
+
+    sfx2::NotificationStore aReloaded(aRepository.url());
+    CPPUNIT_ASSERT_EQUAL(sal_uInt32(1), aReloaded.count(sfx2::NotificationView::Inbox));
+}
+
+void NotificationCenterServiceTest::testRepositoryFactoryRequiresAsyncDispatcher()
+{
+    TemporaryRepository aRepository;
+    CPPUNIT_ASSERT_THROW(sfx2::NotificationCenterService::createForRepository(aRepository.url()),
+                         std::invalid_argument);
+}
+
 void NotificationCenterServiceTest::testConflictRefreshesReturnedSnapshot()
 {
     TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
     sfx2::NotificationStore aWinner(
         aRepository.url(), [] { return sal_Int64(300); }, [] { return fixedId('1'); });
     bool bAdvanced = false;
@@ -187,7 +370,8 @@ void NotificationCenterServiceTest::testConflictRefreshesReturnedSnapshot()
                 aWinningCommit = aResult.CommitId;
             }
             return fixedId('2');
-        });
+        },
+        aDispatcher.dispatcher());
     CompletionCollector aCompletions;
 
     CPPUNIT_ASSERT(xService->add(draft(u"Stale"), aCompletions.callback()) != 0);
@@ -203,14 +387,15 @@ void NotificationCenterServiceTest::testConflictRefreshesReturnedSnapshot()
     xService->shutdown();
 }
 
-void NotificationCenterServiceTest::testBulkOperationCreatesExactlyOneCommit()
+void NotificationCenterServiceTest::testBulkOperationCreatesOneActionCommitBelowCompaction()
 {
     TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
     unsigned int nNextId = 1;
     sal_Int64 nNow = 400;
     auto xService = sfx2::NotificationCenterService::createForRepository(
         aRepository.url(), sfx2::NotificationPreferences(), [&nNow] { return nNow++; },
-        [&nNextId] { return sequentialId(nNextId++); });
+        [&nNextId] { return sequentialId(nNextId++); }, aDispatcher.dispatcher());
     CompletionCollector aCompletions;
 
     for (std::u16string_view aTitle : { u"One", u"Two", u"Three" })
@@ -239,9 +424,10 @@ void NotificationCenterServiceTest::testBulkOperationCreatesExactlyOneCommit()
 void NotificationCenterServiceTest::testMetadataOnlyTextRemainsRedacted()
 {
     TemporaryRepository aRepository;
+    CompletionThread aDispatcher;
     auto xService = sfx2::NotificationCenterService::createForRepository(
         aRepository.url(), sfx2::NotificationPreferences(), [] { return sal_Int64(500); },
-        [] { return fixedId('5'); });
+        [] { return fixedId('5'); }, aDispatcher.dispatcher());
     CompletionCollector aCompletions;
     sfx2::NotificationDraft aPrivate;
     aPrivate.Source = "cppunit";

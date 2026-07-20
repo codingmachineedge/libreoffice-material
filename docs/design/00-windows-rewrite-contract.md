@@ -90,9 +90,10 @@ or build/runtime evidence.
 The notification system must include a full manager, customizable form profile,
 bulk operations, and local Git-backed event history so dismissed or deleted
 notifications can be restored. The history repository must be local-only, use
-redacted structured records, create one atomic commit per user-visible bulk
-operation, and never configure remotes or put notification content in commit
-messages.
+redacted structured records, create one atomic user-action commit per
+user-visible bulk operation, and never configure remotes or put notification
+content in commit messages. A bounded-history maintenance checkpoint may precede
+that action commit when compaction is required.
 
 The storage foundation now implements that local bare Git
 model: metadata-only by default, fixed `main`, same-process mutex plus permanent
@@ -103,10 +104,12 @@ preserving current records and uses a durable pending marker so later writes
 fail closed until pruning completes. Retry validates and reuses an already
 installed checkpoint without adding objects or advancing the ref. A lazy
 application-owned asynchronous service now owns the synchronous store on one
-serialized worker and exposes immutable generation-stamped snapshots. It drains
-accepted mutations during shutdown, cancels queued VCL deliveries, refreshes the
-snapshot after a CAS conflict, maps one bulk request to one store call, and uses
-generated office-configuration accessors for all display/history preferences.
+serialized worker and exposes immutable generation-stamped snapshots. It closes
+admission before draining accepted mutations, self-retains pending raw VCL event
+links, defers off-main cancellation to VCL, rejects inline repository-test
+dispatch, refreshes the snapshot after a CAS conflict, maps one bulk request to
+one store call, and uses generated office-configuration accessors for all
+display/history preferences.
 The detailed boundary is in
 [`02-notification-service-architecture.md`](02-notification-service-architecture.md).
 It is not yet connected to dialog producers or a visible form, manager,

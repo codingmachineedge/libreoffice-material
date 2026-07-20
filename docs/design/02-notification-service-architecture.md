@@ -19,7 +19,18 @@ completion order without per-record worker races.
 The injectable repository factory exists for focused tests. Production uses the
 fixed profile repository and a VCL completion queue. The queue coalesces worker
 results into one user event, preserves FIFO delivery, and can cancel undelivered
-callbacks during application teardown.
+callbacks during application teardown. Because VCL retains a raw event link, a
+pending event holds an explicit self-lease and an active handler takes a local
+lease; a callback can therefore destroy the service without invalidating the
+handler still on the stack. Off-main teardown never calls `RemoveUserEvent`;
+cancelled closures are retained for VCL-side disposal instead.
+
+The repository factory requires a non-blocking completion dispatcher that
+queues work off the store worker and returns without waiting for it. Its former
+empty inline default is rejected, and the worker suppresses a dispatcher that
+violates the contract by invoking the completion inline. This prevents a
+completion-triggered service destruction from attempting to join the current
+Windows worker thread.
 
 ## Immutable result boundary
 
@@ -34,17 +45,20 @@ the winning head and current records instead of presenting stale state.
 
 ## Shutdown contract
 
-Shutdown is idempotent. The profile facade first closes and clears its VCL
-completion queue, then stops worker admission, drains all already-accepted
-requests, joins the worker, and releases the service. Closing delivery before
-the join also prevents a draining worker from posting into a UI loop that is
-already tearing down. Accepted mutations remain durable even when their UI
-callback is cancelled. A request attempted after admission closes returns ID
-zero.
+Shutdown is idempotent. The facade first closes worker admission, then closes
+its VCL completion queue, drains all already-accepted requests, joins the
+worker, and disposes any callbacks rejected during the drain on the main
+thread. Accepted mutations remain durable even when their UI callback is
+cancelled. A concurrent request receives a nonzero ID only when it linearizes
+before admission closes; later requests return ID zero. The joined worker
+reference remains stable until facade destruction, so concurrent rejection and
+repeated shutdown never race a cleared owner.
 
 The application resets the lazy service near the start of `SfxApplication`
 destruction, while the VCL event queue still exists. The store itself is reset
-inside the worker function, not in the application thread.
+inside the worker function, not in the application thread. Launch state is
+recorded only after `salhelper::Thread::launch()` succeeds, so launch failure
+can unwind without asserting that an unstarted worker was joined.
 
 ## Configuration and privacy
 
@@ -66,16 +80,23 @@ contract.
 
 Each bulk service request passes the complete validated ID vector to exactly one
 store method. The service never loops into one commit per selected row. The
-focused CppUnit additions cover:
+result identifies exactly one user-action commit for an effecting bulk request;
+when the bounded-history threshold is reached, the store may first replace old
+history with its documented parentless maintenance checkpoint. The focused
+CppUnit additions cover:
 
 - FIFO request IDs, snapshot generations, and record growth;
 - draining accepted mutations and rejecting post-shutdown admission;
+- concurrent producer admission linearizing against shutdown;
+- completion-side service destruction without a worker self-join;
+- rejection of the former empty inline repository dispatcher;
 - deterministic compare-and-swap conflict refresh;
-- three selected deletions producing exactly one additional Git commit; and
+- three selected deletions below the compaction threshold producing exactly one
+  additional action commit; and
 - metadata-only display text remaining absent from returned snapshots.
 
-The existing notification target now wires 18 CppUnit cases. The fail-closed
-source validator and its 18 mutation tests cover the new worker, snapshot,
+The existing notification target now wires 21 CppUnit cases. The fail-closed
+source validator and its 24 mutation tests cover the new worker, snapshot,
 configuration, lifetime, conflict, bulk, shutdown, and privacy markers. Until
 the native target is compiled and run from this exact source, those CppUnit
 cases are registered coverage, not runtime evidence.

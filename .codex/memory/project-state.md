@@ -559,9 +559,9 @@ state into evidence and must record exact submodule commits.
 ## 2026-07-20 — asynchronous notification service source checkpoint
 
 - `SfxApplication` now owns a lazy `NotificationCenterService`; profile
-  callbacks use a cancellable VCL queue and application teardown closes delivery,
-  drains accepted requests, joins the worker, and releases the service while VCL
-  is alive.
+  callbacks use a cancellable, self-retaining VCL queue and application teardown
+  closes worker admission before delivery, drains accepted requests, joins the
+  worker, and releases the service while VCL is alive.
 - One serialized worker constructs, calls, and destroys `NotificationStore`.
   Completions carry immutable generation-stamped record/history snapshots;
   compare-and-swap conflicts retain their failure result while refreshing the
@@ -570,10 +570,12 @@ state into evidence and must record exact submodule commits.
   for normalized batch read/write. Test repositories do not touch profile
   configuration. The service preserves the store's metadata-only default and
   maps each selected-ID vector to one atomic store method call.
-- Five new CppUnit cases bring the wired notification target to 18 cases for
-  ordering, shutdown durability, conflict refresh, exactly one commit per bulk
-  operation, and metadata-only redaction. They are registered but not compiled
-  in this checkpoint. The static notification contract and all 18 mutation tests,
-  prototype validator (9/9), XML parse, diff check, and new-file Clang formatting
-  pass. No visible stack/manager, producer routing, native build, or runtime UI
-  behavior is claimed.
+- Eight new CppUnit cases bring the wired notification target to 21 cases for
+  ordering, shutdown durability, concurrent admission, completion-side
+  destruction, required off-worker dispatch, conflict refresh, one
+  below-threshold action commit per bulk operation, and metadata-only redaction.
+  They are registered but not
+  compiled in this checkpoint. The static notification contract and all 24
+  mutation tests, prototype validator (9/9), XML parse, diff check, and focused
+  Clang formatting pass. No visible stack/manager, producer routing, native
+  build, or runtime UI behavior is claimed.
