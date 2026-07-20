@@ -555,3 +555,26 @@
   same-process races, bounds reachable history and retry growth, and keeps
   persisted display text opt-in. The visible host, manager, producer routing,
   preference binding, and worker integration remain separate acceptance gates.
+
+## D-032 — prove no-nag startup without prompt-suppression switches
+
+- Date: 2026-07-20
+- State: dedicated harness and source/mutation validation implemented; runtime evidence pending
+- Context: the general Start Center smoke pre-seeds `FirstRun=false` and uses
+  startup switches that historically bypassed Tip, Welcome/What’s New,
+  promotion, recovery, and file-association startup paths. Reusing that launch
+  vector would make a clean screenshot circular evidence for the no-nag claim.
+- Decision: expose a dedicated fresh/legacy entrypoint backed by the mature
+  same-token low-level driver and process/evidence engine. Launch blank Writer
+  from either an empty profile or a fixed safely seeded legacy profile, reject
+  every UI-suppression switch, bind exact source/build ID and PID/HWND, retain
+  every startup/stable window enumeration, poll the stable owned Writer for at
+  least 15 seconds, and deny former-nag text in titles and the complete UNO
+  tree. Keep recovery, Safe Mode, macro, read-only, credential, compatibility,
+  and explicit manual actions outside that denylist.
+- Reason: blank Writer reaches the historical document-startup prompt sites,
+  while separate profiles prove both default and stale-configuration behavior
+  without weakening required safety UI. An extracted MSI is not registered as
+  an installed product under `HKLM`, so the historical automatic association
+  gate remains an MSI-installed disposable Sandbox/VM check rather than an
+  extracted-payload claim.

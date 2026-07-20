@@ -47,6 +47,12 @@ jobs:
       - name: Run Windows no-nag mutation regressions
         run: python3 bin/test_windows_no_nag_contract.py
 
+      - name: Validate fresh and legacy no-nag headless harness
+        run: python3 bin/check-windows-nonag-headless-harness.py
+
+      - name: Run no-nag headless harness mutation regressions
+        run: python3 bin/test_windows_nonag_headless_harness.py
+
       - name: Validate local Git notification-store foundation
         run: python3 bin/check-notification-store-contract.py
 

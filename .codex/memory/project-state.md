@@ -112,7 +112,14 @@ Explicit Help/association actions and recovery, Safe Mode, extension,
 macro/security, metadata, read-only, and credential warnings remain. The
 no-nag contract passes 35 forbidden markers, nine deleted surfaces, sixteen
 required suppressions/safeguards/manual actions, and four mutation tests;
-current-build fresh/legacy-profile startup proof remains open.
+the dedicated fresh/legacy blank-Writer headless harness, evidence-schema
+extension, source validator, and four mutation families now pass as source-only
+infrastructure. The harness uses disposable profiles, rejects UI-suppression
+switches, binds exact build/PID/HWND identity, retains owned-window polling, and
+pairs screenshots with complete UNO trees. No current-build no-nag run or
+accepted screenshot exists yet. Extracted payloads also cannot prove the
+installed-product `HKLM` file-association gate; that needs an MSI-installed
+disposable Sandbox or VM.
 The same slice removes the Windows MSI workflow's contradictory `--disable-cli`
 switch, asserts `ENABLE_CLI=TRUE`, and prebuilds the CLI payload that MSI
 manifests require. These changes are included in the exact-source local VS 2026

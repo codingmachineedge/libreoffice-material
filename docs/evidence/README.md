@@ -34,6 +34,16 @@ The corrected runs prove only their extracted runtime's scoped Start Center UI
 and bounded UNO accessibility smoke. They do not run MSI install, repair,
 upgrade, uninstall, or restart-suppression lifecycle scenarios.
 
+The repository now also contains a dedicated fresh/legacy no-nag candidate
+generator, but it has not been run or accepted yet. Future candidates belong in
+separate `...-windows-headless-nonag-fresh` and
+`...-windows-headless-nonag-legacy` run directories and must retain the blank
+Writer screenshot, paired complete UNO tree, and hash-bound
+`logs/window-polls.json`. The canonical screenshot count remains nine until
+those exact-build images pass visual and sensitive-data review. Extracted MSI
+startup cannot prove the historical `HKLM`-gated automatic file-association
+path; that check requires an MSI-installed disposable Windows Sandbox or VM.
+
 Before adding artifacts, follow [`../HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md).
 A real run belongs under `runs/<run-id>/` with a manifest and results. Do not
 create empty run directories or placeholder images: absence is represented by

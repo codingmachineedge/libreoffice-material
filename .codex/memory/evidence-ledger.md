@@ -14,6 +14,14 @@ MSI install, repair, upgrade, uninstall, or restart-suppression lifecycle behavi
 The public assetless release/tag `e` contains no build and does not change this
 ledger.
 
+Fresh and seeded-legacy no-nag Writer runs are now defined by a source-validated
+headless harness, but neither run exists yet and this ledger's counts therefore
+do not change. Candidate acceptance requires the exact-build blank Writer PNG,
+complete paired UNO tree, retained owned-window poll log, normal cleanup, and
+human visual/sensitive-data review. Extracted-payload startup is not evidence
+for the historical installed-product `HKLM` association gate; that remaining
+branch needs an MSI-installed disposable Windows Sandbox or VM.
+
 ## Accepted runs
 
 | Run ID | Fork commit | Platform | Build | Interaction | Visual | Manifest |

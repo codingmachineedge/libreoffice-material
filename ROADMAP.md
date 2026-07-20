@@ -452,8 +452,18 @@ document recovery, Safe Mode, incompatible-extension, macro/security,
 hidden-metadata, signature, read-only, and credential warnings remain intact.
 The fail-closed validator covers 35 forbidden prompt markers, nine removed
 surfaces, and 16 required suppressions/safeguards/manual actions; all four
-mutation tests pass. A current native build and fresh plus seeded legacy-profile startup smoke
-remain open, so this source result is not yet runtime acceptance.
+mutation tests pass. A dedicated exact-build headless harness now implements the
+fresh plus seeded legacy-profile startup matrix without `--nologo`,
+`--norestore`, or other GUI-suppression switches. It binds the payload build ID,
+exact PID/HWND ownership, bounded window polling, screenshots, complete UNO
+trees, former-nag text denial, and the retained safety/manual allowlist. Its
+source validator and four mutation families pass. No new native payload was
+launched for this harness slice, so both runtime scenarios, visual review, and
+accepted evidence remain open. Because an administratively extracted MSI lacks
+the installed-product `HKLM` registration used by the historical automatic
+association check, that registry-gated branch requires an MSI-installed
+disposable Windows Sandbox or VM and cannot be claimed from extracted-payload
+startup alone.
 
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;

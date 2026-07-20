@@ -292,6 +292,82 @@ of probing an off-screen HWND from the caller desktop. Before capture, the
 numeric process ID must equal both the exact payload process and PID-file value,
 and the numeric thread ID and DPI must both be positive.
 
+## Fresh and legacy no-nag startup harness
+
+[`bin/Run-Windows-NoNag-Headless-Smoke.ps1`](../bin/Run-Windows-NoNag-Headless-Smoke.ps1)
+is the dedicated candidate generator for unsolicited-startup-UI proof. It uses
+the same dedicated same-token low-level server, exact process ownership,
+PrintWindow capture, bounded UNO collector, and cleanup contract as the Start
+Center runner, but launches a blank Writer and deliberately omits every
+prompt-suppressive GUI switch. Do not substitute the ordinary Start Center
+profile or its launch vector for this test.
+
+Run each profile separately so every candidate has one process/window identity
+and one review boundary:
+
+```powershell
+$sourceRoot = 'C:\path\to\clean-source'
+$payloadRoot = 'C:\path\to\extracted-msi-payload'
+$sourceCommit = git -C $sourceRoot rev-parse HEAD
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File bin\Run-Windows-NoNag-Headless-Smoke.ps1 `
+  -PayloadRoot $payloadRoot -SourceRoot $sourceRoot `
+  -SourceCommit $sourceCommit -ProfileMode Fresh
+
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File bin\Run-Windows-NoNag-Headless-Smoke.ps1 `
+  -PayloadRoot $payloadRoot -SourceRoot $sourceRoot `
+  -SourceCommit $sourceCommit -ProfileMode Legacy
+```
+
+The payload is accepted only when `program/version.ini` contains exactly one
+40-character `buildid` equal to `-SourceCommit`, and both the source checkout
+and sibling low-level driver are clean. `Fresh` creates the profile directory
+but requires zero entries immediately before launch; it never pre-creates
+`registrymodifications.xcu`. `Legacy` writes a fixed seed that turns the former
+first-run, Tip, Welcome/What’s New, promotion, file-association, AutoCorrect
+explanation, and crash-report flags on. Its parseable crash seed points to a
+nonexistent run-scoped dump and loopback discard URL while
+`-env:CrashDumpEnable=false` prevents dump creation; the similarly named
+`CRASH_DUMP_ENABLE` process environment variable is deliberately absent because
+LibreOffice treats every nonempty value, including `0`, as enabled. Sanitized
+copies of both legacy seed files are retained under `logs/` and hash-bound in
+the manifest.
+
+Both modes launch exactly one blank Writer with an isolated user-installation
+URI, `--writer`, `--quickstart=no`, `--language=en-US`, a unique PID file, and a
+unique UNO pipe. They must not use `--nologo`, `--norestore`, `--headless`,
+`--invisible`, or `--nodefault`. Startup enumerations are retained, ownership is
+reconciled to the exact PID-file `soffice.bin`, and the stable phase polls at
+500 ms for at least 15 seconds. Every stable poll must contain exactly one
+payload-owned Writer `SALFRAME` with the recorded PID and HWND. Any extra owned
+top-level window or former-nag title fails the run.
+
+The screenshot must be nonblank and at least 640×480. Its SHA-256 is passed to
+the matching built Python/UNO collector; the tree must be complete, nonempty,
+visible, error-free, and expose a menu bar. Titles plus visible/showing
+accessible names and descriptions deny the former Tip, Welcome/What’s New, association solicitation,
+crash-report, donation/Get Involved, and AutoCorrect-explanation text. Recovery,
+Troubleshoot/Safe Mode, macro security, read-only, credential, and extension
+compatibility prompts are intentionally not denied. The manual Tip, What’s New,
+and Options file-association commands remain source-guarded and are recorded as
+retained actions, not silently exercised by startup smoke.
+
+Each candidate retains `screenshots/writer-<profile>-startup-no-nags.png`, its
+paired `logs/a11y-writer-<profile>-startup-no-nags.json`, and
+`logs/window-polls.json`. It still requires visual and sensitive-data review
+before `Validate-Windows-Headless-Evidence.ps1 -RequireAccepted` can accept it.
+No such fresh or legacy candidate has been run or accepted for this harness
+slice yet.
+
+An administratively extracted MSI payload is not installed under the historical
+product-registration keys in `HKLM`. The old automatic file-association check
+returned before showing UI when that registration was absent. Consequently,
+zero association prompts in this extracted-payload harness is not runtime proof
+of that registry-gated branch; use an MSI-installed disposable Windows Sandbox
+or VM for the remaining check. Do not mutate the host registry to manufacture
+that proof.
+
 ## Windows off-screen workflow
 
 The tool names below are the low-level MCP operations expected by this plan.
@@ -308,10 +384,13 @@ Exact arguments belong in the run manifest or automation macro.
 5. Call `launch_on_headless_desktop` with a wrapper command that sets
    `VCL_DRAW_WIDGETS_FROM_FILE=1`, `VCL_FILE_WIDGET_THEME=material`, and
    `SAL_LOG=+WARN.vcl.gdi`, then executes the exact fork binary.
-6. Launch with an isolated `-env:UserInstallation=file:///...` URL,
-   `--nologo`, `--norestore`, `--quickstart=no`, `--language=en-US`, a unique
-   `--pidfile`, and unique `--accept=pipe,name=...;urp`. Do not use `--headless`,
-   `--invisible`, or `--nodefault`, because each suppresses the Start Center GUI.
+6. For ordinary Start Center evidence, launch with an isolated
+   `-env:UserInstallation=file:///...` URL, `--nologo`, `--norestore`,
+   `--quickstart=no`, `--language=en-US`, a unique `--pidfile`, and unique
+   `--accept=pipe,name=...;urp`. Do not use `--headless`, `--invisible`, or
+   `--nodefault`, because each suppresses the Start Center GUI. The dedicated
+   no-nag procedure above intentionally uses a different blank-Writer launch
+   vector and omits all five suppression switches.
 7. Poll `list_headless_windows` for at most 90 seconds. Resolve a nonempty
    LibreOffice/SALFRAME title/class with positive dimensions. Require numeric
    `process_id`, `thread_id`, and `dpi` fields sampled by the enumeration

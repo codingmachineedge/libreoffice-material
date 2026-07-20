@@ -117,7 +117,15 @@ submission paths, including their dead startup UI/configuration and the
 unreachable crash-report opt-in. Manual Help and file-association actions
 remain. The source contract explicitly requires the
 recovery, Safe Mode, extension-compatibility, macro, metadata, read-only, and
-credential paths; exact-build startup/runtime evidence is still pending.
+credential paths. The dedicated fresh/legacy no-nag harness now encodes the
+exact-build acceptance procedure: blank Writer, disposable profiles, no
+UI-suppression switches, exact payload/build-ID and PID/HWND binding, bounded
+owned-window polling, screenshot/UNO-tree pairing, and a former-nag denylist
+that does not include retained safety prompts. Source and mutation validation
+pass; the harness has not yet produced exact-build runtime evidence. An
+administratively extracted MSI also cannot exercise the old installed-product
+`HKLM` file-association gate, so that branch remains a disposable
+Sandbox/VM-installed MSI check rather than an extracted-payload claim.
 
 ## Honest completion rule
 
