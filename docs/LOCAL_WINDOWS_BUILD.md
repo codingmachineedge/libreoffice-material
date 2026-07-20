@@ -198,7 +198,10 @@ produced a 199,692,288-byte unsigned MSI with SHA-256
 Windows Installer administrative extraction completed with status `0`; the
 extracted runtime supplied the registered light Start Center UI and bounded UNO
 tree smoke. The wrapper's parent process exited before the final dist copy and
-manifest stage, so a fully completed one-click wrapper rerun remains required.
+manifest stage. Current source replaces the detach-prone direct `msiexec`
+invocation with a safely quoted, hidden `Start-Process -Wait` client and checks
+that invariant in PowerShell 5.1 and 7; a fully completed one-click wrapper
+rerun remains required.
 The MSI was not installed during this build run. It was later published as the
 normal, non-prerelease `windows-msi-local-20260720-577059e274` release and all
 four public Latest assets were byte-verified, but that older binary omitted the

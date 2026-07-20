@@ -1484,3 +1484,22 @@ build or runtime evidence.
   including the exact four-argument Windows Installer command, protected
   exclusive staging, and retained read-lock regressions. This is compiled native
   evidence for the command construction, not updater UI or MSI lifecycle proof.
+
+## 2026-07-20 — local packaging wait-race correction
+
+- An incremental VS 2026 `make build` completed at updater source commit
+  `150841ef58285e61e7576bda43ca11af93f924c7` and emitted the final MSI. A
+  subsequent local wrapper `Package` attempt started administrative extraction,
+  then immediately inspected the output and failed because `soffice.exe` had not
+  appeared yet. The same run-bound `msiexec.exe` continued after the wrapper
+  exited and completed the extraction with one `soffice.exe`, reproducing the
+  previously documented parent/installer race.
+- `bin/Build-Windows.ps1` now uses its existing Windows argument encoder and a
+  hidden `Start-Process -Wait -PassThru` invocation, reads that exact process's
+  exit code, and only then inspects the payload. The new dependency-free
+  `qa/windows-build/Validate-BuildScript.ps1` rejects a direct `msiexec`
+  invocation and requires the waited/hidden/quoted ordering. It passes under
+  Windows PowerShell 5.1 and PowerShell 7.
+- This is source/static correction plus a diagnostic extraction. A fresh run
+  must still produce the canonical staged MSI, checksum, manifest, successful
+  extraction log, and exact-source provenance before the wrapper gate closes.

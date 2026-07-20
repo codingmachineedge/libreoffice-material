@@ -47,7 +47,10 @@ document engine, file-format support, and accessibility foundations.
 > the final package. The workflow now scopes discovery to the final success-only
 > `install\en-US` directory. The local MSI is unsigned, and the local wrapper's
 > parent process exited after successful extraction but before final dist
-> staging, so it is not presented as an end-to-end wrapper success.
+> staging. Current source now launches administrative extraction through a
+> safely quoted, hidden `Start-Process -Wait` client and validates that invariant
+> under PowerShell 5.1/7; a fresh completed staging run is still required before
+> claiming end-to-end wrapper success.
 > Real LibreOfficeDev Start Center runs from the corrected extracted MSI payload
 > are now the canonical gallery evidence: three light, three dark, and three forced-
 > high-contrast captures with nine matching bounded UNO trees and no collector
@@ -432,7 +435,9 @@ and the imported build files before configuring a machine.
 > MSI, and Windows Installer administrative extraction succeeded. The extracted
 > payload supplied the accepted Start Center UI and bounded UNO-tree run. The wrapper's parent
 > process exited before its final dist copy/manifest step, so that wrapper is not
-> claimed as an end-to-end success. This local result complements the hosted result:
+> claimed as an end-to-end success. Current source fixes that asynchronous
+> `msiexec` race with an explicit hidden waited process; real final staging is
+> still pending. This local result complements the hosted result:
 > current-source Linux run `29695793821` and Windows run `29695815101` passed
 > all five required native C++ targets, and the Windows run built the full
 > installation set but stopped at MSI staging. Hosted run `29720519794` is now

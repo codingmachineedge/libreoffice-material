@@ -269,7 +269,9 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           exact-source build at <code>577059e274</code> completed the native
           targets, product, final MSI, and administrative extraction. The build
           wrapper's parent exited before final dist staging, so end-to-end wrapper
-          completion remains open.
+          completion remains open. Current source now waits on the exact hidden
+          <code>msiexec</code> client before inspecting the extracted payload;
+          PowerShell 5.1/7 static validation covers that sequencing fix.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;
           the latter also built the full installation set. Its staging rule

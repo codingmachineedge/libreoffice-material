@@ -1256,8 +1256,21 @@ function Invoke-MsiPackagingValidation {
     New-FreshDirectory $extract
     $extractLog = Join-Path $stage ($msis[0].BaseName + '-admin-extract.log')
     $msiexec = Join-Path $env:SystemRoot 'System32\msiexec.exe'
-    & $msiexec /a $msis[0].FullName /qn ('TARGETDIR=' + $extract) /L*V $extractLog
-    $extractExitCode = $LASTEXITCODE
+    $extractArguments = @(
+        '/a',
+        $msis[0].FullName,
+        '/qn',
+        ('TARGETDIR=' + $extract),
+        '/L*V',
+        $extractLog
+    )
+    $extractCommandLine = Join-WindowsCommandLine $extractArguments
+    # msiexec.exe is a GUI-subsystem client and can detach from a direct
+    # PowerShell invocation while the Windows Installer service continues the
+    # extraction. Wait on the client process before inspecting the payload.
+    $extractProcess = Start-Process -FilePath $msiexec `
+        -ArgumentList $extractCommandLine -WindowStyle Hidden -Wait -PassThru
+    $extractExitCode = [int]$extractProcess.ExitCode
     if ($extractExitCode -notin @(0, 3010)) {
         throw ('Administrative extraction failed with exit code {0}. See {1}' -f $extractExitCode, $extractLog)
     }

@@ -102,7 +102,9 @@ directory and still requires exactly one MSI plus administrative extraction and
 [`29720519794`](https://github.com/Ding-Ding-Projects/libreoffice-material/actions/runs/29720519794)
 is exercising that corrected rule at `b0e3ea766` and remains in progress. The
 local wrapper's parent process exited after successful extraction but before its
-final dist staging/manifest copy, so an end-to-end wrapper run remains open.
+final dist staging/manifest copy. Current source waits on the exact hidden
+`msiexec` client before inspecting the payload; static PowerShell 5.1/7
+validation passes, while an end-to-end staging rerun remains open.
 
 A separate normal public, non-prerelease release was published at
 [`windows-msi-local-20260720-577059e274`](https://github.com/Ding-Ding-Projects/libreoffice-material/releases/tag/windows-msi-local-20260720-577059e274)
@@ -137,7 +139,8 @@ installation, reboot Windows, or install its MSI. Its
 VS 2022 default and VS 2026 build state cannot resume each other's work. A
 complete successful full run removes only its verified-clean temporary LF
 worktree. The completed VS 2026 build proves the selected toolchain/product path;
-the wrapper's final staging/manifest phase still requires a clean rerun.
+the wrapper now waits for administrative extraction before inspecting/staging,
+and its final staging/manifest phase still requires a clean rerun.
 
 The source now contains a Windows-only consent-based update path. It reads the
 exact GitHub Latest XML asset and accepts only one safe tag-derived GitHub URL

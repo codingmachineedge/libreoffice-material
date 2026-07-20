@@ -348,7 +348,10 @@ Public assetless release/tag `e` remains non-evidence.
   and CLI payload, completed the product, and produced an unsigned
   199,692,288-byte MSI (SHA `437b059c…54a43`). Administrative extraction
   returned `0` with one `soffice.exe`. The wrapper parent exited before final
-  dist staging/manifest copy, so that final phase still needs a clean rerun.
+  dist staging/manifest copy. Current source now safely quotes the extraction
+  command and waits on its hidden `msiexec` client before reading the exit code
+  or inspecting payload files; its PowerShell 5.1/7 static validator passes,
+  while the final phase still needs a clean rerun.
 - Corrected commit `fbba560e27db26de605c40aa237c554c1f0744b1` produced an
   administratively extracted runtime candidate whose canonical off-screen Home
   and Templates smoke passed. Its bounded UNO trees report 96/49 and 111/64
