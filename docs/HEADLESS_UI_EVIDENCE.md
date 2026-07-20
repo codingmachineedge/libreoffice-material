@@ -243,6 +243,46 @@ The manifest must record:
 - scenario identifiers, expected checkpoints, result, and reviewer;
 - SHA-256 hash and pixel dimensions of every committed image.
 
+`bin/Run-Windows-Headless-Smoke.ps1` writes schema-v2 `results.json` and
+`manifest.json` candidates with these fields. Pass `-SourceRoot` when the exact
+clean source checkout is not the harness checkout; its `HEAD` must equal
+`-SourceCommit`, and the payload's `program/version.ini` `buildid` must equal
+that same full `source.commit`. Every `scenarios[].inventory_ids` list must be
+nonempty and contain only stable `WIN-<AREA>-NNN` identifiers from
+[`WINDOWS_UI_INVENTORY.md`](WINDOWS_UI_INVENTORY.md). Validation parses that
+exact tracked inventory, rejects duplicate scenario references, and rejects IDs
+that merely match the shape but do not exist in the inventory.
+
+Both validator modes resolve the portable `screenshots/...` and `logs/...`
+paths beneath the manifest directory, reject traversal, re-hash the actual PNG
+and a11y JSON, compare byte counts and PNG IHDR dimensions, and validate the
+UNO run/screenshot binding and complete accessibility summary. The candidate
+records `automation_result: pass` but leaves each scenario
+`result: pending_visual_review`; capture existence, input delivery, and a
+focused UNO node do not claim that Templates or a visible focus treatment passed
+visual review. After real visual and sensitive-data review, set manifest
+`status` to `accepted` and every scenario `result` to `pass`, record the
+reviewer, and list every scenario exactly once in
+`review.reviewed_scenario_ids`. Then run
+`bin/Validate-Windows-Headless-Evidence.ps1 -RequireAccepted`. That stricter mode
+accepts only `pass` or `accepted-known-issue` review results, requires limitations
+for a known issue, and requires a passed sensitive-data review.
+
+Publishable fields use repository-, payload-, or run-relative paths. The exact
+launch arguments retain explicit `<run-root>` tokens; the raw path-bearing launch
+wrapper and generated profile are runtime-only, and cleanup removes the wrapper.
+Never publish a candidate until the sensitive-data review also checks retained
+logs for private host paths.
+
+The dedicated MCP server inherits the harness token. The manifest records the
+harness mandatory integrity SID, Windows-session equality, and MCP `is_admin`
+parity, and explicitly labels the server integrity level as inferred rather than
+claiming that its mandatory label was queried directly. Its sanitized origin URL
+is read from the sibling checkout rather than inferred from documentation. The
+target display scale comes from `GetDpiForWindow` on the runtime-resolved
+SALFRAME HWND; that HWND's Win32 PID must equal both the exact payload process
+and the PID-file value before capture.
+
 ## Windows off-screen workflow
 
 The tool names below are the low-level MCP operations expected by this plan.

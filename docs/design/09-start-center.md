@@ -1,7 +1,12 @@
 # 09 — Start Center
 
 > **Status:** Specification of target design — native implementation per
-> [`ROADMAP.md`](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [`ROADMAP.md`](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed. The corrected `fbba560e2` extracted runtime has
+> accepted light, dark, and forced-high-contrast Home/focus/Templates captures
+> and bounded UNO trees. That proves only the named launch, focus, navigation,
+> and accessibility-tree checkpoints—not the full target layout, component
+> state, token-pixel, responsive, localization, or accelerated-rendering matrix.
 
 The Start Center is the suite's launch surface: it opens when no document
 window exists and provides recent-document access, template browsing, and
@@ -16,7 +21,8 @@ build capture). The existing native source slice lives in
 [`sfx2/source/dialog/backingwindow.cxx`](../../sfx2/source/dialog/backingwindow.cxx);
 section 9.10 maps this spec onto it. Implementation status is labelled per
 feature as *implemented in definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or
-*specified here, not yet implemented*.
+*specified here, not yet implemented*. Those labels describe source
+provenance; the accepted runtime checkpoints are called out separately below.
 
 ---
 
@@ -208,8 +214,12 @@ keys; the rest restates existing VCL/weld behavior under the target layout.
   elevation; regex errors pair the `error` border with a text message.
 - Contrast: all text/fill pairs use the palette's contrast-checked role pairs
   (`on-primary` on `primary`, `on-primary-container` on `primary-container`).
-  High contrast bypasses Material to the native baseline. No accessibility
-  result is claimed — the suite is compiled at commit 577059e274; surface state unverified.
+  High contrast bypasses Material to the native baseline. The accepted bounded
+  UNO trees report complete collection with no audit errors for the named
+  Home/focus/Templates snapshots, and each focus snapshot exposes `Open File`
+  as the sole focused push button. This is scoped tree/focus evidence, not a
+  complete accessibility result for the target card-grid, search, toggle,
+  localization, or interaction contracts in this chapter.
 
 ## 9.9 RTL & localization
 
@@ -283,4 +293,9 @@ still open unless their exact run says otherwise.
 | SC-09 | RTL locale capture | mirrored column, badges, and search field |
 | SC-10 | Accessibility tree dump of the surface | roles, names, and toggle/selection state exposure |
 
-Until these are registered, everything in this chapter remains a target.
+Current evidence partially covers SC-01 (at the accepted run's 1920 × 1117
+frame rather than the specified 1280 × 800 checkpoint), SC-02 (focus only),
+SC-03 (pointer navigation to Templates), SC-07 (capture presence, not token-
+pixel proof), and SC-10 (bounded trees for the captured states). Uncaptured
+states and every unmet condition in the matrix remain target design; partial
+coverage does not complete an ID.

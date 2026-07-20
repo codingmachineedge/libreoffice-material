@@ -18,6 +18,9 @@ No phase is currently marked verified.
 The current delivery and verification scope is Windows. Cross-platform
 acceptance gates remain recorded below as deferred future work; they are not
 silently removed or treated as evidence for the current Windows milestone.
+The 105-row [`Windows UI inventory`](docs/WINDOWS_UI_INVENTORY.md) is the
+measurable Windows closure ledger: every future evidence credit names its stable
+inventory ID rather than inheriting completion from a shared primitive.
 
 ## Phase 0 — reproducible foundation
 

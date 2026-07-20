@@ -7,6 +7,8 @@ param(
     [ValidatePattern('^[0-9a-fA-F]{40}$')]
     [string]$SourceCommit,
 
+    [string]$SourceRoot = '',
+
     [ValidateSet('Light', 'Dark', 'HighContrast')]
     [string]$Appearance = 'Light',
 
@@ -45,6 +47,12 @@ public static class LibreOfficeMaterialProcessPath
     [DllImport("kernel32.dll")]
     private static extern bool CloseHandle(IntPtr handle);
 
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hwnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
+
     public static string Get(uint processId)
     {
         const uint QueryLimitedInformation = 0x1000;
@@ -63,6 +71,22 @@ public static class LibreOfficeMaterialProcessPath
         {
             CloseHandle(process);
         }
+    }
+
+    public static uint WindowDpi(IntPtr hwnd)
+    {
+        uint dpi = GetDpiForWindow(hwnd);
+        if (dpi == 0)
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        return dpi;
+    }
+
+    public static uint WindowProcessId(IntPtr hwnd)
+    {
+        uint processId;
+        if (GetWindowThreadProcessId(hwnd, out processId) == 0 || processId == 0)
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        return processId;
     }
 }
 '@
@@ -88,6 +112,120 @@ function Write-JsonFile {
     )
 
     Write-Utf8Lf -Path $Path -Text (($Value | ConvertTo-Json -Depth 20) + "`n")
+}
+
+function Invoke-EvidenceGit {
+    param(
+        [Parameter(Mandatory = $true)] [string]$Root,
+        [Parameter(Mandatory = $true)] [string[]]$Arguments
+    )
+
+    $output = @(& git -C $Root @Arguments 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Git failed in '$Root': git $($Arguments -join ' '): $($output -join "`n")"
+    }
+    return $output
+}
+
+function Get-GitEvidenceIdentity {
+    param(
+        [Parameter(Mandatory = $true)] [string]$Root,
+        [Parameter(Mandatory = $true)] [string]$ExpectedCommit,
+        [Parameter(Mandatory = $true)] [string]$Description
+    )
+
+    $resolved = [System.IO.Path]::GetFullPath($Root)
+    if (-not (Test-Path -LiteralPath $resolved -PathType Container)) {
+        throw "$Description checkout does not exist: $resolved"
+    }
+    $top = (Invoke-EvidenceGit -Root $resolved -Arguments @('rev-parse', '--show-toplevel') |
+        Select-Object -First 1).Trim()
+    $head = (Invoke-EvidenceGit -Root $resolved -Arguments @('rev-parse', '--verify', 'HEAD') |
+        Select-Object -First 1).Trim().ToLowerInvariant()
+    if ($head -ne $ExpectedCommit.ToLowerInvariant()) {
+        throw "$Description checkout is at $head, not expected commit $ExpectedCommit."
+    }
+    $dirtyEntries = @(Invoke-EvidenceGit -Root $resolved -Arguments @(
+        'status', '--porcelain=v1', '--untracked-files=all'
+    ))
+    if ($dirtyEntries.Count -ne 0) {
+        throw "$Description checkout must be clean for evidence: $($dirtyEntries -join '; ')"
+    }
+    $repository = @(Invoke-EvidenceGit -Root $resolved -Arguments @(
+        'config', '--get', 'remote.origin.url'
+    )) | Select-Object -First 1
+    $repositoryValue = if ($repository) {
+        $candidateRepository = $repository.Trim()
+        if ($candidateRepository -match '^(?i)https?://[^/@]+@') {
+            $candidateRepository = $candidateRepository -replace `
+                '^(?i)(https?://)[^/@]+@', '$1'
+        }
+        if ($candidateRepository -match '^(?i)(file:|[A-Za-z]:[\\/]|\\\\)') {
+            '<local-repository>'
+        }
+        else {
+            $candidateRepository
+        }
+    }
+    else { $null }
+    return [ordered]@{
+        repository = $repositoryValue
+        commit = $head
+        checkout_clean = $true
+        dirty_worktree_entries = @()
+    }
+}
+
+function Get-EvidenceFileIdentity {
+    param(
+        [Parameter(Mandatory = $true)] [string]$Path,
+        [Parameter(Mandatory = $true)] [string]$PublicPath,
+        [switch]$RuntimeOnly
+    )
+
+    $item = Get-Item -LiteralPath $Path -ErrorAction Stop
+    $identity = [ordered]@{
+        path = $PublicPath
+        bytes = [long]$item.Length
+        sha256 = (Get-FileHash -LiteralPath $item.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+    if ($RuntimeOnly) {
+        $identity.Add('retained_in_public_evidence', $false)
+    }
+    return $identity
+}
+
+function Get-CurrentIntegrityEvidence {
+    $whoami = Join-Path $env:SystemRoot 'System32\whoami.exe'
+    $groups = @(& $whoami /groups /fo csv /nh 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "whoami could not resolve the harness token integrity: $($groups -join "`n")"
+    }
+    $matches = [regex]::Matches(($groups -join "`n"), 'S-1-16-(\d+)')
+    $rids = @($matches | ForEach-Object { [int]$_.Groups[1].Value } | Select-Object -Unique)
+    if ($rids.Count -ne 1) {
+        throw "Expected one mandatory integrity SID, found: $($rids -join ', ')"
+    }
+    $rid = [int]$rids[0]
+    $label = switch ($rid) {
+        { $_ -ge 20480 } { 'protected'; break }
+        { $_ -ge 16384 } { 'system'; break }
+        { $_ -ge 12288 } { 'high'; break }
+        { $_ -ge 8448 } { 'medium-plus'; break }
+        { $_ -ge 8192 } { 'medium'; break }
+        { $_ -ge 4096 } { 'low'; break }
+        default { 'untrusted' }
+    }
+    $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = [System.Security.Principal.WindowsPrincipal]::new($identity)
+    return [ordered]@{
+        mandatory_label_sid = "S-1-16-$rid"
+        mandatory_label_rid = $rid
+        level = $label
+        is_administrator = $principal.IsInRole(
+            [System.Security.Principal.WindowsBuiltInRole]::Administrator
+        )
+    }
 }
 
 function Invoke-LowLevelTool {
@@ -460,6 +598,11 @@ function Assert-A11yReport {
 function Capture-State {
     param(
         [Parameter(Mandatory = $true)] [string]$Slug,
+        [Parameter(Mandatory = $true)] [string]$ScenarioId,
+        [Parameter(Mandatory = $true)] [string]$ScenarioName,
+        [Parameter(Mandatory = $true)] [string[]]$InventoryIds,
+        [Parameter(Mandatory = $true)] [string[]]$ExpectedCheckpoints,
+        [Parameter(Mandatory = $true)] [string]$InputDescription,
         [switch]$RequireFocused,
         [switch]$Terminate
     )
@@ -477,6 +620,9 @@ function Capture-State {
         [int]$capture.height -ne [int]$image.height) {
         throw "Capture dimensions and PNG dimensions disagree for '$Slug'."
     }
+    # Evidence archives move between machines; never persist a host-absolute
+    # artifact path in the candidate manifest.
+    $image.path = "screenshots/$Slug.png"
 
     $a11yPath = Join-Path $script:LogsRoot "a11y-$Slug.json"
     $progressPath = Join-Path $script:LogsRoot "a11y-$Slug-progress.json"
@@ -500,11 +646,28 @@ function Capture-State {
     $a11yHash = (Get-FileHash -LiteralPath $a11yPath -Algorithm SHA256).Hash.ToLowerInvariant()
 
     return [ordered]@{
+        id = $ScenarioId
         slug = $Slug
+        name = $ScenarioName
+        inventory_ids = @($InventoryIds)
+        automation_result = 'pass'
+        result = 'pending_visual_review'
+        input = $InputDescription
+        requires_focused_accessibility = [bool]$RequireFocused
+        expected_checkpoints = @($ExpectedCheckpoints)
+        checkpoint = [ordered]@{
+            captured_at_utc = [DateTimeOffset]::UtcNow.ToString('o')
+            window_handle = [long]$script:WindowHandle
+            window_process_id = [int]$script:WindowProcessId
+            window_title = [string]$script:WindowTitle
+            window_class = [string]$script:WindowClass
+            window_dpi = [int]$script:WindowDpi
+            normal_uno_termination_requested = [bool]$Terminate
+        }
         screenshot = $image
         capture_api = 'PrintWindow through low-level computer-use MCP'
         accessibility = [ordered]@{
-            path = $a11yPath
+            path = "logs/a11y-$Slug.json"
             bytes = [long]$a11yFile.Length
             sha256 = $a11yHash
             screenshot_sha256 = [string]$a11y.screenshot_sha256
@@ -518,9 +681,14 @@ $payloadFull = [System.IO.Path]::GetFullPath($PayloadRoot)
 $programRoot = Join-Path $payloadFull 'program'
 $script:PayloadPython = Join-Path $programRoot 'python.exe'
 $soffice = Join-Path $programRoot 'soffice.exe'
+$sofficeBin = Join-Path $programRoot 'soffice.bin'
+$updaterLibrary = Join-Path $programRoot 'updchklo.dll'
+$materialThemeDefinition = Join-Path $payloadFull `
+    'share\theme_definitions\material\definition.xml'
 $script:McpClientPath = Join-Path $PSScriptRoot 'call-lowlevel-mcp.py'
 $script:PngAnalyzerPath = Join-Path $PSScriptRoot 'analyze-png.py'
 $script:A11yCollectorPath = Join-Path $PSScriptRoot 'dump-a11y.py'
+$evidenceValidatorPath = Join-Path $PSScriptRoot 'Validate-Windows-Headless-Evidence.ps1'
 $script:McpUrl = $McpUrl
 
 if (-not $DriverRoot) {
@@ -538,10 +706,14 @@ $outputFull = [System.IO.Path]::GetFullPath($OutputRoot)
 
 foreach ($required in @(
     $soffice,
+    $sofficeBin,
+    $updaterLibrary,
+    $materialThemeDefinition,
     $script:PayloadPython,
     $script:McpClientPath,
     $script:PngAnalyzerPath,
     $script:A11yCollectorPath,
+    $evidenceValidatorPath,
     (Join-Path $script:ResolvedDriverRoot 'pyproject.toml')
 )) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
@@ -562,6 +734,69 @@ if ($LASTEXITCODE -ne 0 -or $driverStatus.Count -ne 0) {
 }
 
 $sourceLower = $SourceCommit.ToLowerInvariant()
+$driverIdentity = Get-GitEvidenceIdentity -Root $script:ResolvedDriverRoot `
+    -ExpectedCommit $driverCommit -Description 'Low-level driver'
+$harnessCommit = (& git -C $repoRoot rev-parse --verify HEAD).Trim().ToLowerInvariant()
+if ($LASTEXITCODE -ne 0 -or $harnessCommit -notmatch '^[0-9a-f]{40}$') {
+    throw 'Could not resolve the evidence harness commit.'
+}
+$resolvedSourceRoot = if ($SourceRoot) {
+    [System.IO.Path]::GetFullPath($SourceRoot)
+}
+else {
+    $repoRoot
+}
+$sourceIdentity = Get-GitEvidenceIdentity -Root $resolvedSourceRoot `
+    -ExpectedCommit $sourceLower -Description 'Source'
+$harnessIdentity = Get-GitEvidenceIdentity -Root $repoRoot `
+    -ExpectedCommit $harnessCommit -Description 'Harness'
+
+$provenanceText = @(Invoke-EvidenceGit -Root $resolvedSourceRoot -Arguments @(
+    'show', "$($sourceLower):docs/PROVENANCE.md"
+)) -join "`n"
+$baselineMatches = [regex]::Matches(
+    $provenanceText,
+    '(?m)^\| Upstream commit \| `([0-9a-f]{40})` \|\s*$'
+)
+if ($baselineMatches.Count -ne 1) {
+    throw 'The exact source commit must declare one upstream baseline in docs/PROVENANCE.md.'
+}
+$upstreamBaseline = $baselineMatches[0].Groups[1].Value
+
+$versionIniPath = Join-Path $programRoot 'version.ini'
+if (-not (Test-Path -LiteralPath $versionIniPath -PathType Leaf)) {
+    throw "Payload version metadata is missing: $versionIniPath"
+}
+$versionIniText = Get-Content -LiteralPath $versionIniPath -Raw
+$buildIdMatches = [regex]::Matches(
+    $versionIniText,
+    '(?im)^\s*buildid\s*=\s*([0-9a-f]{40})\s*$'
+)
+if ($buildIdMatches.Count -ne 1) {
+    throw 'Payload program/version.ini must contain exactly one 40-character buildid.'
+}
+$embeddedBuildId = $buildIdMatches[0].Groups[1].Value.ToLowerInvariant()
+if ($embeddedBuildId -ne $sourceLower) {
+    throw "Payload build ID $embeddedBuildId does not match source commit $sourceLower."
+}
+
+$driverProjectText = Get-Content -LiteralPath `
+    (Join-Path $script:ResolvedDriverRoot 'pyproject.toml') -Raw
+$driverNameMatches = [regex]::Matches(
+    $driverProjectText,
+    '(?m)^name\s*=\s*"([^"]+)"\s*$'
+)
+$driverVersionMatches = [regex]::Matches(
+    $driverProjectText,
+    '(?m)^version\s*=\s*"([^"]+)"\s*$'
+)
+if ($driverNameMatches.Count -ne 1 -or $driverVersionMatches.Count -ne 1) {
+    throw 'Could not resolve one low-level MCP package name and version from pyproject.toml.'
+}
+$driverPackageName = $driverNameMatches[0].Groups[1].Value
+$driverPackageVersion = $driverVersionMatches[0].Groups[1].Value
+$integrityEvidence = Get-CurrentIntegrityEvidence
+
 $shortCommit = $sourceLower.Substring(0, 10)
 $appearanceSlug = $Appearance.ToLowerInvariant()
 if (-not $RunId) {
@@ -592,7 +827,8 @@ $profileConfig = @"
 <item oor:path="/org.openoffice.Office.Common/Accessibility"><prop oor:name="HighContrast" oor:op="fuse"><value>$highContrastValue</value></prop></item>
 </oor:items>
 "@
-Write-Utf8Lf -Path (Join-Path $profileUserRoot 'registrymodifications.xcu') -Text $profileConfig
+$profileConfigPath = Join-Path $profileUserRoot 'registrymodifications.xcu'
+Write-Utf8Lf -Path $profileConfigPath -Text $profileConfig
 
 $script:UnoPipe = "LibreOfficeMaterialQA-$shortCommit-$appearanceSlug-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
 $desktopName = "LOMaterialQA-$shortCommit-$appearanceSlug-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
@@ -604,6 +840,27 @@ $stdoutPath = Join-Path $script:LogsRoot 'soffice.stdout.log'
 $stderrPath = Join-Path $script:LogsRoot 'soffice.stderr.log'
 $wrapperPath = Join-Path $runRoot 'launch-headless.cmd'
 $profileUri = [System.Uri]::new($profileRoot).AbsoluteUri
+$acceptArgument = "--accept=pipe,name=$($script:UnoPipe);urp"
+$applicationArguments = @(
+    "-env:UserInstallation=$profileUri",
+    '--nologo',
+    '--norestore',
+    '--quickstart=no',
+    '--language=en-US',
+    "--pidfile=$pidPath",
+    $acceptArgument
+)
+$publicProfileUri = '<run-root-uri>/profile'
+$publicPidPath = '<run-root>/soffice.pid'
+$publicApplicationArguments = @(
+    "-env:UserInstallation=$publicProfileUri",
+    '--nologo',
+    '--norestore',
+    '--quickstart=no',
+    '--language=en-US',
+    "--pidfile=$publicPidPath",
+    $acceptArgument
+)
 $wrapper = @"
 @echo off
 setlocal DisableDelayedExpansion
@@ -612,7 +869,7 @@ set "VCL_FILE_WIDGET_THEME=material"
 set "SAL_SKIA=raster"
 set "SAL_DISABLEGL=1"
 set "SAL_LOG=+WARN.vcl.gdi"
-"$soffice" -env:UserInstallation=$profileUri --nologo --norestore --quickstart=no --language=en-US --pidfile="$pidPath" --accept=pipe,name=$($script:UnoPipe);urp 1>"$stdoutPath" 2>"$stderrPath"
+"$soffice" -env:UserInstallation=$profileUri --nologo --norestore --quickstart=no --language=en-US --pidfile="$pidPath" $acceptArgument 1>"$stdoutPath" 2>"$stderrPath"
 exit /b %ERRORLEVEL%
 "@
 Write-Utf8Lf -Path $wrapperPath -Text $wrapper
@@ -623,12 +880,42 @@ if ($existing.Count -ne 0) {
 }
 
 $results = [ordered]@{
-    schema_version = 1
+    schema_version = 2
     run_id = $RunId
     status = 'running'
     generated_at_utc = [DateTimeOffset]::UtcNow.ToString('o')
+    completed_at_utc = $null
     source_commit = $sourceLower
-    payload_root = $payloadFull
+    source = [ordered]@{
+        repository = $sourceIdentity.repository
+        commit = $sourceLower
+        upstream_baseline = $upstreamBaseline
+        checkout_clean = $sourceIdentity.checkout_clean
+        checkout_dirty = (-not $sourceIdentity.checkout_clean)
+        dirty_worktree_entries = @($sourceIdentity.dirty_worktree_entries)
+        embedded_build_id = $embeddedBuildId
+        version_metadata = (Get-EvidenceFileIdentity -Path $versionIniPath `
+            -PublicPath 'program/version.ini')
+    }
+    harness = [ordered]@{
+        repository = $harnessIdentity.repository
+        commit = $harnessCommit
+        checkout_clean = $harnessIdentity.checkout_clean
+        checkout_dirty = (-not $harnessIdentity.checkout_clean)
+        dirty_worktree_entries = @($harnessIdentity.dirty_worktree_entries)
+        entrypoint = (Get-EvidenceFileIdentity -Path $PSCommandPath `
+            -PublicPath 'bin/Run-Windows-Headless-Smoke.ps1')
+        dependencies = @(
+            (Get-EvidenceFileIdentity -Path $script:McpClientPath `
+                -PublicPath 'bin/call-lowlevel-mcp.py'),
+            (Get-EvidenceFileIdentity -Path $script:PngAnalyzerPath `
+                -PublicPath 'bin/analyze-png.py'),
+            (Get-EvidenceFileIdentity -Path $script:A11yCollectorPath `
+                -PublicPath 'bin/dump-a11y.py'),
+            (Get-EvidenceFileIdentity -Path $evidenceValidatorPath `
+                -PublicPath 'bin/Validate-Windows-Headless-Evidence.ps1')
+        )
+    }
     appearance = $Appearance
     profile_values = [ordered]@{
         ApplicationAppearance = $appearanceValue
@@ -641,29 +928,99 @@ $results = [ordered]@{
         SAL_DISABLEGL = '1'
         SAL_LOG = '+WARN.vcl.gdi'
     }
+    host = [ordered]@{
+        operating_system = [System.Environment]::OSVersion.VersionString
+        architecture = $env:PROCESSOR_ARCHITECTURE
+        host_locale = [Globalization.CultureInfo]::CurrentCulture.Name
+        ui_locale = [Globalization.CultureInfo]::CurrentUICulture.Name
+        desktop_backend = 'Win32 off-screen desktop with per-window PrintWindow capture'
+        display_scale = [ordered]@{
+            dpi = $null
+            percent = $null
+            reference_dpi = 96
+            source = 'GetDpiForWindow on the runtime-resolved SALFRAME HWND'
+        }
+        font_configuration = [ordered]@{
+            source = 'native Windows system fonts inherited by LibreOffice VCL'
+            run_specific_override = $false
+            override_files = @()
+        }
+    }
+    application = [ordered]@{
+        executable = (Get-EvidenceFileIdentity -Path $soffice `
+            -PublicPath 'program/soffice.exe')
+        runtime_executable = (Get-EvidenceFileIdentity -Path $sofficeBin `
+            -PublicPath 'program/soffice.bin')
+        updater_library = (Get-EvidenceFileIdentity -Path $updaterLibrary `
+            -PublicPath 'program/updchklo.dll')
+        material_theme_definition = (Get-EvidenceFileIdentity `
+            -Path $materialThemeDefinition `
+            -PublicPath 'share/theme_definitions/material/definition.xml')
+        python_executable = (Get-EvidenceFileIdentity -Path $script:PayloadPython `
+            -PublicPath 'program/python.exe')
+        arguments = @($publicApplicationArguments)
+        arguments_path_tokenized = $true
+        launch_wrapper = (Get-EvidenceFileIdentity -Path $wrapperPath `
+            -PublicPath 'launch-headless.cmd' -RuntimeOnly)
+        isolated_profile_root = 'profile'
+        user_profile_root = 'profile/user'
+        user_installation_uri = $publicProfileUri
+        profile_configuration = (Get-EvidenceFileIdentity -Path $profileConfigPath `
+            -PublicPath 'profile/user/registrymodifications.xcu' `
+            -RuntimeOnly)
+        uno_pipe = $script:UnoPipe
+        uno_accept_argument = $acceptArgument
+        pid_file = $publicPidPath
+        document_fixtures = @()
+    }
     driver = [ordered]@{
-        root = $script:ResolvedDriverRoot
+        repository = $driverIdentity.repository
         commit = $driverCommit
         checkout_clean = $true
+        checkout_dirty = $false
+        package_name = $driverPackageName
+        package_version = $driverPackageVersion
         mcp_url = $null
+        transport = 'streamable HTTP over dedicated loopback endpoint'
         dedicated_server = $false
         server_pid = $null
         desktop_name = $desktopName
+        session = [ordered]@{
+            mode = 'dedicated same-token server process'
+            harness_pid = $PID
+            harness_windows_session_id = [int](Get-Process -Id $PID).SessionId
+            server_windows_session_id = $null
+            same_windows_session = $null
+            token_inheritance = 'Start-Process inherited the harness token'
+            integrity = $integrityEvidence
+            integrity_verification_method = 'Harness mandatory label measured with whoami; dedicated server label inferred from Start-Process token inheritance, same Windows session, and MCP is_admin parity; server mandatory label is not read directly.'
+            server_mandatory_label_measured_directly = $false
+            server_reported_is_administrator = $null
+            integrity_match = $null
+        }
     }
     process = $null
     window = $null
     scenarios = @()
+    review = [ordered]@{
+        status = 'pending'
+        reviewer = $null
+        sensitive_data_review = 'pending'
+        reviewed_scenario_ids = @()
+        limitations = $null
+    }
     cleanup = [ordered]@{
         normal_uno_termination = $false
         forced_owned_process_cleanup = $false
         remaining_payload_processes = -1
         process_cleanup_error = $null
         headless_windows_before_close = $null
-        remaining_headless_windows = -1
         desktop_closed = $false
         desktop_cleanup_error = $null
         dedicated_driver_stopped = $null
         dedicated_driver_cleanup_error = $null
+        runtime_launch_wrapper_removed = $false
+        runtime_launch_wrapper_cleanup_error = $null
     }
     error = $null
 }
@@ -675,9 +1032,13 @@ $pidFilePid = $null
 $normalTermination = $false
 $fatal = $null
 $script:WindowHandle = $null
+$script:WindowTitle = $null
+$script:WindowClass = $null
+$script:WindowProcessId = $null
+$script:WindowDpi = $null
 try {
     if ($McpUrl) {
-        $script:McpUrl = $McpUrl
+        throw 'External MCP URLs cannot provide accepted same-token server provenance; omit -McpUrl to use the dedicated server.'
     }
     else {
         $driverPort = Get-FreeLoopbackPort
@@ -718,6 +1079,23 @@ try {
     if (-not $serverReady) {
         throw "Low-level MCP server did not become ready at $($script:McpUrl)."
     }
+    $dedicatedDriver.Refresh()
+    $serverProcess = Get-Process -Id $dedicatedDriver.Id -ErrorAction Stop
+    $serverAdmin = Invoke-LowLevelTool -Tool 'is_admin' -Arguments @{} `
+        -TimeoutSeconds 15
+    $results.driver.session.server_windows_session_id = [int]$serverProcess.SessionId
+    $results.driver.session.same_windows_session = (
+        [int]$serverProcess.SessionId -eq
+        [int]$results.driver.session.harness_windows_session_id
+    )
+    $results.driver.session.server_reported_is_administrator = [bool]$serverAdmin.is_admin
+    $results.driver.session.integrity_match = (
+        $results.driver.session.same_windows_session -and
+        ([bool]$serverAdmin.is_admin -eq [bool]$integrityEvidence.is_administrator)
+    )
+    if (-not $results.driver.session.integrity_match) {
+        throw 'Dedicated low-level MCP server did not match the harness Windows session/integrity contract.'
+    }
 
     Invoke-LowLevelTool -Tool 'create_headless_desktop' -Arguments @{ name = $desktopName } | Out-Null
     $desktopCreated = $true
@@ -754,7 +1132,9 @@ try {
                     pidfile_pid = $pidFilePid
                     launcher_pid = [int]$launcher.pid
                     name = [string]$owned[0].Name
-                    executable_path = [string]$owned[0].ExecutablePath
+                    executable_path = 'program/' + [System.IO.Path]::GetFileName(
+                        [string]$owned[0].ExecutablePath
+                    )
                     creation_date = [string]$owned[0].CreationDate
                 }
             }
@@ -779,14 +1159,35 @@ try {
             $stableHandle = $null
             $stableCount = 0
         }
-        if ($ownedPid -and $stableCount -ge 3) {
+        if ($ownedPid -and $pidFilePid -and $stableCount -ge 3) {
+            if ([int]$pidFilePid -ne [int]$ownedPid) {
+                throw "PID-file process $pidFilePid does not equal exact owned payload process $ownedPid."
+            }
             $script:WindowHandle = $stableHandle
+            $script:WindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(
+                [IntPtr]$script:WindowHandle
+            )
+            if ($script:WindowProcessId -ne [int]$ownedPid) {
+                throw "SALFRAME HWND belongs to PID $($script:WindowProcessId), not exact owned payload PID $ownedPid."
+            }
+            $script:WindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(
+                [IntPtr]$script:WindowHandle
+            )
+            $results.host.display_scale.dpi = $script:WindowDpi
+            $results.host.display_scale.percent = [int][Math]::Round(
+                ($script:WindowDpi * 100.0) / 96.0
+            )
+            $results.process.pidfile_pid = [int]$pidFilePid
+            $script:WindowTitle = [string]$candidate.title
+            $script:WindowClass = [string]$candidate.class
             $results.window = [ordered]@{
                 handle = $script:WindowHandle
+                process_id = $script:WindowProcessId
                 title = [string]$candidate.title
                 class = [string]$candidate.class
                 width = [int]$candidate.width
                 height = [int]$candidate.height
+                dpi = $script:WindowDpi
                 stable_poll_count = $stableCount
             }
             break
@@ -798,7 +1199,16 @@ try {
     }
 
     $scenarioList = [System.Collections.Generic.List[object]]::new()
-    $scenarioList.Add((Capture-State -Slug "start-center-$appearanceSlug"))
+    $appearanceUpper = $Appearance.ToUpperInvariant()
+    $scenarioList.Add((Capture-State -Slug "start-center-$appearanceSlug" `
+        -ScenarioId "E-START-$appearanceUpper" `
+        -ScenarioName "$Appearance Start Center Home and Recent Documents" `
+        -InventoryIds @('WIN-SC-001', 'WIN-SHL-001') `
+        -ExpectedCheckpoints @(
+            'stable owned LibreOffice SALFRAME window',
+            'rendered nonblank screenshot with exact dimensions and SHA-256',
+            'nonempty complete UNO accessibility tree with visible nodes'
+        ) -InputDescription 'none; initial stable Start Center state'))
 
     if ($KeyboardFocus) {
         Invoke-LowLevelTool -Tool 'win_send_keys' -Arguments @{
@@ -806,7 +1216,16 @@ try {
             keys = @('tab')
         } | Out-Null
         Start-Sleep -Milliseconds 750
-        $scenarioList.Add((Capture-State -Slug "start-center-$appearanceSlug-keyboard-focus" -RequireFocused))
+        $scenarioList.Add((Capture-State `
+            -Slug "start-center-$appearanceSlug-keyboard-focus" `
+            -ScenarioId "E-START-$appearanceUpper-KEYBOARD" `
+            -ScenarioName 'Background Tab navigation exposes keyboard focus' `
+            -InventoryIds @('WIN-SC-002', 'WIN-ACT-006', 'WIN-SC-006') `
+            -ExpectedCheckpoints @(
+                'background Tab input delivered to the owned window',
+                'at least one FOCUSED UNO accessibility node',
+                'rendered nonblank screenshot retained for visual review'
+            ) -InputDescription 'low-level MCP win_send_keys: tab' -RequireFocused))
     }
 
     if ($Templates) {
@@ -818,12 +1237,26 @@ try {
             clicks = 1
         } | Out-Null
         Start-Sleep -Seconds 2
-        $scenarioList.Add((Capture-State -Slug "start-center-templates-$appearanceSlug"))
+        $scenarioList.Add((Capture-State `
+            -Slug "start-center-templates-$appearanceSlug" `
+            -ScenarioId "E-START-$appearanceUpper-TEMPLATES" `
+            -ScenarioName 'Background pointer navigation to Templates' `
+            -InventoryIds @('WIN-SC-003', 'WIN-SC-005') `
+            -ExpectedCheckpoints @(
+                'background pointer click delivered at recorded client coordinates',
+                'rendered nonblank post-input screenshot retained for visual review',
+                'nonempty complete post-input UNO accessibility tree with visible nodes'
+            ) -InputDescription 'low-level MCP mouse_click at client coordinates (140, 330)'))
     }
 
     $finalScenario = $scenarioList[$scenarioList.Count - 1]
     $finalSlug = [string]$finalScenario.slug
-    $terminatedScenario = Capture-State -Slug $finalSlug -Terminate `
+    $terminatedScenario = Capture-State -Slug $finalSlug `
+        -ScenarioId ([string]$finalScenario.id) `
+        -ScenarioName ([string]$finalScenario.name) `
+        -InventoryIds @($finalScenario.inventory_ids) `
+        -ExpectedCheckpoints @($finalScenario.expected_checkpoints) `
+        -InputDescription ([string]$finalScenario.input) -Terminate `
         -RequireFocused:($KeyboardFocus -and -not $Templates)
     $scenarioList[$scenarioList.Count - 1] = $terminatedScenario
     $results.scenarios = $scenarioList.ToArray()
@@ -860,6 +1293,9 @@ finally {
         $processCleanup = Stop-ExactPayloadProcesses -ProgramRoot $programRoot
         $results.cleanup.forced_owned_process_cleanup = [bool]$processCleanup.forced
         $results.cleanup.remaining_payload_processes = [int]$processCleanup.remaining
+        if ($results.status -eq 'passed' -and $processCleanup.forced) {
+            throw 'A passed run required forced payload-process cleanup.'
+        }
     }
     catch {
         $results.cleanup.process_cleanup_error = $_.Exception.Message
@@ -900,7 +1336,9 @@ finally {
             if (-not $closed.closed) {
                 throw 'The long-lived low-level MCP server did not close its desktop handle.'
             }
-            $results.cleanup.remaining_headless_windows = 0
+            if ([int]$windowsFinal.count -ne 0) {
+                throw 'Headless windows remained immediately before desktop close.'
+            }
         }
         catch {
             $results.cleanup.desktop_cleanup_error = $_.Exception.Message
@@ -935,7 +1373,41 @@ finally {
             $dedicatedDriver.Dispose()
         }
     }
-    Write-JsonFile -Path (Join-Path $runRoot 'results.json') -Value $results
+    try {
+        if (Test-Path -LiteralPath $wrapperPath -PathType Leaf) {
+            Remove-Item -LiteralPath $wrapperPath -Force -ErrorAction Stop
+        }
+        $results.cleanup.runtime_launch_wrapper_removed = `
+            -not (Test-Path -LiteralPath $wrapperPath)
+        if (-not $results.cleanup.runtime_launch_wrapper_removed) {
+            throw 'Runtime-only launch wrapper remains after cleanup.'
+        }
+    }
+    catch {
+        $results.cleanup.runtime_launch_wrapper_cleanup_error = $_.Exception.Message
+        if (-not $fatal) { $fatal = $_.Exception }
+        $results.status = 'failed'
+        if (-not $results.error) {
+            $results.error = "Launch-wrapper cleanup error: $($_.Exception.Message)"
+        }
+    }
+    $results.completed_at_utc = [DateTimeOffset]::UtcNow.ToString('o')
+    $resultsPath = Join-Path $runRoot 'results.json'
+    $manifestPath = Join-Path $runRoot 'manifest.json'
+    Write-JsonFile -Path $resultsPath -Value $results
+    Write-JsonFile -Path $manifestPath -Value $results
+    if ($results.status -eq 'passed') {
+        try {
+            & $evidenceValidatorPath -Path $manifestPath -RequirePassed | Out-Null
+        }
+        catch {
+            $results.status = 'failed'
+            $results.error = "Evidence contract validation failed: $($_.Exception.Message)"
+            if (-not $fatal) { $fatal = $_.Exception }
+            Write-JsonFile -Path $resultsPath -Value $results
+            Write-JsonFile -Path $manifestPath -Value $results
+        }
+    }
 }
 
 if ($fatal) {

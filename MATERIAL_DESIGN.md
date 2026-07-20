@@ -111,9 +111,12 @@ already recognized but the theme had not yet defined: the outlined frame
 rectangle—`outline-variant` stroke, `surface-container` fill so it blends into
 the dialog it groups, `stroke-thin` width, and the `corner-container` radius—so
 it introduces one new rounded rectangle and one `stroke-thin` reference and no
-new tokens. The shared renderer now reports a native frame region (bounding and
-content equal to the requested rectangle), which is the signal `decoview`
-requires before it issues the file-definition `Border` draw. `ListNet` is
+new tokens. The shared renderer now reports the requested rectangle as the
+native frame's outer bounding region and a content region inset by 2 px on
+every edge. That inset matches `decoview`'s generic
+`DrawFrameStyle::Group` fallback geometry, while returning a native region is
+the signal `decoview` requires before it issues the file-definition `Border`
+draw. `ListNet` is
 declared with a single supported-but-empty `Entire` state: because the renderer
 returns success while drawing nothing, VCL's tree view suppresses its own
 connector nets, giving the flatter Material tree that native GTK and macOS

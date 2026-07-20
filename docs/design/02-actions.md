@@ -1,7 +1,12 @@
 # 02 — Actions
 
 > **Status:** Specification of target design — native implementation per
-> [ROADMAP.md](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [ROADMAP.md](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed. Accepted light, dark, and forced-high-contrast
+> Start Center runs show the Open File action and one visible Tab-focus
+> checkpoint whose bounded UNO tree identifies `Open File` as the sole focused
+> push button. Other actions, state matrices, and component pixels in this
+> chapter remain unverified.
 
 This chapter specifies every command-invoking control: push buttons (filled,
 tonal, outlined, text), toolbar buttons, icon buttons, split/combo command
@@ -13,7 +18,8 @@ sources are the design contract
 and the interactive reference ([prototype.html](../../site/prototype.html)).
 Each statement is tagged with its implementation status: *implemented in
 definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
-implemented*.
+implemented*. These labels describe source provenance; runtime evidence is
+called out separately and never inferred from compilation or dispatch tests.
 
 ## Token quick reference
 
@@ -477,8 +483,11 @@ Native mapping: a filled push button — `pushbutton`/`Entire` with
 declares `suggested-action`; `VclBuilder` maps that standard UI class to
 `PushButton::setAction(true)`, selecting the existing action state when
 Material drawing is enabled. The focused builder mapping passes in current Linux
-and Windows native runs; the specified 44 px prominence geometry and visual
-states remain target design until an application scenario is captured.
+and Windows native runs. Accepted Start Center captures now show the action at
+rest and with a visible Tab-focus indicator, and the corresponding bounded UNO
+tree reports `Open File` as the sole focused push button. The specified 44 px
+geometry, exact Material pixels, hover/pressed states, and activation flow
+remain unverified.
 
 ### 6.2 Behaviour
 
@@ -495,8 +504,12 @@ states remain target design until an application scenario is captured.
 
 ### 6.3 Verification hooks
 
-- capture checkpoint: Start Center home, light and dark, with this action in
-  idle/hover/focused states;
+Completed scope: accepted light, dark, and forced-high-contrast Home/focus
+captures register the visible action and one Tab-focus transition; they do not
+identify the renderer command or token values from pixels. Remaining hooks:
+
+- capture checkpoint: add hover and pressed states and component-level pixel
+  checks to the existing rest/focus evidence;
 - flow check: activation from a cold start opens the file dialog on the
   off-screen desktop with run-scoped process ownership per
   [HEADLESS_UI_EVIDENCE.md](../HEADLESS_UI_EVIDENCE.md);

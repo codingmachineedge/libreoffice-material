@@ -1,7 +1,11 @@
 # 04 — Inputs
 
 > **Status:** Specification of target design — native implementation per
-> [ROADMAP.md](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [ROADMAP.md](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed. The accepted Start Center captures include the
+> closed idle `cbFilter` combo, but do not prove its definition-backed pixels or
+> any open, focused, disabled, editing, search, spin, or validation state in
+> this chapter.
 
 This file specifies the input family: outlined single-line text fields, the
 borderless and multiline edit variants, combo boxes and dropdown list boxes,
@@ -16,7 +20,9 @@ and the interactive reference [`site/prototype.html`](../../site/prototype.html)
 Implementation labels used throughout:
 
 - **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** — the native part/state exists in
-  the file-widget definition but has never been compiled or executed;
+  the file-widget definition, the exact-source build contains it, and current
+  definition/dispatch assertions have executed; no named input state is treated
+  as rendered proof without a registered component checkpoint;
 - **prototype-only** — shown in `site/prototype.html`, no native counterpart yet;
 - **specified here, not yet implemented** — in neither source.
 
@@ -130,9 +136,10 @@ style on top of the Material container.
 
 ### 1.8 Verification hooks
 
-- Headless draw coverage: assert `editbox`/`Entire` resolves three states and
-  that focused stroke width is `stroke-standard` (2) versus `stroke-thin` (1)
-  idle — extend the existing (not yet executed) headless draw C++ tests.
+- Native command coverage: the required headless draw C++ target has executed
+  definition/state dispatch assertions. Extend it with an explicit
+  `editbox`/`Entire` three-state stroke-width assertion (`stroke-standard` (2)
+  focused versus `stroke-thin` (1) idle); no rendered-pixel comparison exists.
 - Screenshot checkpoints per [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md):
   Save As dialog field idle/focused/disabled in light, dark, and high-contrast
   rows of the scenario matrix; state axis `default, focus, disabled, invalid`.

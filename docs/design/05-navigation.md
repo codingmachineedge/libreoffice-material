@@ -1,7 +1,11 @@
 # 05 · Navigation & command surfaces
 
 > **Status:** Specification of target design — native implementation per
-> [`ROADMAP.md`](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [`ROADMAP.md`](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed. Accepted Start Center runs cover only their named
+> Home/focus/Templates navigation checkpoints; menus, tab bars, notebookbar,
+> sidebar, sheet tabs, title bar, status bar, and their component pixels remain
+> runtime-unverified.
 
 This chapter specifies the surfaces a user navigates *with*: the menubar and its
 drop menus, context menus, tab bars, the notebookbar (ribbon), the sidebar rail,
@@ -20,6 +24,10 @@ Implementation status legend used throughout:
   surface state lacks registered runtime evidence;
 - **prototype-only** — the value exists only in the HTML mockup;
 - **specified here, not yet implemented** — in neither source.
+
+These labels describe source provenance. Executed command/state assertions are
+not screenshots, and the scoped Start Center run is not evidence for other
+navigation surfaces.
 
 | Component | Native contract | Prototype reference |
 | --- | --- | --- |
@@ -168,8 +176,8 @@ off-screen desktop:
   separator, and an enabled submenu arrow.
 - `nav-menu-03` — a menu with a disabled submenu parent; assert the arrow
   renders in `@outline`, not the enabled `@on-surface-variant`.
-- Headless draw tests already cover these part/state tuples in source; they
-  have not executed.
+- The required headless draw target has executed command/state assertions for
+  these tuples; no menu capture or rendered-pixel comparison exists.
 
 ---
 
@@ -642,6 +650,8 @@ Cross-references: shared button and toolbar states in
 [02-actions.md](02-actions.md); container/scrollbar rules in
 [06-containers.md](06-containers.md); the evidence contract in
 [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md). The registered
-light Start Center navigation smoke covers only its stated checkpoints; nothing
-else in this chapter is thereby build- or runtime-verified. Current files are in
+light, dark, and forced-high-contrast Start Center navigation smoke covers only
+its stated Home/focus/Templates checkpoints. Native definition/dispatch tests
+are build evidence, but no other surface or component pixels in this chapter
+are thereby runtime-verified. Current files are in
 [`docs/SCREENSHOTS.md`](../SCREENSHOTS.md).

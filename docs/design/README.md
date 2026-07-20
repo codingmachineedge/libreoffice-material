@@ -23,6 +23,10 @@ spec defines layout and regions, chrome variants, key flows,
 empty/loading/error states, adaptive width behavior, a keyboard map, and
 verification checkpoints.
 
+The companion [`Windows UI inventory`](../WINDOWS_UI_INVENTORY.md) turns these
+chapters into 105 stable, owned closure rows. It records partial evidence
+without treating shared-component compilation as application-surface proof.
+
 ## Reading order
 
 | # | File | Covers |

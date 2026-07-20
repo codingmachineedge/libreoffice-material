@@ -1,7 +1,10 @@
 # 08 — Dialogs & overlays
 
 > **Status:** Specification of target design — native implementation per
-> [`ROADMAP.md`](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [`ROADMAP.md`](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed. The accepted application proof is limited to the
+> Start Center; no dialog, overlay, dialog interaction, accessibility, or pixel
+> checkpoint specified in this chapter has been registered.
 
 This chapter specifies the modal dialog family: the shared modal anatomy and its
 scrim, keyboard, and elevation rules, followed by the four reference dialog
@@ -14,7 +17,9 @@ Replace. Normative inputs are [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md)
 [`site/prototype.html`](../../site/prototype.html) (interactive mockup, not a
 build capture). Implementation status is labelled per feature as *implemented in
 definition.xml (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet
-implemented*. Button variants are specified in [02-actions.md](02-actions.md);
+implemented*. These labels describe source provenance; executed native
+definition/state assertions are not dialog runtime proof. Button variants are
+specified in [02-actions.md](02-actions.md);
 field and search anatomy in [04-inputs.md](04-inputs.md); the snackbar used for
 Replace All reporting in [07-feedback.md](07-feedback.md).
 
@@ -125,8 +130,9 @@ Contrast: `@on-surface` on `@surface-container` and `@on-primary` on
 `@primary` are covered by the standalone validator's contrast-pair checks;
 the scrim never carries meaning. Color independence: the default button is
 identified to assistive technology as the default, not merely by fill;
-disabled states keep their glyphs (chapter 02). No accessibility result is
-claimed — the suite is compiled at commit 577059e274; surface state unverified.
+disabled states keep their glyphs (chapter 02). No **dialog** accessibility
+result is claimed: the accepted bounded UNO trees cover only the Start Center,
+not any surface in this chapter.
 
 ### Density
 
@@ -164,9 +170,11 @@ footer may wrap to a second line preserving order.
 Per [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md): run id
 `YYYYMMDD-HHMMSS-<short-commit>-<platform>`, manifest + SHA-256 per capture.
 
-- Headless: validator coverage of `pushbutton` (all 13 `Entire` states),
-  `windowbackground`/`BackgroundDialog`, and `frame`/`Border` already runs
-  source-side; a build adds headless draw tests for the same tuples.
+- Native source gate: validator coverage of `pushbutton` (all 13 `Entire`
+  states), `windowbackground`/`BackgroundDialog`, and `frame`/`Border` runs
+  source-side, and the required native definition/draw target has compiled and
+  executed command/region assertions for these contracts. No dialog pixels
+  have been compared.
 - Screenshot checkpoints: dialog at rest (light/dark/HC × 100 %/150 % scale);
   footer order; focus ring on each footer button; disabled primary.
 - Interaction: scripted `Esc`, `Enter`, and full `Tab` cycle proving the trap.

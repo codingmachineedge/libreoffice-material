@@ -1,7 +1,11 @@
 # 03 — Selection
 
 > **Status:** Specification of target design — native implementation per
-> [ROADMAP.md](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [ROADMAP.md](../../ROADMAP.md). Required native definition/dispatch targets
+> have compiled and executed against the implemented checkbox, radio, and tab
+> contracts. The accepted Start Center runtime proof is scoped to
+> Home/focus/Templates and does not exercise the selection-control state or
+> pixel matrices specified here.
 
 This file specifies the selection components of LibreOffice Material: the
 checkbox (including the tristate/mixed form), the radio button, the switch,
@@ -14,6 +18,8 @@ in
 and the interactive mockup in [`site/prototype.html`](../../site/prototype.html).
 Implementation status is marked per feature: *implemented in definition.xml
 (compiled at commit 577059e274; surface state unverified)*, *prototype-only*, or *specified here, not yet implemented*.
+Compilation and executed command/state assertions are native source evidence,
+not rendered selection-control proof.
 
 A convention used throughout: the native drawing definitions position geometry
 in normalized part coordinates (0–1 of the part cell). At the declared

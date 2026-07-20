@@ -316,10 +316,12 @@ behind a labelled cluster of dialog controls.
 
 The `@surface-container` fill matches `dialogColor`, so the frame blends into
 the dialog it groups — one hairline of structure, no tonal box-in-box. The
-shared renderer reports a native frame region (bounding = content = requested
-rectangle), the signal `decoview` requires before issuing the file-definition
-`Border` draw. The control adds exactly one rounded rectangle and one
-`stroke-thin` reference; no new tokens.
+shared renderer reports the requested rectangle as the frame's outer bounding
+region and reports a content region inset by 2 px on every edge. The inset
+matches `decoview`'s generic `DrawFrameStyle::Group` fallback geometry; the
+successful native-region result is the signal `decoview` requires before
+issuing the file-definition `Border` draw. The control adds exactly one rounded
+rectangle and one `stroke-thin` reference; no new tokens.
 
 ### States
 
@@ -366,9 +368,10 @@ bypass).
 
 ### Verification hooks
 
-Headless: frame-region reporting (bounding = content) and the `Border` draw
-command are covered by executed C++ assertions; no rendered-pixel comparison
-exists. Build checkpoint: shared Options
+Headless: frame-region reporting (requested outer bounding rectangle plus a
+2 px inset content rectangle) and the `Border` draw command are covered by
+executed C++ assertions; no rendered-pixel comparison exists. Build checkpoint:
+shared Options
 dialog capture showing frames in light/dark; a high-contrast capture proving
 native fallback.
 

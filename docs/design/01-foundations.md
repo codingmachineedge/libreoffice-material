@@ -1,7 +1,12 @@
 # 01 — Foundations
 
 > **Status:** Specification of target design — native implementation per
-> [`ROADMAP.md`](../../ROADMAP.md); nothing here is build- or runtime-verified.
+> [`ROADMAP.md`](../../ROADMAP.md). The static validator and required native
+> definition-reader/dispatch targets have compiled and executed. The corrected
+> `fbba560e2` extracted runtime also supplied scoped light, dark, and forced-
+> high-contrast Start Center Home/focus/Templates evidence. Those runs requested
+> the Material opt-in, but do not prove every token, route, component state, or
+> target pixel in this foundations chapter.
 
 This file defines the ground rules every component and surface specification in
 this directory inherits: the design principles, the four token families and
@@ -17,8 +22,10 @@ mockup, not a build capture). Throughout this spec, every statement is tagged
 with one of three provenance levels:
 
 - **implemented in definition.xml (compiled at commit 577059e274; surface state unverified)** — the native file-widget theme
-  declares it and the build contains it; the accepted run requested the opt-in,
-  but no named component state is treated as rendered proof without a registered checkpoint;
+  declares it, the exact-source build contains it, and current native
+  definition/dispatch assertions have executed; the accepted app runs requested
+  the opt-in, but no named component state is treated as rendered proof without
+  a registered checkpoint;
 - **prototype-only** — only the HTML mockup demonstrates it;
 - **specified here, not yet implemented** — a target this spec sets that
   neither source currently contains.
@@ -231,8 +238,9 @@ Rules for every spec in this directory:
   token-reference table;
 - new components must consume existing roles before proposing new ones; a new
   role requires light **and** dark values and a contrast-checked pairing;
-- the standalone validator (source-only, covered by tests that have not
-  executed) checks token discipline, the exact shape/metric/72-slot schemas,
+- the standalone validator (source-only and currently passing, with companion
+  native reader/draw targets also executed) checks token discipline, the exact
+  shape/metric/72-slot schemas,
   light/dark schema parity, unused roles, required control/state coverage
   (currently 79 parts and 205 states), list/selection/feedback contrast pairs,
   and native font/geometry-preservation invariants.
@@ -438,19 +446,22 @@ submenu arrows) are sized by `@size-menu-indicator` (`18`) and drawn with
 
 Foundations are proved indirectly — every component capture exercises them —
 plus the following dedicated checks, in the
-[`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) format. None have
-run; the build blocker is recorded there.
+[`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) format. Source
+validation, native definition/dispatch execution, and scoped Start Center
+captures now exist; the broader verification matrix below remains incomplete.
 
-1. **Validator run (headless, no GUI).** Execute the standalone validator
-   against `definition.xml`: token discipline, shape/metric/72-slot schemas,
-   light/dark parity, 79-part/205-state coverage, contrast pairs, and
-   font/geometry-preservation invariants must pass at the recorded commit.
-2. **Theme-resolution captures.** One representative surface (Start Center)
-   captured under light, dark, and platform high contrast in the same run,
-   launched with `VCL_DRAW_WIDGETS_FROM_FILE=1` and
-   `VCL_FILE_WIDGET_THEME=material`. Checkpoints: dark palette selected from
-   the resolved dark signal; high contrast shows the *native* baseline (no
-   Material fills) with a visible focus indicator.
+1. **Validator run (headless, no GUI) — executed source gate.** The standalone
+   validator currently passes against `definition.xml`: token discipline,
+   shape/metric/72-slot schemas, light/dark parity, 79-part/205-state coverage,
+   contrast pairs, and font/geometry-preservation invariants. This is source
+   validation, not rendered-pixel evidence.
+2. **Theme-resolution captures — scoped runtime evidence.** The accepted Start
+   Center runs cover light, dark, and forced-high-contrast Home/focus/Templates
+   checkpoints with `VCL_DRAW_WIDGETS_FROM_FILE=1` and
+   `VCL_FILE_WIDGET_THEME=material`. They establish successful launch,
+   interaction, visible focus, and bounded UNO-tree collection for those
+   checkpoints; they do not by themselves prove exact dark-palette selection,
+   high-contrast routing for every control, or Material token pixels.
 3. **Token spot-checks.** Pixel probes on accepted captures: pushbutton fill
    equals `@primary-container` (`#E8DEF8` light), field fill equals
    `@surface`, dialog face equals `@surface-container`; corner radii of a
@@ -468,5 +479,7 @@ run; the build blocker is recorded there.
 
 Each run records the manifest fields, run identity
 (`YYYYMMDD-HHMMSS-<short-commit>-<platform>`), and capture-acceptance review
-defined by the evidence plan. Until such runs exist, everything in this file
-remains target design.
+defined by the evidence plan. Current results establish only the source gates,
+native definition/dispatch assertions, and the named Start Center checkpoints;
+all unmeasured token, scale, motion, adaptive-layout, and component-pixel claims
+in this file remain target design.
