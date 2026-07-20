@@ -260,11 +260,12 @@ protected:
 
         CPPUNIT_ASSERT_EQUAL(u"C:\\Windows\\System32\\msiexec.exe"_ustr,
                              aCommand.ExecutablePath);
-        CPPUNIT_ASSERT_EQUAL(std::size_t(4), aCommand.Arguments.size());
+        CPPUNIT_ASSERT_EQUAL(std::size_t(5), aCommand.Arguments.size());
         CPPUNIT_ASSERT_EQUAL(u"/i"_ustr, aCommand.Arguments[0]);
         CPPUNIT_ASSERT_EQUAL(aInstallerPath, aCommand.Arguments[1]);
         CPPUNIT_ASSERT_EQUAL(u"REINSTALL=ALL"_ustr, aCommand.Arguments[2]);
         CPPUNIT_ASSERT_EQUAL(u"REINSTALLMODE=vomus"_ustr, aCommand.Arguments[3]);
+        CPPUNIT_ASSERT_EQUAL(u"REBOOT=ReallySuppress"_ustr, aCommand.Arguments[4]);
     }
 
     CPPUNIT_TEST_SUITE(Test);

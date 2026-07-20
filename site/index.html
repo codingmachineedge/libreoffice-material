@@ -208,7 +208,9 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
               bytes are copied with <code>CREATE_NEW</code> into protected
               LocalAppData staging with a user/Administrators/SYSTEM DACL,
               verified again, and held under a final read lock before a visible
-              Windows Installer launch.
+              Windows Installer launch. The launch includes
+              <code>REBOOT=ReallySuppress</code>, so it cannot request or force
+              a Windows restart.
             </p>
             <p>
               Confirmation defaults to No; no silent install exists. Checks

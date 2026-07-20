@@ -192,7 +192,8 @@ LocalAppData directory whose DACL is limited to the user, Administrators, and
 SYSTEM; it verifies the staged copy and retains a final read lock that excludes
 write/delete replacement. The only install action is a visible Windows
 Installer launch after an explicit confirmation whose default is **No**. There
-is no silent install path.
+is no silent install path, and the launch passes `REBOOT=ReallySuppress` so it
+cannot request or force a Windows restart.
 
 Automatic update checking is enabled by default on a weekly interval. Automatic
 download is disabled by default, and download and installation remain user

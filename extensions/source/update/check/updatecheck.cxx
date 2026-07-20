@@ -76,10 +76,11 @@ WindowsInstallerCommand buildWindowsInstallerCommand(const OUString& rSystemDire
                                                        const OUString& rInstallerPath)
 {
     // Keep the Windows Installer UI fully interactive: this exact argument
-    // list deliberately has no quiet or passive switch.
+    // list deliberately has no quiet or passive switch. Suppress reboot
+    // requests so an accepted update cannot force an unexpected restart.
     return { rSystemDirectory + u"\\msiexec.exe"_ustr,
              { u"/i"_ustr, rInstallerPath, u"REINSTALL=ALL"_ustr,
-               u"REINSTALLMODE=vomus"_ustr } };
+               u"REINSTALLMODE=vomus"_ustr, u"REBOOT=ReallySuppress"_ustr } };
 }
 
 bool verifyUpdateFile(const OUString& rFileName, const DownloadSource& rSource)

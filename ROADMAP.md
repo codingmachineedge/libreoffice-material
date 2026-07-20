@@ -99,8 +99,9 @@ checks the completed download, and on confirmation copies it with `CREATE_NEW`
 into protected LocalAppData staging with a user/Administrators/SYSTEM DACL,
 re-verifies it, and retains a final read lock against write/delete replacement.
 The visible MSI launch requires explicit default-No consent; silent install is
-not implemented. Automatic checks default on weekly, while automatic download
-is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
+not implemented, and it passes `REBOOT=ReallySuppress` so it cannot request or
+force a Windows restart. Automatic checks default on weekly, while automatic
+download is off and download/install remain opt-in. See [`PRIVACY.md`](PRIVACY.md).
 The required native CI targets and Windows installation-set build have completed
 for this source. Runtime, public release, headless smoke, accessibility smoke,
 and an installer artifact remain pending.
