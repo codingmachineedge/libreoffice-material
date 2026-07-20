@@ -184,3 +184,7 @@ repairs the profile rather than proceeding with an incomplete toolchain. These
 are provisioning/configure observations only: no local native build, MSI,
 LibreOffice launch, or accepted UI evidence is claimed here. The VS 2026
 selection is likewise source automation until an isolated local run is recorded.
+On 2026-07-19, the explicit Enterprise 2026 host path above passed this document's
+no-bootstrap preflight after its C++/CLI, Clang, and VC145 merge-module payloads
+were installed. No configure, native build, MSI, application launch, UI, or
+accessibility result is implied by that preflight.

@@ -68,6 +68,9 @@ profile only, not a completed local native build, installer, runtime, headless
 UI, or accessibility result.
 The local checker recognizes both the VS 2022 `Llvm\bin` layout and VS 2026's
 host-native `Llvm\x64\bin` Clang layout.
+On 2026-07-19, the named VS 2026 Enterprise host passed the no-bootstrap
+preflight after C++/CLI, Clang, and VC145 merge modules were installed. This is
+toolchain/preflight evidence only, not a configured or built LibreOffice target.
 
 Run `29695815101` did not upload an MSI: its staging script recursively matched
 two retained LibreOffice working databases as well as the final installer. The

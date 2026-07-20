@@ -240,7 +240,8 @@ VCL_FILE_WIDGET_THEME=material</code></pre>
           used only when its exact <code>-VisualStudioInstallPath</code> is
           provided and verified. The wrapper never silently substitutes or
           repairs a host installation, recognizes VS 2026's native
-          <code>Llvm\x64\bin</code> Clang layout, and this profile has not
+          <code>Llvm\x64\bin</code> Clang layout. Its named Enterprise host
+          passed no-bootstrap preflight on 2026-07-19, but this profile has not
           produced local build or runtime evidence.
           Current-source Linux run <code>29695793821</code> and Windows run
           <code>29695815101</code> passed all five required native C++ targets;

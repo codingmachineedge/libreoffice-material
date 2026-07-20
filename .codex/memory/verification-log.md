@@ -990,3 +990,27 @@ build or runtime evidence.
 - This is a source/documentation profile change only. No VS 2026 bootstrap,
   preflight, native target, MSI, LibreOffice launch, headless UI smoke,
   accessibility smoke, or release result is claimed by this entry.
+
+## 2026-07-19 — VS 2026 Enterprise toolchain preflight
+
+- The previously canceled Visual Studio Enterprise 2026 instance at
+  `C:\Program Files\Microsoft Visual Studio\18\Enterprise` completed and
+  launched normally. A narrow additive modify installed the missing C++/CLI,
+  LLVM/Clang, and VC145 merge-module payloads with restart suppression; no
+  components were removed.
+- `vswhere` matched that exact VS 18 installation for the required C++
+  component set. Clang 22.1.3 ran from VS 2026's host-native
+  `VC\Tools\Llvm\x64\bin\clang-cl.exe`, and both
+  `Microsoft_VC145_CRT_{x86,x64}.msm` files were present. The wrapper and
+  `configure.ac` were updated to accept that layout while retaining VS 2022's
+  legacy flat LLVM layout.
+- The standard CBS and Windows Update reboot keys were absent. The sole
+  pending-reboot signal was six temporary-file entries in
+  `PendingFileRenameOperations`; the explicitly authorized cleanup removed that
+  value and a follow-up check was clear.
+- `Build-Windows.cmd -Phase Preflight -NoBootstrap -VisualStudioYear 2026`
+  with the exact Enterprise path and a fresh `lo-material-vs2026` build root
+  passed at source commit `12605eabf6bfdea93a0d4c49c5e2c8a3ab5e25b2`.
+  This is toolchain/preflight evidence only: no configure, native target, MSI,
+  LibreOffice launch, UI smoke, accessibility smoke, or release result is
+  claimed.

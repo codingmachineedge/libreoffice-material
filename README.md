@@ -334,6 +334,10 @@ and the imported build files before configuring a machine.
 > application launch, UI smoke, or accessibility result.
 > The checker accepts VS 2022's legacy <code>Llvm\bin</code> layout and VS
 > 2026's host-native <code>Llvm\x64\bin</code> layout for <code>clang-cl</code>.
+> On 2026-07-19, the named VS 2026 Enterprise host passed the script's
+> no-bootstrap preflight. That verifies the selected toolchain only; it is not
+> a configure, native-build, MSI, application-launch, UI-smoke, or accessibility
+> result.
 
 The bootstrapper creates a clean detached LF worktree rather than normalizing
 the development checkout. It checks root safety, free space, and (when Git is
