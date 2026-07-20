@@ -1070,7 +1070,9 @@ $results = [ordered]@{
 $desktopCreated = $false
 $dedicatedDriver = $null
 $ownedPid = $null
+$ownedProcessStartTimeUtcTicks = $null
 $pidFilePid = $null
+$pidFileResolutionError = $null
 $normalTermination = $false
 $fatal = $null
 $script:WindowHandle = $null
@@ -1152,32 +1154,86 @@ try {
     $stableCount = 0
     $lastWindows = $null
     while ([DateTimeOffset]::UtcNow -lt $deadline) {
-        if (-not $pidFilePid -and (Test-Path -LiteralPath $pidPath -PathType Leaf)) {
+        if (Test-Path -LiteralPath $pidPath -PathType Leaf) {
             $pidText = (Get-Content -LiteralPath $pidPath -Raw).Trim()
             if ($pidText -match '^\d+$') {
-                # LibreOffice's small soffice.exe launcher can write its PID and
-                # exit after handing off to soffice.bin.  Keep that PID as
-                # provenance, but resolve the surviving owned process by exact
-                # executable path; the preflight required that set to be empty.
-                $pidFilePid = [int]$pidText
+                $observedPidFilePid = [int]$pidText
+                if ($pidFilePid -and $observedPidFilePid -ne [int]$pidFilePid) {
+                    throw "LibreOffice PID file changed from $pidFilePid to $observedPidFilePid."
+                }
+                if (-not $pidFilePid) {
+                    $pidFilePid = $observedPidFilePid
+                }
+            }
+            elseif ($pidText) {
+                $pidFileResolutionError = "PID file contains non-numeric text '$pidText'."
             }
         }
-        if (-not $ownedPid) {
-            $payloadProcesses = @(Get-ExactPayloadProcesses -ProgramRoot $programRoot)
-            $owned = @($payloadProcesses | Sort-Object @{
-                Expression = { if ($_.Name -ieq 'soffice.bin') { 0 } else { 1 } }
-            }, CreationDate | Select-Object -First 1)
-            if ($owned.Count -eq 1) {
-                $ownedPid = [int]$owned[0].ProcessId
-                $results.process = [ordered]@{
-                    pid = $ownedPid
-                    pidfile_pid = $pidFilePid
-                    launcher_pid = [int]$launcher.pid
-                    name = [string]$owned[0].Name
-                    executable_path = 'program/' + [System.IO.Path]::GetFileName(
-                        [string]$owned[0].ExecutablePath
-                    )
-                    creation_date = [string]$owned[0].CreationDate
+
+        # The pidfile PID is the sole ownership authority.  Never latch an
+        # arbitrary exact-payload process observed during the launcher handoff.
+        if ($pidFilePid) {
+            if (-not (Get-Process -Id $pidFilePid -ErrorAction SilentlyContinue)) {
+                throw "PID-file process $pidFilePid is no longer running before window ownership was established."
+            }
+
+            $pidFileOwnedProcess = $null
+            try {
+                $pidFileOwnedProcess = Get-OwnedProcess -ProcessId $pidFilePid `
+                    -ProgramRoot $programRoot
+            }
+            catch [System.ArgumentException] {
+                if (-not (Get-Process -Id $pidFilePid -ErrorAction SilentlyContinue)) {
+                    throw "PID-file process $pidFilePid exited while its executable path was resolved."
+                }
+                $pidFileResolutionError = $_.Exception.Message
+            }
+            catch [System.InvalidOperationException] {
+                if (-not (Get-Process -Id $pidFilePid -ErrorAction SilentlyContinue)) {
+                    throw "PID-file process $pidFilePid exited while its executable path was resolved."
+                }
+                $pidFileResolutionError = $_.Exception.Message
+            }
+            catch [System.ComponentModel.Win32Exception] {
+                if (-not (Get-Process -Id $pidFilePid -ErrorAction SilentlyContinue)) {
+                    throw "PID-file process $pidFilePid exited while its executable path was resolved."
+                }
+                $pidFileResolutionError = $_.Exception.Message
+            }
+            catch {
+                if (-not (Get-Process -Id $pidFilePid -ErrorAction SilentlyContinue)) {
+                    throw "PID-file process $pidFilePid exited while its executable path was resolved."
+                }
+                throw
+            }
+
+            if ($pidFileOwnedProcess) {
+                $pidFileExecutableName = [System.IO.Path]::GetFileName(
+                    [string]$pidFileOwnedProcess.ExecutablePath
+                )
+                if ($pidFileExecutableName -ine 'soffice.bin') {
+                    throw "PID-file process $pidFilePid resolved to '$($pidFileOwnedProcess.ExecutablePath)', not the required soffice.bin GUI runtime."
+                }
+
+                $currentStartTimeUtcTicks = (
+                    [DateTime]$pidFileOwnedProcess.CreationDate
+                ).ToUniversalTime().Ticks
+                if (-not $ownedPid) {
+                    $ownedPid = [int]$pidFileOwnedProcess.ProcessId
+                    $ownedProcessStartTimeUtcTicks = $currentStartTimeUtcTicks
+                    $pidFileResolutionError = $null
+                    $results.process = [ordered]@{
+                        pid = $ownedPid
+                        pidfile_pid = [int]$pidFilePid
+                        launcher_pid = [int]$launcher.pid
+                        name = [string]$pidFileOwnedProcess.Name
+                        executable_path = 'program/' + $pidFileExecutableName
+                        creation_date = [string]$pidFileOwnedProcess.CreationDate
+                    }
+                }
+                elseif ([int]$pidFileOwnedProcess.ProcessId -ne [int]$ownedPid -or
+                    $currentStartTimeUtcTicks -ne [long]$ownedProcessStartTimeUtcTicks) {
+                    throw "PID-file process identity changed after ownership was established for PID $ownedPid."
                 }
             }
         }
@@ -1202,9 +1258,6 @@ try {
             $stableCount = 0
         }
         if ($ownedPid -and $pidFilePid -and $stableCount -ge 3) {
-            if ([int]$pidFilePid -ne [int]$ownedPid) {
-                throw "PID-file process $pidFilePid does not equal exact owned payload process $ownedPid."
-            }
             $script:WindowHandle = $stableHandle
             $script:WindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(
                 [IntPtr]$script:WindowHandle
@@ -1237,7 +1290,16 @@ try {
         Start-Sleep -Milliseconds 750
     }
     if (-not $ownedPid -or -not $script:WindowHandle) {
-        throw "LibreOffice did not expose a stable owned window in 90 seconds. Last windows: $($lastWindows | ConvertTo-Json -Compress -Depth 8)"
+        $pidFileDetail = if ($pidFileResolutionError) {
+            " Last PID-file resolution error: $pidFileResolutionError"
+        }
+        elseif (-not $pidFilePid) {
+            ' No numeric LibreOffice PID file was observed.'
+        }
+        else {
+            ''
+        }
+        throw "LibreOffice did not expose a stable PID-file-owned window in 90 seconds.$pidFileDetail Last windows: $($lastWindows | ConvertTo-Json -Compress -Depth 8)"
     }
 
     $scenarioList = [System.Collections.Generic.List[object]]::new()

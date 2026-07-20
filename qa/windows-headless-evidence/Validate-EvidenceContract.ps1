@@ -454,6 +454,45 @@ try {
         throw 'Runner must remove a path-bearing wrapper when wrapper preflight fails.'
     }
 
+    $ownershipLoopIndex = $runnerText.IndexOf(
+        '$deadline = [DateTimeOffset]::UtcNow.AddSeconds(90)'
+    )
+    $ownershipLoopEndIndex = $runnerText.IndexOf(
+        '$scenarioList = [System.Collections.Generic.List[object]]::new()',
+        $ownershipLoopIndex
+    )
+    $pidFileAuthorityIndex = $runnerText.IndexOf(
+        '$pidFilePid = $observedPidFilePid',
+        $ownershipLoopIndex
+    )
+    $pidFileResolutionIndex = $runnerText.IndexOf(
+        'Get-OwnedProcess -ProcessId $pidFilePid',
+        $ownershipLoopIndex
+    )
+    $ownedPidLatchIndex = $runnerText.IndexOf(
+        '$ownedPid = [int]$pidFileOwnedProcess.ProcessId',
+        $ownershipLoopIndex
+    )
+    $windowOwnerIndex = $runnerText.IndexOf(
+        '::WindowProcessId(',
+        $ownedPidLatchIndex
+    )
+    if ($ownershipLoopIndex -lt 0 -or $ownershipLoopEndIndex -le $ownershipLoopIndex -or
+        $pidFileAuthorityIndex -le $ownershipLoopIndex -or
+        $pidFileResolutionIndex -le $pidFileAuthorityIndex -or
+        $ownedPidLatchIndex -le $pidFileResolutionIndex -or
+        $windowOwnerIndex -le $ownedPidLatchIndex) {
+        throw 'Runner must resolve and latch only the authoritative pidfile PID before HWND ownership validation.'
+    }
+    $arbitraryPayloadEnumerationIndex = $runnerText.IndexOf(
+        'Get-ExactPayloadProcesses -ProgramRoot $programRoot',
+        $ownershipLoopIndex
+    )
+    if ($arbitraryPayloadEnumerationIndex -ge 0 -and
+        $arbitraryPayloadEnumerationIndex -lt $ownershipLoopEndIndex) {
+        throw 'Runner must not enumerate and latch an arbitrary payload process during ownership establishment.'
+    }
+
     foreach ($needle in @(
         "Join-Path `$programRoot 'version.ini'",
         'upstream_baseline',
@@ -470,6 +509,9 @@ try {
         'program/updchklo.dll',
         'share/theme_definitions/material/definition.xml',
         'runtime_launch_wrapper_removed',
+        'The pidfile PID is the sole ownership authority',
+        'not the required soffice.bin GUI runtime',
+        'PID-file process identity changed after ownership was established',
         'expected_checkpoints',
         "Join-Path `$runRoot 'manifest.json'",
         '& $evidenceValidatorPath -Path $manifestPath -RequirePassed'
