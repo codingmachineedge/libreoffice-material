@@ -3,11 +3,14 @@
 `Validate-EvidenceContract.ps1` is a dependency-free PowerShell 5.1-compatible
 regression for the schema-v2 Windows headless candidate manifest. It proves that
 a complete synthetic passed candidate validates, and that mismatched embedded
-build IDs, non-Boolean impostors, invalid inventory IDs, private paths, process
-or session mismatches, forced cleanup, missing/traversing artifacts, PNG/hash or
-a11y mismatches, absent focused nodes, and incomplete acceptance reviews are
-rejected. The fixture writes real minimal PNG/IHDR and a11y JSON files so both
-candidate and accepted validation exercise file binding without UI automation.
+build IDs, non-Boolean impostors, invalid inventory IDs, private paths, process,
+window-thread, or session mismatches, forced cleanup, missing/traversing
+artifacts, PNG/hash or a11y mismatches, absent focused nodes, and incomplete
+acceptance reviews are rejected. It also checks that the runner consumes the
+driver's atomic HWND/process/thread/DPI enumeration fields before binding
+handle-and-process stability, with no caller-desktop HWND probes. The fixture
+writes real minimal PNG/IHDR and a11y JSON files so both candidate and accepted
+validation exercise file binding without UI automation.
 
 Run it without launching LibreOffice or the low-level MCP server:
 

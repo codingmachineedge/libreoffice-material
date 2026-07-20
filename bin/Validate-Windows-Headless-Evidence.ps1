@@ -259,12 +259,12 @@ foreach ($dependency in $harnessDependencies) {
         'Harness dependency path must be repository-relative.'
 }
 
-$dpi = [int](Get-RequiredEvidenceValue $evidence 'host.display_scale.dpi')
-$scale = [int](Get-RequiredEvidenceValue $evidence 'host.display_scale.percent')
+$dpi = Get-RequiredEvidenceInteger $evidence 'host.display_scale.dpi'
+$scale = Get-RequiredEvidenceInteger $evidence 'host.display_scale.percent'
 Assert-Evidence ($dpi -gt 0 -and $scale -gt 0) 'Display DPI and scale must be positive.'
 Assert-Evidence ((Get-RequiredEvidenceValue $evidence 'host.display_scale.source') -ceq
-    'GetDpiForWindow on the runtime-resolved SALFRAME HWND') `
-    'Display scale must come from the resolved target window.'
+    'GetDpiForWindow in the low-level list_headless_windows enumeration callback') `
+    'Display scale must come from the driver enumeration callback.'
 Assert-Evidence (-not (Get-RequiredEvidenceBoolean $evidence `
     'host.font_configuration.run_specific_override')) `
     'This harness contract expects native fonts without a run-specific override.'
@@ -394,12 +394,14 @@ Assert-Evidence ((Get-RequiredEvidenceValue $evidence 'process.executable_path')
 Assert-Evidence ((Get-RequiredEvidenceValue $evidence 'process.name') -ceq 'soffice.bin') `
     'Owned runtime process must be soffice.bin.'
 $windowProcessId = Get-RequiredEvidenceInteger $evidence 'window.process_id'
+$windowThreadId = Get-RequiredEvidenceInteger $evidence 'window.thread_id'
 $windowHandle = Get-RequiredEvidenceInteger $evidence 'window.handle'
 $windowWidth = [int](Get-RequiredEvidenceValue $evidence 'window.width')
 $windowHeight = [int](Get-RequiredEvidenceValue $evidence 'window.height')
-$windowDpi = [int](Get-RequiredEvidenceValue $evidence 'window.dpi')
-Assert-Evidence ($windowProcessId -eq $ownedPid -and $windowHandle -gt 0) `
-    'Resolved window ownership does not match the exact payload PID.'
+$windowDpi = Get-RequiredEvidenceInteger $evidence 'window.dpi'
+Assert-Evidence ($windowProcessId -eq $ownedPid -and $windowHandle -gt 0 -and
+    $windowThreadId -gt 0) `
+    'Resolved window ownership/thread identity does not match the exact payload PID.'
 Assert-Evidence ($windowWidth -gt 0 -and $windowHeight -gt 0 -and
     [int](Get-RequiredEvidenceValue $evidence 'window.stable_poll_count') -ge 3) `
     'Resolved window dimensions or stability proof is invalid.'
@@ -465,9 +467,14 @@ if ($RequirePassed -or $RequireAccepted) {
         Assert-Evidence (-not [string]::IsNullOrWhiteSpace(
             [string]$scenario.checkpoint.captured_at_utc
         )) "Scenario '$($scenario.id)' has no capture timestamp."
-        Assert-Evidence ([long]$scenario.checkpoint.window_handle -eq $windowHandle -and
-            [int]$scenario.checkpoint.window_process_id -eq $windowProcessId -and
-            [int]$scenario.checkpoint.window_dpi -eq $windowDpi -and
+        Assert-Evidence ((Get-RequiredEvidenceInteger $scenario `
+                'checkpoint.window_handle') -eq $windowHandle -and
+            (Get-RequiredEvidenceInteger $scenario `
+                'checkpoint.window_process_id') -eq $windowProcessId -and
+            (Get-RequiredEvidenceInteger $scenario `
+                'checkpoint.window_thread_id') -eq $windowThreadId -and
+            (Get-RequiredEvidenceInteger $scenario `
+                'checkpoint.window_dpi') -eq $windowDpi -and
             [string]$scenario.checkpoint.window_title -ceq [string]$evidence.window.title -and
             [string]$scenario.checkpoint.window_class -ceq [string]$evidence.window.class) `
             "Scenario '$($scenario.id)' has incomplete window checkpoint metadata."

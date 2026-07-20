@@ -153,7 +153,7 @@ try {
             display_scale = @{
                 dpi = 144
                 percent = 150
-                source = 'GetDpiForWindow on the runtime-resolved SALFRAME HWND'
+                source = 'GetDpiForWindow in the low-level list_headless_windows enumeration callback'
             }
             font_configuration = @{
                 source = 'native Windows system fonts'
@@ -226,6 +226,7 @@ try {
         window = [ordered]@{
             handle = 42
             process_id = 2222
+            thread_id = 3333
             title = 'LibreOfficeDev'
             class = 'SALFRAME'
             width = 1920
@@ -244,6 +245,7 @@ try {
                 captured_at_utc = '2099-01-01T00:00:00Z'
                 window_handle = 42
                 window_process_id = 2222
+                window_thread_id = 3333
                 window_title = 'LibreOfficeDev'
                 window_class = 'SALFRAME'
                 window_dpi = 144
@@ -352,6 +354,24 @@ try {
     $candidate.process.pidfile_pid = 3333
     Assert-Rejected $candidate 'process provenance'
     $candidate.process.pidfile_pid = 2222
+
+    $candidate.window.process_id = '2222'
+    Assert-Rejected $candidate 'JSON integer: window.process_id'
+    $candidate.window.process_id = 2222
+
+    $candidate.window.thread_id = '3333'
+    Assert-Rejected $candidate 'JSON integer: window.thread_id'
+    $candidate.window.thread_id = 0
+    Assert-Rejected $candidate 'ownership/thread identity'
+    $candidate.window.thread_id = 3333
+
+    $candidate.window.dpi = '144'
+    Assert-Rejected $candidate 'JSON integer: window.dpi'
+    $candidate.window.dpi = 144
+
+    $candidate.scenarios[0].checkpoint.window_thread_id = 4444
+    Assert-Rejected $candidate 'incomplete window checkpoint metadata'
+    $candidate.scenarios[0].checkpoint.window_thread_id = 3333
 
     $candidate.driver.session.server_windows_session_id = 2
     Assert-Rejected $candidate 'session IDs are inconsistent'
@@ -473,16 +493,16 @@ try {
         '$ownedPid = [int]$pidFileOwnedProcess.ProcessId',
         $ownershipLoopIndex
     )
-    $windowOwnerIndex = $runnerText.IndexOf(
-        '::WindowProcessId(',
+    $windowEnumerationIndex = $runnerText.IndexOf(
+        "Invoke-LowLevelTool -Tool 'list_headless_windows'",
         $ownedPidLatchIndex
     )
     if ($ownershipLoopIndex -lt 0 -or $ownershipLoopEndIndex -le $ownershipLoopIndex -or
         $pidFileAuthorityIndex -le $ownershipLoopIndex -or
         $pidFileResolutionIndex -le $pidFileAuthorityIndex -or
         $ownedPidLatchIndex -le $pidFileResolutionIndex -or
-        $windowOwnerIndex -le $ownedPidLatchIndex) {
-        throw 'Runner must resolve and latch only the authoritative pidfile PID before HWND ownership validation.'
+        $windowEnumerationIndex -le $ownedPidLatchIndex) {
+        throw 'Runner must resolve and latch only the authoritative pidfile PID before driver window-identity validation.'
     }
     $arbitraryPayloadEnumerationIndex = $runnerText.IndexOf(
         'Get-ExactPayloadProcesses -ProgramRoot $programRoot',
@@ -493,68 +513,75 @@ try {
         throw 'Runner must not enumerate and latch an arbitrary payload process during ownership establishment.'
     }
 
-    $stableThresholdIndex = $runnerText.IndexOf(
-        'if ($ownedPid -and $pidFilePid -and $stableCount -ge 3)',
-        $ownershipLoopIndex
+    $windowPidFieldIndex = $runnerText.IndexOf(
+        '$candidateProcessId = Get-JsonIntegerProperty -Object $observedWindow',
+        $windowEnumerationIndex
     )
-    $windowPidProbeIndex = $runnerText.IndexOf(
-        '$candidateWindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(',
-        $stableThresholdIndex
+    $windowThreadFieldIndex = $runnerText.IndexOf(
+        '$candidateThreadId = Get-JsonIntegerProperty -Object $observedWindow',
+        $windowPidFieldIndex
+    )
+    $windowDpiFieldIndex = $runnerText.IndexOf(
+        '$candidateDpi = Get-JsonIntegerProperty -Object $observedWindow',
+        $windowThreadFieldIndex
     )
     $invalidWindowPidIndex = $runnerText.IndexOf(
-        'if ($candidateWindowProcessId -eq 0)',
-        $windowPidProbeIndex
+        'if ($null -eq $candidateProcessId -or $candidateProcessId -le 0)',
+        $windowDpiFieldIndex
     )
-    $wrongWindowPidIndex = $runnerText.IndexOf(
-        'if ($candidateWindowProcessId -ne [int]$ownedPid)',
+    $invalidWindowThreadIndex = $runnerText.IndexOf(
+        'if ($null -eq $candidateThreadId -or $candidateThreadId -le 0)',
         $invalidWindowPidIndex
     )
-    $windowDpiProbeIndex = $runnerText.IndexOf(
-        '$candidateWindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(',
-        $wrongWindowPidIndex
-    )
     $invalidWindowDpiIndex = $runnerText.IndexOf(
-        'if ($candidateWindowDpi -eq 0)',
-        $windowDpiProbeIndex
+        'if ($null -eq $candidateDpi -or $candidateDpi -le 0)',
+        $invalidWindowThreadIndex
     )
-    $acceptedWindowIndex = $runnerText.IndexOf(
-        '$script:WindowHandle = $candidateWindowHandle',
+    $wrongWindowPidIndex = $runnerText.IndexOf(
+        'if ($candidateProcessId -ne [long]$ownedPid)',
         $invalidWindowDpiIndex
     )
-    if ($stableThresholdIndex -le $ownedPidLatchIndex -or
-        $windowPidProbeIndex -le $stableThresholdIndex -or
-        $invalidWindowPidIndex -le $windowPidProbeIndex -or
-        $wrongWindowPidIndex -le $invalidWindowPidIndex -or
-        $windowDpiProbeIndex -le $wrongWindowPidIndex -or
-        $invalidWindowDpiIndex -le $windowDpiProbeIndex -or
-        $acceptedWindowIndex -le $invalidWindowDpiIndex) {
-        throw 'Runner must reject transient, wrong-owner, and zero-DPI HWNDs before accepting a stable window.'
+    $candidateSnapshotIndex = $runnerText.IndexOf(
+        '$candidate = [pscustomobject][ordered]@{',
+        $wrongWindowPidIndex
+    )
+    $stableHandlePidIndex = $runnerText.IndexOf(
+        '$stableHandle -eq [long]$candidate.handle -and',
+        $candidateSnapshotIndex
+    )
+    $stableThresholdIndex = $runnerText.IndexOf(
+        'if ($ownedPid -and $pidFilePid -and $stableCount -ge 3)',
+        $stableHandlePidIndex
+    )
+    $acceptedWindowIndex = $runnerText.IndexOf(
+        '$script:WindowHandle = [long]$candidate.handle',
+        $stableThresholdIndex
+    )
+    if ($windowPidFieldIndex -le $windowEnumerationIndex -or
+        $windowThreadFieldIndex -le $windowPidFieldIndex -or
+        $windowDpiFieldIndex -le $windowThreadFieldIndex -or
+        $invalidWindowPidIndex -le $windowDpiFieldIndex -or
+        $invalidWindowThreadIndex -le $invalidWindowPidIndex -or
+        $invalidWindowDpiIndex -le $invalidWindowThreadIndex -or
+        $wrongWindowPidIndex -le $invalidWindowDpiIndex -or
+        $candidateSnapshotIndex -le $wrongWindowPidIndex -or
+        $stableHandlePidIndex -le $candidateSnapshotIndex -or
+        $stableThresholdIndex -le $stableHandlePidIndex -or
+        $acceptedWindowIndex -le $stableThresholdIndex) {
+        throw 'Runner must reject incomplete/wrong driver window identity before handle-and-PID stability and acceptance.'
     }
 
-    $windowProcessHelperIndex = $runnerText.IndexOf(
-        'public static uint WindowProcessId(IntPtr hwnd)'
-    )
-    $invalidHandleConstantIndex = $runnerText.IndexOf(
-        'ErrorInvalidWindowHandle = 1400',
-        $windowProcessHelperIndex
-    )
-    $invalidHandleReturnIndex = $runnerText.IndexOf(
-        'return 0;',
-        $invalidHandleConstantIndex
-    )
-    $unexpectedWindowErrorIndex = $runnerText.IndexOf(
-        'throw new Win32Exception(error);',
-        $invalidHandleReturnIndex
-    )
-    if ($windowProcessHelperIndex -lt 0 -or
-        $invalidHandleConstantIndex -le $windowProcessHelperIndex -or
-        $invalidHandleReturnIndex -le $invalidHandleConstantIndex -or
-        $unexpectedWindowErrorIndex -le $invalidHandleReturnIndex) {
-        throw 'C# HWND helper must return zero for invalid handles and preserve unexpected Win32 failures.'
-    }
-    if ($runnerText.Contains(
-        'SALFRAME HWND belongs to PID $($script:WindowProcessId)')) {
-        throw 'Runner must retry a wrong-owner transient HWND instead of failing immediately.'
+    foreach ($forbiddenHwndProbe in @(
+        '[DllImport("user32.dll")]',
+        'GetWindowThreadProcessId(IntPtr',
+        'public static uint WindowDpi(IntPtr hwnd)',
+        'public static uint WindowProcessId(IntPtr hwnd)',
+        '::WindowDpi(',
+        '::WindowProcessId('
+    )) {
+        if ($runnerText.Contains($forbiddenHwndProbe)) {
+            throw "Runner must consume the driver's atomic window identity instead of local HWND probe: $forbiddenHwndProbe"
+        }
     }
 
     foreach ($needle in @(
@@ -567,7 +594,7 @@ try {
         'integrity_match',
         'integrity_verification_method',
         'GetDpiForWindow',
-        'WindowProcessId',
+        'Get-JsonIntegerProperty',
         'inventory_ids',
         'automation_result',
         'program/updchklo.dll',
@@ -576,11 +603,13 @@ try {
         'The pidfile PID is the sole ownership authority',
         'not the required soffice.bin GUI runtime',
         'PID-file process identity changed after ownership was established',
-        'return GetDpiForWindow(hwnd);',
         'window_handoff_diagnostics',
-        'became invalid before owner resolution',
-        'not pidfile-owned PID',
-        'became invalid before DPI resolution',
+        'inside the same EnumDesktopWindows callback that produced the HWND',
+        'list_headless_windows process_id is missing, non-integer, or zero',
+        'list_headless_windows thread_id is missing, non-integer, or zero',
+        'list_headless_windows dpi is missing, non-integer, or zero',
+        'does not match pidfile-owned PID',
+        'thread_id = [long]$candidate.thread_id',
         'expected_checkpoints',
         "Join-Path `$runRoot 'manifest.json'",
         '& $evidenceValidatorPath -Path $manifestPath -RequirePassed'

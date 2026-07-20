@@ -236,7 +236,8 @@ The manifest must record:
 
 - fork commit, upstream baseline, dirty-worktree state, and build identifier;
 - operating system, architecture, desktop backend, locale, theme, contrast,
-  display scale, window size, and font configuration;
+  display scale, window size, atomic HWND/process/thread/DPI identity, and font
+  configuration;
 - LibreOffice command, isolated user-profile location, enabled feature flags,
   and document fixture hashes;
 - driver repository commit and MCP/server version;
@@ -279,9 +280,12 @@ harness mandatory integrity SID, Windows-session equality, and MCP `is_admin`
 parity, and explicitly labels the server integrity level as inferred rather than
 claiming that its mandatory label was queried directly. Its sanitized origin URL
 is read from the sibling checkout rather than inferred from documentation. The
-target display scale comes from `GetDpiForWindow` on the runtime-resolved
-SALFRAME HWND; that HWND's Win32 PID must equal both the exact payload process
-and the PID-file value before capture.
+low-level driver's `list_headless_windows` operation records the HWND, owning
+process ID, thread ID, and `GetDpiForWindow` result inside the same
+`EnumDesktopWindows` callback. The harness consumes that atomic identity instead
+of probing an off-screen HWND from the caller desktop. Before capture, the
+numeric process ID must equal both the exact payload process and PID-file value,
+and the numeric thread ID and DPI must both be positive.
 
 ## Windows off-screen workflow
 
@@ -303,11 +307,15 @@ Exact arguments belong in the run manifest or automation macro.
    `--nologo`, `--norestore`, `--quickstart=no`, `--language=en-US`, a unique
    `--pidfile`, and unique `--accept=pipe,name=...;urp`. Do not use `--headless`,
    `--invisible`, or `--nodefault`, because each suppresses the Start Center GUI.
-7. Poll `list_headless_windows` for at most 60 seconds. Resolve a nonempty,
-   stable LibreOffice/SALFRAME window for three consecutive polls; never
-   hard-code an HWND.
+7. Poll `list_headless_windows` for at most 90 seconds. Resolve a nonempty
+   LibreOffice/SALFRAME title/class with positive dimensions. Require numeric
+   `process_id`, `thread_id`, and `dpi` fields sampled by the enumeration
+   callback; missing, zero, or wrong-owner values are retry diagnostics, never
+   accepted evidence.
 8. Read the PID file and require that PID's executable path to be inside the
-   exact fork build before accepting window ownership.
+   exact fork build. Require the enumerated `process_id` to equal that PID, then
+   bind stability to the same HWND plus process ID for three consecutive polls;
+   never hard-code an HWND or query it from the caller desktop.
 9. Capture the resolved window and require successful/rendered flags, positive
    dimensions, nonblank pixel statistics, expected title/class, SHA-256, and
    visual review before driving input.

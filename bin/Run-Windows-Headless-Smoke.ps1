@@ -47,15 +47,6 @@ public static class LibreOfficeMaterialProcessPath
     [DllImport("kernel32.dll")]
     private static extern bool CloseHandle(IntPtr handle);
 
-    [DllImport("user32.dll")]
-    private static extern uint GetDpiForWindow(IntPtr hwnd);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
-
-    [DllImport("kernel32.dll")]
-    private static extern void SetLastError(uint errorCode);
-
     public static string Get(uint processId)
     {
         const uint QueryLimitedInformation = 0x1000;
@@ -76,28 +67,6 @@ public static class LibreOfficeMaterialProcessPath
         }
     }
 
-    public static uint WindowDpi(IntPtr hwnd)
-    {
-        // GetDpiForWindow documents zero for an invalid HWND and does not
-        // provide a last-error contract that can distinguish other failures.
-        return GetDpiForWindow(hwnd);
-    }
-
-    public static uint WindowProcessId(IntPtr hwnd)
-    {
-        const int ErrorInvalidWindowHandle = 1400;
-        SetLastError(0);
-        uint processId;
-        uint threadId = GetWindowThreadProcessId(hwnd, out processId);
-        if (threadId == 0 || processId == 0)
-        {
-            int error = Marshal.GetLastWin32Error();
-            if (error == 0 || error == ErrorInvalidWindowHandle)
-                return 0;
-            throw new Win32Exception(error);
-        }
-        return processId;
-    }
 }
 '@
 
@@ -122,6 +91,25 @@ function Write-JsonFile {
     )
 
     Write-Utf8Lf -Path $Path -Text (($Value | ConvertTo-Json -Depth 20) + "`n")
+}
+
+function Get-JsonIntegerProperty {
+    param(
+        [Parameter(Mandatory = $true)] [object]$Object,
+        [Parameter(Mandatory = $true)] [string]$PropertyName
+    )
+
+    $property = $Object.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        return $null
+    }
+    $integerTypes = @(
+        [byte], [sbyte], [int16], [uint16], [int32], [uint32], [int64], [uint64]
+    )
+    if ($integerTypes -notcontains $property.Value.GetType()) {
+        return $null
+    }
+    return [long]$property.Value
 }
 
 function Get-Sha256Hex {
@@ -691,6 +679,7 @@ function Capture-State {
             captured_at_utc = [DateTimeOffset]::UtcNow.ToString('o')
             window_handle = [long]$script:WindowHandle
             window_process_id = [int]$script:WindowProcessId
+            window_thread_id = [long]$script:WindowThreadId
             window_title = [string]$script:WindowTitle
             window_class = [string]$script:WindowClass
             window_dpi = [int]$script:WindowDpi
@@ -999,7 +988,7 @@ $results = [ordered]@{
             dpi = $null
             percent = $null
             reference_dpi = 96
-            source = 'GetDpiForWindow on the runtime-resolved SALFRAME HWND'
+            source = 'GetDpiForWindow in the low-level list_headless_windows enumeration callback'
         }
         font_configuration = [ordered]@{
             source = 'native Windows system fonts inherited by LibreOffice VCL'
@@ -1091,6 +1080,7 @@ $script:WindowHandle = $null
 $script:WindowTitle = $null
 $script:WindowClass = $null
 $script:WindowProcessId = $null
+$script:WindowThreadId = $null
 $script:WindowDpi = $null
 try {
     if ($McpUrl) {
@@ -1163,6 +1153,7 @@ try {
 
     $deadline = [DateTimeOffset]::UtcNow.AddSeconds(90)
     $stableHandle = $null
+    $stableProcessId = $null
     $stableCount = 0
     $lastWindows = $null
     while ([DateTimeOffset]::UtcNow -lt $deadline) {
@@ -1252,66 +1243,116 @@ try {
         $lastWindows = Invoke-LowLevelTool -Tool 'list_headless_windows' -Arguments @{
             name = $desktopName
         } -TimeoutSeconds 15
-        $candidate = @($lastWindows.windows | Where-Object {
-            $_.class -eq 'SALFRAME' -and $_.title -match 'LibreOffice' -and
-            [int]$_.width -ge 640 -and [int]$_.height -ge 480
-        }) | Select-Object -First 1
+
+        # Window ownership, thread identity, and DPI are sampled by the driver
+        # inside the same EnumDesktopWindows callback that produced the HWND.
+        # A local process cannot safely query an HWND on the off-screen desktop.
+        $candidate = $null
+        foreach ($observedWindow in @($lastWindows.windows)) {
+            $classProperty = $observedWindow.PSObject.Properties['class']
+            $titleProperty = $observedWindow.PSObject.Properties['title']
+            $candidateWidth = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'width'
+            $candidateHeight = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'height'
+            if ($null -eq $classProperty -or $null -eq $titleProperty -or
+                [string]$classProperty.Value -cne 'SALFRAME' -or
+                [string]::IsNullOrWhiteSpace([string]$titleProperty.Value) -or
+                [string]$titleProperty.Value -notmatch 'LibreOffice' -or
+                $null -eq $candidateWidth -or $candidateWidth -lt 640 -or
+                $null -eq $candidateHeight -or $candidateHeight -lt 480) {
+                continue
+            }
+
+            $candidateHandle = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'handle'
+            $candidateProcessId = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'process_id'
+            $candidateThreadId = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'thread_id'
+            $candidateDpi = Get-JsonIntegerProperty -Object $observedWindow `
+                -PropertyName 'dpi'
+            $handleLabel = if ($null -eq $candidateHandle) {
+                '<invalid>'
+            }
+            else {
+                [string]$candidateHandle
+            }
+
+            if ($null -eq $candidateHandle -or $candidateHandle -le 0) {
+                $diagnostic = 'Rejected SALFRAME candidate: list_headless_windows handle is missing, non-integer, or zero.'
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
+            if ($null -eq $candidateProcessId -or $candidateProcessId -le 0) {
+                $diagnostic = "Rejected SALFRAME HWND ${handleLabel}: list_headless_windows process_id is missing, non-integer, or zero."
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
+            if ($null -eq $candidateThreadId -or $candidateThreadId -le 0) {
+                $diagnostic = "Rejected SALFRAME HWND ${handleLabel}: list_headless_windows thread_id is missing, non-integer, or zero."
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
+            if ($null -eq $candidateDpi -or $candidateDpi -le 0) {
+                $diagnostic = "Rejected SALFRAME HWND ${handleLabel}: list_headless_windows dpi is missing, non-integer, or zero."
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
+            if (-not $ownedPid) {
+                continue
+            }
+            if ($candidateProcessId -ne [long]$ownedPid) {
+                $diagnostic = "Rejected SALFRAME HWND ${handleLabel}: list_headless_windows process_id $candidateProcessId does not match pidfile-owned PID $ownedPid."
+                if (-not $windowHandoffDiagnostics.Contains($diagnostic)) {
+                    $windowHandoffDiagnostics.Add($diagnostic)
+                }
+                continue
+            }
+
+            $candidate = [pscustomobject][ordered]@{
+                handle = [long]$candidateHandle
+                process_id = [long]$candidateProcessId
+                thread_id = [long]$candidateThreadId
+                title = [string]$titleProperty.Value
+                class = [string]$classProperty.Value
+                width = [long]$candidateWidth
+                height = [long]$candidateHeight
+                dpi = [long]$candidateDpi
+            }
+            break
+        }
+        $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
+
         if ($candidate) {
-            if ($stableHandle -eq [long]$candidate.handle) {
+            if ($stableHandle -eq [long]$candidate.handle -and
+                $stableProcessId -eq [long]$candidate.process_id) {
                 $stableCount++
             }
             else {
                 $stableHandle = [long]$candidate.handle
+                $stableProcessId = [long]$candidate.process_id
                 $stableCount = 1
             }
         }
         else {
             $stableHandle = $null
+            $stableProcessId = $null
             $stableCount = 0
         }
         if ($ownedPid -and $pidFilePid -and $stableCount -ge 3) {
-            $candidateWindowHandle = [long]$stableHandle
-            $candidateWindowProcessId = [int][LibreOfficeMaterialProcessPath]::WindowProcessId(
-                [IntPtr]$candidateWindowHandle
-            )
-            if ($candidateWindowProcessId -eq 0) {
-                $windowHandoffDiagnostics.Add(
-                    "Transient SALFRAME HWND $candidateWindowHandle became invalid before owner resolution."
-                )
-                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
-                $stableHandle = $null
-                $stableCount = 0
-                Start-Sleep -Milliseconds 250
-                continue
-            }
-            if ($candidateWindowProcessId -ne [int]$ownedPid) {
-                $windowHandoffDiagnostics.Add(
-                    "Transient SALFRAME HWND $candidateWindowHandle belongs to PID $candidateWindowProcessId, not pidfile-owned PID $ownedPid."
-                )
-                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
-                $stableHandle = $null
-                $stableCount = 0
-                Start-Sleep -Milliseconds 250
-                continue
-            }
-
-            $candidateWindowDpi = [int][LibreOfficeMaterialProcessPath]::WindowDpi(
-                [IntPtr]$candidateWindowHandle
-            )
-            if ($candidateWindowDpi -eq 0) {
-                $windowHandoffDiagnostics.Add(
-                    "Transient SALFRAME HWND $candidateWindowHandle became invalid before DPI resolution."
-                )
-                $results.window_handoff_diagnostics = @($windowHandoffDiagnostics.ToArray())
-                $stableHandle = $null
-                $stableCount = 0
-                Start-Sleep -Milliseconds 250
-                continue
-            }
-
-            $script:WindowHandle = $candidateWindowHandle
-            $script:WindowProcessId = $candidateWindowProcessId
-            $script:WindowDpi = $candidateWindowDpi
+            $script:WindowHandle = [long]$candidate.handle
+            $script:WindowProcessId = [int]$candidate.process_id
+            $script:WindowThreadId = [long]$candidate.thread_id
+            $script:WindowDpi = [int]$candidate.dpi
             $results.host.display_scale.dpi = $script:WindowDpi
             $results.host.display_scale.percent = [int][Math]::Round(
                 ($script:WindowDpi * 100.0) / 96.0
@@ -1320,13 +1361,14 @@ try {
             $script:WindowTitle = [string]$candidate.title
             $script:WindowClass = [string]$candidate.class
             $results.window = [ordered]@{
-                handle = $script:WindowHandle
-                process_id = $script:WindowProcessId
+                handle = [long]$candidate.handle
+                process_id = [int]$candidate.process_id
+                thread_id = [long]$candidate.thread_id
                 title = [string]$candidate.title
                 class = [string]$candidate.class
                 width = [int]$candidate.width
                 height = [int]$candidate.height
-                dpi = $script:WindowDpi
+                dpi = [int]$candidate.dpi
                 stable_poll_count = $stableCount
             }
             break
