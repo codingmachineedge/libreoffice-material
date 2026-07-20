@@ -250,9 +250,9 @@ void NotificationStoreTest::testBareRepositoryAndReload()
     CPPUNIT_ASSERT_EQUAL(
         std::string(aAdd.CommitId) + "\n",
         readFile(childURL(childURL(childURL(aRepository.url(), u"refs"), u"heads"), u"main")));
-    // Independently calculated Git blob ID for this deterministic JSON snapshot.
-    CPPUNIT_ASSERT(fileExists(childURL(childURL(childURL(aRepository.url(), u"objects"), u"90"),
-                                       u"a990c88dc8a56289eee54005a754dde517551c")));
+    // Independently calculated Git blob ID for the exact JsonWriter-formatted snapshot.
+    CPPUNIT_ASSERT(fileExists(childURL(childURL(childURL(aRepository.url(), u"objects"), u"47"),
+                                       u"f3a04c1c9e31888c417286736e827946dbc213")));
 
     sfx2::NotificationStore aReloaded(aRepository.url());
     CPPUNIT_ASSERT_EQUAL(sfx2::NotificationStoreHealth::Ready, aReloaded.health());
