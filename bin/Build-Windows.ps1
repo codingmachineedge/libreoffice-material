@@ -984,7 +984,9 @@ function Invoke-CygwinScript {
     New-RequiredDirectory $invocationLogDirectory
     $log = Join-Path $invocationLogDirectory ($Name + '.log')
     Write-Section $Name
-    & $bash --noprofile --norc -o igncr -eo pipefail -c $ScriptText 2>&1 | Tee-Object -LiteralPath $log
+    # Feed multi-line commands on stdin. Windows PowerShell can split a
+    # newline-bearing argument passed after bash -c, corrupting shell syntax.
+    $ScriptText | & $bash --noprofile --norc -o igncr -eo pipefail -s 2>&1 | Tee-Object -LiteralPath $log
     $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) {
         throw ('{0} failed with exit code {1}. See {2}' -f $Name, $exitCode, $log)

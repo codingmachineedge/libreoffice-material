@@ -937,3 +937,15 @@ build or runtime evidence.
   isolated-toolchain checks and reached the intentional clean-checkout guard.
   It stopped only because this repair itself was not yet committed. No native
   build, MSI, LibreOffice launch, or runtime capture ran in that invocation.
+
+## 2026-07-19 — local configure command-transport follow-up
+
+- The first all-phase local attempt successfully created and LF-checked its
+  detached source snapshot at `5c0c4ae2a11a0a604278ae518fe08621ad796e16`, then
+  failed before `autogen.sh` because the shared configure runner still supplied
+  its multiline shell program through `bash -c`. The native build, MSI, and
+  application runtime did not start.
+- The common Cygwin runner now uses the same stdin transport as the proven
+  preflight probe, covering configure, profile assertion, native tests, and
+  product build. The clean failed-run root is preserved rather than overwritten;
+  the repaired commit will use a distinct isolated build root for a fresh run.
