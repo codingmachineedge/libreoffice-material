@@ -135,7 +135,8 @@ std::filesystem::path systemPath(const OUString& rURL)
     CPPUNIT_ASSERT_EQUAL(osl::FileBase::E_None,
                          osl::FileBase::getSystemPathFromFileURL(rURL, aSystemPath));
     OString aUtf8 = OUStringToOString(aSystemPath, RTL_TEXTENCODING_UTF8);
-    return std::filesystem::u8path(aUtf8.getStr(), aUtf8.getStr() + aUtf8.getLength());
+    const auto* pUtf8 = reinterpret_cast<const char8_t*>(aUtf8.getStr());
+    return std::filesystem::path(std::u8string_view(pUtf8, aUtf8.getLength()));
 }
 
 bool inflatedObjectsContain(const OUString& rRepositoryURL, std::string_view rNeedle)
@@ -319,8 +320,8 @@ void NotificationStoreTest::testPrivacyRedactionAndGuard()
         aRepository.url(), [] { return sal_Int64(1000); }, [] { return fixedId('1'); });
     sfx2::NotificationDraft aPrivate;
     aPrivate.Source = "cppunit";
-    aPrivate.Title = OUString(u"TOP-SECRET-PATH C:\\private\\document.odt");
-    aPrivate.Body = OUString(u"token=never-persist-this");
+    aPrivate.Title = u"TOP-SECRET-PATH C:\\private\\document.odt"_ustr;
+    aPrivate.Body = u"token=never-persist-this"_ustr;
     OString aId;
     CPPUNIT_ASSERT(aStore.add(aPrivate, &aId).Success);
     CPPUNIT_ASSERT(!inflatedObjectsContain(aRepository.url(), "TOP-SECRET-PATH"));
