@@ -10,6 +10,7 @@
 $(eval $(call gb_CppunitTest_CppunitTest,sfx2_notificationstore))
 
 $(eval $(call gb_CppunitTest_add_exception_objects,sfx2_notificationstore, \
+	sfx2/qa/cppunit/notificationcenterservice \
 	sfx2/qa/cppunit/notificationstore \
 ))
 

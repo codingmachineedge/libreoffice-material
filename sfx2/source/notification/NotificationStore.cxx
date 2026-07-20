@@ -678,6 +678,56 @@ std::vector<NotificationHistoryEntry> NotificationStore::history(sal_uInt32 nLim
     return aResult;
 }
 
+NotificationCenterSnapshotRef NotificationStore::snapshot(sal_uInt64 nGeneration,
+                                                           sal_uInt32 nHistoryLimit) const
+{
+    std::scoped_lock aGuard(m_pImpl->Mutex);
+    std::vector<NotificationRecord> aRecords;
+    std::vector<NotificationHistoryEntry> aHistory;
+    const bool bObserved = m_pImpl->observe();
+    aRecords.reserve(m_pImpl->Records.size());
+    for (const auto& [rId, rRecord] : m_pImpl->Records)
+    {
+        (void)rId;
+        aRecords.push_back(rRecord);
+    }
+    std::sort(aRecords.begin(), aRecords.end(),
+              [](const auto& rLeft, const auto& rRight)
+              {
+                  return rLeft.CreatedAt != rRight.CreatedAt ? rLeft.CreatedAt > rRight.CreatedAt
+                                                             : rLeft.Id < rRight.Id;
+              });
+
+    nHistoryLimit = std::min<sal_uInt32>(nHistoryLimit, 1000);
+    if (bObserved && nHistoryLimit != 0)
+    {
+        try
+        {
+            for (const GitSnapshot& rSnapshot :
+                 m_pImpl->Repository->readHistory(m_pImpl->Head, nHistoryLimit))
+            {
+                aHistory.push_back({ rSnapshot.CommitId, rSnapshot.ParentId,
+                                     actionFromToken(rSnapshot.Action), rSnapshot.Affected,
+                                     rSnapshot.Timestamp });
+            }
+        }
+        catch (const GitRepositoryError& rError)
+        {
+            m_pImpl->setRepositoryFailure(rError);
+            aHistory.clear();
+        }
+        catch (const std::exception& rError)
+        {
+            m_pImpl->Health = NotificationStoreHealth::Corrupt;
+            m_pImpl->LastError = errorText(rError);
+            aHistory.clear();
+        }
+    }
+    return std::make_shared<const NotificationCenterSnapshot>(
+        nGeneration, m_pImpl->Health, m_pImpl->LastError, m_pImpl->Head, m_pImpl->Preferences,
+        std::move(aRecords), std::move(aHistory));
+}
+
 NotificationPreferences NotificationStore::preferences() const
 {
     std::scoped_lock aGuard(m_pImpl->Mutex);

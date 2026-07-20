@@ -101,6 +101,38 @@ class NotificationStoreContractTest(unittest.TestCase):
         mutated[path] += "\n    aRecord.Title = rDraft.Title;\n"
         self.assertIn("metadata-text-isolation", self.violation_ids(mutated))
 
+    def test_rejects_store_lifetime_outside_worker_order(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        destroy = "        pStore.reset();"
+        process = "            process(*pStore, std::move(aRequest));"
+        self.assertIn(destroy, mutated[path])
+        self.assertIn(process, mutated[path])
+        mutated[path] = mutated[path].replace(destroy, "        LIFETIME_MARKER", 1)
+        mutated[path] = mutated[path].replace(process, destroy, 1)
+        mutated[path] = mutated[path].replace("        LIFETIME_MARKER", process, 1)
+        self.assertIn("worker-store-lifetime-order", self.violation_ids(mutated))
+
+    def test_rejects_looped_bulk_store_dispatch(self) -> None:
+        path = "sfx2/source/notification/NotificationCenterService.cxx"
+        mutated = dict(self.contents)
+        call = "rStore.remove(aRequest.Ids)"
+        self.assertEqual(1, mutated[path].count(call))
+        mutated[path] = mutated[path].replace(call, call + ", " + call, 1)
+        self.assertIn("one-store-call-per-bulk-request", self.violation_ids(mutated))
+
+    def test_rejects_incomplete_generated_configuration_adapter(self) -> None:
+        path = "sfx2/source/notification/NotificationConfiguration.cxx"
+        mutated = dict(self.contents)
+        accessor = (
+            "officecfg::Office::UI::NotificationCenter::Display::Animations::get()"
+        )
+        self.assertIn(accessor, mutated[path])
+        mutated[path] = mutated[path].replace(accessor, "false", 1)
+        self.assertIn(
+            "complete-generated-configuration-adapter", self.violation_ids(mutated)
+        )
+
     def test_rejects_post_mutation_compaction(self) -> None:
         path = "sfx2/source/notification/NotificationStore.cxx"
         mutated = dict(self.contents)

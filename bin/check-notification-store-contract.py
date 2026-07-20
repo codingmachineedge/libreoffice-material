@@ -37,7 +37,11 @@ REQUIRED_FILES = (
     "sfx2/source/notification/NotificationJson.cxx",
     "sfx2/source/notification/LocalGitRepository.hxx",
     "sfx2/source/notification/LocalGitRepository.cxx",
+    "sfx2/source/notification/NotificationCenterService.cxx",
+    "sfx2/source/notification/NotificationConfiguration.hxx",
+    "sfx2/source/notification/NotificationConfiguration.cxx",
     "sfx2/source/notification/NotificationStore.cxx",
+    "sfx2/qa/cppunit/notificationcenterservice.cxx",
     "sfx2/qa/cppunit/notificationstore.cxx",
     "sfx2/CppunitTest_sfx2_notificationstore.mk",
     "officecfg/registry/schema/org/openoffice/Office/UI/NotificationCenter.xcs",
@@ -543,6 +547,108 @@ REQUIRED_MARKERS = (
         "nObjectsAfterFirstFailure",
         "repeated forced prune failures cannot advance the ref or add objects",
     ),
+    MarkerRule(
+        "immutable-service-snapshot",
+        "include/sfx2/notificationcenter.hxx",
+        "const std::vector<NotificationRecord> Records;",
+        "UI consumers receive immutable record snapshots",
+    ),
+    MarkerRule(
+        "asynchronous-service-facade",
+        "include/sfx2/notificationcenter.hxx",
+        "class SFX2_DLLPUBLIC NotificationCenterService final",
+        "the synchronous store is hidden behind one asynchronous facade",
+    ),
+    MarkerRule(
+        "worker-owned-store-construction",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "pStore = std::make_unique<NotificationStore>",
+        "the notification store is constructed on its worker",
+    ),
+    MarkerRule(
+        "worker-owned-store-destruction",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "pStore.reset();",
+        "the notification store is destroyed on its worker",
+    ),
+    MarkerRule(
+        "serialized-service-queue",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "std::deque<Request> m_aRequests;",
+        "notification requests are serialized through one queue",
+    ),
+    MarkerRule(
+        "vcl-completion-dispatch",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "Application::PostUserEvent(LINK(this, UiCompletionQueue, handleEvent))",
+        "profile completions return through the VCL event queue",
+    ),
+    MarkerRule(
+        "conflict-snapshot-refresh",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "if (aResult.Mutation.Conflict)\n            (void)rStore.refresh();",
+        "conflict results include the winning repository state",
+    ),
+    MarkerRule(
+        "one-store-call-per-bulk-delete",
+        "sfx2/source/notification/NotificationCenterService.cxx",
+        "aResult.Mutation = rStore.remove(aRequest.Ids);",
+        "one bulk delete request maps to one atomic store mutation",
+    ),
+    MarkerRule(
+        "generated-configuration-read",
+        "sfx2/source/notification/NotificationConfiguration.cxx",
+        "officecfg::Office::UI::NotificationCenter::Display::Enabled::get()",
+        "profile preferences use generated office configuration accessors",
+    ),
+    MarkerRule(
+        "generated-configuration-write",
+        "sfx2/source/notification/NotificationConfiguration.cxx",
+        "officecfg::Office::UI::NotificationCenter::History::Limit::set",
+        "customized profile preferences are persisted through generated accessors",
+    ),
+    MarkerRule(
+        "lazy-application-service",
+        "sfx2/source/appl/app.cxx",
+        "pImpl->mxNotificationCenter = sfx2::NotificationCenterService::createForProfile();",
+        "the service starts only when first requested by the application",
+    ),
+    MarkerRule(
+        "application-service-shutdown",
+        "sfx2/source/appl/app.cxx",
+        "pImpl->mxNotificationCenter.reset();",
+        "the application joins the worker while VCL is still alive",
+    ),
+    MarkerRule(
+        "runtime-service-ordering-test",
+        "sfx2/qa/cppunit/notificationcenterservice.cxx",
+        "testSerializedOrderingAndImmutableSnapshots",
+        "serialized completion ordering and snapshot generations are covered",
+    ),
+    MarkerRule(
+        "runtime-service-shutdown-test",
+        "sfx2/qa/cppunit/notificationcenterservice.cxx",
+        "testShutdownDrainsAcceptedMutations",
+        "shutdown durability is covered",
+    ),
+    MarkerRule(
+        "runtime-service-conflict-test",
+        "sfx2/qa/cppunit/notificationcenterservice.cxx",
+        "testConflictRefreshesReturnedSnapshot",
+        "service conflict recovery is covered",
+    ),
+    MarkerRule(
+        "runtime-service-bulk-commit-test",
+        "sfx2/qa/cppunit/notificationcenterservice.cxx",
+        "testBulkOperationCreatesExactlyOneCommit",
+        "bulk manager requests are proven to add one history commit",
+    ),
+    MarkerRule(
+        "runtime-service-privacy-test",
+        "sfx2/qa/cppunit/notificationcenterservice.cxx",
+        "testMetadataOnlyTextRemainsRedacted",
+        "the service cannot re-expose metadata-only display text",
+    ),
 )
 
 
@@ -657,6 +763,22 @@ JSON_PROPERTY_ORDER = (
     'aWriter.put("dedupeHash"',
 )
 
+CONFIGURATION_FIELDS = (
+    ("Display", "Enabled"),
+    ("Display", "MaxVisible"),
+    ("Display", "Width"),
+    ("Display", "TimeoutSeconds"),
+    ("Display", "HorizontalInset"),
+    ("Display", "VerticalInset"),
+    ("Display", "CornerRadius"),
+    ("Display", "OpacityPercent"),
+    ("Display", "UseThemeColors"),
+    ("Display", "AccentColor"),
+    ("Display", "Animations"),
+    ("History", "RetentionDays"),
+    ("History", "Limit"),
+)
+
 
 def load_snapshot(root: Path) -> tuple[dict[str, str], set[str]]:
     paths = set(REQUIRED_FILES)
@@ -758,6 +880,90 @@ def find_violations(
                 "rule": "metadata-text-isolation",
                 "path": "sfx2/source/notification/NotificationStore.cxx",
                 "detail": "display text may only enter persisted records in the SafeDisplayText branch",
+            }
+        )
+
+    service_source = contents.get(
+        "sfx2/source/notification/NotificationCenterService.cxx", ""
+    )
+    worker = _extract_braced_block(service_source, "class NotificationWorker final")
+    execute = _extract_braced_block(worker, "void execute() override")
+    construct = execute.find("std::make_unique<NotificationStore>(")
+    process = execute.find("process(*pStore, std::move(aRequest))")
+    destroy = execute.find("pStore.reset();")
+    if min(construct, process, destroy) < 0 or not construct < process < destroy:
+        violations.append(
+            {
+                "rule": "worker-store-lifetime-order",
+                "path": "sfx2/source/notification/NotificationCenterService.cxx",
+                "detail": "the store must be constructed, processed, and destroyed inside the worker",
+            }
+        )
+
+    service_process = _extract_braced_block(
+        worker, "void process(NotificationStore& rStore, Request aRequest)"
+    )
+    bulk_calls = (
+        "rStore.markRead(aRequest.Ids, aRequest.Flag)",
+        "rStore.setPinned(aRequest.Ids, aRequest.Flag)",
+        "rStore.archive(aRequest.Ids)",
+        "rStore.remove(aRequest.Ids)",
+        "rStore.restore(aRequest.Ids)",
+    )
+    if any(service_process.count(call) != 1 for call in bulk_calls):
+        violations.append(
+            {
+                "rule": "one-store-call-per-bulk-request",
+                "path": "sfx2/source/notification/NotificationCenterService.cxx",
+                "detail": "each service bulk branch must invoke its atomic store method exactly once",
+            }
+        )
+
+    worker_shutdown = _extract_braced_block(worker, "void shutdown()")
+    stop_admission = worker_shutdown.find("m_bAccepting = false")
+    drain_signal = worker_shutdown.find("m_bStopWhenDrained = true")
+    join = worker_shutdown.find("join();")
+    if min(stop_admission, drain_signal, join) < 0 or not stop_admission < drain_signal < join:
+        violations.append(
+            {
+                "rule": "service-shutdown-drain-order",
+                "path": "sfx2/source/notification/NotificationCenterService.cxx",
+                "detail": "shutdown must stop admission, request queue drain, then join",
+            }
+        )
+
+    configuration_source = contents.get(
+        "sfx2/source/notification/NotificationConfiguration.cxx", ""
+    )
+    missing_configuration_accessors = []
+    for group, field in CONFIGURATION_FIELDS:
+        prefix = f"officecfg::Office::UI::NotificationCenter::{group}::{field}::"
+        if configuration_source.count(prefix + "get()") != 1:
+            missing_configuration_accessors.append(f"{group}.{field}.get")
+        if configuration_source.count(prefix + "set") != 1:
+            missing_configuration_accessors.append(f"{group}.{field}.set")
+    if missing_configuration_accessors:
+        violations.append(
+            {
+                "rule": "complete-generated-configuration-adapter",
+                "path": "sfx2/source/notification/NotificationConfiguration.cxx",
+                "detail": "missing or duplicate generated accessors: "
+                + ", ".join(missing_configuration_accessors),
+            }
+        )
+
+    app_source = contents.get("sfx2/source/appl/app.cxx", "")
+    app_destructor = _extract_braced_block(
+        app_source, "SfxApplication::~SfxApplication()"
+    )
+    service_stop = app_destructor.find("pImpl->mxNotificationCenter.reset();")
+    dying_broadcast = app_destructor.find("Broadcast( SfxHint(SfxHintId::Dying) )")
+    if min(service_stop, dying_broadcast) < 0 or not service_stop < dying_broadcast:
+        violations.append(
+            {
+                "rule": "application-service-shutdown-order",
+                "path": "sfx2/source/appl/app.cxx",
+                "detail": "the service must stop while VCL is alive and before the dying broadcast",
             }
         )
 
@@ -1009,7 +1215,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(
         "Notification-store contract passed: public state model, deterministic redaction, "
         "bare loose-object Git, fixed local main ref, lock/CAS, tombstone/undo, bounded "
-        "preferences, schema registration, and focused runtime coverage are intact."
+        "preferences, generated configuration, serialized async service, application shutdown, "
+        "schema registration, and focused native-test wiring are intact."
     )
     return 0
 

@@ -49,6 +49,7 @@ class BasicManager;
 class SfxBasicManagerHolder;
 class SfxBasicManagerCreationListener;
 namespace sfx2::sidebar { class Theme; }
+namespace sfx2 { class NotificationCenterService; }
 
 
 
@@ -105,6 +106,7 @@ public:
     std::optional<SfxDispatcher>
                                 pAppDispat;     // Dispatcher if no document
     ::rtl::Reference<sfx2::sidebar::Theme> m_pSidebarTheme;
+    std::unique_ptr<sfx2::NotificationCenterService> mxNotificationCenter;
 
     bool                        bDowning:1;   // sal_True on Exit and afterwards
     bool                        bInQuit : 1;

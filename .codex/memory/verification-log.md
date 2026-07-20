@@ -1649,3 +1649,21 @@ build or runtime evidence.
   repeated forced prune failure, and preference bounds. The notification source
   also passed a focused clang-cl syntax-only probe with temporary generated
   header/zlib stubs; no repository-native compile or runtime behavior is claimed.
+
+## 2026-07-20 — asynchronous notification service source checkpoint
+
+- `python bin/check-notification-store-contract.py`: passed the serialized
+  worker/store lifetime, immutable snapshot, conflict refresh, generated
+  configuration, shutdown ordering, application lifetime, and single-call bulk
+  additions alongside every earlier storage/privacy invariant.
+- `python -m unittest bin/test_notification_store_contract.py`: 18/18 mutation
+  tests passed, including new worker lifetime, bulk dispatch, and complete
+  generated-accessor guards.
+- `node bin/validate-prototype.mjs`: 9/9 passed; the target notification and
+  regex-builder surfaces remain intact.
+- `git diff --check`, Python byte-compilation, notification schema XML parsing,
+  and Clang format dry-run for all new C++/test files passed.
+- Five native service CppUnit cases are wired into
+  `CppunitTest_sfx2_notificationstore` but were not compiled or run. No shared
+  retained build directory was used, and no application/runtime proof is
+  claimed for this source checkpoint.

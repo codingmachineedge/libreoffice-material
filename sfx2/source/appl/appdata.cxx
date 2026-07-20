@@ -25,6 +25,7 @@
 #include <sfx2/childwin.hxx>
 #include <sfx2/doctempl.hxx>
 #include <sfx2/module.hxx>
+#include <sfx2/notificationcenter.hxx>
 #include <sfx2/sidebar/Theme.hxx>
 #include <sfx2/objsh.hxx>
 #include <appbaslib.hxx>

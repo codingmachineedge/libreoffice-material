@@ -373,7 +373,7 @@ source validator and eleven mutation regressions pass. This does not yet add
 the notification form host, event routing, customization UI, stacking, or
 compiled/headless proof.
 
-The source-only notification-store foundation now persists redacted structured
+The notification storage/service foundation now persists redacted structured
 records in a genuine local bare Git repository with fixed `main`, durable
 same-process plus OS-held cross-process exclusion, CAS ref updates, atomic bulk
 state transitions, recoverable tombstones,
@@ -381,10 +381,17 @@ pin/deduplicate/purge/empty-trash maintenance, bounded parentless checkpoints,
 history enumeration, and inverse-commit undo. Metadata-only persistence is the
 default, repository operations are explicitly worker-thread-only, and a durable
 compaction gate blocks further user commits after a prune failure; retries reuse
-the installed checkpoint without growing objects or advancing `main`. Thirteen
-native CppUnit cases are wired and all 15 source mutation tests pass. No dialog
-producer, visible notification form/manager, configuration
-binding, or runtime behavior is claimed yet.
+the installed checkpoint without growing objects or advancing `main`. A lazy
+application-owned `NotificationCenterService` now constructs, uses, and destroys
+that store on one serialized worker, returns immutable generation-stamped
+snapshots, refreshes after CAS conflicts, drains accepted mutations at shutdown,
+and marshals profile completions through the VCL event queue. A typed adapter
+reads and writes every generated `Office.UI.NotificationCenter` preference.
+Eighteen native CppUnit cases are wired and all 18 source mutation tests pass.
+The service architecture is recorded in
+[`docs/design/02-notification-service-architecture.md`](docs/design/02-notification-service-architecture.md).
+No dialog producer, visible notification form/manager, stack, compiled service
+test, or runtime behavior is claimed yet.
 
 The shared native regex foundation now uses LibreOffice’s ICU-backed
 `SearchOptions2`/`TextSearch` semantics for literal and regular-expression

@@ -555,3 +555,25 @@ upstream source submodules. If later work creates several independently
 versioned product repositories, a separate master repository must pin them as
 Git submodules. That orchestration decision does not convert unverified external
 state into evidence and must record exact submodule commits.
+
+## 2026-07-20 — asynchronous notification service source checkpoint
+
+- `SfxApplication` now owns a lazy `NotificationCenterService`; profile
+  callbacks use a cancellable VCL queue and application teardown closes delivery,
+  drains accepted requests, joins the worker, and releases the service while VCL
+  is alive.
+- One serialized worker constructs, calls, and destroys `NotificationStore`.
+  Completions carry immutable generation-stamped record/history snapshots;
+  compare-and-swap conflicts retain their failure result while refreshing the
+  accompanying snapshot to the winning repository head.
+- `NotificationConfiguration` maps all 13 generated display/history preferences
+  for normalized batch read/write. Test repositories do not touch profile
+  configuration. The service preserves the store's metadata-only default and
+  maps each selected-ID vector to one atomic store method call.
+- Five new CppUnit cases bring the wired notification target to 18 cases for
+  ordering, shutdown durability, conflict refresh, exactly one commit per bulk
+  operation, and metadata-only redaction. They are registered but not compiled
+  in this checkpoint. The static notification contract and all 18 mutation tests,
+  prototype validator (9/9), XML parse, diff check, and new-file Clang formatting
+  pass. No visible stack/manager, producer routing, native build, or runtime UI
+  behavior is claimed.

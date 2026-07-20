@@ -94,16 +94,23 @@ redacted structured records, create one atomic commit per user-visible bulk
 operation, and never configure remotes or put notification content in commit
 messages.
 
-The first source-only storage foundation now implements that local bare Git
+The storage foundation now implements that local bare Git
 model: metadata-only by default, fixed `main`, same-process mutex plus permanent
 OS-held cross-process operation locking, CAS updates, atomic bulk transitions,
 recoverable tombstones, bounded pre-mutation checkpoints, history, and
 inverse-commit undo. Compaction expires older commit IDs intentionally while
 preserving current records and uses a durable pending marker so later writes
 fail closed until pruning completes. Retry validates and reuses an already
-installed checkpoint without adding objects or advancing the ref. It is not yet
-connected to dialog producers or a visible form,
-manager, preference binding, or notification stack, and has no build/runtime
+installed checkpoint without adding objects or advancing the ref. A lazy
+application-owned asynchronous service now owns the synchronous store on one
+serialized worker and exposes immutable generation-stamped snapshots. It drains
+accepted mutations during shutdown, cancels queued VCL deliveries, refreshes the
+snapshot after a CAS conflict, maps one bulk request to one store call, and uses
+generated office-configuration accessors for all display/history preferences.
+The detailed boundary is in
+[`02-notification-service-architecture.md`](02-notification-service-architecture.md).
+It is not yet connected to dialog producers or a visible form, manager,
+customization controls, or notification stack, and has no compiled/runtime
 evidence.
 
 Promotional or recurring nags are not part of the rewritten product. Donation,

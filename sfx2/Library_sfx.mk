@@ -262,6 +262,8 @@ $(eval $(call gb_Library_add_exception_objects,sfx,\
     sfx2/source/notify/hintpost \
     sfx2/source/notify/openurlhint \
     sfx2/source/notification/LocalGitRepository \
+    sfx2/source/notification/NotificationCenterService \
+    sfx2/source/notification/NotificationConfiguration \
     sfx2/source/notification/NotificationJson \
     sfx2/source/notification/NotificationStore \
     sfx2/source/safemode/safemode \

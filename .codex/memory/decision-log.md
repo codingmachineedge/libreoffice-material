@@ -555,3 +555,24 @@
   same-process races, bounds reachable history and retry growth, and keeps
   persisted display text opt-in. The visible host, manager, producer routing,
   preference binding, and worker integration remain separate acceptance gates.
+
+## D-032 — isolate the synchronous notification store behind one application worker
+
+- Date: 2026-07-20
+- State: source implemented and statically validated; native/runtime proof pending
+- Context: the durable store performs synchronous compression, filesystem sync,
+  repository locking, history reads, and configuration writes. Calling it from
+  a notification card or manager would block the UI, while multiple store-owning
+  workers would make request order and shutdown behavior ambiguous.
+- Decision: lazily create one application-owned facade. Construct, access, and
+  destroy `NotificationStore` on one FIFO worker; return only immutable
+  generation-stamped snapshots; marshal production completions through a
+  cancellable VCL queue; refresh snapshots after CAS conflicts; close UI delivery
+  before draining accepted shutdown work; and pass each bulk selection to one
+  store call. Use a typed generated-configuration adapter, with profile writes
+  disabled by the injectable repository test factory.
+- Reason: this creates an explicit non-blocking UI boundary, deterministic
+  mutation/completion order, durable teardown, and one-commit bulk behavior
+  without weakening metadata-only privacy or exposing the synchronous store to
+  future UI consumers. Visible cards, the bulk manager, and dialog producer
+  migration remain later checkpoints.
