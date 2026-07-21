@@ -217,7 +217,18 @@ function Record-WindowEnumeration {
     )
 
     $windows = [System.Collections.Generic.List[object]]::new()
-    foreach ($window in @($Enumeration.windows)) {
+    $enumeratedWindows = @($Enumeration.windows)
+    if ($StartupProfile -ne 'Configured') {
+        # EnumDesktopWindows also reports normal Windows IME, tooltip, and
+        # helper windows created by the GUI process.  They are not user-facing
+        # LibreOffice surfaces and must not be mistaken for nag dialogs.  The
+        # no-nag contract is about the single visible Writer SALFRAME; the
+        # complete raw driver enumeration remains available in the MCP logs.
+        $enumeratedWindows = @($enumeratedWindows | Where-Object {
+            [string]$_.class -ceq 'SALFRAME'
+        })
+    }
+    foreach ($window in $enumeratedWindows) {
         $processId = Get-JsonIntegerProperty -Object $window -PropertyName 'process_id'
         $record = [ordered]@{
             handle = Get-JsonIntegerProperty -Object $window -PropertyName 'handle'
