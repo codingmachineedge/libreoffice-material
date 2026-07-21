@@ -115,6 +115,7 @@ struct LastPageSaver
 
 namespace com::sun::star::frame { class XFrame; }
 namespace com::sun::star::awt { class XContainerWindowProvider; }
+namespace sfx2 { class RegexSearchController; }
 
 struct OptionsPageInfo;
 struct OptionsGroupInfo;
@@ -130,6 +131,11 @@ private:
     std::unique_ptr<weld::TreeView> xTreeLB;
     std::unique_ptr<weld::Container> xTabBox;
     std::unique_ptr<weld::Entry> m_xSearchEdit;
+    // The regex builder button and its controller are declared AFTER m_xSearchEdit so the
+    // controller is destroyed first: its destructor re-installs the entry's original changed
+    // callback while the entry (and builder button) are still alive.
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     weld::Window*    m_pParent;
 
@@ -137,7 +143,6 @@ private:
 
     // For search
     Timer m_aUpdateDataTimer;
-    i18nutil::SearchOptions2 m_options;
 
     bool bIsFirstInitialize;
     std::vector<OptionsPageIdInfo*> m_aTreePageIds;
@@ -205,7 +210,7 @@ private:
 
     void InitItemSets(OptionsGroupInfo& rGroupInfo);
 
-    int applySearchFilter(const OUString& rSearchTerm);
+    int applySearchFilter();
 
     void ImplDestroy();
 

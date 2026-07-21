@@ -2,7 +2,7 @@
   "schema_version": 1,
   "contract": "windows-native-regex-search-integrations",
   "platform": "windows",
-  "expected_integrations": 6,
+  "expected_integrations": 11,
   "integrations": [
     {
       "coverage_id": "calc.go-to-sheet",
@@ -140,6 +140,154 @@
           "signature": "void SfxTemplateManagerDlg::SearchUpdate(",
           "site_route": "legacy-literal-filter",
           "match_subject": "rTitle"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "customize.keyboard-functions",
+      "surface": "Keyboard customization",
+      "status": "source-integrated",
+      "ui_file": "cui/uiconfig/ui/accelconfigpage.ui",
+      "entry_id": "searchEntry",
+      "builder_button_id": "searchEntry_regex_builder",
+      "header_file": "cui/source/inc/acccfg.hxx",
+      "source_file": "cui/source/customize/acccfg.cxx",
+      "owner_type": "SfxAcceleratorConfigPage",
+      "owner_changed_handler": "SearchUpdateHdl",
+      "entry_member": "m_xSearchEdit",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "GetFrameWeld()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "literal-case-insensitive-contains-compatible",
+      "changed_handler_role": "debounce-timer-start",
+      "changed_handler_trigger": "m_aUpdateDataTimer.Start()",
+      "search_sites": [
+        {
+          "signature": "int SfxAcceleratorConfigPage::applySearchFilter(",
+          "site_route": "legacy-literal-filter",
+          "match_subject": "aRowText"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "options.settings",
+      "surface": "Options",
+      "status": "source-integrated",
+      "ui_file": "cui/uiconfig/ui/optionsdialog.ui",
+      "entry_id": "searchEntry",
+      "builder_button_id": "searchEntry_regex_builder",
+      "header_file": "cui/source/inc/treeopt.hxx",
+      "source_file": "cui/source/options/treeopt.cxx",
+      "owner_type": "OfaTreeOptionsDialog",
+      "owner_changed_handler": "SearchUpdateHdl",
+      "entry_member": "m_xSearchEdit",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xDialog.get()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "literal-case-insensitive-contains-compatible",
+      "changed_handler_role": "debounce-timer-start",
+      "changed_handler_trigger": "m_aUpdateDataTimer.Start()",
+      "search_sites": [
+        {
+          "signature": "int OfaTreeOptionsDialog::applySearchFilter(",
+          "site_route": "legacy-literal-filter",
+          "match_subject": "rPageStrings"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "changes.comment-filter",
+      "surface": "Manage Changes comment filter",
+      "status": "source-integrated",
+      "ui_file": "svx/uiconfig/ui/redlinefilterpage.ui",
+      "entry_id": "commentedit",
+      "builder_button_id": "commentedit_regex_builder",
+      "header_file": "include/svx/ctredlin.hxx",
+      "source_file": "svx/source/dialog/ctredlin.cxx",
+      "owner_type": "SvxTPFilter",
+      "owner_changed_handler": "ModifyHdl",
+      "entry_member": "m_xEdComment",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xContainer.get()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "regex-native-case-insensitive",
+      "changed_handler_role": "deferred-dirty-flag",
+      "changed_handler_trigger": "m_bModified = true",
+      "search_sites": [
+        {
+          "signature": "void SvxTPFilter::DeactivatePage(",
+          "site_route": "options-handoff",
+          "handoff_sink": "m_pRedlineTable->SetCommentParams"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "writer.find-entry",
+      "surface": "Writer Find Entry",
+      "status": "source-integrated",
+      "ui_file": "sw/uiconfig/swriter/ui/findentrydialog.ui",
+      "entry_id": "entry",
+      "builder_button_id": "entry_regex_builder",
+      "header_file": "sw/source/ui/dbui/createaddresslistdialog.hxx",
+      "source_file": "sw/source/ui/dbui/createaddresslistdialog.cxx",
+      "owner_type": "SwFindEntryDialog",
+      "owner_changed_handler": "FindEnableHdl_Impl",
+      "entry_member": "m_xFindED",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xDialog.get()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "engine-preserving-current-default",
+      "engine_default_case_insensitive": true,
+      "changed_handler_role": "button-enabler",
+      "changed_handler_trigger": "m_xFindPB->set_sensitive",
+      "search_sites": [
+        {
+          "signature": "IMPL_LINK_NOARG(SwFindEntryDialog, FindHdl_Impl, weld::Button&, void)",
+          "site_route": "options-handoff",
+          "handoff_sink": "m_pParent->Find"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "extensions.manager",
+      "surface": "Extension Manager search",
+      "status": "source-integrated",
+      "ui_file": "desktop/uiconfig/ui/extensionmanager.ui",
+      "entry_id": "search",
+      "builder_button_id": "search_regex_builder",
+      "header_file": "desktop/source/deployment/gui/dp_gui_dialog2.hxx",
+      "source_file": "desktop/source/deployment/gui/dp_gui_dialog2.cxx",
+      "owner_type": "ExtMgrDialog",
+      "owner_changed_handler": "HandleSearch",
+      "entry_member": "m_xSearchEntry",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xDialog.get()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "literal-case-insensitive-contains-compatible",
+      "changed_handler_role": "forward-to-site",
+      "changed_handler_trigger": "updateList()",
+      "search_sites": [
+        {
+          "signature": "bool ExtMgrDialog::matchPackage(",
+          "site_route": "live-predicate",
+          "enumeration_signature": "void ExtMgrDialog::updateList(",
+          "matcher_member": "m_xSearchMatcher",
+          "match_subject": "rDisplayName"
         }
       ],
       "runtime_verified": false

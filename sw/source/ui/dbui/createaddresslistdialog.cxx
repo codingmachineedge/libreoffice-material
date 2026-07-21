@@ -37,6 +37,8 @@
 #include <vcl/weld/ScrolledWindow.hxx>
 #include <sfx2/filedlghelper.hxx>
 #include <sfx2/docfile.hxx>
+#include <sfx2/RegexSearchController.hxx>
+#include <unotools/textsearch.hxx>
 #include <rtl/textenc.h>
 #include <com/sun/star/ui/dialogs/TemplateDescription.hpp>
 #include <com/sun/star/ui/dialogs/XFilePicker3.hpp>
@@ -514,9 +516,13 @@ void SwCreateAddressListDialog::UpdateButtons()
     m_xDeletePB->set_sensitive(nSize > 0);
 }
 
-void SwCreateAddressListDialog::Find(const OUString& rSearch, sal_Int32 nColumn)
+void SwCreateAddressListDialog::Find(const i18nutil::SearchOptions2& rOptions, sal_Int32 nColumn)
 {
-    const OUString sSearch = rSearch.toAsciiLowerCase();
+    // Route matching through the shared search engine so the advanced builder's regex/options
+    // apply. The controller seeds a case-insensitive literal "contains" search by default, which
+    // reproduces the legacy toAsciiLowerCase().indexOf() record match. Compile the matcher once
+    // and reuse it across every record/column, exactly like the previous single lowercased query.
+    utl::TextSearch aTextSearch(rOptions);
     sal_uInt32 nCurrent = m_xAddressControl->GetCurrentDataSet();
     //search forward
     bool bFound = false;
@@ -530,12 +536,12 @@ void SwCreateAddressListDialog::Find(const OUString& rSearch, sal_Int32 nColumn)
         {
             std::vector< OUString> const & aData = m_pCSVData->aDBData[nPos];
             if(nColumn >=0)
-                bFound = -1 != aData[static_cast<sal_uInt32>(nColumn)].toAsciiLowerCase().indexOf(sSearch);
+                bFound = aTextSearch.searchForward(aData[static_cast<sal_uInt32>(nColumn)]);
             else
             {
                 for( nElement = 0; nElement < aData.size(); ++nElement)
                 {
-                    bFound = -1 != aData[nElement].toAsciiLowerCase().indexOf(sSearch);
+                    bFound = aTextSearch.searchForward(aData[nElement]);
                     if(bFound)
                     {
                         nColumn = nElement; //TODO: std::size_t -> sal_Int32!
@@ -567,9 +573,19 @@ SwFindEntryDialog::SwFindEntryDialog(SwCreateAddressListDialog* pParent)
     , m_xFindOnlyLB(m_xBuilder->weld_combo_box(u"area"_ustr))
     , m_xFindPB(m_xBuilder->weld_button(u"find"_ustr))
     , m_xCancel(m_xBuilder->weld_button(u"cancel"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"entry_regex_builder"_ustr))
 {
     m_xFindPB->connect_clicked(LINK(this, SwFindEntryDialog, FindHdl_Impl));
-    m_xFindED->connect_changed(LINK(this, SwFindEntryDialog, FindEnableHdl_Impl));
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xDialog.get(), *m_xFindED, *m_xRegexBuilderButton,
+        LINK(this, SwFindEntryDialog, FindEnableHdl_Impl));
+
+    // Preserve the legacy case-insensitive "contains" record search as the default; the
+    // advanced builder lets the user opt into regular expressions or other options.
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
+
     m_xCancel->connect_clicked(LINK(this, SwFindEntryDialog, CloseHdl_Impl));
 }
 
@@ -582,7 +598,8 @@ IMPL_LINK_NOARG(SwFindEntryDialog, FindHdl_Impl, weld::Button&, void)
     sal_Int32 nColumn = -1;
     if (m_xFindOnlyCB->get_active())
         nColumn = m_xFindOnlyLB->get_active();
-    m_pParent->Find(m_xFindED->get_text(), nColumn);
+    const i18nutil::SearchOptions2 aOptions = m_xRegexSearchController->GetSearchOptions();
+    m_pParent->Find(aOptions, nColumn);
 }
 
 IMPL_LINK_NOARG(SwFindEntryDialog, FindEnableHdl_Impl, weld::TextWidget&, void)

@@ -45,6 +45,9 @@
 
 struct ImplSVEvent;
 
+namespace sfx2 { class RegexSearchController; }
+namespace utl { class TextSearch; }
+
 namespace dp_gui {
 
 class ExtensionBoxWithButtons;
@@ -118,8 +121,13 @@ class ExtMgrDialog : public DialogHelper
     std::unique_ptr<weld::ProgressBar> m_xProgressBar;
     std::unique_ptr<weld::Button> m_xCancelBtn;
     std::unique_ptr<weld::Entry> m_xSearchEntry;
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    std::unique_ptr<utl::TextSearch> m_xSearchMatcher;
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
+    bool m_bConstructed = false;
 
     bool removeExtensionWarn(std::u16string_view rExtensionTitle);
+    bool matchPackage(const OUString& rDisplayName);
 
     DECL_LINK( HandleOptionsBtn, weld::Button&, void );
     DECL_LINK( HandleAddBtn, weld::Button&, void );

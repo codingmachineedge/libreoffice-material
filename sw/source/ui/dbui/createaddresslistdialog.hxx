@@ -30,6 +30,9 @@
 
 #include <vector>
 
+namespace i18nutil { struct SearchOptions2; }
+namespace sfx2 { class RegexSearchController; }
+
 class SwAddressControl_Impl;
 class SwMailMergeConfigItem;
 
@@ -79,7 +82,7 @@ public:
     virtual ~SwCreateAddressListDialog() override;
 
     const OUString&         GetURL() const { return m_sURL; }
-    void                    Find( const OUString& rSearch, sal_Int32 nColumn);
+    void                    Find( const i18nutil::SearchOptions2& rOptions, sal_Int32 nColumn);
 };
 
 class SwFindEntryDialog : public weld::GenericDialogController
@@ -91,6 +94,8 @@ class SwFindEntryDialog : public weld::GenericDialogController
     std::unique_ptr<weld::ComboBox> m_xFindOnlyLB;
     std::unique_ptr<weld::Button> m_xFindPB;
     std::unique_ptr<weld::Button> m_xCancel;
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     DECL_LINK(FindHdl_Impl, weld::Button&, void);
     DECL_LINK(FindEnableHdl_Impl, weld::TextWidget&, void);

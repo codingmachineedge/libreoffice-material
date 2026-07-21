@@ -93,19 +93,53 @@
       </packing>
     </child>
     <child>
-      <object class="GtkEntry" id="commentedit">
+      <object class="GtkBox" id="commentbox">
         <property name="visible">True</property>
-        <property name="sensitive">False</property>
-        <property name="can-focus">True</property>
+        <property name="can-focus">False</property>
         <property name="margin-start">24</property>
-        <property name="hexpand">True</property>
-        <property name="activates-default">True</property>
-        <property name="truncate-multiline">True</property>
-        <child internal-child="accessible">
-          <object class="AtkObject" id="commentedit-atkobject">
-            <property name="AtkObject::accessible-name" translatable="yes" context="redlinefilterpage|commentedit-atkobject">Comment</property>
-            <property name="AtkObject::accessible-description" translatable="yes" context="redlinefilterpage|extended_tip|commentedit">Filters the comments of the changes according to the keyword(s) that you enter.</property>
+        <property name="orientation">horizontal</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkEntry" id="commentedit">
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can-focus">True</property>
+            <property name="hexpand">True</property>
+            <property name="activates-default">True</property>
+            <property name="truncate-multiline">True</property>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="commentedit-atkobject">
+                <property name="AtkObject::accessible-name" translatable="yes" context="redlinefilterpage|commentedit-atkobject">Comment</property>
+                <property name="AtkObject::accessible-description" translatable="yes" context="redlinefilterpage|extended_tip|commentedit">Filters the comments of the changes according to the keyword(s) that you enter.</property>
+              </object>
+            </child>
           </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="commentedit_regex_builder">
+            <property name="label">.*</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="tooltip-text" translatable="yes" context="redlinefilterpage|commentedit_regex_builder|tooltip_text">Build a regular expression for the comment filter</property>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="commentedit_regex_builder-atkobject">
+                <property name="AtkObject::accessible-name" translatable="yes" context="redlinefilterpage|commentedit_regex_builder-atkobject">Regular expression builder</property>
+                <property name="AtkObject::accessible-description" translatable="yes" context="redlinefilterpage|commentedit_regex_builder-atkobject">Open the advanced builder to construct a regular expression for the comment filter.</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
       <packing>

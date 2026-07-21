@@ -48,6 +48,7 @@
 
 #include <sfx2/filedlghelper.hxx>
 #include <sfx2/sfxdlg.hxx>
+#include <sfx2/RegexSearchController.hxx>
 
 #include <comphelper/anytostring.hxx>
 #include <cppuhelper/exc_hlp.hxx>
@@ -56,6 +57,7 @@
 #include <comphelper/processfactory.hxx>
 #include <comphelper/diagnose_ex.hxx>
 #include <unotools/configmgr.hxx>
+#include <unotools/textsearch.hxx>
 
 #include <com/sun/star/deployment/DeploymentException.hpp>
 #include <com/sun/star/lang/IllegalArgumentException.hpp>
@@ -213,6 +215,7 @@ ExtMgrDialog::ExtMgrDialog(weld::Window* pParent, TheExtensionManager& rManager)
     , m_xProgressBar(m_xBuilder->weld_progress_bar(u"progressbar"_ustr))
     , m_xCancelBtn(m_xBuilder->weld_button(u"cancel"_ustr))
     , m_xSearchEntry(m_xBuilder->weld_entry(u"search"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"search_regex_builder"_ustr))
 {
     m_xEnableBtn->set_help_id(HID_EXTENSION_MANAGER_LISTBOX_ENABLE);
 
@@ -228,7 +231,18 @@ ExtMgrDialog::ExtMgrDialog(weld::Window* pParent, TheExtensionManager& rManager)
     m_xSharedCbx->connect_toggled( LINK( this, ExtMgrDialog, HandleExtTypeCbx ) );
     m_xUserCbx->connect_toggled( LINK( this, ExtMgrDialog, HandleExtTypeCbx ) );
 
-    m_xSearchEntry->connect_changed( LINK( this, ExtMgrDialog, HandleSearch ) );
+    // Bind the extension search entry to the shared advanced regex builder. The controller owns
+    // the entry's changed callback and forwards it to HandleSearch, so the live per-package filter
+    // keeps working while the builder button opens the regular-expression popover. The seeded state
+    // reproduces the field's legacy behaviour exactly: a case-insensitive literal "contains" match
+    // over extension display names until the user opts into regex/options through the builder.
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xDialog.get(), *m_xSearchEntry, *m_xRegexBuilderButton,
+        LINK(this, ExtMgrDialog, HandleSearch));
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::Literal;
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
 
     m_xBundledCbx->set_active(true);
     m_xSharedCbx->set_active(true);
@@ -256,6 +270,12 @@ ExtMgrDialog::ExtMgrDialog(weld::Window* pParent, TheExtensionManager& rManager)
 
     m_aIdle.SetPriority(TaskPriority::LOWEST);
     m_aIdle.SetInvokeHandler( LINK( this, ExtMgrDialog, TimeOutHdl ) );
+
+    // The seeding SetState() above fires HandleSearch -> updateList() while this dialog is still
+    // inside make_shared, before TheExtensionManager has stored the shared_ptr; guard the list
+    // rebuild until construction finishes so updateList() cannot call createPackageList() (which
+    // dereferences the not-yet-published dialog through getDialogHelper()).
+    m_bConstructed = true;
 }
 
 ExtMgrDialog::~ExtMgrDialog()
@@ -274,16 +294,7 @@ void ExtMgrDialog::addPackageToList( const uno::Reference< deployment::XPackage 
     const SolarMutexGuard aGuard;
     m_xUpdateBtn->set_sensitive(true);
 
-    bool bSearchMatch = m_xSearchEntry->get_text().isEmpty();
-    if (!m_xSearchEntry->get_text().isEmpty()
-        && xPackage->getDisplayName().toAsciiLowerCase().indexOf(
-               m_xSearchEntry->get_text().toAsciiLowerCase())
-               >= 0)
-    {
-        bSearchMatch = true;
-    }
-
-    if (!bSearchMatch)
+    if (!matchPackage(xPackage->getDisplayName()))
         return;
 
     if (m_xBundledCbx->get_active() && (xPackage->getRepositoryName() == BUNDLED_PACKAGE_MANAGER) )
@@ -300,8 +311,41 @@ void ExtMgrDialog::addPackageToList( const uno::Reference< deployment::XPackage 
     }
 }
 
+bool ExtMgrDialog::matchPackage(const OUString& rDisplayName)
+{
+    // Live per-package predicate. The compiled matcher is prepared once per rebuild in updateList()
+    // and only tested here, so the filter cannot go stale while the package set changes underneath
+    // an active search. With the seeded default (literal, case-insensitive) this reproduces the old
+    // getDisplayName().toAsciiLowerCase().indexOf(...) contains match; a builder opt-in swaps in the
+    // controller's regex/options matcher without touching this call site.
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    return bEmpty || (bLegacyCompatibleLiteral && rDisplayName.indexOf(rState.Pattern) >= 0)
+           || (m_xSearchMatcher && m_xSearchMatcher->searchForward(rDisplayName));
+}
+
 void ExtMgrDialog::updateList()
 {
+    // Compile the shared literal/regex matcher exactly once for this rebuild so the per-package
+    // predicate in matchPackage() stays live but never recompiles per item. An empty or
+    // legacy-compatible literal query needs no compiled matcher and falls back to indexOf().
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    m_xSearchMatcher.reset();
+    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)
+        m_xSearchMatcher = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
+
+    // The constructor seeds controller state, which fires HandleSearch before TheExtensionManager
+    // has published this dialog; skip the rebuild until then (the manager runs its own initial
+    // createPackageList() right after construction).
+    if (!m_bConstructed)
+        return;
+
     // re-creates the list of packages with addEntry selecting the packages
     prepareChecking();
     m_rManager.createPackageList();

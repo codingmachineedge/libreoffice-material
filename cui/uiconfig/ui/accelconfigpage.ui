@@ -277,16 +277,51 @@ To quickly find a shortcut in this list, simply press the key combination.</prop
             <property name="vexpand">True</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkEntry" id="searchEntry">
+              <object class="GtkBox" id="searchEntryBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="can-focus">False</property>
                 <property name="margin-bottom">5</property>
-                <property name="truncate-multiline">True</property>
-                <property name="placeholder-text" translatable="yes" context="accelconfigpage|searchEntry">Type to search</property>
-                <child internal-child="accessible">
-                  <object class="AtkObject" id="searchEntry-atkobject">
-                    <property name="AtkObject::accessible-description" translatable="yes" context="accelconfigpage|extended_tip|searchEntry">Type here to search in the list of functions.</property>
+                <property name="hexpand">True</property>
+                <property name="orientation">horizontal</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkEntry" id="searchEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="truncate-multiline">True</property>
+                    <property name="placeholder-text" translatable="yes" context="accelconfigpage|searchEntry">Type to search</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="searchEntry-atkobject">
+                        <property name="AtkObject::accessible-description" translatable="yes" context="accelconfigpage|extended_tip|searchEntry">Type here to search in the list of functions.</property>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="searchEntry_regex_builder">
+                    <property name="label">.*</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes" context="accelconfigpage|searchEntry_regex_builder|tooltip_text">Build and test a regular expression</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject" id="searchEntry_regex_builder-atkobject">
+                        <property name="AtkObject::accessible-name" translatable="yes" context="accelconfigpage|searchEntry_regex_builder-atkobject">Regular expression builder</property>
+                        <property name="AtkObject::accessible-description" translatable="yes" context="accelconfigpage|extended_tip|searchEntry_regex_builder">Open the advanced regular expression builder for the function search filter.</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>

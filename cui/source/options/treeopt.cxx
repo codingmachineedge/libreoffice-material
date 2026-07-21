@@ -86,6 +86,7 @@
 #include <sfx2/app.hxx>
 #include <sfx2/dispatch.hxx>
 #include <sfx2/module.hxx>
+#include <sfx2/RegexSearchController.hxx>
 #include <sfx2/printopt.hxx>
 #include <sfx2/shell.hxx>
 #include <sfx2/viewsh.hxx>
@@ -454,6 +455,7 @@ OfaTreeOptionsDialog::OfaTreeOptionsDialog(weld::Window* pParent, bool fromExten
     , xTreeLB(m_xBuilder->weld_tree_view(u"pages"_ustr))
     , xTabBox(m_xBuilder->weld_container(u"box"_ustr))
     , m_xSearchEdit(m_xBuilder->weld_entry(u"searchEntry"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"searchEntry_regex_builder"_ustr))
     , m_pParent(pParent)
     , m_aUpdateDataTimer("OfaTreeOptionsDialog UpdateDataTimer")
     , bIsFirstInitialize(true)
@@ -478,18 +480,29 @@ OfaTreeOptionsDialog::OfaTreeOptionsDialog(weld::Window* pParent, bool fromExten
     xBackPB->connect_clicked(LINK(this, OfaTreeOptionsDialog, BackHdl_Impl));
     xApplyPB->connect_clicked(LINK(this, OfaTreeOptionsDialog, ApplyHdl_Impl));
     xOkPB->connect_clicked(LINK(this, OfaTreeOptionsDialog, ApplyHdl_Impl));
-    m_xSearchEdit->connect_changed(LINK(this, OfaTreeOptionsDialog, SearchUpdateHdl));
     m_xSearchEdit->connect_focus_out(LINK(this, OfaTreeOptionsDialog, FocusOut_Impl));
     m_xDialog->connect_help(LINK(this, OfaTreeOptionsDialog, HelpHdl_Impl));
 
     m_aUpdateDataTimer.SetInvokeHandler(LINK(this, OfaTreeOptionsDialog, ImplUpdateDataHdl));
     m_aUpdateDataTimer.SetTimeout(EDIT_UPDATEDATA_TIMEOUT);
 
-    // Initialize search util
-    m_options.AlgorithmType2 = util::SearchAlgorithms2::ABSOLUTE;
-    m_options.transliterateFlags |= TransliterationFlags::IGNORE_CASE;
-    m_options.searchFlag
-        |= (util::SearchFlags::REG_NOT_BEGINOFLINE | util::SearchFlags::REG_NOT_ENDOFLINE);
+    // Bind the search entry to the shared advanced regex builder. The controller takes ownership of
+    // the entry's changed callback and forwards it to SearchUpdateHdl, so the debounced
+    // ImplUpdateDataHdl -> applySearchFilter path keeps its exact behaviour, and the adjacent .*
+    // button opens the regular-expression builder popover.
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xDialog.get(), *m_xSearchEdit, *m_xRegexBuilderButton,
+        LINK(this, OfaTreeOptionsDialog, SearchUpdateHdl));
+    // Seed the field's legacy default: a case-insensitive literal ("contains") match reproducing
+    // the previous utl::TextSearch(ABSOLUTE + IGNORE_CASE) behaviour until the user opts into
+    // regular expressions or other options through the builder.
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::Literal;
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
+    // Seeding notifies the owner (SearchUpdateHdl), which arms the debounce timer; the query is
+    // empty on open, so cancel that pending tick to leave the initial page selection untouched.
+    m_aUpdateDataTimer.Stop();
 
     xTreeLB->set_accessible_name(sTitle);
 }
@@ -781,6 +794,11 @@ IMPL_LINK_NOARG(OfaTreeOptionsDialog, SearchUpdateHdl, weld::TextWidget&, void)
 
 IMPL_LINK_NOARG(OfaTreeOptionsDialog, ImplUpdateDataHdl, Timer*, void)
 {
+    // The controller (destroyed before the entry and timer during teardown) owns the query state
+    // that applySearchFilter reads; guard a late flush so it is never dereferenced after teardown.
+    if (!m_xRegexSearchController)
+        return;
+
     // initializeAllDialogs() can take a long time, show wait cursor and disable input
     m_xSearchEdit->set_editable(false);
     m_xSearchEdit->set_busy_cursor(true);
@@ -800,9 +818,8 @@ IMPL_LINK_NOARG(OfaTreeOptionsDialog, ImplUpdateDataHdl, Timer*, void)
         bIsFirstInitialize = false;
     }
 
-    // Apply the search filter
-    OUString aSearchTerm(m_xSearchEdit->get_text());
-    int nMatchFound = applySearchFilter(aSearchTerm);
+    // Apply the search filter (the query lives in the regex-search controller's state)
+    int nMatchFound = applySearchFilter();
 
     // Resume redraw
     xTreeLB->thaw();
@@ -929,9 +946,15 @@ void OfaTreeOptionsDialog::storeOptionsTree()
     }
 }
 
-int OfaTreeOptionsDialog::applySearchFilter(const OUString& rSearchTerm)
+int OfaTreeOptionsDialog::applySearchFilter()
 {
-    if (rSearchTerm.isEmpty())
+    // The shared regex-search controller owns the query state; rState.Pattern mirrors the search
+    // entry text that legacy code read directly, so the filter keeps its exact behaviour while the
+    // builder can additionally opt into regular-expression / option matching.
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+
+    if (bEmpty)
     {
         clearOptionsDialog();
         xTreeLB->clear();
@@ -940,31 +963,48 @@ int OfaTreeOptionsDialog::applySearchFilter(const OUString& rSearchTerm)
         return 0;
     }
 
-    m_options.searchString = rSearchTerm;
-    utl::TextSearch textSearch(m_options);
+    // Compile the controller's matcher once, before iterating the pages. The legacy default is a
+    // case-insensitive literal ("contains") search, so bLegacyCompatibleLiteral is false and the
+    // compiled ABSOLUTE + IGNORE_CASE utl::TextSearch reproduces the previous behaviour exactly; the
+    // indexOf fast-path only applies to a case-sensitive literal default, and regex / other options
+    // arrive solely through the builder.
+    const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    std::unique_ptr<utl::TextSearch> xSearch;
+    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)
+        xSearch = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
 
     clearOptionsDialog();
 
     if (xTreeLB->n_children() > 0)
         xTreeLB->clear();
 
+    // Assemble one composite "<parent> <page> <control strings>" subject per options page, exactly
+    // as before, so the match decision below is a single range-for over OUString subjects; the
+    // parent/child id association used to rebuild the tree is preserved by the parallel lookup.
+    std::vector<OUString> aPageSubjects;
+    aPageSubjects.reserve(m_aTreePageIds.size());
+    for (const OptionsPageIdInfo* pPageIdInfo : m_aTreePageIds)
+    {
+        const OUString sPageStrings = TreeOptHelper::getStringsFromDialog(pPageIdInfo->m_nPageId);
+        aPageSubjects.push_back(pPageIdInfo->m_sParentName + " " + pPageIdInfo->m_sPageName + " "
+                                + sPageStrings);
+    }
+
     std::vector<std::pair<sal_uInt16, std::vector<sal_uInt16>>> aFoundIdsVector;
 
-    for (std::size_t i = 0; i < m_aTreePageIds.size(); ++i)
+    std::size_t nSubjectIndex = 0;
+    for (const OUString& rPageStrings : aPageSubjects)
     {
-        const OUString sParentName = m_aTreePageIds[i]->m_sParentName;
-        const OUString sPageName = m_aTreePageIds[i]->m_sPageName;
-        const sal_uInt16 nParentId = m_aTreePageIds[i]->m_nParentId;
-        const sal_uInt16 nPageId = m_aTreePageIds[i]->m_nPageId;
+        const OptionsPageIdInfo* pPageIdInfo = m_aTreePageIds[nSubjectIndex++];
+        const sal_uInt16 nParentId = pPageIdInfo->m_nParentId;
+        const sal_uInt16 nPageId = pPageIdInfo->m_nPageId;
 
-        const OUString sPageStrings = TreeOptHelper::getStringsFromDialog(nPageId);
-        const OUString sPageNameAndStrings = sParentName + " " + sPageName + " " + sPageStrings;
-
-        sal_Int32 aStartPos = 0;
-        sal_Int32 aEndPos = sPageNameAndStrings.getLength();
-
-        // check if rSearchTerm matches with sPageNameAndStrings
-        if (textSearch.SearchForward(sPageNameAndStrings, &aStartPos, &aEndPos))
+        // Preserve the legacy case-insensitive "contains" match, and let the builder opt into
+        // regular expressions / other options through the controller-compiled matcher.
+        if (bEmpty || (bLegacyCompatibleLiteral && rPageStrings.indexOf(rState.Pattern) >= 0)
+            || (xSearch && xSearch->searchForward(rPageStrings)))
         {
             bool isFound = false;
             for (auto& aEntryId : aFoundIdsVector)

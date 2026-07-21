@@ -26,6 +26,7 @@
 
 #include <sfx2/filedlghelper.hxx>
 #include <sfx2/minfitem.hxx>
+#include <sfx2/RegexSearchController.hxx>
 #include <sfx2/sfxresid.hxx>
 
 #include <vcl/event.hxx>
@@ -987,6 +988,7 @@ SfxAcceleratorConfigPage::SfxAcceleratorConfigPage(weld::Container* pPage,
     , m_xSaveButton(m_xBuilder->weld_button(u"save"_ustr))
     , m_xResetButton(m_xBuilder->weld_button(u"reset"_ustr))
     , m_xSaveInListBox(m_xBuilder->weld_combo_box(u"savein"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"searchEntry_regex_builder"_ustr))
     , m_xComponentDisposedListener(new ComponentDisposedListener(this))
 {
     Size aSize(m_xEntriesBox->get_approximate_digit_width() * 40,
@@ -1016,7 +1018,8 @@ SfxAcceleratorConfigPage::SfxAcceleratorConfigPage(weld::Container* pPage,
     m_xOfficeButton->connect_toggled(LINK(this, SfxAcceleratorConfigPage, RadioHdl));
     m_xDocumentButton->connect_toggled(LINK(this, SfxAcceleratorConfigPage, DocumentRadioHdl));
     m_xSaveInListBox->connect_changed(LINK(this, SfxAcceleratorConfigPage, SelectSaveInLocation));
-    m_xSearchEdit->connect_changed(LINK(this, SfxAcceleratorConfigPage, SearchUpdateHdl));
+    // The search entry's changed callback is owned by m_xRegexSearchController (wired below), which
+    // forwards it to SearchUpdateHdl. Focus-out still flushes the pending debounce directly.
     m_xSearchEdit->connect_focus_out(LINK(this, SfxAcceleratorConfigPage, FocusOut_Impl));
 
     // detect max keyname width
@@ -1034,11 +1037,6 @@ SfxAcceleratorConfigPage::SfxAcceleratorConfigPage(weld::Container* pPage,
     std::vector<int> aWidths{ nNewTab };
     m_xEntriesBox->set_column_fixed_widths(aWidths);
 
-    //Initialize search util
-    m_options.AlgorithmType2 = util::SearchAlgorithms2::ABSOLUTE;
-    m_options.transliterateFlags |= TransliterationFlags::IGNORE_CASE;
-    m_options.searchFlag
-        |= (util::SearchFlags::REG_NOT_BEGINOFLINE | util::SearchFlags::REG_NOT_ENDOFLINE);
     // initialize GroupBox
     m_xGroupLBox->SetFunctionListBox(m_xFunctionBox.get());
 
@@ -1047,6 +1045,24 @@ SfxAcceleratorConfigPage::SfxAcceleratorConfigPage(weld::Container* pPage,
 
     m_aUpdateDataTimer.SetInvokeHandler(LINK(this, SfxAcceleratorConfigPage, ImplUpdateDataHdl));
     m_aUpdateDataTimer.SetTimeout(EDIT_UPDATEDATA_TIMEOUT);
+
+    // Bind the function search filter to the shared advanced regex builder. The controller owns the
+    // entry's changed callback and forwards it to SearchUpdateHdl, so the debounced live filter keeps
+    // working while the builder button opens the regular-expression popover. The seeded state
+    // reproduces the field's legacy behaviour exactly: a case-insensitive literal substring match
+    // over the function labels (the previous ABSOLUTE + IGNORE_CASE utl::TextSearch) until the user
+    // opts into regex/options through the builder.
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        GetFrameWeld(), *m_xSearchEdit, *m_xRegexBuilderButton,
+        LINK(this, SfxAcceleratorConfigPage, SearchUpdateHdl));
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::Literal;
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
+    // Seeding the state notifies the owner changed handler once, which arms the debounce timer.
+    // The legacy page never filtered at construction time, so cancel that one-off trigger; the
+    // filter starts on the first real edit exactly as before.
+    m_aUpdateDataTimer.Stop();
 }
 
 std::vector<sal_uInt16> SfxAcceleratorConfigPage::GetReservedKeyCodes()
@@ -1365,8 +1381,7 @@ IMPL_LINK(SfxAcceleratorConfigPage, SelectHdl, weld::ItemView&, rListBox, void)
         // Pause redraw (Do not redraw at each removal)
         m_xFunctionBox->freeze();
         // Apply the search filter to the functions list
-        OUString aSearchTerm(m_xSearchEdit->get_text());
-        int nMatchFound = applySearchFilter(aSearchTerm);
+        int nMatchFound = applySearchFilter();
         // Resume redraw
         m_xFunctionBox->thaw();
         if (nMatchFound != -1)
@@ -1900,26 +1915,54 @@ OUString SfxAcceleratorConfigPage::GetLabel4Command(const OUString& sCommand)
 }
 
 /*
- * Remove entries which doesn't contain the search term
+ * Remove entries which don't match the search term. Matching runs through the shared regex
+ * controller: the legacy default reproduces the previous ABSOLUTE + IGNORE_CASE utl::TextSearch
+ * (a case-insensitive literal substring) exactly, and the builder button opts into regex/options.
  */
-int SfxAcceleratorConfigPage::applySearchFilter(OUString const& rSearchTerm)
+int SfxAcceleratorConfigPage::applySearchFilter()
 {
-    if (rSearchTerm.isEmpty())
+    // During teardown m_xRegexSearchController is destroyed first and re-installs the entry's
+    // changed callback, so a late focus/debounce flush must not dereference the freed controller.
+    if (!m_xRegexSearchController)
         return -1;
 
-    m_options.searchString = rSearchTerm;
-    utl::TextSearch textSearch(m_options);
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    if (bEmpty)
+        return -1;
 
-    for (int i = m_xFunctionBox->n_children(); i > 0; --i)
+    const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    // utl::TextSearch equates straight and typographic quotes in literal mode. Keep the old exact
+    // case-insensitive substring semantics until the user chooses different matching options.
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    std::unique_ptr<utl::TextSearch> xSearch;
+    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)
+        xSearch = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
+
+    const int nRowCount = m_xFunctionBox->n_children();
+    std::vector<OUString> aRowTexts;
+    aRowTexts.reserve(nRowCount);
+    for (int nRow = 0; nRow < nRowCount; ++nRow)
+        aRowTexts.push_back(m_xFunctionBox->get_text(nRow));
+
+    // Decide each row through the exact legacy-preserving compatibility route, then remove the
+    // non-matching rows bottom-up so surviving row indices stay valid. The per-row command URL/id
+    // and icon association of the kept rows is untouched, exactly as the previous in-place removal.
+    std::vector<int> aRowsToRemove;
+    int nRowIndex = 0;
+    for (const OUString& aRowText : aRowTexts)
     {
-        int nEntry = i - 1;
-        OUString aStr = m_xFunctionBox->get_text(nEntry);
-        sal_Int32 aStartPos = 0;
-        sal_Int32 aEndPos = aStr.getLength();
-
-        if (!textSearch.SearchForward(aStr, &aStartPos, &aEndPos))
-            m_xFunctionBox->remove(nEntry);
+        const bool bMatches
+            = bEmpty || (bLegacyCompatibleLiteral && aRowText.indexOf(rState.Pattern) >= 0)
+              || (xSearch && xSearch->searchForward(aRowText));
+        if (!bMatches)
+            aRowsToRemove.push_back(nRowIndex);
+        ++nRowIndex;
     }
+
+    for (auto it = aRowsToRemove.rbegin(); it != aRowsToRemove.rend(); ++it)
+        m_xFunctionBox->remove(*it);
 
     return m_xFunctionBox->n_children() ? 0 : -1;
 }

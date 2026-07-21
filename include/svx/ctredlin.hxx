@@ -45,6 +45,10 @@ namespace utl {
     class TextSearch;
 }
 
+namespace i18nutil { struct SearchOptions2; }
+
+namespace sfx2 { class RegexSearchController; }
+
 namespace comphelper::string { class NaturalStringSorter; }
 
 class SvtCalendarBox;
@@ -130,6 +134,7 @@ public:
     void            SetAuthor(const OUString &);
     void            SetFilterComment(bool bFlag);
     void            SetCommentParams( const utl::SearchParam* pSearchPara );
+    void            SetCommentParams( const i18nutil::SearchOptions2& rSearchOptions );
 
     void            UpdateFilterTest();
     // } For FilterPage only
@@ -190,6 +195,11 @@ class SAL_WARN_UNUSED SVX_DLLPUBLIC SvxTPFilter final : public SvxTPage
     std::unique_ptr<weld::ComboBox> m_xLbAction;
     std::unique_ptr<weld::CheckButton> m_xCbComment;
     std::unique_ptr<weld::Entry> m_xEdComment;
+    // The advanced regular-expression builder button sits next to the comment
+    // filter entry; the controller is declared last so it is destroyed first and
+    // can re-install the entry's / button's original callbacks in its destructor.
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     DECL_DLLPRIVATE_LINK( SelDateHdl, weld::ComboBox&, void );
     DECL_DLLPRIVATE_LINK( RowEnableHdl, weld::Toggleable&, void );

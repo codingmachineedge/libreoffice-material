@@ -30,6 +30,7 @@
 
 #include <helpids.h>
 
+#include <sfx2/RegexSearchController.hxx>
 #include <svx/ctredlin.hxx>
 #include <o3tl/unreachable.hxx>
 
@@ -260,6 +261,16 @@ void SvxRedlineTable::SetCommentParams( const utl::SearchParam* pSearchPara )
     {
         m_pCommentSearcher.reset(new utl::TextSearch(*pSearchPara, LANGUAGE_SYSTEM ));
     }
+}
+
+void SvxRedlineTable::SetCommentParams( const i18nutil::SearchOptions2& rSearchOptions )
+{
+    // Advanced-builder hand-off: build the comment matcher directly from the shared
+    // RegexSearchController's SearchOptions2.  With the controller's default seed
+    // (RegularExpression / CaseInsensitive) this reproduces the historical
+    // utl::SearchParam(text, SearchType::Regexp, /*bCaseSensitive=*/false) exactly,
+    // while letting the user opt into other regex modes through the builder.
+    m_pCommentSearcher.reset(new utl::TextSearch(rSearchOptions));
 }
 
 bool SvxRedlineTable::IsValidEntry(std::u16string_view rAuthorStr, const DateTime& rDateTime,
@@ -527,9 +538,24 @@ SvxTPFilter::SvxTPFilter(weld::Container* pParent)
 
     Link<weld::TextWidget&, void> a4Link = LINK(this, SvxTPFilter, ModifyHdl);
     m_xEdRange->connect_changed(a4Link);
-    m_xEdComment->connect_changed(a4Link);
     m_xLbAction->connect_changed(LINK( this, SvxTPFilter, ModifyListBoxHdl));
     m_xLbAuthor->connect_changed(LINK( this, SvxTPFilter, ModifyListBoxHdl));
+
+    // Bind the comment filter entry to the shared advanced regular-expression
+    // builder.  RegexSearchController takes ownership of the entry's changed
+    // callback (forwarding it to ModifyHdl, so the shared m_bModified dirty flag is
+    // preserved for the Range entry too) and of the builder button's clicked
+    // callback.  The comment filter's legacy default is a case-insensitive regular
+    // expression, so seed the controller to RegularExpression / CaseInsensitive; the
+    // deferred DeactivatePage() then hands GetSearchOptions() to the redline table.
+    m_xRegexBuilderButton = m_xBuilder->weld_button(u"commentedit_regex_builder"_ustr);
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xContainer.get(), *m_xEdComment, *m_xRegexBuilderButton,
+        LINK(this, SvxTPFilter, ModifyHdl));
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::RegularExpression;
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
 
     RowEnableHdl(*m_xCbDate);
     RowEnableHdl(*m_xCbAuthor);
@@ -701,7 +727,19 @@ void SvxTPFilter::HideRange(bool bHide)
 
 void SvxTPFilter::SetComment(const OUString &rComment)
 {
+    // Programmatic text does not reach the controller's changed callback, so keep
+    // its state pattern in sync; DeactivatePage() reads GetSearchOptions() from it.
+    // Preserve m_bModified so restoring a saved comment does not mark the filter
+    // dirty (the controller's SetState() notifies the owner changed handler).
+    const bool bWasModified = m_bModified;
     m_xEdComment->set_text(rComment);
+    if (m_xRegexSearchController)
+    {
+        sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+        aState.Pattern = rComment;
+        m_xRegexSearchController->SetState(aState);
+    }
+    m_bModified = bWasModified;
 }
 
 OUString SvxTPFilter::GetComment()const
@@ -840,6 +878,8 @@ IMPL_LINK(SvxTPFilter, RowEnableHdl, weld::Toggleable&, rCB, void)
     else if (&rCB == m_xCbComment.get())
     {
         m_xEdComment->set_sensitive(m_xCbComment->get_active());
+        if (m_xRegexBuilderButton)
+            m_xRegexBuilderButton->set_sensitive(m_xCbComment->get_active());
     }
     m_bModified = true;
 }
@@ -884,10 +924,7 @@ void SvxTPFilter::DeactivatePage()
 
             m_pRedlineTable->SetFilterComment(IsComment());
 
-            utl::SearchParam aSearchParam( m_xEdComment->get_text(),
-                    utl::SearchParam::SearchType::Regexp,false );
-
-            m_pRedlineTable->SetCommentParams(&aSearchParam);
+            m_pRedlineTable->SetCommentParams(m_xRegexSearchController->GetSearchOptions());
 
             m_pRedlineTable->UpdateFilterTest();
         }

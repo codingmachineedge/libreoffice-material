@@ -44,6 +44,7 @@ class SfxMacroInfoItem;
 namespace sfx2
 {
 class FileDialogHelper;
+class RegexSearchController;
 }
 
 enum class StartFileDialogType
@@ -88,7 +89,6 @@ private:
 
     // For search
     Timer m_aUpdateDataTimer;
-    i18nutil::SearchOptions2 m_options;
 
     std::unique_ptr<weld::TreeView> m_xEntriesBox;
     std::unique_ptr<weld::RadioButton> m_xOfficeButton;
@@ -104,6 +104,11 @@ private:
     std::unique_ptr<weld::Button> m_xSaveButton;
     std::unique_ptr<weld::Button> m_xResetButton;
     std::unique_ptr<weld::ComboBox> m_xSaveInListBox;
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    // Destroyed before m_xSearchEdit and m_xRegexBuilderButton: the controller re-installs the
+    // search entry's changed callback and restores the builder button's tooltip/accessibility in
+    // its destructor, so both widgets must still be alive when it runs.
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     rtl::Reference<ComponentDisposedListener> m_xComponentDisposedListener;
     friend class ComponentDisposedListener;
@@ -127,7 +132,7 @@ private:
     DECL_LINK(SaveHdl, sfx2::FileDialogHelper*, void);
 
     OUString GetLabel4Command(const OUString& rCommand);
-    int applySearchFilter(OUString const& rSearchTerm);
+    int applySearchFilter();
     void InitAccCfg();
     sal_Int32 MapKeyCodeToPos(const vcl::KeyCode& rCode) const;
     void StartFileDialog(StartFileDialogType nType, const OUString& rTitle);
