@@ -9,6 +9,7 @@
 
 #include "NotificationOverlayWindow.hxx"
 
+#include <vcl/weld/Container.hxx>
 #include <vcl/window.hxx>
 
 #include <algorithm>

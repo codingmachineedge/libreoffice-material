@@ -17,6 +17,7 @@
 #include <sfx2/strings.hrc>
 
 #include <vcl/weld/Box.hxx>
+#include <vcl/weld/Builder.hxx>
 #include <vcl/weld/Button.hxx>
 #include <vcl/weld/Label.hxx>
 
