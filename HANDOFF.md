@@ -1,15 +1,16 @@
 # Windows-only handoff — 2026-07-20
 
-This handoff pauses the Windows build/rewrite work at the pushed `main` tip
-`f8f7d8f6e5c3b638ae710652afcf6681f409225f`.
+This handoff is the pushed `main` tip `2498c3893` (the source/build SHA immediately
+before this documentation-only commit is
+`f8f7d8f6e5c3b638ae710652afcf6681f409225f`).
 
 ## What is complete at this tip
 
-- The repository is clean on `main` and the tip is pushed to
+- The repository is clean on `main` and the handoff tip is pushed to
   `origin/main` (`https://github.com/Ding-Ding-Projects/libreoffice-material.git`).
 - A local VS 2026 build completed with the retained build root
   `C:\Users\cntow\lo-material-vs2026-577059e27`.
-- The built payload is at
+- The built payload (for the pre-handoff source SHA above) is at
   `C:\Users\cntow\lo-material-vs2026-577059e27\build\instdir`; its
   `program/version.ini` build ID is the exact handoff SHA above.
 - Native notification-store and regex tests, the notification/regex/no-donate/
