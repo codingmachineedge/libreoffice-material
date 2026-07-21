@@ -40,6 +40,7 @@
 #include <sfx2/viewsh.hxx>
 #include <sfx2/viewfrm.hxx>
 #include <appdata.hxx>
+#include "../notification/NotificationPresenter.hxx"
 #include <sfx2/module.hxx>
 #include <sfx2/notificationcenter.hxx>
 #include <sfx2/event.hxx>
@@ -167,6 +168,11 @@ SfxApplication::~SfxApplication()
 {
     SAL_WARN_IF(!GetObjectShells_Impl().empty(), "sfx.appl", "Memory leak: some object shells were not removed!");
 
+    // Tear down the visible notification surfaces before joining the service, while VCL is alive:
+    // destroying the presenter first disposes the InterimItemWindow overlays and expires its
+    // alive-token so any completion the service still drains during shutdown is a guarded no-op.
+    pImpl->mxNotificationPresenter.reset();
+
     // Join the notification worker and cancel its queued UI callbacks while VCL is still alive.
     pImpl->mxNotificationCenter.reset();
 
@@ -192,6 +198,14 @@ sfx2::NotificationCenterService& SfxApplication::GetNotificationCenter()
     if (!pImpl->mxNotificationCenter)
         pImpl->mxNotificationCenter = sfx2::NotificationCenterService::createForProfile();
     return *pImpl->mxNotificationCenter;
+}
+
+sfx2::NotificationPresenter& SfxApplication::GetNotificationPresenter()
+{
+    assert(Application::IsMainThread());
+    if (!pImpl->mxNotificationPresenter)
+        pImpl->mxNotificationPresenter = std::make_unique<sfx2::NotificationPresenter>();
+    return *pImpl->mxNotificationPresenter;
 }
 
 

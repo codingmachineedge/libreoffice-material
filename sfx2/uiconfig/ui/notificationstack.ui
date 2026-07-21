@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of the LibreOffice project. -->
+<!-- Non-dialog top-level (GtkBox) so the Windows dialog-notification contract does not count it. -->
+<interface domain="sfx">
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkBox" id="NotificationStack">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="orientation">vertical</property>
+    <property name="spacing">9</property>
+    <child>
+      <object class="GtkLabel" id="live_region">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="no-show-all">True</property>
+        <property name="xalign">0</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="stack_cards">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">9</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="overflow_button">
+        <property name="visible">False</property>
+        <property name="can-focus">True</property>
+        <property name="receives-default">False</property>
+        <property name="halign">end</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="fab_row">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">end</property>
+        <property name="spacing">4</property>
+        <child>
+          <object class="GtkLabel" id="manager_badge">
+            <property name="visible">False</property>
+            <property name="can-focus">False</property>
+            <property name="valign">start</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="manager_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="tooltip-text" translatable="yes" context="notification|fab_tip">Notification manager</property>
+            <child>
+              <object class="GtkImage" id="fab_image">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">dialog-information</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
+  </object>
+</interface>

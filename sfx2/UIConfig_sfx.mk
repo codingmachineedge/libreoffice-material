@@ -55,6 +55,9 @@ $(eval $(call gb_UIConfig_add_uifiles,sfx,\
 	sfx2/uiconfig/ui/panel \
 	sfx2/uiconfig/ui/password \
 	sfx2/uiconfig/ui/notebookbarpopup \
+	sfx2/uiconfig/ui/notificationcard \
+	sfx2/uiconfig/ui/notificationmanager \
+	sfx2/uiconfig/ui/notificationstack \
 	sfx2/uiconfig/ui/printeroptionsdialog \
 	sfx2/uiconfig/ui/propertychip \
 	sfx2/uiconfig/ui/propertychiprow \

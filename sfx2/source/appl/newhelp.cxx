@@ -20,6 +20,7 @@
 
 #include "newhelp.hxx"
 #include <sfx2/sfxresid.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include "helpinterceptor.hxx"
 #include <helper.hxx>
 #include <srchdlg.hxx>
@@ -1919,9 +1920,13 @@ void SfxHelpTextWindow_Impl::FindHdl(sfx2::SearchDialog* pDlg)
                 else
                 {
                     assert(m_xSrchDlg && "no search dialog");
-                    std::unique_ptr<weld::MessageDialog> xBox(Application::CreateMessageDialog(m_xSrchDlg->getDialog(),
-                                                              VclMessageType::Info, VclButtonsType::Ok, SfxResId(STR_INFO_NOSEARCHTEXTFOUND)));
-                    xBox->run();
+                    // Transient, one-way "no matches" notice: route it to the bottom-right stack
+                    // instead of a modal OK box, then keep the search dialog interactive. The notice
+                    // is a fixed built-in string with no document data, so it routes as SafeDisplayText
+                    // under the audited core-ui source.
+                    sfx2::NotificationRouter::NotifyInfo(
+                        "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Information,
+                        SfxResId(STR_INFO_NOSEARCHTEXTFOUND));
                     m_xSrchDlg->SetFocusOnEdit();
                 }
             }

@@ -44,6 +44,7 @@
 #include <sfx2/viewsh.hxx>
 #include "viewimp.hxx"
 #include <sfx2/viewfrm.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <sfx2/printer.hxx>
 #include <sfx2/sfxresid.hxx>
 #include <sfx2/request.hxx>
@@ -828,10 +829,13 @@ void SfxViewShell::ExecPrint_Impl( SfxRequest &rReq )
                 // if printer is busy, abort configuration
                 if ( !bSilent )
                 {
-                    std::unique_ptr<weld::MessageDialog> xBox(Application::CreateMessageDialog(nullptr,
-                                                                             VclMessageType::Info, VclButtonsType::Ok,
-                                                                             SfxResId(STR_ERROR_PRINTER_BUSY)));
-                    xBox->run();
+                    // Transient printer-busy notice: route it to the bottom-right stack instead of a
+                    // modal OK box. The abort below still happens; this is a one-way warning with a
+                    // fixed built-in string and no document data, so it routes as SafeDisplayText
+                    // under the audited core-ui source.
+                    sfx2::NotificationRouter::NotifyInfo(
+                        "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Warning,
+                        SfxResId(STR_ERROR_PRINTER_BUSY));
                 }
                 rReq.SetReturnValue(SfxBoolItem(0,false));
 

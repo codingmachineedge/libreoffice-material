@@ -61,6 +61,7 @@ class SbxValue;
 namespace sfx2
 {
     class NotificationCenterService;
+    class NotificationPresenter;
     namespace sidebar {
         class Theme;
     }
@@ -226,6 +227,9 @@ public:
 
     /** Lazily starts the application-owned asynchronous notification history service. */
     sfx2::NotificationCenterService& GetNotificationCenter();
+
+    /** Lazily starts the application-owned notification presenter (visible stack + manager). */
+    sfx2::NotificationPresenter& GetNotificationPresenter();
 
     /** this Theme contains Images so must be deleted before DeInitVCL */
     SAL_DLLPRIVATE sfx2::sidebar::Theme & GetSidebarTheme();
