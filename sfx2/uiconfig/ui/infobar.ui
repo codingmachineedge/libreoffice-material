@@ -8,6 +8,14 @@
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
     <property name="orientation">vertical</property>
+    <!-- docs/design/07-feedback.md 7.6: the strip is a polite live region so a newly shown or
+         updated banner is announced without stealing focus (SfxInfoBarWindow refreshes the
+         accessible name with the severity + message text). -->
+    <child internal-child="accessible">
+      <object class="AtkObject" id="InfoBar-atkobject">
+        <property name="AtkObject::accessible-role">notification</property>
+      </object>
+    </child>
     <child>
       <object class="GtkScrolledWindow">
         <property name="visible">True</property>
@@ -27,8 +35,13 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
-                <property name="border-width">2</property>
-                <property name="column-spacing">6</property>
+                <!-- docs/design/07-feedback.md 7.6 reference geometry: 12px vertical / 16px
+                     horizontal padding and a 12px inter-column gap. -->
+                <property name="margin-start">16</property>
+                <property name="margin-end">16</property>
+                <property name="margin-top">12</property>
+                <property name="margin-bottom">12</property>
+                <property name="column-spacing">12</property>
                 <child>
                   <object class="GtkBox" id="right">
                     <property name="visible">True</property>
@@ -91,12 +104,15 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="valign">start</property>
-                    <property name="spacing">6</property>
+                    <!-- docs/design/07-feedback.md 7.6: 12px leading-icon-to-text gap. -->
+                    <property name="spacing">12</property>
                     <child>
                       <object class="GtkImage" id="image">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="valign">center</property>
+                        <!-- docs/design/07-feedback.md 7.6: 20px leading severity icon. -->
+                        <property name="pixel-size">20</property>
                         <property name="icon-name">missing-image</property>
                       </object>
                       <packing>

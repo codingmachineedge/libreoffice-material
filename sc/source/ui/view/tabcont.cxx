@@ -23,6 +23,8 @@
 #include <sfx2/docfile.hxx>
 #include <tools/urlobj.hxx>
 #include <vcl/commandevent.hxx>
+#include <vcl/MaterialTokens.hxx>
+#include <vcl/settings.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/weld/Menu.hxx>
 #include <vcl/weld/Window.hxx>
@@ -40,6 +42,50 @@
 #include <gridwin.hxx>
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <comphelper/lok.hxx>
+
+#include <cstdlib>
+#include <optional>
+#include <string_view>
+
+namespace
+{
+// Material sheet-tab overlay tokens, resolved from the single named-token table
+// over definition.xml (vcl::MaterialTokens) rather than any raw literal, and
+// only while VCL_FILE_WIDGET_THEME=material is the documented active theme (the
+// docs/design/05-navigation.md 6 verification checkpoints). Under the default or
+// native theme this returns nothing, so the sheet-tab strip keeps its existing
+// TabBar rendering untouched.
+struct ScMaterialSheetTabTokens
+{
+    Color aOutlineVariant;     // @outline-variant strip top rule (design 6.1)
+    sal_Int32 nStrokeThin;     // @stroke-thin rule thickness
+    sal_Int32 nStrokeStandard; // @stroke-standard accent-strip thickness
+    sal_Int32 nAccentInset;    // @space-tab-inline horizontal inset of the accent
+};
+
+std::optional<ScMaterialSheetTabTokens> lcl_getMaterialSheetTabTokens()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+
+    const std::optional<Color> oOutlineVariant = aTokens.findColor("outline-variant");
+    const std::optional<sal_Int32> oStrokeThin = aTokens.findMetric("stroke-thin");
+    const std::optional<sal_Int32> oStrokeStandard = aTokens.findMetric("stroke-standard");
+    const std::optional<sal_Int32> oAccentInset = aTokens.findMetric("space-tab-inline");
+    if (!oOutlineVariant || !oStrokeThin || !oStrokeStandard || !oAccentInset)
+        return std::nullopt;
+
+    return ScMaterialSheetTabTokens{ *oOutlineVariant, *oStrokeThin, *oStrokeStandard,
+                                     *oAccentInset };
+}
+}
 
 ScTabControl::ScTabControl( vcl::Window* pParent, ScViewData& rData )
     : TabBar(pParent, WB_3DLOOK | WB_MINSCROLL | WB_SCROLL | WB_RANGESELECT | WB_MULTISELECT | WB_DRAG, true)
@@ -74,7 +120,7 @@ ScTabControl::ScTabControl( vcl::Window* pParent, ScViewData& rData )
         if ( !rDoc.IsDefaultTabBgColor(i) )
         {
             aTabBgColor = rDoc.GetTabBgColor(i);
-            SetTabBgColor( static_cast<sal_uInt16>(i)+1, aTabBgColor );
+            SetMaterialAwareTabBgColor( static_cast<sal_uInt16>(i)+1, aTabBgColor );
         }
     }
 
@@ -383,13 +429,25 @@ void ScTabControl::UpdateStatus()
             aString.clear();
         }
 
-        if ( aString != GetPageText(static_cast<sal_uInt16>(i)+1) || (GetTabBgColor(static_cast<sal_uInt16>(i)+1) != aTabBgColor) )
+        // Compare against the colour actually shown. Under the Material theme the
+        // user colour is held in maMaterialTabColors (the base tab stays neutral),
+        // so comparing GetTabBgColor()==COL_AUTO against the document colour would
+        // otherwise force a needless rebuild on every UpdateStatus call.
+        sal_uInt16 nId = static_cast<sal_uInt16>(i)+1;
+        Color aShownBgColor = GetTabBgColor(nId);
+        if (IsMaterialSheetTabActive())
+        {
+            auto it = maMaterialTabColors.find(nId);
+            aShownBgColor = (it != maMaterialTabColors.end()) ? it->second : COL_AUTO;
+        }
+        if ( aString != GetPageText(nId) || (aShownBgColor != aTabBgColor) )
             bModified = true;
     }
 
     if (bModified)
     {
         Clear();
+        maMaterialTabColors.clear();
         for (i=0; i<nCount; i++)
         {
             if (rDoc.IsVisible(i))
@@ -407,7 +465,7 @@ void ScTabControl::UpdateStatus()
                     if ( !rDoc.IsDefaultTabBgColor(i) )
                     {
                         aTabBgColor = rDoc.GetTabBgColor(i);
-                        SetTabBgColor(static_cast<sal_uInt16>(i)+1, aTabBgColor );
+                        SetMaterialAwareTabBgColor(static_cast<sal_uInt16>(i)+1, aTabBgColor );
                     }
                 }
             }
@@ -693,6 +751,96 @@ void ScTabControl::Mirror()
             SetPointerPosPixel( aRect.Center() );
         nSelPageIdByMouse = TabBar::PAGE_NOT_FOUND;  // only once after a Select()
     }
+}
+
+bool ScTabControl::IsMaterialSheetTabActive() const
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return false;
+    // Resolved high contrast bypasses the Material drawing path and restores the
+    // captured native StyleSettings baseline, so the overlay must stay inert.
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return false;
+    return true;
+}
+
+void ScTabControl::SetMaterialAwareTabBgColor( sal_uInt16 nPageId, const Color& rColor )
+{
+    // Only hold the user colour out of the TabBar full-tab fill when the accent
+    // strip will actually be drawn - i.e. exactly the pair of conditions Paint()
+    // gates the overlay on: IsMaterialSheetTabActive() (theme active, not high
+    // contrast) AND the overlay tokens resolve. If Material is active but a token
+    // cannot be resolved, fall back to the native full-fill so the sheet-colour
+    // indicator can never vanish (docs/design/05-navigation.md 6.4).
+    if ( IsMaterialSheetTabActive() && lcl_getMaterialSheetTabTokens().has_value() )
+    {
+        // The base tab keeps its neutral Material surface plus the selection
+        // treatment; the colour is rendered as an accent strip under the label, so
+        // recolouring can never mask which sheet is active.
+        maMaterialTabColors[nPageId] = rColor;
+        SetTabBgColor( nPageId, COL_AUTO );
+    }
+    else
+    {
+        SetTabBgColor( nPageId, rColor );
+    }
+}
+
+void ScTabControl::Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect )
+{
+    // The base class owns tab layout, drag-reorder, rename-in-place, multi-select
+    // and the LibreOfficeKit path; the Material work is purely additive on top so
+    // the native / default theme rendering is left completely untouched.
+    TabBar::Paint( rRenderContext, rRect );
+
+    if ( IsMaterialSheetTabActive() )
+        PaintMaterialSheetTabOverlay( rRenderContext );
+}
+
+void ScTabControl::PaintMaterialSheetTabOverlay( vcl::RenderContext& rRenderContext )
+{
+    const std::optional<ScMaterialSheetTabTokens> oTokens = lcl_getMaterialSheetTabTokens();
+    if ( !oTokens )
+        return;
+
+    rRenderContext.Push( vcl::PushFlags::LINECOLOR | vcl::PushFlags::FILLCOLOR );
+
+    // Strip top rule: @outline-variant hairline across the whole sheet-tab strip
+    // (docs/design/05-navigation.md 6.1). GetPageArea() is already mirrored in RTL.
+    const tools::Rectangle aPageArea = GetPageArea();
+    rRenderContext.SetLineColor( oTokens->aOutlineVariant );
+    rRenderContext.DrawLine( aPageArea.TopLeft(), aPageArea.TopRight() );
+
+    // Colour accent strip under each user-coloured tab. The loop walks the stored
+    // colours only and never consults GetCurPageId()/IsPageSelected(), so the
+    // accent is fully independent of the active-tab treatment.
+    rRenderContext.SetLineColor();
+    // Accent-strip thickness is @stroke-standard alone (design 6.4); @stroke-thin is
+    // resolved as the strip top-rule thickness and rendered as the hairline DrawLine
+    // above. The lift off the tab bottom edge below is a raw pixel inset: the
+    // vertical placement is honestly-deferred pixel geometry, not a token metric.
+    const tools::Long nThickness = oTokens->nStrokeStandard;
+    const tools::Long nBottomInsetPx = 2;
+    for ( const auto& [ nPageId, aColor ] : maMaterialTabColors )
+    {
+        const tools::Rectangle aRect = GetPageRect( nPageId );
+        if ( aRect.IsEmpty() )
+            continue;
+
+        tools::Rectangle aAccent( aRect );
+        aAccent.AdjustLeft( oTokens->nAccentInset );
+        aAccent.AdjustRight( -oTokens->nAccentInset );
+        aAccent.SetTop( aRect.Bottom() - nBottomInsetPx - nThickness );
+        aAccent.SetBottom( aRect.Bottom() - nBottomInsetPx );
+        if ( aAccent.GetWidth() <= 0 )
+            continue;
+
+        rRenderContext.SetFillColor( aColor );
+        rRenderContext.DrawRect( aAccent );
+    }
+
+    rRenderContext.Pop();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

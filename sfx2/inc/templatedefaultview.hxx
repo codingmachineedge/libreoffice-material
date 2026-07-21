@@ -27,6 +27,10 @@ public:
 
 protected:
     void UpdateColors(const StyleSettings& rSettings) override;
+
+    /// Material Start Center card grid; falls back to the base paint otherwise.
+    virtual void Paint(vcl::RenderContext& rRenderContext,
+                       const tools::Rectangle& rRect) override;
 };
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

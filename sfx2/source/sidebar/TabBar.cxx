@@ -27,6 +27,7 @@
 #include <comphelper/lok.hxx>
 #include <comphelper/processfactory.hxx>
 #include <o3tl/safeint.hxx>
+#include <cstdlib>
 #include <utility>
 #include <vcl/commandevent.hxx>
 #include <vcl/commandinfoprovider.hxx>
@@ -47,6 +48,34 @@ using namespace css::uno;
 static int gDefaultWidth;
 
 namespace sfx2::sidebar {
+
+namespace {
+
+/** WIN-NAV-005: the Material sidebar rail treatment (48px rail width, 38x38px
+    corner-small buttons stacked at a 4px gap below 10px top padding) only
+    applies when the file-definition Material widget theme is the active VCL
+    draw path. Every other theme keeps the measured native rail untouched, so no
+    keyboard, mouse, a11y or RTL behaviour of the shared TabBar changes off the
+    Material path. The rail width and button geometry are density-invariant and
+    unaffected by high contrast; the @primary focus ring is drawn by the shared
+    toolbar Focus part, which honours the VCL high-contrast bypass. */
+bool IsMaterialRail()
+{
+    // The VCL_DRAW_WIDGETS_FROM_FILE environment variable is treated as
+    // authoritative here: it is the same gate VCL keys the file-definition
+    // widget-draw backend on (SalGraphics::initWidgetDrawBackends in
+    // vcl/source/gdi/salgdilayout.cxx), so when it is set the Material rail
+    // geometry lines up with the intended draw path. VCL additionally drops the
+    // backend if the Material definition file fails to load; that degenerate
+    // configuration (env set but definition unloadable) is not supported and is
+    // intentionally not consulted here, since VCL exposes no process-global
+    // "backend active" signal to the sfx2 sidebar -- isActive() is per
+    // SalGraphics instance, not a static predicate.
+    static const bool bMaterial = (std::getenv("VCL_DRAW_WIDGETS_FROM_FILE") != nullptr);
+    return bMaterial;
+}
+
+} // anonymous namespace
 
 TabBar::TabBar(vcl::Window* pParentWindow,
                const Reference<frame::XFrame>& rxFrame,
@@ -112,6 +141,14 @@ void TabBar::dispose()
 
 sal_Int32 TabBar::GetDefaultWidth()
 {
+    // WIN-NAV-005: the Material rail is a fixed 48px deck-switcher column
+    // (design 05 s5.1) rather than the width measured from native toolbar
+    // chrome. SidebarController uses this value to lay out the rail/deck split
+    // and the collapsed-to-rail state, so honouring the Material metric here is
+    // what makes the whole rail 48px wide.
+    if (IsMaterialRail())
+        return Theme::GetInteger(Theme::Int_TabBarRailWidth);
+
     if (!gDefaultWidth)
     {
         std::unique_ptr<weld::Builder> xBuilder(Application::CreateBuilder(nullptr, u"sfx/ui/tabbarcontents.ui"_ustr));
@@ -147,6 +184,33 @@ void TabBar::SetDecks(const ResourceManager::DeckContextDescriptorContainer& rDe
         xItem->mbIsHidden = !xDescriptor->mbIsEnabled;
 
         xItem->mxButton->set_visible(deck.mbIsEnabled);
+    }
+
+    // WIN-NAV-005: on the Material path give every rail button the fixed
+    // 38x38px corner-small footprint (design 05 s5.1), stacked with a 4px gap
+    // below 10px top padding. The rest/hover/active/focus/disabled fills and
+    // icon colours come from the shared Material toolbar Button part the rail
+    // buttons already render through, so only the geometry is applied here.
+    if (IsMaterialRail())
+    {
+        const sal_Int32 nButtonSize = Theme::GetInteger(Theme::Int_TabItemButtonSize);
+        const sal_Int32 nGap = Theme::GetInteger(Theme::Int_TabItemGap);
+        const sal_Int32 nTopPadding = Theme::GetInteger(Theme::Int_TabBarTopPadding);
+        // The 10px top padding belongs above the first *visible* rail button
+        // (design 05 s5.1). maItems can lead with decks hidden by the
+        // set_visible(deck.mbIsEnabled) call above, and a hidden button gets no
+        // allocation, so anchoring the padding on maItems[0] would strand it on
+        // an invisible button and leave the first visible button with only the
+        // 4px inter-button gap. Track the first visible item instead.
+        bool bFirstVisible = true;
+        for (auto const& item : maItems)
+        {
+            const bool bVisible = item->mxButton->get_visible();
+            item->mxButton->set_size_request(nButtonSize, nButtonSize);
+            item->mxButton->set_margin_top(bFirstVisible && bVisible ? nTopPadding : nGap);
+            if (bVisible)
+                bFirstVisible = false;
+        }
     }
 
     UpdateButtonIcons();

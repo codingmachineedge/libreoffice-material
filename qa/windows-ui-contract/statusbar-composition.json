@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "contract": "material-statusbar-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/05-navigation.md",
+  "chapter_section": "8",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-NAV-008. The framework status bar (vcl/source/window/status.cxx) and the generic per-app status controller compose the Material 28px status band guarded behind the Material file-widget theme; non-Material rendering, keyboard, mouse, a11y and RTL paths are untouched. definition.xml already carries the faceColor style slot, the band/field tokens and the zoom-slider parts from the Material foundations; this contract locks them against drift and binds them to the guarded native wiring. No native build, band pixels or runtime interaction are claimed.",
+  "band": {
+    "face_color_slot": {"slot": "faceColor", "token": "@surface-container"},
+    "top_rule": {"token": "outline-variant", "stroke_width": "stroke-thin"},
+    "height_metric": {"name": "size-compact-control", "value": "28"},
+    "metrics": [
+      {"name": "size-compact-control", "value": "28"},
+      {"name": "stroke-thin", "value": "1"},
+      {"name": "stroke-standard", "value": "2"},
+      {"name": "stroke-track", "value": "4"}
+    ],
+    "palette_colors": [
+      "surface-container",
+      "outline-variant",
+      "on-surface-variant",
+      "primary",
+      "primary-container",
+      "primary-action-hover",
+      "on-surface"
+    ],
+    "owner": {
+      "source": "vcl/source/window/status.cxx",
+      "include": "<vcl/MaterialTokens.hxx>",
+      "markers": [
+        "VCL_FILE_WIDGET_THEME",
+        "MaterialTokens::fromThemeDefinition",
+        "lcl_materialStatusColor(\"surface-container\")",
+        "lcl_materialStatusColor(\"outline-variant\")"
+      ]
+    }
+  },
+  "field_hover": {
+    "status": "specified",
+    "note": "docs/design/05-navigation.md 8.2 marks the interactive-field hover wash (@primary-container, corner-small) as 'specified here' -- it is not yet a native part, and the status-bar container has no dedicated definition part (8.1). This section only grounds the tokens the field-hover spec depends on; the hover slot itself remains spec-only (runtime_verified false).",
+    "wash_color": "primary-container",
+    "radius": {"name": "corner-small", "value": "8"}
+  },
+  "zoom_slider": {
+    "control": "slider",
+    "parts": [
+      {
+        "part": "Button",
+        "part_attrs": {"width": "@size-compact-control", "height": "@size-compact-control"},
+        "states": [
+          {"role": "thumb-idle", "attrs": {"enabled": "true"}, "element": "rect", "tokens": {"stroke": "@primary", "fill": "@primary", "radius": "@corner-control"}},
+          {"role": "thumb-hover", "attrs": {"enabled": "true", "rollover": "true"}, "element": "rect", "tokens": {"fill": "@primary-action-hover", "radius": "@corner-container"}},
+          {"role": "thumb-focus", "attrs": {"enabled": "true", "focused": "true"}, "element": "rect", "tokens": {"stroke": "@on-surface", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-container"}},
+          {"role": "thumb-disabled", "attrs": {"enabled": "false"}, "element": "rect", "tokens": {"stroke": "@outline", "fill": "@outline-variant", "radius": "@corner-control"}}
+        ]
+      },
+      {
+        "part": "TrackHorzLeft",
+        "states": [
+          {"role": "filled-track", "attrs": {"enabled": "true"}, "element": "line", "tokens": {"stroke": "@primary", "stroke-width": "@stroke-track"}}
+        ]
+      },
+      {
+        "part": "TrackHorzRight",
+        "states": [
+          {"role": "remainder-track", "attrs": {"enabled": "true"}, "element": "line", "tokens": {"stroke": "@outline-variant", "stroke-width": "@stroke-track"}}
+        ]
+      }
+    ]
+  },
+  "accessibility": {
+    "source": "framework/source/uielement/genericstatusbarcontroller.cxx",
+    "note": "docs/design/05-navigation.md 8.3/8.4: owner-drawn status updates must be exposed as accessible value changes, not bare repaints; the zoom readout stays textual, never value-by-position. Under the Material theme the generic controller routes the owner-drawn status string through the item's accessible name (SetAccessibleName -> StatusbarNameChanged -> VCLXAccessibleStatusBarItem NAME_CHANGED) in addition to the existing repaint. The accessible-name channel is used deliberately: unlike setText it does not touch maText or recompute the item width, so it cannot reflow the band or clip owner-drawn content and adds no second synchronous paint on top of repaint().",
+    "guard_marker": "lcl_isMaterialFileWidgetTheme",
+    "guarded_call": {
+      "guard": "lcl_isMaterialFileWidgetTheme",
+      "call": "m_xStatusbarItem->setAccessibleName( aStrValue )",
+      "within_branch_after": "if ( !m_bOwnerDraw )"
+    },
+    "markers": [
+      "VCL_FILE_WIDGET_THEME",
+      "lcl_isMaterialFileWidgetTheme",
+      "m_xStatusbarItem->setAccessibleName"
+    ],
+    "must_retain": [
+      "m_xStatusbarItem->repaint()"
+    ]
+  }
+}

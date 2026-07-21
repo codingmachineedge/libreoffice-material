@@ -1234,6 +1234,11 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
           &rWidgetDefinition.mpSettings->msListBoxPreviewDefaultLogicWidth },
         { "listBoxPreviewDefaultLogicHeight",
           &rWidgetDefinition.mpSettings->msListBoxPreviewDefaultLogicHeight },
+        { "menuBarHeight", &rWidgetDefinition.mpSettings->msMenuBarHeight },
+        { "menuItemHeight", &rWidgetDefinition.mpSettings->msMenuItemHeight },
+        { "menuPopupMinWidth", &rWidgetDefinition.mpSettings->msMenuPopupMinWidth },
+        { "menuAccelColumnGap", &rWidgetDefinition.mpSettings->msMenuAccelColumnGap },
+        { "menuInnerBorder", &rWidgetDefinition.mpSettings->msMenuInnerBorder },
     };
 
     SvFileStream aFileStream(m_rDefinitionFile, StreamMode::READ);

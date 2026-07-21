@@ -22,6 +22,8 @@
 #include <types.hxx>
 #include <svtools/tabbar.hxx>
 #include <vcl/transfer.hxx>
+#include <tools/color.hxx>
+#include <map>
 
 class ScViewData;
 
@@ -36,14 +38,32 @@ private:
     sal_uInt16      nSelPageIdByMouse;      /// Selected page ID, if selected with mouse
     bool            bErrorShown;
 
+    /// User sheet-tab colours held out of the TabBar base full-tab fill while the
+    /// Material file-widget theme is active, so they can be drawn as an accent
+    /// strip under the label (docs/design/05-navigation.md 6.4) instead of a
+    /// full fill that would compete with the selection treatment.
+    std::map<sal_uInt16, Color> maMaterialTabColors;
+
     void            DoDrag();
 
     sal_uInt16      GetMaxId() const;
     SCTAB           GetPrivatDropPos(const Point& rPos );
 
+    /// True only when VCL_FILE_WIDGET_THEME=material is the documented active
+    /// theme and high contrast is not resolved (native baseline bypass).
+    bool            IsMaterialSheetTabActive() const;
+    /// Route a document tab colour: under the Material theme record it for the
+    /// accent-strip overlay and leave the base tab neutral; otherwise apply the
+    /// existing full-fill path unchanged.
+    void            SetMaterialAwareTabBgColor( sal_uInt16 nPageId, const Color& rColor );
+    /// Draw the Material strip top rule and the per-tab colour accent strips on
+    /// top of the base paint; never consults the selection state.
+    void            PaintMaterialSheetTabOverlay( vcl::RenderContext& rRenderContext );
+
     DECL_LINK(ShowPageList, const CommandEvent&, void);
 
 protected:
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect ) override;
     virtual void    Select() override;
     virtual void    Command( const CommandEvent& rCEvt ) override;
     virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;

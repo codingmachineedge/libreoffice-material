@@ -213,6 +213,11 @@ public:
     OString msFloatTitleHeight;
     OString msListBoxPreviewDefaultLogicWidth;
     OString msListBoxPreviewDefaultLogicHeight;
+    OString msMenuBarHeight;
+    OString msMenuItemHeight;
+    OString msMenuPopupMinWidth;
+    OString msMenuAccelColumnGap;
+    OString msMenuInnerBorder;
 };
 
 enum class WidgetDefinitionFontWeight

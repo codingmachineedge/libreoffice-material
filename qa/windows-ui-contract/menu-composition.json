@@ -1,0 +1,218 @@
+{
+  "description": "WIN-NAV-001 menubar + drop-menu composition contract. Cross-validates the Material menu part/state/metric declarations in vcl/uiconfig/theme_definitions/material/definition.xml against the real cross-platform menu layout that consumes them: the settings -> NWF -> Menu::ImplCalcSize channel that carries the design-05 1.1/1.5 anatomy (band/row heights, drop-menu minimum width, 6px inner border, 14px accelerator-column gap) plus the milestone-10 dimmed disabled-submenu-arrow plumbing. Source evidence only; no build, menu pixels, or runtime interaction are claimed.",
+  "definition_xml": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "indicator_metric": {
+    "name": "size-menu-indicator",
+    "value": 18
+  },
+  "menu_settings": {
+    "menuBarHeight": 38,
+    "menuItemHeight": 40,
+    "menuPopupMinWidth": 248,
+    "menuAccelColumnGap": 14,
+    "menuInnerBorder": 6
+  },
+  "menubar_part_states": {
+    "Entire": [
+      { "state": {}, "fill": "@surface-container", "stroke_width": "@stroke-none" }
+    ],
+    "MenuItem": [
+      { "state": {}, "fill": "@surface-container", "radius": "@corner-container" },
+      { "state": { "rollover": "true" }, "fill": "@primary-container" },
+      { "state": { "selected": "true" }, "fill": "@primary-hover" }
+    ]
+  },
+  "menupopup_part_states": {
+    "Entire": [
+      { "state": {}, "fill": "@surface", "stroke": "@outline-variant", "stroke_width": "@stroke-thin", "radius": "@corner-container" }
+    ],
+    "MenuItem": [
+      { "state": {}, "fill": "@surface", "radius": "@corner-small" },
+      { "state": { "rollover": "true" }, "fill": "@primary-container" },
+      { "state": { "selected": "true" }, "fill": "@primary-hover" }
+    ]
+  },
+  "menupopup_indicators": {
+    "MenuItemCheckMark": {
+      "size_metric": "@size-menu-indicator",
+      "enabled_state": { "enabled": "true", "pressed": "true" },
+      "enabled_stroke": "@primary",
+      "disabled_state": { "enabled": "false", "pressed": "true" },
+      "disabled_stroke": "@outline",
+      "element": "line"
+    },
+    "MenuItemRadioMark": {
+      "size_metric": "@size-menu-indicator",
+      "enabled_state": { "enabled": "true", "pressed": "true" },
+      "enabled_stroke": "@primary",
+      "disabled_state": { "enabled": "false", "pressed": "true" },
+      "disabled_stroke": "@outline",
+      "element": "rect"
+    },
+    "SubmenuArrow": {
+      "size_metric": "@size-menu-indicator",
+      "enabled_state": {},
+      "enabled_stroke": "@on-surface-variant",
+      "disabled_state": { "enabled": "false" },
+      "disabled_stroke": "@outline",
+      "element": "line"
+    }
+  },
+  "menupopup_separator": {
+    "part": "Separator",
+    "stroke": "@outline-variant",
+    "stroke_width": "@stroke-thin"
+  },
+  "nwf_fields": [
+    "mnMenuBarHeight",
+    "mnMenuItemHeight",
+    "mnMenuPopupMinWidth",
+    "mnMenuAccelColumnGap"
+  ],
+  "code_markers": [
+    {
+      "id": "nwf-field-barheight",
+      "file": "vcl/inc/svdata.hxx",
+      "pattern": "int\\s+mnMenuBarHeight\\s*=\\s*0;",
+      "why": "menubar band height NWF channel is declared"
+    },
+    {
+      "id": "nwf-field-itemheight",
+      "file": "vcl/inc/svdata.hxx",
+      "pattern": "int\\s+mnMenuItemHeight\\s*=\\s*0;",
+      "why": "command-row height NWF channel is declared"
+    },
+    {
+      "id": "nwf-field-minwidth",
+      "file": "vcl/inc/svdata.hxx",
+      "pattern": "int\\s+mnMenuPopupMinWidth\\s*=\\s*0;",
+      "why": "drop-menu minimum width NWF channel is declared"
+    },
+    {
+      "id": "nwf-field-accelgap",
+      "file": "vcl/inc/svdata.hxx",
+      "pattern": "int\\s+mnMenuAccelColumnGap\\s*=\\s*0;",
+      "why": "accelerator-column gap NWF channel is declared"
+    },
+    {
+      "id": "reader-barheight",
+      "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+      "pattern": "\"menuBarHeight\"[^\\n]*msMenuBarHeight",
+      "why": "menuBarHeight setting is mapped into the widget definition"
+    },
+    {
+      "id": "reader-itemheight",
+      "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+      "pattern": "\"menuItemHeight\"[^\\n]*msMenuItemHeight",
+      "why": "menuItemHeight setting is mapped into the widget definition"
+    },
+    {
+      "id": "reader-minwidth",
+      "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+      "pattern": "\"menuPopupMinWidth\"[^\\n]*msMenuPopupMinWidth",
+      "why": "menuPopupMinWidth setting is mapped into the widget definition"
+    },
+    {
+      "id": "reader-accelgap",
+      "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+      "pattern": "\"menuAccelColumnGap\"[^\\n]*msMenuAccelColumnGap",
+      "why": "menuAccelColumnGap setting is mapped into the widget definition"
+    },
+    {
+      "id": "reader-innerborder",
+      "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+      "pattern": "\"menuInnerBorder\"[^\\n]*msMenuInnerBorder",
+      "why": "menuInnerBorder setting is mapped into the widget definition"
+    },
+    {
+      "id": "populate-barheight",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "mnMenuBarHeight\\s*=\\s*getSettingValueInteger\\(\\s*pSettings->msMenuBarHeight",
+      "why": "band height flows from the definition into NWF only when Material is live"
+    },
+    {
+      "id": "populate-itemheight",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "mnMenuItemHeight\\s*=\\s*getSettingValueInteger\\(\\s*pSettings->msMenuItemHeight",
+      "why": "command-row height flows from the definition into NWF only when Material is live"
+    },
+    {
+      "id": "populate-minwidth",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "mnMenuPopupMinWidth\\s*=\\s*getSettingValueInteger\\(\\s*pSettings->msMenuPopupMinWidth",
+      "why": "drop-menu minimum width flows from the definition into NWF only when Material is live"
+    },
+    {
+      "id": "populate-accelgap",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "mnMenuAccelColumnGap\\s*=\\s*getSettingValueInteger\\(\\s*pSettings->msMenuAccelColumnGap",
+      "why": "accelerator-column gap flows from the definition into NWF only when Material is live"
+    },
+    {
+      "id": "populate-innerborder",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "mnMenuFormatBorderX\\s*=\\s*getSettingValueInteger\\(\\s*pSettings->msMenuInnerBorder",
+      "why": "6px inner border flows from the definition into the existing popup-border NWF field"
+    },
+    {
+      "id": "populate-baseline-capture",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "aBaseline\\.mnMenuBarHeight\\s*=\\s*rNWFData\\.mnMenuBarHeight",
+      "why": "the platform baseline is captured so the guard is reversible on theme teardown"
+    },
+    {
+      "id": "populate-baseline-restore",
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "pattern": "rNWFData\\.mnMenuBarHeight\\s*=\\s*aBaseline\\.mnMenuBarHeight",
+      "why": "the platform baseline is restored so non-Material rendering is never touched"
+    },
+    {
+      "id": "layout-nwf-reference",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "const ImplSVNWFData&\\s*rMenuNWFData\\s*=\\s*ImplGetSVData\\(\\)->maNWFData;",
+      "why": "ImplCalcSize reads the Material menu metrics from the NWF channel"
+    },
+    {
+      "id": "layout-itemheight",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "nMinMenuItemHeight\\s*=\\s*rMenuNWFData\\.mnMenuItemHeight",
+      "why": "command rows honour the Material minimum row height"
+    },
+    {
+      "id": "layout-accelgap",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "rMenuNWFData\\.mnMenuAccelColumnGap\\s*>\\s*0[^;]*rMenuNWFData\\.mnMenuAccelColumnGap",
+      "why": "the accelerator column reserves the Material gap width"
+    },
+    {
+      "id": "layout-minwidth",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "aSz\\.setWidth\\(\\s*rMenuNWFData\\.mnMenuPopupMinWidth\\s*\\);",
+      "why": "the drop menu never opens narrower than the Material minimum width"
+    },
+    {
+      "id": "layout-barheight",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "aSz\\.setHeight\\(\\s*rMenuNWFData\\.mnMenuBarHeight\\s*\\);",
+      "why": "the menubar band honours the Material minimum band height"
+    },
+    {
+      "id": "layout-disabled-arrow",
+      "file": "vcl/source/window/menu.cxx",
+      "pattern": "IsNativeControlSupported\\(ControlType::MenuPopup,\\s*ControlPart::SubmenuArrow\\)(?:(?!DrawNativeControl).)*?pData->bEnabled\\s*&&\\s*m_pWindow->IsEnabled\\(\\)(?:(?!DrawNativeControl).)*?nState\\s*\\|=\\s*ControlState::ENABLED(?:(?!DrawNativeControl).)*?DrawNativeControl\\(ControlType::MenuPopup,\\s*ControlPart::SubmenuArrow",
+      "why": "a disabled submenu parent draws its arrow through the enabled=false @outline definition state"
+    },
+    {
+      "id": "accel-source",
+      "file": "framework/source/uielement/menubarmanager.cxx",
+      "pattern": "SetAcceleratorKeys\\(\\s*pMenu\\s*\\);",
+      "why": "the framework populates the accelerator keys the native accelerator column then lays out"
+    },
+    {
+      "id": "padding-consumer",
+      "file": "vcl/source/window/menufloatingwindow.cxx",
+      "pattern": "maNWFData\\.mnMenuFormatBorderY",
+      "why": "the floating drop-menu window honours the inner-border padding"
+    }
+  ]
+}

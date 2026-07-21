@@ -1438,6 +1438,12 @@ Size Menu::ImplCalcSize(vcl::Window& rWin)
     tools::Long nFontHeight = rWin.GetTextHeight();
     tools::Long nExtra = nFontHeight/4;
 
+    // Material menu composition metrics (docs/design/05-navigation.md 1.1/1.5). Non-zero only while
+    // the Material file-definition theme is live (populated in FileDefinitionWidgetDraw and reverted
+    // to the platform baseline on teardown), so each guarded branch below leaves the native/platform
+    // menu geometry, mnemonics, accelerators, RTL and a11y behaviour unchanged for every other theme.
+    const ImplSVNWFData& rMenuNWFData = ImplGetSVData()->maNWFData;
+
     tools::Long nMinMenuItemHeight = nFontHeight;
     tools::Long nCheckHeight = 0, nRadioHeight = 0;
     Size aMarkSize = ImplGetNativeCheckAndRadioSize(*rWin.GetOutDev(), nCheckHeight, nRadioHeight);
@@ -1469,6 +1475,13 @@ Size Menu::ImplCalcSize(vcl::Window& rWin)
             }
         }
     }
+
+    // Material popup command rows honour a minimum row height (comfortable-profile 40px) so every
+    // command item matches the design-05 1.5 anatomy. It is a floor applied through the existing
+    // std::max on nMinMenuItemHeight, so shorter fonts grow to the row height while taller content
+    // is never clipped; separators keep their own 4px height and are unaffected.
+    if (!IsMenuBar() && rMenuNWFData.mnMenuItemHeight > nMinMenuItemHeight)
+        nMinMenuItemHeight = rMenuNWFData.mnMenuItemHeight;
 
     Size aSz;
     tools::Long nMaxWidth = 0;
@@ -1538,7 +1551,11 @@ Size Menu::ImplCalcSize(vcl::Window& rWin)
             {
                 OUString aName = pData->aAccelKey.GetName();
                 tools::Long nAccWidth = rWin.GetTextWidth(aName);
-                nAccWidth += nExtra;
+                // Material reserves a wider gap (design-05 1.1: 14px label/accelerator/arrow column)
+                // between the command label and its accelerator text; other themes keep nExtra.
+                nAccWidth += (rMenuNWFData.mnMenuAccelColumnGap > 0)
+                                 ? rMenuNWFData.mnMenuAccelColumnGap
+                                 : nExtra;
                 nWidth += nAccWidth;
             }
 
@@ -1611,11 +1628,20 @@ Size Menu::ImplCalcSize(vcl::Window& rWin)
 
         aSz.AdjustWidth(2*ImplGetSVData()->maNWFData.mnMenuFormatBorderX );
         aSz.AdjustHeight(2*ImplGetSVData()->maNWFData.mnMenuFormatBorderY );
+
+        // Material drop menus never open narrower than the design-05 1.1 minimum width (248px);
+        // longer localized labels still widen the popup past the floor rather than truncating.
+        if (aSz.Width() < rMenuNWFData.mnMenuPopupMinWidth)
+            aSz.setWidth( rMenuNWFData.mnMenuPopupMinWidth );
     }
     else
     {
         nTextPos = static_cast<sal_uInt16>(2*nExtra);
         aSz.setHeight( nFontHeight+6 );
+
+        // Material menubar band honours the design-05 1.5 minimum band height (comfortable 38px).
+        if (aSz.Height() < rMenuNWFData.mnMenuBarHeight)
+            aSz.setHeight( rMenuNWFData.mnMenuBarHeight );
 
         // get menubar height from native methods if supported
         if (m_pWindow->IsNativeControlSupported(ControlType::Menubar, ControlPart::Entire))

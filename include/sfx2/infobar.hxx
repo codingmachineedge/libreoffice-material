@@ -97,6 +97,11 @@ private:
 
     void SetForeAndBackgroundColors(InfobarType eType);
     void SetCloseButtonImage();
+    /** Refresh the polite live announcement (docs/design/07-feedback.md 7.6): the strip is marked
+        AccessibleRole::NOTIFICATION in infobar.ui, so updating its accessible name announces the
+        severity + text without stealing focus, while the message stays persistently readable. */
+    void UpdateAccessibleAnnouncement(const OUString& sPrimaryMessage,
+                                      const OUString& sSecondaryMessage);
 
 public:
     SfxInfoBarWindow(vcl::Window* parent, OUString sId, const OUString& sPrimaryMessage,
@@ -104,6 +109,9 @@ public:
                      bool bShowCloseButton);
     Size DoLayout();
     virtual void Layout() override;
+    /** Paint the persistent strip as a corner-container (12px) rounded Material surface; an
+        InterimItemWindow strip has no themed part, so the radius is painted here. */
+    virtual void Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect) override;
     virtual bool EventNotify(NotifyEvent& rEvent) override;
     virtual ~SfxInfoBarWindow() override;
     virtual void dispose() override;

@@ -44,10 +44,32 @@ and statically validated only.
     (`check-windows-ui-registry-closure.py --regenerate` →
     `ui-registry.json`): 1270 surfaces, 821 assigned, 449 explicit unassigned
     baseline that fails closed on growth.
-- **Static gate**: all **29** build-free validators pass at this tip (21
-  pre-existing + 8 added this session). Run them with `py`/`node` from the
-  repo root; the list is in `bin/` (`check-*` + `test_*` pairs plus
-  `validate-prototype.mjs`).
+- **Wave 2 Batch A of the full-UI rewrite** (eight dependency-free
+  shell/navigation/feedback rows, each behind the Material file-widget guard
+  and locked by a new fail-closed checker + JSON registry + mutation suite):
+  - Whole-row source scope: WIN-NAV-001 menubar/drop-menu anatomy carried
+    through the settings→NWF→`Menu::ImplCalcSize` channel plus the
+    disabled-arrow `@outline` plumbing (`menu-composition`, 18 tests over 24
+    code markers); WIN-FBK-006 four-severity infobar Material container/
+    on-container roles with a code-painted corner-container radius, high-contrast
+    square bypass, and polite `AccessibleRole::NOTIFICATION` announcement
+    (`material-infobar`, 16 tests); WIN-ACT-005 native `FixedHyperlink` +
+    `weld::LinkButton` interaction contract with a `@primary` corner-focus ring
+    and tracked/queryable visited state (`link-contract`, 25 tests).
+  - Partial source with named residual deltas: WIN-NAV-005 48px sidebar rail
+    via the sfx2 sidebar `Theme` slots consumed by `TabBar` (`sidebar-rail`, 14
+    tests); WIN-NAV-008 28px status band with `@outline-variant` top rule and
+    accessible owner-draw value changes (`statusbar-composition`, 21 tests);
+    WIN-CON-006 Recent/Template Start Center card anatomy (`startcenter-cards`,
+    18 tests); WIN-INP-006 Find & Replace Material field set driving one
+    `SvxSearchItem` ICU descriptor with a loop-safe regex-toggle sync
+    (`find-replace-fieldset`, 25 tests); WIN-NAV-006 Calc `ScTabControl` strip
+    top rule and selection-independent tab-colour accent (`calc-sheet-tabs`, 22
+    tests). No build or runtime evidence exists for any of it.
+- **Static gate**: all **45** build-free validators pass at this tip (29 from
+  the wave-1 tip + 16 wave-2 Batch A: 8 checker/mutation-suite pairs). Run them
+  with `py`/`node` from the repo root; the list is in `bin/` (`check-*` +
+  `test_*` pairs plus `validate-prototype.mjs`).
 
 ## Important boundaries
 
@@ -74,8 +96,11 @@ and statically validated only.
 - The full-UI audit plan (76 rows: 6 wave-1, 39 wave-2, 31 wave-3/build-bound,
   with per-row file lists, validators, and dependencies) is preserved in the
   2026-07-21 session scratchpad journals and summarized in the wave-1 commit
-  messages; wave-2 starts with the dependency-free rows (menubar, sidebar
-  rail, status bar, Start Center cards, Calc chrome).
+  messages. Wave-2 Batch A has now landed the eight dependency-free shell rows
+  above (menubar, infobars, links, sidebar rail, status bar, Start Center
+  cards, Find & Replace field set, Calc sheet tabs) at source level; the
+  remaining wave-2 rows (Batch B onward) and all wave-3/build-bound rows are
+  still open, as is build/runtime proof for everything in Batch A.
 - Operator-instruction note: the user-level requirement for
   English/Cantonese/bilingual language modes has not been implemented for this
   fork; LibreOffice's own localization pipeline (including zh-* locales) is

@@ -193,6 +193,9 @@
 
 #define STR_WELCOME_LINE1                       NC_("STR_WELCOME_LINE1", "Welcome to %PRODUCTNAME!")
 #define STR_WELCOME_LINE2                       NC_("STR_WELCOME_LINE2", "Drop a document here or open an app to create one.")
+// Material Start Center empty/filtered document-card grid messages (docs/design/06-containers.md 6.6).
+#define STR_SC_NO_RECENT_MATCH                  NC_("STR_SC_NO_RECENT_MATCH", "No recent documents match this pattern.")
+#define STR_SC_NO_TEMPLATE_MATCH                NC_("STR_SC_NO_TEMPLATE_MATCH", "No templates match this pattern.")
 
 // Translators: Target types in Auto-redaction dialog
 #define STR_REDACTION_TARGET_TYPE_TEXT          NC_("STR_REDACTION_TARGET_TYPE_TEXT", "Text")
