@@ -1,80 +1,106 @@
-# Windows-only handoff — 2026-07-20
+# Windows-only handoff — 2026-07-21
 
-This handoff is the pushed `main` tip `cf50bbc5766ebd7eeaf6332d65509b9090a2aabf` (the source/build SHA immediately
-before this documentation-only commit is
-`f8f7d8f6e5c3b638ae710652afcf6681f409225f`).
+This handoff supersedes the 2026-07-20 handoff. It was produced on a different
+host (`Administrator` Windows 11 machine) than the previous `cntow` build host;
+no local build root exists here, so every change below is source-implemented
+and statically validated only.
 
 ## What is complete at this tip
 
-- The repository is clean on `main` and the handoff tip is pushed to
-  `origin/main` (`https://github.com/Ding-Ding-Projects/libreoffice-material.git`).
-- A local VS 2026 build completed with the retained build root
-  `C:\Users\cntow\lo-material-vs2026-577059e27`.
-- The built payload (for the pre-handoff source SHA above) is at
-  `C:\Users\cntow\lo-material-vs2026-577059e27\build\instdir`; its
-  `program/version.ini` build ID is the exact handoff SHA above.
-- Native notification-store and regex tests, the notification/regex/no-donate/
-  dialog-placement contracts, the release-workflow validator, and the
-  no-nag harness static/regression suite passed during this work.
-- The accepted configured Start Center smoke run at source SHA
-  `9d2219bad8249bbdb25fce9b1edae5c81228c8cb` produced a nonblank 1920×1117
-  PrintWindow screenshot and a complete accessibility tree (92 nodes, 45
-  visible, 0 errors). Retained evidence:
-  `C:\Users\cntow\lo-material-vs2026-577059e27\headless-evidence-final\20260720-205155-9d2219bad8-windows-headless-light`.
-- The headless harness now starts the checked-out low-level MCP executable
-  directly, tolerates whole-second Windows process timestamps, accepts empty
-  no-nag text collections, filters normal non-SALFRAME helper/IME windows from
-  the user-facing no-nag inventory, and tolerates the URP bridge disposal race
-  after a successful accessibility-triggered office termination.
+- **Notification center, visible layer**: the asynchronous snapshot facade now
+  has its native UI in source — `NotificationPresenter` (application-lifetime,
+  snapshot-consuming, teardown-tolerant), `NotificationOverlayWindow` +
+  `NotificationStackController` + `NotificationCard` (bottom-right
+  per-work-area stack, severity styling via `NotificationTheme`),
+  `NotificationManagerController` (folders, bulk actions mapping to single
+  service requests, preferences), and the `NotificationRouter` facade whose
+  classification keeps input/destructive/credential/security prompts modal.
+  Two producers route through it: the help-search no-matches notice
+  (`newhelp.cxx`) and the printer-busy notice (`viewprn.cxx`).
+- **Regex search program**: the integration contract generalized twice into a
+  strict parameterized form — four matcher strategies (in-handler legacy
+  literal, options-handoff, native-regex-option-sync, controller-driven
+  declared search sites), four default modes (including
+  regex-native-case-insensitive), per-entry match subjects, and a 67-test
+  fail-closed mutation suite. **12 of 27** registered shipping fields are
+  source-integrated; **15** carry reviewed honest-gap analyses recorded in the
+  2026-07-21 workflow journals (stacked auto-dismiss popovers, typeahead index,
+  bidirectional similarity matchers, remote threaded catalog, split UNO
+  toolbar ownership, stub surface, multi-collection branching filters,
+  URL-based help engines).
+- **Wave 1 of the full-UI rewrite** (from the 76-row audit plan):
+  - WIN-DLG-001 (partial): `sfx2::ConfirmDestructiveAction` implements the
+    §8.1 destructive-confirmation pattern (safe action = initial focus and
+    Enter default); five real confirmations converted; fail-closed
+    `check-material-dialog-anatomy.py` + `dialog-anatomy-policy.json`;
+    `dialog-notification-policy.csv` reconciled with the router's modal
+    exclusions.
+  - WIN-DR-001 (partial): public `vcl` `MaterialTokens` accessor with 1:1
+    fidelity contract (`check-material-token-accessor.py`), Impress/Draw
+    surface contract (`check-impress-draw-surface-contract.py` +
+    `impress-draw-surfaces.json`), property-panel no-selection policy, Draw
+    status model. Dotted canvas-grid custom draw deferred to a build host.
+  - WIN-SYS-016 (partial): deterministic UI-closure ledger
+    (`check-windows-ui-registry-closure.py --regenerate` →
+    `ui-registry.json`): 1270 surfaces, 821 assigned, 449 explicit unassigned
+    baseline that fails closed on growth.
+- **Static gate**: all **29** build-free validators pass at this tip (21
+  pre-existing + 8 added this session). Run them with `py`/`node` from the
+  repo root; the list is in `bin/` (`check-*` + `test_*` pairs plus
+  `validate-prototype.mjs`).
 
 ## Important boundaries
 
-- The current native source is not yet a complete rewrite of every page in the
-  supplied Libre Office design ZIP. The notification backend/facade and the
-  first Calc regex integration are present, but the full native notification
-  manager, all notification producer routing, and the remaining search-field
-  regex builders still need implementation and visual verification.
-- The MSI package phase and final current-SHA public release verification have
-  not been run for `f8f7d8f6e5c3b638ae710652afcf6681f409225f`.
-- The most recent Fresh no-nag run reached a stable single Writer `SALFRAME`,
-  but its final UNO accessibility call exposed a bridge-disposal race. The
-  termination handling fix is in this handoff SHA and must be re-run against
-  this exact payload before claiming accepted Fresh/Legacy no-nag evidence.
-- The stale host reboot marker
-  `*1\\??\\C:\Windows\System32\gamingservicesproxy_11.dll.0` could not be
-  deleted because this shell is non-administrator. `Build-Windows.ps1` ignores
-  only that exact known stale marker and still fails on any unknown pending
-  reboot state; no registry value was falsely claimed to be removed.
+- **No build or runtime evidence exists for any of the above.** The `B V I A
+  L P C` inventory gates are untouched. The next build host (or the hosted
+  `windows-installer.yml` CI on a `main` push) must compile the five required
+  native targets, run the registered CppUnit coverage (notification view
+  model, store service, regex foundation), and produce fresh headless
+  evidence before any runtime claim.
+- The previous handoff's retained build root
+  `C:\Users\cntow\lo-material-vs2026-577059e27` does not exist on this host.
+  The Package-phase resume commands from the 2026-07-20 handoff apply only on
+  a host that still has that root.
+- The 15 honest-gap search fields need either targeted contract extensions
+  (each gap analysis names the exact blocker) or per-surface rework (e.g.
+  focus-model changes for the two auto-dismiss popover hosts) before
+  integration; do not force them through the existing strategies.
+- The 597-root dialog policy registry now carries explicit modal exclusions;
+  the remaining informational roots still need producer-by-producer routing
+  through `NotificationRouter` with registration in a producer registry
+  (planned as `notification-producers.json` — designed in the wave-1 plan but
+  NOT yet implemented; WIN-SHL-003's infobar Material anatomy is likewise
+  still open).
+- The full-UI audit plan (76 rows: 6 wave-1, 39 wave-2, 31 wave-3/build-bound,
+  with per-row file lists, validators, and dependencies) is preserved in the
+  2026-07-21 session scratchpad journals and summarized in the wave-1 commit
+  messages; wave-2 starts with the dependency-free rows (menubar, sidebar
+  rail, status bar, Start Center cards, Calc chrome).
+- Operator-instruction note: the user-level requirement for
+  English/Cantonese/bilingual language modes has not been implemented for this
+  fork; LibreOffice's own localization pipeline (including zh-* locales) is
+  the existing mechanism, and reconciling that requirement with upstream l10n
+  norms is an open operator decision recorded here rather than silently
+  dropped.
 
-## Resume commands
+## Resume guidance
 
-Run from the repository root with the retained VS 2026 build root:
+1. On a build host: run the local bootstrap/build per
+   `docs/LOCAL_WINDOWS_BUILD.md`, then the five required native targets plus
+   the newly registered CppUnit coverage, then the headless harness matrix
+   (light/dark/high-contrast) against the exact `version.ini` SHA before
+   claiming any `B`/`V` gate.
+2. Wave 2 of the full-UI rewrite: implement the dependency-free wave-2 rows
+   first, each with its own fail-closed contract following the established
+   checker + mutation-suite pattern.
+3. Producer migration: build the producer registry + checker described above,
+   then migrate informational-only prompts in bounded, registered tranches.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\bin\Build-Windows.ps1 -Phase Package -Jobs 2 `
-  -BuildRoot 'C:\Users\cntow\lo-material-vs2026-577059e27' `
-  -VisualStudioYear 2026 `
-  -VisualStudioInstallPath 'C:\Program Files\Microsoft Visual Studio\18\Enterprise' `
-  -NoBootstrap -Resume
-```
+## Repository state
 
-Then re-run the configured and `Fresh`/`Legacy` low-level headless harnesses
-against the exact `program/version.ini` SHA, inspect the PNG with the visual
-review tool, validate each manifest with
-`bin/Validate-Windows-Headless-Evidence.ps1 -RequirePassed`, update
-`README.md`, `ROADMAP.md`, and the docs evidence page, and push before release
-work.
-
-## Retained branches/worktrees
-
-The completed source branches remain available for audit and must not be
-deleted until the next continuation has verified their tips are ancestors of
-the pushed default branch and performed the repository-mandated cleanup:
-
-- `codex/notification-service`
-- `codex/regex-calc-goto`
-- `codex/headless-nonag-harness`
-
-Their work was merged into `main`; the linked worktree directories are retained
-for this handoff and should be removed only after remote proof and a clean
-default checkout.
+- `main` contains all work described here; the task branch
+  `claude/handoff-ultracode-onlyfans-opus-da0bf6` is merged and deleted after
+  remote ancestor proof.
+- The retained `codex/*` branches from the 2026-07-20 handoff were verified as
+  ancestors of the pushed `origin/main` and deleted (branch cleanup section of
+  this session).

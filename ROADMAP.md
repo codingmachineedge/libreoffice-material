@@ -437,8 +437,18 @@ threshold, forced repeated prune failure, crash recovery, reload, and exact
 undo; they are wired but not yet compiled. The static contract and all 24 Python
 mutation tests pass. See
 [`docs/design/02-notification-service-architecture.md`](docs/design/02-notification-service-architecture.md).
-The visible card stack, manager, producer routing, and customization controls
-remain open.
+On 2026-07-21 the visible layer landed in source: a snapshot-consuming
+presenter with a bottom-right per-work-area overlay stack, severity-styled
+cards, a folder/bulk/preferences manager window, and a `NotificationRouter`
+facade whose classification keeps input, destructive, credential, and security
+prompts modal. Two producers route through it (help-search no-matches,
+printer-busy), the shared `sfx2::ConfirmDestructiveAction` helper converted
+five real destructive confirmations under a new fail-closed dialog-anatomy
+contract with the safe action holding both initial focus and the Enter
+default, and the dialog policy registry was reconciled so input/destructive/
+credential/security roots carry explicit modal exclusions. Broad producer
+migration across the remaining policy registry, customization controls, and
+all build/runtime proof remain open.
 
 The companion search contract registers 26 audited shipping text-query fields,
 one planned Start Center field, and 16 explicit non-search exclusions. It fails
@@ -457,8 +467,25 @@ owns the existing change callback and preserves exact legacy
 `OUString::indexOf` matching in the default literal, case-sensitive mode. Regex
 and explicitly case-insensitive literal search build one `utl::TextSearch`
 matcher before each sheet-list loop. The implementation registry, focused
-validator, and all ten mutation tests pass. Integration of the remaining 25
-shipping fields plus native build and behavior proof remain open.
+validator, and all ten mutation tests pass.
+
+By 2026-07-21 the integration contract generalized twice into a strict
+parameterized form: four matcher strategies (in-handler legacy literal,
+options-handoff, native-regex-option-sync, and controller-driven declared
+search sites), four cross-validated default modes including a
+regex-native-case-insensitive seed, per-entry match subjects, and a 67-test
+fail-closed mutation suite. Twelve of the 27 registered shipping fields are
+now source-integrated with the adjacent accessible builder (Calc Go to Sheet,
+Start Center document search, Form record search, Find & Replace, Writer Quick
+Find, Template Manager, Keyboard customization, Options search, Manage Changes
+comment filter — whose legacy case-insensitive-regex default is preserved
+exactly — Writer Find Entry, Extension Manager, and the Gallery sidebar). The
+other 15 fields carry reviewed, documented honest-gap analyses (stacked
+auto-dismiss popovers, a typeahead index selector, bidirectional similarity
+matchers, a remote threaded catalog, split UNO toolbar ownership, a stub
+surface, multi-collection branching filters, and URL-based help engines) and
+stay registered as unintegrated targets. Native build and behavior proof
+remain open for every integration.
 
 The rewrite now removes automatic donation/Get Involved/What’s New promotion,
 first-start Welcome, Tip scheduling, Windows file-association solicitation,
