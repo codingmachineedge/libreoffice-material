@@ -977,8 +977,15 @@ function Get-ValidatedLoopbackListenerIdentity {
     if ($null -eq $rootIdentity) {
         throw "Dedicated driver root PID $($RootProcess.Id) exited before listener ownership was bound."
     }
+    # Win32_Process CreationDate is rounded to whole seconds on this host,
+    # while Process.StartTime retains sub-second precision.  Treat only a
+    # materially different timestamp as PID reuse; a sub-second delta is the
+    # normal representation difference, not a new process.
     $expectedRootTicks = $RootProcess.StartTime.ToUniversalTime().Ticks
-    if ([long]$rootIdentity.creation_ticks -ne $expectedRootTicks) {
+    $creationDeltaTicks = [Math]::Abs(
+        [long]$rootIdentity.creation_ticks - $expectedRootTicks
+    )
+    if ($creationDeltaTicks -gt [TimeSpan]::FromSeconds(2).Ticks) {
         throw "Dedicated driver root PID $($RootProcess.Id) was reused before listener ownership was bound."
     }
 
