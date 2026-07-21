@@ -91,7 +91,12 @@ native `pushbutton` contract.
 
 ### Destructive-confirmation pattern
 
-*Specified here, not yet implemented.* When a dialog confirms an irreversible
+*Source-implemented 2026-07-21 (unbuilt): the shared
+`sfx2::ConfirmDestructiveAction` helper realizes this pattern with the safe
+action holding both initial focus and the Enter default; five real
+confirmations are converted and registered in the fail-closed
+`dialog-anatomy-policy.json` contract. No build or runtime evidence exists
+yet.* When a dialog confirms an irreversible
 act (overwrite on save, "Don't Save", Replace All across a selection larger
 than the document view):
 

@@ -1,7 +1,11 @@
 # Notification service architecture checkpoint
 
 Status: implemented and source-validated; native CppUnit and runtime UI proof are
-not yet recorded for this checkpoint.
+not yet recorded for this checkpoint. The next-checkpoint visible layer
+(snapshot-consuming presenter, bottom-right overlay stack, manager window, and
+the `NotificationRouter` facade with modal-semantics exclusions) landed in
+source on 2026-07-21 with two routed producers; it follows the same
+registered-coverage-only evidence state.
 
 This checkpoint puts an asynchronous boundary between UI code and the existing
 synchronous, durable `NotificationStore`. It does not implement notification
