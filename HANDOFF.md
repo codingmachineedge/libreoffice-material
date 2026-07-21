@@ -108,18 +108,56 @@ and statically validated only.
   norms is an open operator decision recorded here rather than silently
   dropped.
 
+## Final session state (2026-07-21, late-session ASAP handoff)
+
+- **Merged and pushed on `main` (tip `b420ce9ae`)**: wave 1 (WIN-DLG-001
+  partial, WIN-DR-001, WIN-SYS-016, gallery.search) AND wave-2 Batch A —
+  eight rows: WIN-NAV-001 menubar composition, WIN-NAV-005 sidebar rail
+  (partial), WIN-NAV-008 status bar, WIN-CON-006 Start Center cards,
+  WIN-FBK-006 four-severity Material infobars, WIN-INP-006 Find & Replace
+  field set (partial), WIN-ACT-005 links, WIN-NAV-006 Calc sheet-tab accents
+  (partial). The complete build-free gate is green at this tip: 22
+  checker+mutation pairs plus `check_search_field_coverage` and
+  `validate-prototype.mjs`.
+- **First compiler contact happened via CI**: the Linux focused-native run
+  `29874968034` failed on two missing includes in the notification UI, fixed
+  at `b420ce9ae` (weld `Container.hxx`/`Builder.hxx`). Expect FURTHER compile
+  errors across this session's large C++ surface — the next continuation's
+  FIRST task is iterating the hosted CI (or a local build) until the five
+  required native targets compile, before any new feature work. The Windows
+  MSI run for the pre-fix tip was in progress at handoff time and will fail
+  the same way; watch the run triggered by `b420ce9ae` instead.
+- **Wave-2 Batch B is an UNVALIDATED WIP snapshot** on
+  `origin/claude/wave2-batch-b` (`3ffad98ac`), stopped mid-implementation on
+  operator request. It contains partial work for nine rows (WIN-NAV-002,
+  WIN-CON-007, WIN-WR-004, WIN-FBK-005, WIN-FBK-008, WIN-CA-001, WIN-CA-002,
+  WIN-IM-002, WIN-CONCEPT-003) plus five new checker/registry pairs. Before
+  ANY merge: strip the accidental debris committed with it (`design/**` — an
+  extraction of the operator archive that must never live in the repo;
+  `e1.txt`, `e2.txt`, `err.txt`), complete the nine rows, run the full gate
+  to green. Do not delete this branch until its work is merged or
+  consciously superseded.
+- **Wave-2 Batch C (staged, not started)**: WIN-SYS-001, -002, -003, -004,
+  -005, -006, -007, -009, -010, -011, -015 (system dialog flows),
+  WIN-CONCEPT-001 (Features catalog), plus the 15 honest-gap search fields
+  if their contract extensions are attempted. Wave 3 (31 rows) is
+  build-host-bound per the audit.
+- **Recurring defect to watch**: agent editors twice flipped whole files to
+  CRLF (`menu.cxx`, `svdata.hxx`, `sw/qa/unit/swmodeltestbase.cxx`); a
+  wholesale line-ending flip in a diff is a defect, not a change.
+
 ## Resume guidance
 
-1. On a build host: run the local bootstrap/build per
-   `docs/LOCAL_WINDOWS_BUILD.md`, then the five required native targets plus
-   the newly registered CppUnit coverage, then the headless harness matrix
-   (light/dark/high-contrast) against the exact `version.ini` SHA before
-   claiming any `B`/`V` gate.
-2. Wave 2 of the full-UI rewrite: implement the dependency-free wave-2 rows
-   first, each with its own fail-closed contract following the established
-   checker + mutation-suite pattern.
-3. Producer migration: build the producer registry + checker described above,
-   then migrate informational-only prompts in bounded, registered tranches.
+1. Drive the hosted CI (or a local build per `docs/LOCAL_WINDOWS_BUILD.md`)
+   to compile the five required native targets at `main`, fixing compile
+   errors as the first work item; then run the registered CppUnit coverage
+   and the headless harness matrix before claiming any `B`/`V` gate.
+2. Finish wave-2 Batch B from the WIP branch (strip debris, complete, gate,
+   merge), then Batch C, each row with its fail-closed contract per the
+   established checker + mutation-suite pattern.
+3. Producer migration: extend the notification-producer registry in bounded,
+   registered informational-only tranches (never input/destructive/
+   credential/security prompts).
 
 ## Repository state
 
