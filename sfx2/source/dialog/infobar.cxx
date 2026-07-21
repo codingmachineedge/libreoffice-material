@@ -20,10 +20,15 @@
 #include <sfx2/chalign.hxx>
 #include <sfx2/dispatch.hxx>
 #include <sfx2/infobar.hxx>
+#include <sfx2/notificationcenter.hxx>
 #include <sfx2/objface.hxx>
+#include <sfx2/sfxresid.hxx>
 #include <sfx2/sfxsids.hrc>
+#include <sfx2/strings.hrc>
 #include <sfx2/viewfrm.hxx>
+#include <tools/color.hxx>
 #include <utility>
+#include "../notification/NotificationTheme.hxx"
 #include <vcl/event.hxx>
 #include <vcl/image.hxx>
 #include <vcl/settings.hxx>
@@ -48,43 +53,70 @@ using namespace css::frame;
 
 namespace
 {
+// Map an InfobarType severity onto the notification-service severity enum so both feedback
+// families resolve identical severity semantics (icon, localized label, and the success accent)
+// from one source instead of a divergent infobar-local table.
+sfx2::NotificationSeverity ToNotificationSeverity(InfobarType ibType)
+{
+    switch (ibType)
+    {
+        case InfobarType::INFO:
+            return sfx2::NotificationSeverity::Information;
+        case InfobarType::SUCCESS:
+            return sfx2::NotificationSeverity::Success;
+        case InfobarType::WARNING:
+            return sfx2::NotificationSeverity::Warning;
+        case InfobarType::DANGER:
+            return sfx2::NotificationSeverity::Error;
+    }
+    return sfx2::NotificationSeverity::Information;
+}
+
+// docs/design/07-feedback.md 7.6: every InfobarType severity is a Material container/on-container
+// pair resolved from semantic StyleSettings feedback slots -- no infobar-local hex. Under a
+// non-Material theme those slots carry the platform feedback colors, so the routing stays
+// theme-agnostic; severity is never carried by color alone (icon + wording remain the signal).
 void GetInfoBarColors(InfobarType ibType, BColor& rBackgroundColor, BColor& rForegroundColor,
                       BColor& rMessageColor)
 {
     const StyleSettings& rSettings = Application::GetSettings().GetStyleSettings();
-    const bool bIsDark = rSettings.GetWindowColor().IsDark();
     switch (ibType)
     {
-        case InfobarType::INFO: // blue; #004785/0,71,133; #BDE5F8/189,229,248
-            rBackgroundColor = bIsDark ? basegfx::BColor(0.000, 0.278, 0.522)
-                                       : basegfx::BColor(0.741, 0.898, 0.973);
-            rForegroundColor = bIsDark ? basegfx::BColor(0.741, 0.898, 0.973)
-                                       : basegfx::BColor(0.000, 0.278, 0.522);
-            rMessageColor = rForegroundColor;
+        case InfobarType::INFO:
+            // @primary-container / @on-primary-container (Material highlight roles).
+            rBackgroundColor = rSettings.GetHighlightColor().getBColor();
+            rForegroundColor = rSettings.GetHighlightTextColor().getBColor();
             break;
-        case InfobarType::SUCCESS: // green; #32550C/50,85,12; #DFF2BF/223,242,191
-            rBackgroundColor = bIsDark ? basegfx::BColor(0.196, 0.333, 0.047)
-                                       : basegfx::BColor(0.874, 0.949, 0.749);
-            rForegroundColor = bIsDark ? basegfx::BColor(0.874, 0.949, 0.749)
-                                       : basegfx::BColor(0.196, 0.333, 0.047);
-            rMessageColor = rForegroundColor;
+        case InfobarType::SUCCESS:
+        {
+            // Reuse the single NotificationTheme resolved-green severity accent rather than a
+            // divergent infobar-local green; its contrast-safe on-color is white.
+            const Color aSuccess = sfx2::NotificationTheme::ResolveAccentColor(
+                sfx2::NotificationSeverity::Success, sfx2::NotificationPreferences());
+            rBackgroundColor = aSuccess.getBColor();
+            rForegroundColor = COL_WHITE.getBColor();
             break;
-        case InfobarType::WARNING: // orange; #704300/112,67,0; #FEEFB3/254,239,179
+        }
+        case InfobarType::WARNING:
+            // @warning-container / @on-warning-container.
             rBackgroundColor = rSettings.GetWarningColor().getBColor();
             rForegroundColor = rSettings.GetWarningTextColor().getBColor();
-            rMessageColor = rSettings.GetWarningTextColor().getBColor();
             break;
-        case InfobarType::DANGER: // red; #7A0006/122,0,6; #FFBABA/255,186,186
+        case InfobarType::DANGER:
+            // @error-container / @on-error-container.
             rBackgroundColor = rSettings.GetErrorColor().getBColor();
             rForegroundColor = rSettings.GetErrorTextColor().getBColor();
-            rMessageColor = rSettings.GetErrorTextColor().getBColor();
             break;
     }
+    rMessageColor = rForegroundColor;
 
+    // High contrast bypass: restore the captured native baseline and drop Material tokens so the
+    // strip stays legible; severity is still carried by the icon + wording.
     if (rSettings.GetHighContrastMode())
     {
         rBackgroundColor = rSettings.GetLightColor().getBColor();
         rForegroundColor = rSettings.GetDialogTextColor().getBColor();
+        rMessageColor = rForegroundColor;
     }
 }
 OUString GetInfoBarIconName(InfobarType ibType)
@@ -250,6 +282,8 @@ SfxInfoBarWindow::SfxInfoBarWindow(vcl::Window* pParent, OUString sId,
 
     SetForeAndBackgroundColors(m_eType);
 
+    UpdateAccessibleAnnouncement(sPrimaryMessage, sSecondaryMessage);
+
     auto nWidth = pParent->GetSizePixel().getWidth();
     auto nHeight = get_preferred_size().Height();
     SetSizePixel(Size(nWidth, nHeight + 2));
@@ -302,6 +336,23 @@ void SfxInfoBarWindow::Layout()
     m_bLayingOut = false;
 }
 
+void SfxInfoBarWindow::Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle& /*rRect*/)
+{
+    // docs/design/07-feedback.md 7.6: paint the persistent strip as a corner-container (12px)
+    // rounded Material surface in the resolved container color. An InterimItemWindow strip has no
+    // themed part, so the radius is painted here in code, mirroring the NotificationSeverityStrip
+    // rounded accent in sfx2/source/notification/NotificationCard.cxx.
+    const StyleSettings& rSettings = Application::GetSettings().GetStyleSettings();
+    // corner-container == 12 in vcl/uiconfig/theme_definitions/material/definition.xml <shapes>.
+    // High contrast bypasses Material drawing, so the strip falls back to a square baseline fill.
+    const sal_uLong nCornerContainerRadius = rSettings.GetHighContrastMode() ? 0 : 12;
+
+    const ::tools::Rectangle aRect(Point(0, 0), GetOutputSizePixel());
+    rRenderContext.SetLineColor();
+    rRenderContext.SetFillColor(Color(m_aBackgroundColor));
+    rRenderContext.DrawRect(aRect, nCornerContainerRadius, nCornerContainerRadius);
+}
+
 bool SfxInfoBarWindow::EventNotify(NotifyEvent& rEvent)
 {
     const NotifyEventType nType = rEvent.GetType();
@@ -344,12 +395,33 @@ void SfxInfoBarWindow::SetForeAndBackgroundColors(InfobarType eType)
     Color aBackgroundColor(m_aBackgroundColor);
     m_xPrimaryMessage->set_background(aBackgroundColor);
     m_xSecondaryMessage->set_background(aBackgroundColor);
-    m_xContainer->set_background(aBackgroundColor);
+    // The strip surface -- including the corner-container rounding -- is painted by
+    // SfxInfoBarWindow::Paint; the top container stays transparent so the rounded corners show.
     if (m_xCloseBtn->get_visible())
     {
         m_xCloseBtn->set_background(aBackgroundColor);
         SetCloseButtonImage();
     }
+
+    Invalidate();
+}
+
+void SfxInfoBarWindow::UpdateAccessibleAnnouncement(const OUString& sPrimaryMessage,
+                                                    const OUString& sSecondaryMessage)
+{
+    // Compose "<severity>: <text>" from the localized notification-service severity labels so the
+    // announcement names the severity in words (color-independent) and stays translatable. The
+    // strip carries AccessibleRole::NOTIFICATION (infobar.ui), so refreshing the accessible name
+    // is announced politely without stealing focus, while the text remains persistently readable.
+    const OUString aSeverity
+        = sfx2::NotificationTheme::GetSeverityLabel(ToNotificationSeverity(m_eType));
+    OUString aMessage = sPrimaryMessage;
+    if (!sSecondaryMessage.isEmpty())
+        aMessage
+            = aMessage.isEmpty() ? sSecondaryMessage : aMessage + u" "_ustr + sSecondaryMessage;
+    m_xContainer->set_accessible_name(SfxResId(STR_NOTIF_CARD_ACCESSIBLE)
+                                          .replaceFirst(u"%1"_ustr, aSeverity)
+                                          .replaceFirst(u"%2"_ustr, aMessage));
 }
 
 void SfxInfoBarWindow::dispose()
@@ -378,6 +450,7 @@ void SfxInfoBarWindow::Update(const OUString& sPrimaryMessage, const OUString& s
 
     m_xPrimaryMessage->set_label(sPrimaryMessage);
     m_xSecondaryMessage->set_text(sSecondaryMessage);
+    UpdateAccessibleAnnouncement(sPrimaryMessage, sSecondaryMessage);
     Resize();
     Invalidate();
 }

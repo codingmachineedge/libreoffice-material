@@ -2888,6 +2888,10 @@ IMPL_LINK_NOARG(SalInstanceMenuButton, ActivateHdl, ::MenuButton*, void) { signa
 
 IMPL_LINK(SalInstanceLinkButton, ClickHdl, FixedHyperlink&, rButton, void)
 {
+    // Activating a weld::LinkButton visits the underlying link, so the visited
+    // state (Material @visited-link) is exposed across both link surfaces --
+    // the native FixedHyperlink and this weld wrapper.
+    rButton.SetVisited(true);
     bool bConsumed = signal_activate_link();
     if (!bConsumed)
         m_aOrigClickHdl.Call(rButton);

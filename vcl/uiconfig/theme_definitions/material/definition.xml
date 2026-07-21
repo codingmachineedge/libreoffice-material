@@ -189,6 +189,11 @@
         <floatTitleHeight value="@height-floating-title"/>
         <listBoxPreviewDefaultLogicWidth value="@size-list-preview"/>
         <listBoxPreviewDefaultLogicHeight value="@size-list-preview"/>
+        <menuBarHeight value="38"/>
+        <menuItemHeight value="40"/>
+        <menuPopupMinWidth value="248"/>
+        <menuAccelColumnGap value="14"/>
+        <menuInnerBorder value="6"/>
     </settings>
 
     <typography>

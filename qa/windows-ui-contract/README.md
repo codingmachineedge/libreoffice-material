@@ -336,3 +336,149 @@ deliberately out of scope and is not faked here. The surfaces are
 source-declared for the Windows-first migration target; `runtime_verified` stays
 `false` until an exact-build capture exists, and the contract claims no native
 build, screenshot, or runtime evidence.
+
+## Wave-2 Batch A shell and surface contracts
+
+Wave-2 Batch A (2026-07-21) adds eight fail-closed source contracts, one per
+inventory row, that lock a Material shell/navigation/feedback surface against
+`definition.xml` token drift and against the guarded native wiring that consumes
+it. Each is source evidence only: markers are checked in comment-stripped code,
+`runtime_verified` (where present) stays `false`, and none claims a native
+build, pixels, or runtime interaction. Validate the whole cohort:
+
+```sh
+python bin/check-windows-menu-composition.py
+python bin/test_windows_menu_composition.py
+python bin/check-windows-sidebar-rail.py
+python bin/test_windows_sidebar_rail.py
+python bin/check-windows-statusbar-composition.py
+python bin/test_windows_statusbar_composition.py
+python bin/check-windows-calc-sheet-tabs.py
+python bin/test_windows_calc_sheet_tabs.py
+python bin/check-windows-startcenter-cards.py
+python bin/test_windows_startcenter_cards.py
+python bin/check-material-infobar-contract.py
+python bin/test_material_infobar_contract.py
+python bin/check-windows-find-replace-fieldset.py
+python bin/test_windows_find_replace_fieldset.py
+python bin/check-windows-link-contract.py
+python bin/test_windows_link_contract.py
+```
+
+### Menubar and drop menus (WIN-NAV-001)
+
+`menu-composition.json` cross-validates the Material menubar/menupopup part and
+state declarations, the five composition settings (`menuBarHeight` 38,
+`menuItemHeight` 40, `menuPopupMinWidth` 248, `menuAccelColumnGap` 14,
+`menuInnerBorder` 6), the `size-menu-indicator` (18) metric, and the
+disabled-submenu-arrow `@outline` state against 24 real code markers that carry
+them through the `settings -> NWF -> Menu::ImplCalcSize` layout channel: the
+`mnMenu*` fields in `vcl/inc/svdata.hxx`, the reader mapping in
+`WidgetDefinitionReader.cxx`, the Material-guarded population plus platform
+baseline capture/restore in `FileDefinitionWidgetDraw.cxx`, and the layout reads
+in `menu.cxx`. The 18 mutation tests fail closed on token/metric drift, a
+dropped NWF field, a lost baseline restore (which would leak the Material metrics
+into non-Material rendering), or a broken disabled-arrow state. Prototype-only
+fine geometry (title-drop offset, exact text insets, monospaced accelerator
+styling) is out of scope.
+
+### Sidebar rail (WIN-NAV-005)
+
+`sidebar-rail.json` records that the rail is sidebar-framework chrome, not a
+`definition.xml` control (design [05](../../docs/design/05-navigation.md) §5.1/
+§5.7 and [06](../../docs/design/06-containers.md) §6.7: "No dedicated native rail
+part exists"), so its five metrics (48px rail width, 38px button, 22px icon, 4px
+gap, 10px top padding) and six state colours live in the sfx2 sidebar `Theme`
+and are consumed by `TabBar`/`SidebarController` behind
+`VCL_DRAW_WIDGETS_FROM_FILE`. This is a **documented divergence** from the row
+plan, which named `definition.xml`; the design chapter wins. The 14 mutation
+tests lock the idle/hover/active-deck/focus/disabled palette, the guarded
+geometry consumption, and click-active-to-collapse (`OpenThenToggleDeck`). The
+22px icon down-scaling and the bespoke inner rule / focus ring delegated to the
+shared toolbar part remain open.
+
+### Status bar (WIN-NAV-008)
+
+`statusbar-composition.json` binds the Material 28px status band to its guarded
+native wiring. `vcl/source/window/status.cxx` composes the `faceColor ->
+@surface-container` fill and the `@outline-variant` `stroke-thin` top rule behind
+`VCL_FILE_WIDGET_THEME`; `definition.xml` already carries the band/field tokens
+and the zoom-slider parts (thumb idle/hover/focus/disabled, filled/remainder
+tracks), which this contract locks against drift; and
+`genericstatusbarcontroller.cxx` routes owner-drawn status updates through the
+item accessible name (`setAccessibleName`, deliberately not `setText`, so the
+band cannot reflow) as accessible value changes while retaining `repaint()`. The
+interactive-field hover wash (§8.2) has no dedicated native part and stays
+spec-only. 21 mutation tests.
+
+### Calc sheet tabs (WIN-NAV-006)
+
+`calc-sheet-tabs.json` locks the `tabitem`/`tabheader`/`tabpane` token set the
+Calc sheet-tab strip maps onto and the additive `ScTabControl::Paint` override
+(drawn over `TabBar::Paint`, Material- and high-contrast-guarded via
+`vcl::MaterialTokens`) that renders the `@outline-variant` strip top rule and the
+`PaintMaterialSheetTabOverlay` user tab-colour accent. The 22 mutation tests
+assert the accent strip is **selection-independent** (it must reference
+`maMaterialTabColors` and must not reference `IsPageSelected`/`GetCurPageId`, per
+design [05](../../docs/design/05-navigation.md) §6.4). The strip band, docked-tab
+fills, active-tab grid-join fill, and the Add-Sheet button are drawn by the
+svtools `TabBar`/`TabDrawer` base class, out of this row's file scope.
+
+### Start Center document cards (WIN-CON-006)
+
+`startcenter-cards.json` registers the two card grids (`RecentDocsView`,
+`TemplateDefaultView`) that draw over `@surface` as Start Center application
+drawing, not a `definition.xml` control (design
+[06](../../docs/design/06-containers.md) §6.6). The 18 mutation tests lock the
+palette/shape token contract and the guarded renderer anatomy in
+`startcentercard.cxx` — card container, 118px preview, 74x92 thumbnail, 26x26
+corner-small badge chip, ellipsized 13px caption plus 11px meta, `@primary` hover
+border, corner-focus keyboard ring, and the filtered-empty message
+(`STR_SC_NO_RECENT_MATCH` / `STR_SC_NO_TEMPLATE_MATCH`) — while both views keep
+their non-Material `ThumbnailView::Paint` fallthrough. Soft-shadow elevation, the
+relative-time meta model, the per-module badge glyph, and the first-run welcome
+bitmap are deferred.
+
+### Warning/error banners and infobars (WIN-FBK-006)
+
+`infobar-severity-policy.json` requires every `InfobarType` severity to resolve a
+Material container/on-container pair from semantic `StyleSettings` feedback slots
+(INFO -> primary-container highlight, WARNING -> warning-container, DANGER ->
+error-container) or from the single shared `NotificationTheme` resolved-green
+(SUCCESS), never from an infobar-local hex literal; the strip paints the
+corner-container 12px radius in code with a high-contrast square bypass; a polite
+`AccessibleRole::NOTIFICATION` announcement names the severity in words; and
+`infobar.ui` carries the design [07](../../docs/design/07-feedback.md) §7.6
+padding/gap/icon geometry. The file documents the INFO/SUCCESS divergence (§7.6 is
+a warning/error chapter and defines no INFO/SUCCESS container tokens). 16 mutation
+tests. The §7.6 single-line 13px/1.3 text metric is deferred to the Material
+typography layer.
+
+### Find & Replace field set (WIN-INP-006)
+
+`find-replace-fieldset.json` locks the `SvxSearchDialog` Material field set
+(design [04](../../docs/design/04-inputs.md) §6/6.1): the search combo bound to
+the shared `sfx2::RegexSearchController` and its regex builder; Match case
+(inverse of ignore-case, driving `TransliterationFlags::IGNORE_CASE`), Whole
+words (`SetWordOnly`), and Regular expressions (shared-controller mode via
+`SyncRegexControllerFromToggle` with a `loop_breaker_guard`) all driving the one
+`SvxSearchItem` descriptor; the Replace field; the notification-role result
+summary (`searchlabel`); and exactly one `suggested-action` emphasis, kept on the
+Enter-default Find Next. The 25 mutation tests fail closed on a broken binding,
+a dropped descriptor effect, a lost loop breaker, or emphasis drift. The floating
+Replace label, the supplementary tinted live-preview run list, and the
+filled-pill-on-Replace-All visual are deferred with recorded reasons in the JSON.
+
+### Links (WIN-ACT-005)
+
+`link-contract.json` names the two link surfaces — the native `FixedHyperlink`
+(`vcl/source/control/fixedhyper.cxx`) and its `weld::LinkButton` wrapper
+(`salvtables.cxx`) — and the Material token side the design
+[02](../../docs/design/02-actions.md) §5 interaction contract depends on: a
+`@primary` focus outline at `corner-focus` (6px) radius replacing the platform
+ShowFocus rectangle (rendered only when Material is active and not high
+contrast), a hover that keeps the underline with no colour tint, a disabled state
+rendering `deactiveTextColor` (`@outline`) as plain non-underlined non-focusable
+text, and an exposed visited state (`@visited-link`). The 25 mutation tests cover
+both surfaces. The full AT-SPI/IA2 visited accessibility-state flag is deferred
+because upstream has no `VISITED` `AccessibleStateType`.

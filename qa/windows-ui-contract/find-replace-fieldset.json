@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "contract": "windows-native-find-replace-fieldset",
+  "platform": "windows",
+  "inventory_id": "WIN-INP-006",
+  "design_chapter": "docs/design/04-inputs.md",
+  "design_sections": ["6", "6.1"],
+  "surface": "Find and Replace field set",
+  "ui_file": "svx/uiconfig/ui/findreplacedialog.ui",
+  "header_file": "include/svx/srchdlg.hxx",
+  "source_file": "svx/source/dialog/srchdlg.cxx",
+  "dialog_id": "FindReplaceDialog",
+  "owner_type": "SvxSearchDialog",
+  "single_search_descriptor": "SvxSearchItem",
+  "composition_marker": "WIN-INP-006 Material Find & Replace field set",
+  "find_field": {
+    "widget_id": "searchterm",
+    "widget_class": "GtkComboBoxText",
+    "has_entry": true,
+    "member": "m_xSearchLB",
+    "regex_builder_id": "searchterm_regex_builder",
+    "regex_builder_member": "m_xSearchRegexBuilder",
+    "controller_member": "m_xSearchRegexController",
+    "controller_ctor_marker": "std::make_unique<sfx2::RegexSearchController>(",
+    "controller_ctor_args": "*m_xSearchLB, *m_xSearchRegexBuilder"
+  },
+  "replace_field": {
+    "widget_id": "replaceterm",
+    "widget_class": "GtkComboBoxText",
+    "has_entry": true,
+    "member": "m_xReplaceLB",
+    "weld_marker": "weld_combo_box(u\"replaceterm\"",
+    "floating_label": {
+      "status": "deferred",
+      "reason": "The floating label cut into the field outline is prototype-only per docs/design/04-inputs.md section 1.1; native VCL dialogs pair a GtkLabel beside the field (label2 'Replace With' / label5 'Replace:'), and relocating the caption into the outline is a later .ui/VCL layout work item shared by the whole input family, not a Find & Replace change."
+    }
+  },
+  "result_summary": {
+    "widget_id": "searchlabel",
+    "widget_class": "GtkLabel",
+    "a11y_role": "notification",
+    "member": "m_xSearchLabel",
+    "setter": "SetSearchLabel",
+    "note": "docs/design/04-inputs.md section 6 result summary. The in-dialog result-summary surface is the searchlabel (notification a11y role) driven by SetSearchLabel; the prototype's numeric 'N matches in M of P' string is supplied at runtime by the application search host (Writer/Calc) through SvxSearchDialogWrapper::SetSearchLabel over the real document, not fabricated in the dialog."
+  },
+  "options": [
+    {
+      "option": "match-case",
+      "widget_id": "matchcase",
+      "widget_class": "GtkCheckButton",
+      "member": "m_xMatchCaseCB",
+      "weld_marker": "weld_check_button(u\"matchcase\"",
+      "binding": "inverse-of-ignore-case-flag",
+      "flag": "i",
+      "descriptor_marker": "if (!m_xMatchCaseCB->get_active())",
+      "descriptor_effect": "TransliterationFlags::IGNORE_CASE"
+    },
+    {
+      "option": "whole-words",
+      "widget_id": "wholewords",
+      "widget_class": "GtkCheckButton",
+      "member": "m_xWordBtn",
+      "weld_marker": "weld_check_button(u\"wholewords\"",
+      "binding": "descriptor-word-boundary",
+      "descriptor_marker": "m_pSearchItem->SetWordOnly(GetCheckBoxValue(*m_xWordBtn))",
+      "config_marker": "aOpt.SetWholeWordsOnly"
+    },
+    {
+      "option": "regular-expressions",
+      "widget_id": "regexp",
+      "widget_class": "GtkCheckButton",
+      "member": "m_xRegExpBtn",
+      "weld_marker": "weld_check_button(u\"regexp\"",
+      "binding": "shared-controller-mode",
+      "descriptor_marker": "m_pSearchItem->SetRegExp(true)",
+      "toggle_gate": "GetCheckBoxValue(*m_xRegExpBtn)",
+      "toggle_to_controller_helper": "SyncRegexControllerFromToggle",
+      "controller_to_toggle_marker": "m_xRegExpBtn->set_active(rState.Mode ==",
+      "loop_breaker_guard": "if (aState.Mode != eMode)"
+    }
+  ],
+  "emphasis_class": "suggested-action",
+  "emphasized_action_id": "search",
+  "emphasis_note": "docs/design/04-inputs.md section 6 asks for outlined Find All / Find Next / Replace with a filled pill Replace All, while section 6.2 requires Enter to activate Find Next. The native dialog resolves that internal tension by keeping the Material filled emphasis (suggested-action) on the Enter default, Find Next; moving the filled pill purely onto the non-default Replace All is a visual-only change deferred until it can be rendered and verified against the theme. Exactly one action carries the emphasis class and it is the keyboard default.",
+  "actions": [
+    {"id": "searchall", "member": "m_xSearchAllBtn", "role": "find-all", "emphasis": "outlined"},
+    {"id": "backsearch", "member": "m_xBackSearchBtn", "role": "find-previous", "emphasis": "outlined"},
+    {"id": "search", "member": "m_xSearchBtn", "role": "find-next", "emphasis": "filled", "style_class": "suggested-action", "is_default": true},
+    {"id": "replace", "member": "m_xReplaceBtn", "role": "replace", "emphasis": "outlined"},
+    {"id": "replaceall", "member": "m_xReplaceAllBtn", "role": "replace-all", "emphasis": "outlined"}
+  ],
+  "supplementary_live_preview": {
+    "status": "deferred",
+    "reason": "docs/design/04-inputs.md section 6.3 marks the tinted preview run list supplementary -- results are always also stated in the text summary. The native Find & Replace is a modeless dialog (SfxModelessDialogController) that drives the real ICU engine over the live document via SvxSearchItem/Find All selection in the document view; there is no in-dialog document model to render a preview run list against without a substantial new preview subsystem, so the tinted run list is deferred and its absence never removes match information (the searchlabel summary carries it)."
+  },
+  "builder_popover_escape": "native: the regex builder opens as a top-level VCL floating window owned by sfx2::RegexSearchController, so it is not clipped by the dialog; the prototype's overflow:visible is a CSS-only concern with no native analog.",
+  "runtime_verified": false
+}

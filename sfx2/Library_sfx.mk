@@ -155,6 +155,7 @@ $(eval $(call gb_Library_add_exception_objects,sfx,\
     sfx2/source/control/sfxstatuslistener \
     sfx2/source/control/shell \
     sfx2/source/control/sorgitm \
+    sfx2/source/control/startcentercard \
     sfx2/source/control/statcach \
 	sfx2/source/control/templatedefaultview \
     sfx2/source/control/templateviewitem \

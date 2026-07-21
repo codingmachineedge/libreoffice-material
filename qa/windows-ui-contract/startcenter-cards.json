@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "contract": "material-startcenter-cards",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/06-containers.md",
+  "chapter_sections": ["6.6", "9.1", "9.10"],
+  "notes": "Start Center Recent Documents / Templates card grids drawn natively by the RecentDocsView and TemplateDefaultView ThumbnailView subclasses. Cards are Start Center application drawing over @surface, not a definition.xml control (06-containers 6.6 platform notes); the palette/shape tokens below are the card's token contract with definition.xml and drift fails closed. Source-declared only: no native build, card pixels or runtime interaction is claimed.",
+  "renderer": {
+    "source": "sfx2/source/control/startcentercard.cxx",
+    "header": "sfx2/inc/startcentercard.hxx",
+    "token_include": "<vcl/MaterialTokens.hxx>",
+    "guard_env": "VCL_FILE_WIDGET_THEME",
+    "guard_markers": [
+      "VCL_FILE_WIDGET_THEME",
+      "== \"material\"",
+      "MaterialTokens::fromThemeDefinition",
+      "findColor(",
+      "findRadius("
+    ],
+    "geometry_constants": {
+      "SC_CARD_MIN_WIDTH": 184,
+      "SC_CARD_GRID_GAP": 16,
+      "SC_CARD_PREVIEW_HEIGHT": 118,
+      "SC_CARD_CAPTION_HEIGHT": 52,
+      "SC_CARD_THUMB_WIDTH": 74,
+      "SC_CARD_THUMB_HEIGHT": 92,
+      "SC_CARD_THUMB_RADIUS": 6,
+      "SC_CARD_BADGE_SIZE": 26,
+      "SC_CARD_BADGE_INSET": 8,
+      "SC_CARD_BADGE_ICON": 16,
+      "SC_CARD_CAPTION_PAD_TOP": 10,
+      "SC_CARD_TITLE_TEXT": 13,
+      "SC_CARD_META_TEXT": 11,
+      "SC_CARD_EMPTY_PADDING": 34,
+      "SC_CARD_EMPTY_TEXT": 13
+    }
+  },
+  "palette_tokens": [
+    "surface",
+    "surface-container-low",
+    "outline-variant",
+    "primary",
+    "primary-container",
+    "on-primary-container",
+    "on-surface",
+    "on-surface-variant"
+  ],
+  "shape_tokens": {
+    "corner-container": "12",
+    "corner-small": "8",
+    "corner-focus": "6"
+  },
+  "anatomy": [
+    {
+      "role": "card-container",
+      "chapter": "06-containers 6.6 (card: @surface fill, @outline-variant border, corner-container, clipped)",
+      "markers": ["DrawRect(rArea, nCardRadius, nCardRadius)", "\"corner-container\"", "\"surface\"", "\"outline-variant\""]
+    },
+    {
+      "role": "preview-region",
+      "chapter": "06-containers 6.6 (118 px @surface-container-low, hairline bottom)",
+      "markers": ["SC_CARD_PREVIEW_HEIGHT", "\"surface-container-low\"", "DrawLine("]
+    },
+    {
+      "role": "page-thumbnail",
+      "chapter": "06-containers 6.6 (74x92 @surface page, @outline-variant border, 6px radius)",
+      "markers": ["SC_CARD_THUMB_WIDTH", "SC_CARD_THUMB_HEIGHT", "SC_CARD_THUMB_RADIUS", "DrawBitmap("]
+    },
+    {
+      "role": "app-badge",
+      "chapter": "06-containers 6.6 (26x26 corner-small @primary-container chip, @on-primary-container 16px icon)",
+      "markers": ["SC_CARD_BADGE_SIZE", "SC_CARD_BADGE_INSET", "\"primary-container\"", "\"on-primary-container\"", "\"corner-small\""]
+    },
+    {
+      "role": "caption",
+      "chapter": "06-containers 6.6 (13px medium @on-surface name ellipsized, 11px @on-surface-variant meta)",
+      "markers": ["SC_CARD_TITLE_TEXT", "SC_CARD_META_TEXT", "WEIGHT_MEDIUM", "\"on-surface\"", "\"on-surface-variant\"", "EndEllipsis", "DrawText("]
+    },
+    {
+      "role": "hover-border",
+      "chapter": "06-containers 6.6 (hover: @primary border; the paired soft-shadow elevation cue is deferred, so hover is currently border-colour-only)",
+      "markers": ["bHover ?", "\"primary\""]
+    },
+    {
+      "role": "focus-ring",
+      "chapter": "09-start-center 9.8 / 06-containers 6.6 (corner-focus @primary ring, outside the border)",
+      "markers": ["bFocused", "\"corner-focus\""]
+    },
+    {
+      "role": "empty-grid-message",
+      "chapter": "06-containers 6.6 / 09-start-center 9.5 (full-width centred @on-surface-variant message)",
+      "markers": ["rEmptyMessage", "SC_CARD_EMPTY_PADDING", "SC_CARD_EMPTY_TEXT"]
+    }
+  ],
+  "empty_message_resource_file": "include/sfx2/strings.hrc",
+  "expected_views": 2,
+  "views": [
+    {
+      "view_id": "recentdocs.card-grid",
+      "class": "RecentDocsView",
+      "status": "source-declared",
+      "source": "sfx2/source/control/recentdocsview.cxx",
+      "empty_message_resource": "STR_SC_NO_RECENT_MATCH",
+      "empty_message_contains": "No recent documents match",
+      "fallthrough_marker": "ThumbnailView::Paint(",
+      "markers": [
+        "#include <startcentercard.hxx>",
+        "sfx2::IsMaterialStartCenterActive()",
+        "sfx2::MaterialStartCenterCards::Paint(",
+        "SfxResId(STR_SC_NO_RECENT_MATCH)",
+        "SC_CARD_PREVIEW_HEIGHT"
+      ],
+      "runtime_verified": false
+    },
+    {
+      "view_id": "templatedefault.card-grid",
+      "class": "TemplateDefaultView",
+      "status": "source-declared",
+      "source": "sfx2/source/control/templatedefaultview.cxx",
+      "empty_message_resource": "STR_SC_NO_TEMPLATE_MATCH",
+      "empty_message_contains": "No templates match",
+      "fallthrough_marker": "TemplateLocalView::Paint(",
+      "markers": [
+        "#include <startcentercard.hxx>",
+        "sfx2::IsMaterialStartCenterActive()",
+        "sfx2::MaterialStartCenterCards::Paint(",
+        "SfxResId(STR_SC_NO_TEMPLATE_MATCH)",
+        "SC_CARD_PREVIEW_HEIGHT"
+      ],
+      "runtime_verified": false
+    }
+  ],
+  "runtime_verified": false
+}

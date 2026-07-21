@@ -2344,6 +2344,14 @@ void SvxSearchDialog::SaveToModule_Impl()
         Remember_Impl(true);
     }
 
+    // WIN-INP-006 Material Find & Replace field set (docs/design/04-inputs.md section 6.1):
+    // the Match case / Whole words / Regular expressions checkboxes below drive this one
+    // SvxSearchItem -- the single ICU-backed LibreOffice search descriptor -- and never a
+    // parallel matcher. Match case is bound as the inverse of the shared regex builder's
+    // ignore-case flag; Whole words maps to the descriptor word-boundary option; Regular
+    // expressions shares its state with the builder mode, kept bidirectionally consistent and
+    // loop-free by the regexp-toggle sync helpers. The enforced wiring anchors live in
+    // bin/check-windows-find-replace-fieldset.py.
     m_pSearchItem->SetRegExp(false);
     m_pSearchItem->SetWildcard(false);
     m_pSearchItem->SetLevenshtein(false);

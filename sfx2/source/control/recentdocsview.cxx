@@ -30,7 +30,12 @@
 #include <sfx2/strings.hrc>
 #include <bitmaps.hlst>
 #include "recentdocsviewitem.hxx"
+#include <sfx2/thumbnailviewitem.hxx>
+#include <startcentercard.hxx>
 #include <sfx2/app.hxx>
+
+#include <memory>
+#include <vector>
 
 #include <officecfg/Office/Common.hxx>
 #include <svtools/confirmationdlg.hxx>
@@ -73,6 +78,20 @@ RecentDocsView::RecentDocsView(std::unique_ptr<weld::ScrolledWindow> xWindow)
 
     setItemMaxTextLength( 30 );
     setItemDimensions( mnItemMaxSize, mnItemMaxSize, gnTextHeight, gnItemPadding );
+
+    // Material Start Center: lay the grid out as Material document cards
+    // (SC_CARD_MIN_WIDTH wide, SC_CARD_PREVIEW_HEIGHT preview + SC_CARD_CAPTION_HEIGHT
+    // caption tall). setItemDimensions() adds 2*padding to *both* axes, so -- exactly
+    // as SC_CARD_GRID_GAP is pre-subtracted from the width -- it is subtracted from
+    // the caption height too, leaving the drawn cell at preview + caption. Without
+    // this the cell would overshoot by 2*padding and the caption region would render
+    // SC_CARD_GRID_GAP px taller than SC_CARD_CAPTION_HEIGHT documents.
+    // Guarded so the default/native thumbnail geometry above is untouched.
+    if (sfx2::IsMaterialStartCenterActive())
+        setItemDimensions(sfx2::SC_CARD_MIN_WIDTH - sfx2::SC_CARD_GRID_GAP,
+                          sfx2::SC_CARD_PREVIEW_HEIGHT,
+                          sfx2::SC_CARD_CAPTION_HEIGHT - sfx2::SC_CARD_GRID_GAP,
+                          sfx2::SC_CARD_GRID_GAP / 2);
 
     mfHighlightTransparence = 0.75;
 
@@ -282,6 +301,28 @@ void RecentDocsView::OnItemDblClicked(ThumbnailViewItem *pItem)
 
 void RecentDocsView::Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle &aRect)
 {
+    // Material Start Center: draw the native Material document-card grid, plus
+    // the filtered-empty message. Inert under the default/native theme, so the
+    // existing ThumbnailView + welcome-screen path below stays untouched.
+    //
+    // Only take the Material path when there ARE recent documents (mItemList
+    // non-empty): either a populated card grid, or -- when a live search hides
+    // every card -- the "no documents match this pattern" filtered-empty message.
+    // When mItemList itself is empty (fresh install, no recent documents at all)
+    // fall through to the Welcome screen below; a first-run user must see the
+    // Welcome logo, not a filter-implying "no match" message when no filter is set.
+    if (sfx2::IsMaterialStartCenterActive() && !mItemList.empty())
+    {
+        std::vector<ThumbnailViewItem*> aVisibleItems;
+        aVisibleItems.reserve(mItemList.size());
+        for (const std::unique_ptr<ThumbnailViewItem>& rxItem : mItemList)
+            if (rxItem && rxItem->isVisible())
+                aVisibleItems.push_back(rxItem.get());
+        if (sfx2::MaterialStartCenterCards::Paint(rRenderContext, *this, aVisibleItems,
+                                                  SfxResId(STR_SC_NO_RECENT_MATCH)))
+            return;
+    }
+
     ThumbnailView::Paint(rRenderContext, aRect);
 
     if (!mItemList.empty())

@@ -327,6 +327,10 @@ struct ImplSVNWFData
     int                     mnStatusBarLowerRightOffset = 0; // amount in pixel to avoid in the lower righthand corner
     int                     mnMenuFormatBorderX = 0;        // horizontal inner popup menu border
     int                     mnMenuFormatBorderY = 0;        // vertical inner popup menu border
+    int                     mnMenuBarHeight = 0;            // Material menubar band minimum height (0 = platform default)
+    int                     mnMenuItemHeight = 0;           // Material popup command-row minimum height (0 = platform default)
+    int                     mnMenuPopupMinWidth = 0;        // Material drop-menu minimum width (0 = platform default)
+    int                     mnMenuAccelColumnGap = 0;       // Material accelerator-column gap width (0 = platform default)
     ::Color                 maMenuBarHighlightTextColor = COL_TRANSPARENT; // override highlight text color
                                                             // in menubar if not transparent
     bool                    mbMenuBarDockingAreaCommonBG = false; // e.g. WinXP default theme

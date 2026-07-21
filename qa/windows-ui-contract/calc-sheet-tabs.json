@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "contract": "material-calc-sheet-tabs",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/05-navigation.md",
+  "chapter_section": "6",
+  "expected_surfaces": 1,
+  "surfaces": [
+    {
+      "surface_id": "calc.sheet-tabs",
+      "title": "Calc sheet-tab strip (ScTabControl over TabBar)",
+      "chapter_section": "6",
+      "status": "source-declared",
+      "notes": "The strip band, docked-tab fills and Add-Sheet button are drawn by the svtools TabBar/TabDrawer base class (out of this row's file scope). This contract covers what ScTabControl owns natively and additively: the Material strip top rule, the user tab-colour accent strip decoupled from the selection treatment, the Material-aware colour routing, and the tabitem/tabheader/tabpane token set the sheet-tab strip maps onto. No native build, tab pixels or runtime interaction are claimed.",
+      "runtime_verified": false,
+      "owner_sources": [
+        "sc/source/ui/view/tabcont.cxx",
+        "sc/source/ui/inc/tabcont.hxx",
+        "vcl/uiconfig/theme_definitions/material/definition.xml"
+      ],
+      "definition_parts": [
+        {
+          "control": "tabitem",
+          "part": "Entire",
+          "part_attrs": {"margin-width": "@space-tab-inline", "height": "@height-tab"},
+          "states": [
+            {"role": "inactive", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+            {"role": "active", "attrs": {"enabled": "true", "selected": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+            {"role": "hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+            {"role": "focus", "attrs": {"enabled": "true", "focused": "true"}, "tokens": {"stroke": "@primary", "fill": "@surface-container", "stroke-width": "@stroke-standard", "radius": "@corner-pill"}}
+          ]
+        },
+        {
+          "control": "tabitem",
+          "part": "MenuItem",
+          "states": [
+            {"role": "inactive", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-container"}},
+            {"role": "active", "attrs": {"enabled": "true", "selected": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-container"}}
+          ]
+        },
+        {
+          "control": "tabheader",
+          "part": "Entire",
+          "states": [
+            {"role": "strip-face", "attrs": {}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}}
+          ]
+        },
+        {
+          "control": "tabpane",
+          "part": "Entire",
+          "states": [
+            {"role": "grid-surface", "attrs": {}, "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+          ]
+        }
+      ],
+      "guarded_token_consumption": {
+        "source": "sc/source/ui/view/tabcont.cxx",
+        "include": "<vcl/MaterialTokens.hxx>",
+        "env_guard": "VCL_FILE_WIDGET_THEME",
+        "high_contrast_guard": "GetHighContrastMode",
+        "markers": [
+          "MaterialTokens::fromThemeDefinition",
+          "findColor(\"outline-variant\")",
+          "findMetric(\"stroke-thin\")",
+          "findMetric(\"stroke-standard\")",
+          "findMetric(\"space-tab-inline\")",
+          "isValid()"
+        ]
+      },
+      "paint_layout": {
+        "source": "sc/source/ui/view/tabcont.cxx",
+        "header": "sc/source/ui/inc/tabcont.hxx",
+        "override_signature": "void ScTabControl::Paint(",
+        "base_call": "TabBar::Paint(",
+        "markers": [
+          "PaintMaterialSheetTabOverlay",
+          "SetMaterialAwareTabBgColor",
+          "maMaterialTabColors",
+          "GetPageArea()",
+          "GetPageRect(",
+          "DrawLine(",
+          "DrawRect("
+        ],
+        "header_markers": [
+          "Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect ) override;",
+          "PaintMaterialSheetTabOverlay",
+          "SetMaterialAwareTabBgColor",
+          "IsMaterialSheetTabActive",
+          "std::map<sal_uInt16, Color> maMaterialTabColors"
+        ]
+      },
+      "color_strip_independence": {
+        "source": "sc/source/ui/view/tabcont.cxx",
+        "function": "ScTabControl::PaintMaterialSheetTabOverlay",
+        "must_contain": ["maMaterialTabColors", "SetFillColor(", "DrawRect("],
+        "must_not_contain": ["IsPageSelected", "GetCurPageId"]
+      }
+    }
+  ]
+}

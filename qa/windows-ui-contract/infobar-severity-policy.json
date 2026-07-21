@@ -1,0 +1,89 @@
+{
+  "_comment": [
+    "Registry for the Material warning/error banner (infobar) severity contract",
+    "(docs/design/07-feedback.md 7.6). Source-implementation ledger only: it does not claim a",
+    "native build, dialog pixels, or runtime accessibility evidence. Validate with",
+    "bin/check-material-infobar-contract.py and bin/test_material_infobar_contract.py.",
+    "The contract: every InfobarType severity resolves a Material container/on-container pair from",
+    "semantic StyleSettings feedback slots (INFO -> primary-container highlight roles, WARNING ->",
+    "warning-container, DANGER -> error-container) or from the single shared NotificationTheme",
+    "resolved-green (SUCCESS), never from an infobar-local hex literal; the strip paints the",
+    "corner-container (12px) radius in code with a high-contrast square bypass; a polite live",
+    "announcement (AccessibleRole::NOTIFICATION + refreshed accessible name) names the severity in",
+    "words; and infobar.ui carries the 7.6 padding/gap/icon geometry.",
+    "Note: 7.6 is a warning/error chapter and defines no INFO/SUCCESS container tokens; INFO reuses",
+    "the primary-container highlight roles and SUCCESS reuses the NotificationTheme resolved-green",
+    "accent (a filled surface with a white on-color), a documented divergence from the light-tint",
+    "container model of WARNING/DANGER."
+  ],
+  "source": "sfx2/source/dialog/infobar.cxx",
+  "header": "include/sfx2/infobar.hxx",
+  "ui_file": "sfx2/uiconfig/ui/infobar.ui",
+  "container_id": "InfoBar",
+  "color_resolver": "GetInfoBarColors",
+  "forbidden_color_literal_regex": "(?:basegfx::BColor|Color)\\(\\s*(?:0x|[0-9.])",
+  "severities": [
+    {
+      "type": "INFO",
+      "case_label": "case InfobarType::INFO:",
+      "role": "primary-container / on-primary-container",
+      "background_marker": "rSettings.GetHighlightColor()",
+      "foreground_marker": "rSettings.GetHighlightTextColor()"
+    },
+    {
+      "type": "SUCCESS",
+      "case_label": "case InfobarType::SUCCESS:",
+      "role": "NotificationTheme resolved-green accent",
+      "background_marker": "NotificationTheme::ResolveAccentColor(",
+      "foreground_marker": "COL_WHITE.getBColor()"
+    },
+    {
+      "type": "WARNING",
+      "case_label": "case InfobarType::WARNING:",
+      "role": "warning-container / on-warning-container",
+      "background_marker": "rSettings.GetWarningColor()",
+      "foreground_marker": "rSettings.GetWarningTextColor()"
+    },
+    {
+      "type": "DANGER",
+      "case_label": "case InfobarType::DANGER:",
+      "role": "error-container / on-error-container",
+      "background_marker": "rSettings.GetErrorColor()",
+      "foreground_marker": "rSettings.GetErrorTextColor()"
+    }
+  ],
+  "high_contrast_markers": [
+    "rSettings.GetHighContrastMode()",
+    "rSettings.GetLightColor()",
+    "rSettings.GetDialogTextColor()"
+  ],
+  "announcement": {
+    "accessible_role": "notification",
+    "source_markers": [
+      "UpdateAccessibleAnnouncement",
+      "NotificationTheme::GetSeverityLabel(",
+      "set_accessible_name(",
+      "STR_NOTIF_CARD_ACCESSIBLE"
+    ]
+  },
+  "corner_container": {
+    "radius": 12,
+    "paint_signature": "void SfxInfoBarWindow::Paint(",
+    "draw_marker": "rRenderContext.DrawRect(aRect, nCornerContainerRadius, nCornerContainerRadius)",
+    "radius_marker": "nCornerContainerRadius = rSettings.GetHighContrastMode() ? 0 : 12"
+  },
+  "ui_geometry": {
+    "grid_class": "GtkGrid",
+    "grid_margins": {
+      "margin-start": "16",
+      "margin-end": "16",
+      "margin-top": "12",
+      "margin-bottom": "12",
+      "column-spacing": "12"
+    },
+    "leading_box_id": "left",
+    "leading_box_spacing": "12",
+    "image_id": "image",
+    "image_pixel_size": "20"
+  }
+}

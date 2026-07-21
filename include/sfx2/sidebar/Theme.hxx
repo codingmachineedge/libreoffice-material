@@ -59,6 +59,19 @@ public:
         Color_PanelBackground,
         Color_PanelTitleBarBackground,
         Color_TabBarBackground,
+        // Material sidebar rail (WIN-NAV-005): the deck-switcher rail is
+        // sidebar-framework chrome (design 05 s5.1 / 06 s6.7), so its Material
+        // state palette lives here rather than as a VCL widget-definition part.
+        // Idle icon @on-surface-variant; hover/active fill @primary-container +
+        // icon @on-primary-container; focus ring @primary; disabled icon
+        // @outline; inner rule @outline-variant. The rail fill itself stays on
+        // Color_TabBarBackground (@surface-container via the dialog color).
+        Color_TabItemActiveBackground,
+        Color_TabItemActiveText,
+        Color_TabItemText,
+        Color_TabItemFocusRing,
+        Color_TabItemDisabledText,
+        Color_TabBarSeparator,
 
         Color_Int_,
 
@@ -68,6 +81,14 @@ public:
         Int_DeckTopPadding,
         Int_DeckRightPadding,
         Int_DeckBottomPadding,
+        // Material sidebar rail metrics (WIN-NAV-005), density-invariant:
+        // 48px rail, 38x38px corner-small buttons carrying 22px icons stacked
+        // at a 4px gap below 10px top padding (design 05 s5.1 / 05 s5.5).
+        Int_TabBarRailWidth,
+        Int_TabItemButtonSize,
+        Int_TabItemIconSize,
+        Int_TabItemGap,
+        Int_TabBarTopPadding,
 
         Int_Bool_,
 

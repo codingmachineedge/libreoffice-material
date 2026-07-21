@@ -1,0 +1,56 @@
+{
+  "surface": "sidebar rail (WIN-NAV-005)",
+  "design_refs": [
+    "docs/design/05-navigation.md#5 Sidebar rail",
+    "docs/design/06-containers.md#6.7 Panels & side panes"
+  ],
+  "note": "The rail is sidebar-framework chrome (design 05 s5.1 / 05 s5.7 / 06 s6.7: 'No dedicated native rail part exists; buttons consume icon-button/toolbar tokens ... belong to the sidebar framework'), so its Material metrics and state palette live in the sfx2 sidebar Theme and are consumed by TabBar/SidebarController -- NOT as a VCL widget-definition part. This diverges from the row plan, which named definition.xml; the design chapter wins.",
+  "guard_env": "VCL_DRAW_WIDGETS_FROM_FILE",
+  "guard_helper": "IsMaterialRail",
+  "theme_header": "include/sfx2/sidebar/Theme.hxx",
+  "theme_source": "sfx2/source/sidebar/Theme.cxx",
+  "tabbar_source": "sfx2/source/sidebar/TabBar.cxx",
+  "controller_source": "sfx2/source/sidebar/SidebarController.cxx",
+  "rail_fill": {
+    "slot": "Color_TabBarBackground",
+    "token": "surface-container",
+    "getter": "GetDialogColor",
+    "role": "48px rail fill (@surface-container)"
+  },
+  "metrics": [
+    { "slot": "Int_TabBarRailWidth", "value": 48, "role": "rail width" },
+    { "slot": "Int_TabItemButtonSize", "value": 38, "role": "corner-small button size" },
+    { "slot": "Int_TabItemIconSize", "value": 22, "role": "icon size" },
+    { "slot": "Int_TabItemGap", "value": 4, "role": "inter-button gap" },
+    { "slot": "Int_TabBarTopPadding", "value": 10, "role": "top padding" }
+  ],
+  "colors": [
+    { "slot": "Color_TabItemActiveBackground", "token": "primary-container", "getter": "GetActiveTabColor", "role": "hover/active-deck fill" },
+    { "slot": "Color_TabItemActiveText", "token": "on-primary-container", "getter": "GetHighlightTextColor", "role": "hover/active-deck icon" },
+    { "slot": "Color_TabItemText", "token": "on-surface-variant", "getter": "GetGroupTextColor", "role": "idle icon" },
+    { "slot": "Color_TabItemFocusRing", "token": "primary", "getter": "GetAccentColor", "role": "focus ring" },
+    { "slot": "Color_TabItemDisabledText", "token": "outline", "getter": "GetDeactiveTextColor", "role": "disabled icon" },
+    { "slot": "Color_TabBarSeparator", "token": "outline-variant", "getter": "GetMenuBorderColor", "role": "inner rule" }
+  ],
+  "states": [
+    { "name": "idle", "fill": "transparent", "icon": "on-surface-variant" },
+    { "name": "hover", "fill": "primary-container", "icon": "on-primary-container" },
+    { "name": "active", "fill": "primary-container", "icon": "on-primary-container" },
+    { "name": "focus", "ring": "primary", "radius": "corner-small" },
+    { "name": "disabled", "fill": "none", "icon": "outline" }
+  ],
+  "tabbar_width_marker": "Theme::GetInteger(Theme::Int_TabBarRailWidth)",
+  "tabbar_geometry_markers": [
+    "Theme::GetInteger(Theme::Int_TabItemButtonSize)",
+    "Theme::GetInteger(Theme::Int_TabItemGap)",
+    "Theme::GetInteger(Theme::Int_TabBarTopPadding)",
+    "set_size_request(",
+    "set_margin_top("
+  ],
+  "tabbar_background_marker": "Theme::GetColor(Theme::Color_TabBarBackground)",
+  "collapse_function": "OpenThenToggleDeck",
+  "collapse_markers": [
+    "IsDeckVisible(",
+    "RequestCloseDeck()"
+  ]
+}

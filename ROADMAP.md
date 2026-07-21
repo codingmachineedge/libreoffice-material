@@ -515,6 +515,30 @@ association check, that registry-gated branch requires an MSI-installed
 disposable Windows Sandbox or VM and cannot be claimed from extracted-payload
 startup alone.
 
+On 2026-07-21, wave-2 Batch A added eight shared-shell, navigation, and feedback
+surfaces at source level, each guarded behind the Material file-widget theme and
+each locked by a new fail-closed build-free contract (checker + JSON registry +
+mutation suite). Three reached whole-row source scope: the menubar/drop-menu
+anatomy carried through the settings->NWF->`Menu::ImplCalcSize` channel with the
+disabled-arrow `@outline` plumbing (`menu-composition`, 18 tests over 24 code
+markers); the warning/error infobar's four-severity Material container/on-container
+resolution with a code-painted corner-container radius, high-contrast square
+bypass, and polite `AccessibleRole::NOTIFICATION` announcement (`material-infobar`,
+16 tests); and the native `FixedHyperlink` + `weld::LinkButton` interaction
+contract with a `@primary` corner-focus ring, tintless-underline hover, plain
+disabled text, and a tracked/rendered/queryable visited state (`link-contract`,
+25 tests). Five landed as partial source with named residual deltas: the 48px
+`@surface-container` sidebar rail via the sfx2 sidebar `Theme` slots consumed by
+`TabBar` (`sidebar-rail`, 14 tests); the 28px status band with `@outline-variant`
+top rule and accessible owner-draw value changes (`statusbar-composition`, 21
+tests); the Recent/Template Start Center card anatomy (`startcenter-cards`, 18
+tests); the Find & Replace Material field set driving one `SvxSearchItem` ICU
+descriptor with a loop-safe regex-toggle sync (`find-replace-fieldset`, 25 tests);
+and the Calc `ScTabControl` strip top rule and selection-independent tab-colour
+accent (`calc-sheet-tabs`, 22 tests). No build or runtime evidence exists for any
+of it: the `B V I A L P C` inventory gates are untouched and every row's pixel,
+interaction, and accessibility proof stays pending a native build.
+
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
 - common file, print, export, properties, options, extension, and template flows;

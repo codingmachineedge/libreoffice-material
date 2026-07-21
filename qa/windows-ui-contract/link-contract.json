@@ -1,0 +1,19 @@
+{
+  "_comment": "Registry for bin/check-windows-link-contract.py (inventory row WIN-ACT-005, links). Names the two link surfaces -- the native FixedHyperlink and its weld::LinkButton wrapper -- plus the Material token side the interaction contract of docs/design/02-actions.md 5 depends on: a @primary focus outline at corner-focus radius replacing the platform focus rectangle, a hover that keeps the underline with no color tint, a disabled state rendering deactiveTextColor (@outline) as plain non-underlined non-focusable text, and an exposed visited state (@visited-link). Source evidence only: no native build, link pixels, or runtime interaction are claimed.",
+  "definition": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "focus_ring": {
+    "color_role": "primary",
+    "radius_token": "corner-focus",
+    "radius_value": 6
+  },
+  "style_slots": {
+    "linkColor": "primary",
+    "visitedLinkColor": "visited-link",
+    "deactiveTextColor": "outline"
+  },
+  "surfaces": {
+    "native_source": "vcl/source/control/fixedhyper.cxx",
+    "native_header": "include/vcl/toolkit/fixedhyper.hxx",
+    "weld_source": "vcl/source/app/salvtables.cxx"
+  }
+}

@@ -31,9 +31,14 @@
 #include <vcl/status.hxx>
 #include <vcl/virdev.hxx>
 #include <vcl/settings.hxx>
+#include <vcl/MaterialTokens.hxx>
 #include <config_features.h>
 #include <svdata.hxx>
 #include <window.h>
+
+#include <cstdlib>
+#include <optional>
+#include <string_view>
 
 #define STATUSBAR_OFFSET_X      STATUSBAR_OFFSET
 #define STATUSBAR_OFFSET_Y      2
@@ -44,6 +49,39 @@
 #define STATUSBAR_PRGS_MIN      5
 
 #define STATUSBAR_MIN_HEIGHT    16 // icons height, tdf#153344
+
+namespace
+{
+// Resolve a Material semantic color token for the status band, but only when the
+// Material file-widget theme is the active, documented activation
+// (VCL_FILE_WIDGET_THEME=material -- the same gate used in
+// vcl/source/gdi/FileDefinitionWidgetDraw.cxx; see docs/design/05-navigation.md
+// section 8). Under the default/native theme this returns nothing, so the status
+// bar keeps every existing StyleSettings-derived color and no Material code path
+// runs -- keyboard, mouse, a11y and RTL behavior are untouched. Values flow
+// exclusively through vcl::MaterialTokens, the single named-token view over
+// definition.xml, so the band fill and top rule can never drift from the
+// definition they mirror (no raw hex literal here). The per-scheme token table is
+// parsed at most once because definition.xml is immutable at runtime, keeping the
+// hot paint path cheap; the cheap getenv gate short-circuits before any parse
+// under the native theme.
+std::optional<Color> lcl_materialStatusColor(std::string_view rRole)
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    static std::optional<vcl::MaterialTokens> spLightTokens;
+    static std::optional<vcl::MaterialTokens> spDarkTokens;
+    std::optional<vcl::MaterialTokens>& rCache = bDark ? spDarkTokens : spLightTokens;
+    if (!rCache)
+        rCache = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!rCache->isValid())
+        return std::nullopt;
+    return rCache->findColor(rRole);
+}
+}
 
 class StatusBar::ImplData
 {
@@ -198,6 +236,16 @@ void StatusBar::ApplySettings(vcl::RenderContext& rRenderContext)
         aColor = rStyleSettings.GetFaceColor();
     else
         aColor = rStyleSettings.GetWindowColor();
+
+    // Material file-widget theme: the status band renders from the
+    // faceColor -> @surface-container style slot (docs/design/05-navigation.md
+    // 8.1). Resolve @surface-container through the token accessor so the band
+    // fill stays drift-locked to the definition. Inert under the native theme,
+    // and never overrides an explicit app-set control background.
+    if (!IsControlBackground())
+        if (const std::optional<Color> oBand = lcl_materialStatusColor("surface-container"))
+            aColor = *oBand;
+
     rRenderContext.SetBackground(aColor);
 
     // NWF background
@@ -749,7 +797,14 @@ void StatusBar::Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle
     // draw line at the top of the status bar (to visually distinguish it from
     // shell / docking area)
     const StyleSettings& rStyleSettings = rRenderContext.GetSettings().GetStyleSettings();
-    rRenderContext.SetLineColor(rStyleSettings.GetShadowColor());
+    // Material file-widget theme: the top rule is drawn in the @outline-variant
+    // token (docs/design/05-navigation.md 8.1). The native theme keeps the
+    // StyleSettings shadow color unchanged; the Material color is resolved through
+    // the token accessor so it cannot drift from the definition.
+    Color aTopRuleColor = rStyleSettings.GetShadowColor();
+    if (const std::optional<Color> oRule = lcl_materialStatusColor("outline-variant"))
+        aTopRuleColor = *oRule;
+    rRenderContext.SetLineColor(aTopRuleColor);
     rRenderContext.DrawLine(Point(0, 0), Point(mnDX-1, 0));
 }
 

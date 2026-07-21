@@ -30,12 +30,29 @@
 #include <com/sun/star/awt/XGraphics2.hpp>
 #include <com/sun/star/graphic/GraphicType.hpp>
 
+#include <cstdlib>
+#include <string_view>
+
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::frame;
 
 namespace framework
 {
+
+namespace
+{
+// The Material file-widget theme is the documented activation
+// (VCL_FILE_WIDGET_THEME=material -- the same gate read in
+// vcl/source/gdi/FileDefinitionWidgetDraw.cxx). Under the default/native theme
+// this is false, so no Material-specific behavior runs and the existing
+// owner-draw repaint path is byte-for-byte unchanged.
+bool lcl_isMaterialFileWidgetTheme()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    return pThemeName && std::string_view(pThemeName) == "material";
+}
+}
 
 GenericStatusbarController::GenericStatusbarController(
     const Reference< XComponentContext >& rxContext,
@@ -97,6 +114,22 @@ void SAL_CALL GenericStatusbarController::statusChanged(
             {
                 m_xStatusbarItem->setQuickHelpText( aStrValue );
             }
+
+            // Material file-widget theme: also surface the owner-drawn status
+            // string as an accessible value change instead of only a bare
+            // repaint(). Route it through the item's accessible name, which
+            // updates maAccessibleName and fires the StatusbarNameChanged
+            // listener event (vcl/source/window/status.cxx SetAccessibleName ->
+            // VCLXAccessibleStatusBar -> VCLXAccessibleStatusBarItem NAME_CHANGED),
+            // so a screen reader observes status updates (word count, save state,
+            // zoom readout) as accessible value changes -- never value-by-position
+            // (docs/design/05-navigation.md 8.4). Unlike SetItemText this path
+            // touches neither maText nor the computed item width, so it cannot
+            // reflow the band or clip the owner-drawn content, and it issues no
+            // extra synchronous paint on top of the repaint() below. Inert under
+            // the native theme; repaint() below is kept.
+            if ( lcl_isMaterialFileWidgetTheme() )
+                m_xStatusbarItem->setAccessibleName( aStrValue );
         }
     }
     else if ( ( rEvent.State >>= aGraphic ) && m_bOwnerDraw )

@@ -128,6 +128,52 @@ void Theme::UpdateTheme()
             maPropertyIdToNameMap[Color_TabBarBackground],
             Any(sal_Int32(aBaseBackgroundColor.GetRGBColor())));
 
+        // Material sidebar rail state palette (WIN-NAV-005). Each slot is
+        // sourced from the Material-mapped StyleSettings getter that resolves to
+        // the design token named in design 05 s5.2, so the rail follows whatever
+        // widget theme is active instead of hard-coding a Material literal.
+        // These six colour slots (and the Int_TabItemIconSize metric set below)
+        // are intentionally set-only for now: they are the pinned source of
+        // truth the sidebar-rail contract locks in, to be read via
+        // Theme::GetColor / Theme::GetInteger by the bespoke rail-button paint
+        // row. The absence of a getter consumer today is deliberate, not a
+        // wiring gap.
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabItemActiveBackground],
+            Any(sal_Int32(rStyle.GetActiveTabColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabItemActiveText],
+            Any(sal_Int32(rStyle.GetHighlightTextColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabItemText],
+            Any(sal_Int32(rStyle.GetGroupTextColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabItemFocusRing],
+            Any(sal_Int32(rStyle.GetAccentColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabItemDisabledText],
+            Any(sal_Int32(rStyle.GetDeactiveTextColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_TabBarSeparator],
+            Any(sal_Int32(rStyle.GetMenuBorderColor().GetRGBColor())));
+
+        // Material sidebar rail metrics (WIN-NAV-005), density-invariant.
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_TabBarRailWidth],
+            Any(sal_Int32(48)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_TabItemButtonSize],
+            Any(sal_Int32(38)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_TabItemIconSize],
+            Any(sal_Int32(22)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_TabItemGap],
+            Any(sal_Int32(4)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_TabBarTopPadding],
+            Any(sal_Int32(10)));
+
         setPropertyValue(
             maPropertyIdToNameMap[Color_Highlight],
             Any(sal_Int32(rStyle.GetHighlightColor().GetRGBColor())));
@@ -449,6 +495,24 @@ void Theme::SetupPropertyMaps()
     maPropertyNameToIdMap[u"Color_TabBarBackground"_ustr]=Color_TabBarBackground;
     maPropertyIdToNameMap[Color_TabBarBackground]="Color_TabBarBackground";
 
+    maPropertyNameToIdMap[u"Color_TabItemActiveBackground"_ustr]=Color_TabItemActiveBackground;
+    maPropertyIdToNameMap[Color_TabItemActiveBackground]="Color_TabItemActiveBackground";
+
+    maPropertyNameToIdMap[u"Color_TabItemActiveText"_ustr]=Color_TabItemActiveText;
+    maPropertyIdToNameMap[Color_TabItemActiveText]="Color_TabItemActiveText";
+
+    maPropertyNameToIdMap[u"Color_TabItemText"_ustr]=Color_TabItemText;
+    maPropertyIdToNameMap[Color_TabItemText]="Color_TabItemText";
+
+    maPropertyNameToIdMap[u"Color_TabItemFocusRing"_ustr]=Color_TabItemFocusRing;
+    maPropertyIdToNameMap[Color_TabItemFocusRing]="Color_TabItemFocusRing";
+
+    maPropertyNameToIdMap[u"Color_TabItemDisabledText"_ustr]=Color_TabItemDisabledText;
+    maPropertyIdToNameMap[Color_TabItemDisabledText]="Color_TabItemDisabledText";
+
+    maPropertyNameToIdMap[u"Color_TabBarSeparator"_ustr]=Color_TabBarSeparator;
+    maPropertyIdToNameMap[Color_TabBarSeparator]="Color_TabBarSeparator";
+
 
     maPropertyNameToIdMap[u"Int_DeckBorderSize"_ustr]=Int_DeckBorderSize;
     maPropertyIdToNameMap[Int_DeckBorderSize]="Int_DeckBorderSize";
@@ -467,6 +531,21 @@ void Theme::SetupPropertyMaps()
 
     maPropertyNameToIdMap[u"Int_DeckBottomPadding"_ustr]=Int_DeckBottomPadding;
     maPropertyIdToNameMap[Int_DeckBottomPadding]="Int_DeckBottomPadding";
+
+    maPropertyNameToIdMap[u"Int_TabBarRailWidth"_ustr]=Int_TabBarRailWidth;
+    maPropertyIdToNameMap[Int_TabBarRailWidth]="Int_TabBarRailWidth";
+
+    maPropertyNameToIdMap[u"Int_TabItemButtonSize"_ustr]=Int_TabItemButtonSize;
+    maPropertyIdToNameMap[Int_TabItemButtonSize]="Int_TabItemButtonSize";
+
+    maPropertyNameToIdMap[u"Int_TabItemIconSize"_ustr]=Int_TabItemIconSize;
+    maPropertyIdToNameMap[Int_TabItemIconSize]="Int_TabItemIconSize";
+
+    maPropertyNameToIdMap[u"Int_TabItemGap"_ustr]=Int_TabItemGap;
+    maPropertyIdToNameMap[Int_TabItemGap]="Int_TabItemGap";
+
+    maPropertyNameToIdMap[u"Int_TabBarTopPadding"_ustr]=Int_TabBarTopPadding;
+    maPropertyIdToNameMap[Int_TabBarTopPadding]="Int_TabBarTopPadding";
 
 
     maPropertyNameToIdMap[u"Bool_UseSystemColors"_ustr]=Bool_UseSystemColors;
@@ -489,6 +568,12 @@ Theme::PropertyType Theme::GetPropertyType (const ThemeItem eItem)
         case Color_PanelBackground:
         case Color_PanelTitleBarBackground:
         case Color_TabBarBackground:
+        case Color_TabItemActiveBackground:
+        case Color_TabItemActiveText:
+        case Color_TabItemText:
+        case Color_TabItemFocusRing:
+        case Color_TabItemDisabledText:
+        case Color_TabBarSeparator:
             return PT_Color;
 
         case Int_DeckBorderSize:
@@ -497,6 +582,11 @@ Theme::PropertyType Theme::GetPropertyType (const ThemeItem eItem)
         case Int_DeckTopPadding:
         case Int_DeckRightPadding:
         case Int_DeckBottomPadding:
+        case Int_TabBarRailWidth:
+        case Int_TabItemButtonSize:
+        case Int_TabItemIconSize:
+        case Int_TabItemGap:
+        case Int_TabBarTopPadding:
             return PT_Integer;
 
         case Bool_UseSystemColors:

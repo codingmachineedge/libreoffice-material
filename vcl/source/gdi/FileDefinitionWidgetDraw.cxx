@@ -284,6 +284,12 @@ struct NativeWidgetFrameworkBaseline
     int mnStatusBarLowerRightOffset = 0;
     bool mbCanDrawWidgetAnySize = false;
     int mnListBoxEntryMargin = 0;
+    int mnMenuFormatBorderX = 0;
+    int mnMenuFormatBorderY = 0;
+    int mnMenuBarHeight = 0;
+    int mnMenuItemHeight = 0;
+    int mnMenuPopupMinWidth = 0;
+    int mnMenuAccelColumnGap = 0;
 };
 
 void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>& pDefinition)
@@ -307,6 +313,12 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
         rNWFData.mnStatusBarLowerRightOffset = aBaseline.mnStatusBarLowerRightOffset;
         rNWFData.mbCanDrawWidgetAnySize = aBaseline.mbCanDrawWidgetAnySize;
         rNWFData.mnListBoxEntryMargin = aBaseline.mnListBoxEntryMargin;
+        rNWFData.mnMenuFormatBorderX = aBaseline.mnMenuFormatBorderX;
+        rNWFData.mnMenuFormatBorderY = aBaseline.mnMenuFormatBorderY;
+        rNWFData.mnMenuBarHeight = aBaseline.mnMenuBarHeight;
+        rNWFData.mnMenuItemHeight = aBaseline.mnMenuItemHeight;
+        rNWFData.mnMenuPopupMinWidth = aBaseline.mnMenuPopupMinWidth;
+        rNWFData.mnMenuAccelColumnGap = aBaseline.mnMenuAccelColumnGap;
         aBaseline.mbCaptured = false;
         return;
     }
@@ -321,6 +333,12 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
         aBaseline.mnStatusBarLowerRightOffset = rNWFData.mnStatusBarLowerRightOffset;
         aBaseline.mbCanDrawWidgetAnySize = rNWFData.mbCanDrawWidgetAnySize;
         aBaseline.mnListBoxEntryMargin = rNWFData.mnListBoxEntryMargin;
+        aBaseline.mnMenuFormatBorderX = rNWFData.mnMenuFormatBorderX;
+        aBaseline.mnMenuFormatBorderY = rNWFData.mnMenuFormatBorderY;
+        aBaseline.mnMenuBarHeight = rNWFData.mnMenuBarHeight;
+        aBaseline.mnMenuItemHeight = rNWFData.mnMenuItemHeight;
+        aBaseline.mnMenuPopupMinWidth = rNWFData.mnMenuPopupMinWidth;
+        aBaseline.mnMenuAccelColumnGap = rNWFData.mnMenuAccelColumnGap;
         aBaseline.mbCaptured = true;
     }
 
@@ -334,6 +352,24 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
     rNWFData.mbCanDrawWidgetAnySize = true;
     rNWFData.mnListBoxEntryMargin
         = getSettingValueInteger(pSettings->msListBoxEntryMargin, aBaseline.mnListBoxEntryMargin);
+
+    // Material menu composition metrics (docs/design/05-navigation.md 1.1/1.5): the drop-menu
+    // inner border, the menubar band / command-row minimum heights, the drop-menu minimum width and
+    // the accelerator-column gap. These feed the generic (cross-platform) Menu::ImplCalcSize layout
+    // only while the Material file-definition theme is live; the baseline restore above returns the
+    // platform values so non-Material rendering paths are never touched.
+    rNWFData.mnMenuFormatBorderX
+        = getSettingValueInteger(pSettings->msMenuInnerBorder, aBaseline.mnMenuFormatBorderX);
+    rNWFData.mnMenuFormatBorderY
+        = getSettingValueInteger(pSettings->msMenuInnerBorder, aBaseline.mnMenuFormatBorderY);
+    rNWFData.mnMenuBarHeight
+        = getSettingValueInteger(pSettings->msMenuBarHeight, aBaseline.mnMenuBarHeight);
+    rNWFData.mnMenuItemHeight
+        = getSettingValueInteger(pSettings->msMenuItemHeight, aBaseline.mnMenuItemHeight);
+    rNWFData.mnMenuPopupMinWidth
+        = getSettingValueInteger(pSettings->msMenuPopupMinWidth, aBaseline.mnMenuPopupMinWidth);
+    rNWFData.mnMenuAccelColumnGap
+        = getSettingValueInteger(pSettings->msMenuAccelColumnGap, aBaseline.mnMenuAccelColumnGap);
 }
 
 tools::Long getLevelBarStateValue(tools::Long nValue, tools::Long nFullWidth)
