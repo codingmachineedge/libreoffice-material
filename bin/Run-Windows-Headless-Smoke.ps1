@@ -163,7 +163,12 @@ function Get-JsonIntegerProperty {
 }
 
 function Find-NoNagTextMatches {
-    param([Parameter(Mandatory = $true)] [AllowEmptyCollection()] [string[]]$Text)
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [AllowEmptyString()]
+        [string[]]$Text
+    )
 
     $matches = [System.Collections.Generic.List[object]]::new()
     foreach ($candidate in @($Text)) {
