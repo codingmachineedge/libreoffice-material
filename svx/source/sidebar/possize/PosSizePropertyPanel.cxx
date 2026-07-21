@@ -998,6 +998,41 @@ void PosSizePropertyPanel::DisableControls()
         mxCbxScale->set_sensitive(false);
 }
 
+void PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy()
+{
+    // Every control stays visible (no layout jump) but becomes insensitive, per
+    // the §11.2 no-selection policy. This mirrors the disabled states already
+    // defined for these controls (spinbox / checkbox / toolbar Button) in the
+    // Material definition.xml; command semantics and F4 numeric entry are
+    // unchanged -- only sensitivity is toggled.
+    mxFtPosX->set_visible(true);
+    mxFtPosX->set_sensitive(false);
+    mxMtrPosX->set_visible(true);
+    mxMtrPosX->set_sensitive(false);
+    mxFtPosY->set_visible(true);
+    mxFtPosY->set_sensitive(false);
+    mxMtrPosY->set_visible(true);
+    mxMtrPosY->set_sensitive(false);
+    mxFtWidth->set_visible(true);
+    mxFtWidth->set_sensitive(false);
+    mxMtrWidth->set_visible(true);
+    mxMtrWidth->set_sensitive(false);
+    mxFtHeight->set_visible(true);
+    mxFtHeight->set_sensitive(false);
+    mxMtrHeight->set_visible(true);
+    mxMtrHeight->set_sensitive(false);
+    mxCbxScale->set_visible(true);
+    mxCbxScale->set_sensitive(false);
+    mxFtAngle->set_visible(true);
+    mxFtAngle->set_sensitive(false);
+    mxMtrAngle->set_visible(true);
+    mxMtrAngle->set_sensitive(false);
+    mxFtFlip->set_visible(true);
+    mxFtFlip->set_sensitive(false);
+    mxFlipTbx->set_visible(true);
+    mxFlipTbx->set_sensitive(false);
+}
+
 void PosSizePropertyPanel::SetPosSizeMinMax(double fUIScale)
 {
     SdrPageView* pPV = mpView->GetSdrPageView();

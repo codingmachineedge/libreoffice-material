@@ -2897,6 +2897,19 @@ sal_uInt16 PopupMenu::ImplExecute(const VclPtr<vcl::Window>& pParentWin, const t
                                                            | FloatWinPopupEndFlags::CloseAll);
     }
 
+    // docs/design/05-navigation.md section 2 context-menu first-highlight: consume the transient
+    // keyboard-invocation flag (captured for CommandEventId::ContextMenu in ImplCallCommand) exactly
+    // once per execute -- clearing it here means a cancelled keyboard menu can never leak the
+    // pre-highlight into a following pointer-opened menu. The pre-highlight is applied (below, folded
+    // into bPreSelectFirst) only for a top-level context menu (!pStartedFrom) while the Material
+    // NWF policy mbContextMenuKeyboardFirstHighlight is live, so non-Material menus and drop menus
+    // spawned from a bar/parent keep their unchanged platform behaviour.
+    const bool bContextMenuByKeyboard = pSVData->maAppData.mbContextMenuByKeyboard;
+    pSVData->maAppData.mbContextMenuByKeyboard = false;
+    const bool bContextKeyboardFirstHighlight
+        = bRealExecute && !pStartedFrom && bContextMenuByKeyboard
+          && pSVData->maNWFData.mbContextMenuKeyboardFirstHighlight;
+
     tools::Rectangle aRect(rRect);
     aRect.SetPos(pParentWin->OutputToScreenPixel(aRect.TopLeft()));
 
@@ -3018,7 +3031,8 @@ sal_uInt16 PopupMenu::ImplExecute(const VclPtr<vcl::Window>& pParentWin, const t
     pWin->SetFocusId( xFocusId );
     pWin->SetOutputSizePixel( aSz );
 
-    const bool bNative = Run(pWin, bRealExecute, bPreSelectFirst, nPopupModeFlags, pSFrom, aRect);
+    const bool bNative = Run(pWin, bRealExecute, bPreSelectFirst || bContextKeyboardFirstHighlight,
+                             nPopupModeFlags, pSFrom, aRect);
     FinishRun(pWin, pParentWin, bRealExecute, bNative);
     return nSelectedId;
 }

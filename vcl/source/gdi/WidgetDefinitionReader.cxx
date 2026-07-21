@@ -1223,6 +1223,8 @@ bool WidgetDefinitionReader::read(WidgetDefinition& rWidgetDefinition)
     std::unordered_map<std::string_view, OString*> aSettingMap = {
         { "noActiveTabTextRaise", &rWidgetDefinition.mpSettings->msNoActiveTabTextRaise },
         { "centeredTabs", &rWidgetDefinition.mpSettings->msCenteredTabs },
+        { "contextMenuKeyboardFirstHighlight",
+          &rWidgetDefinition.mpSettings->msContextMenuKeyboardFirstHighlight },
         { "defaultFontSize", &rWidgetDefinition.mpSettings->msDefaultFontSize },
     };
 

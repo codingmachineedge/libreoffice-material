@@ -218,6 +218,7 @@ public:
     OString msMenuPopupMinWidth;
     OString msMenuAccelColumnGap;
     OString msMenuInnerBorder;
+    OString msContextMenuKeyboardFirstHighlight;
 };
 
 enum class WidgetDefinitionFontWeight

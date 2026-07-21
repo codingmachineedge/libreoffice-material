@@ -47,6 +47,17 @@ public:
     static void NotifyInfo(const OString& rSource, NotificationSeverity eSeverity,
                            const OUString& rTitle, const OUString& rBody = OUString());
 
+    /** Convenience for a transient action-confirmation: the Success/Information outcome of a
+        completed user action (e.g. Find & Replace "N replacements made" / "Search key not found").
+        This is the toast/snackbar path (docs/design/07-feedback.md 7.5): it reuses the landed
+        bottom-right notification stack rather than a parallel snackbar surface. Confirmations are
+        informational only -- never input, destructive, credential or security -- so Classify always
+        routes them to a notification and never forces them modal. bSuccess selects Success (a
+        completed action) or Information (a neutral outcome such as no match). rMessage must be a
+        fixed, audited SafeDisplayText string under an approved source; the store redacts anything
+        else. Non-blocking; must run on the VCL main thread. */
+    static void NotifyConfirmation(const OString& rSource, const OUString& rMessage, bool bSuccess);
+
     /** Policy classifier for the 597-dialog migration. KeepModal iff the prompt collects input,
         confirms a destructive/irreversible act, handles credentials, or enforces security.
         Everything purely informational routes to Notification. Pure; unit-tested. */

@@ -1,0 +1,2326 @@
+{
+  "schema_version": 1,
+  "contract": "windows-component-gallery-coverage",
+  "inventory_row": "WIN-CONCEPT-003",
+  "surface": "Components",
+  "platform": "windows",
+  "generator": "bin/check-component-gallery-coverage.py",
+  "definition": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "source_note": "Deterministic source-level gallery coverage ledger for WIN-CONCEPT-003. Regenerate with --regenerate. Every renderable Material part and declared state in the definition maps to exactly one gallery cell. Not a claim of native implementation, a successful build, dialog pixels, or any runtime evidence.",
+  "proposed_fixture": {
+    "owner": "unassigned",
+    "candidate_home": "sfx2/uiconfig/ui/componentgallery.ui",
+    "note": "Proposed sfx2 dev/qa fixture home for the Components gallery. The native .ui and rendered pixels are the separate B/V gate; this ledger is the source-level M-gate coverage contract only."
+  },
+  "counts": {
+    "controls": 28,
+    "parts": 79,
+    "states": 205,
+    "cells": 205
+  },
+  "controls": [
+    {
+      "control": "pushbutton",
+      "parts": [
+        "Entire",
+        "Focus"
+      ]
+    },
+    {
+      "control": "radiobutton",
+      "parts": [
+        "Entire",
+        "Focus"
+      ]
+    },
+    {
+      "control": "checkbox",
+      "parts": [
+        "Entire",
+        "Focus"
+      ]
+    },
+    {
+      "control": "combobox",
+      "parts": [
+        "Entire",
+        "SubEdit",
+        "ButtonDown",
+        "Focus"
+      ]
+    },
+    {
+      "control": "editbox",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "editboxnoborder",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "multilineeditbox",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "listbox",
+      "parts": [
+        "Entire",
+        "ListboxWindow",
+        "SubEdit",
+        "ButtonDown",
+        "Focus"
+      ]
+    },
+    {
+      "control": "spinbox",
+      "parts": [
+        "Entire",
+        "SubEdit",
+        "ButtonDown",
+        "ButtonUp",
+        "Focus"
+      ]
+    },
+    {
+      "control": "spinbuttons",
+      "parts": [
+        "ButtonUp",
+        "ButtonDown",
+        "ButtonLeft",
+        "ButtonRight"
+      ]
+    },
+    {
+      "control": "scrollbar",
+      "parts": [
+        "Entire",
+        "ThumbHorz",
+        "ThumbVert",
+        "ButtonUp",
+        "ButtonDown",
+        "ButtonLeft",
+        "ButtonRight",
+        "TrackHorzLeft",
+        "TrackHorzRight",
+        "TrackVertUpper",
+        "TrackVertLower"
+      ]
+    },
+    {
+      "control": "slider",
+      "parts": [
+        "Button",
+        "TrackHorzLeft",
+        "TrackHorzRight",
+        "TrackVertUpper",
+        "TrackVertLower"
+      ]
+    },
+    {
+      "control": "fixedline",
+      "parts": [
+        "SeparatorHorz",
+        "SeparatorVert"
+      ]
+    },
+    {
+      "control": "progress",
+      "parts": [
+        "TrackHorzArea",
+        "Entire"
+      ]
+    },
+    {
+      "control": "levelbar",
+      "parts": [
+        "TrackHorzArea",
+        "Entire"
+      ]
+    },
+    {
+      "control": "tabitem",
+      "parts": [
+        "Entire",
+        "MenuItem"
+      ]
+    },
+    {
+      "control": "tabheader",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "tabpane",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "tabbody",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "windowbackground",
+      "parts": [
+        "Entire",
+        "BackgroundWindow",
+        "BackgroundDialog"
+      ]
+    },
+    {
+      "control": "frame",
+      "parts": [
+        "Border"
+      ]
+    },
+    {
+      "control": "toolbar",
+      "parts": [
+        "Entire",
+        "DrawBackgroundHorz",
+        "DrawBackgroundVert",
+        "ThumbHorz",
+        "ThumbVert",
+        "SeparatorVert",
+        "SeparatorHorz",
+        "Button"
+      ]
+    },
+    {
+      "control": "listnode",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "listnet",
+      "parts": [
+        "Entire"
+      ]
+    },
+    {
+      "control": "listheader",
+      "parts": [
+        "Button",
+        "Arrow"
+      ]
+    },
+    {
+      "control": "menubar",
+      "parts": [
+        "Entire",
+        "MenuItem"
+      ]
+    },
+    {
+      "control": "menupopup",
+      "parts": [
+        "Entire",
+        "MenuItem",
+        "MenuItemCheckMark",
+        "MenuItemRadioMark",
+        "Separator",
+        "SubmenuArrow"
+      ]
+    },
+    {
+      "control": "tooltip",
+      "parts": [
+        "Entire"
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "cell_id": "checkbox/Entire/001",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/002",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/003",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "button-value": "mixed",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/004",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/005",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/006",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "button-value": "mixed",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/007",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/008",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/009",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 9,
+      "stateless": false,
+      "state": {
+        "button-value": "mixed",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/010",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 10,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/011",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 11,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "checkbox/Entire/012",
+      "control": "checkbox",
+      "part": "Entire",
+      "ordinal": 12,
+      "stateless": false,
+      "state": {
+        "button-value": "mixed",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "checkbox/Focus/001",
+      "control": "checkbox",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "combobox/ButtonDown/001",
+      "control": "combobox",
+      "part": "ButtonDown",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "combobox/ButtonDown/002",
+      "control": "combobox",
+      "part": "ButtonDown",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "combobox/ButtonDown/003",
+      "control": "combobox",
+      "part": "ButtonDown",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "combobox/ButtonDown/004",
+      "control": "combobox",
+      "part": "ButtonDown",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "combobox/Entire/001",
+      "control": "combobox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "combobox/Entire/002",
+      "control": "combobox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "combobox/Entire/003",
+      "control": "combobox",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "combobox/Focus/001",
+      "control": "combobox",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "combobox/SubEdit/001",
+      "control": "combobox",
+      "part": "SubEdit",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "editbox/Entire/001",
+      "control": "editbox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "editbox/Entire/002",
+      "control": "editbox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "editbox/Entire/003",
+      "control": "editbox",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "editboxnoborder/Entire/001",
+      "control": "editboxnoborder",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "editboxnoborder/Entire/002",
+      "control": "editboxnoborder",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "editboxnoborder/Entire/003",
+      "control": "editboxnoborder",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "fixedline/SeparatorHorz/001",
+      "control": "fixedline",
+      "part": "SeparatorHorz",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "fixedline/SeparatorVert/001",
+      "control": "fixedline",
+      "part": "SeparatorVert",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "frame/Border/001",
+      "control": "frame",
+      "part": "Border",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "levelbar/Entire/001",
+      "control": "levelbar",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "critical"
+      }
+    },
+    {
+      "cell_id": "levelbar/Entire/002",
+      "control": "levelbar",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "low"
+      }
+    },
+    {
+      "cell_id": "levelbar/Entire/003",
+      "control": "levelbar",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "medium"
+      }
+    },
+    {
+      "cell_id": "levelbar/Entire/004",
+      "control": "levelbar",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "high"
+      }
+    },
+    {
+      "cell_id": "levelbar/Entire/005",
+      "control": "levelbar",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "levelbar/TrackHorzArea/001",
+      "control": "levelbar",
+      "part": "TrackHorzArea",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "levelbar/TrackHorzArea/002",
+      "control": "levelbar",
+      "part": "TrackHorzArea",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "listbox/ButtonDown/001",
+      "control": "listbox",
+      "part": "ButtonDown",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listbox/ButtonDown/002",
+      "control": "listbox",
+      "part": "ButtonDown",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "listbox/ButtonDown/003",
+      "control": "listbox",
+      "part": "ButtonDown",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "listbox/ButtonDown/004",
+      "control": "listbox",
+      "part": "ButtonDown",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "listbox/Entire/001",
+      "control": "listbox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listbox/Entire/002",
+      "control": "listbox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "listbox/Focus/001",
+      "control": "listbox",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "listbox/ListboxWindow/001",
+      "control": "listbox",
+      "part": "ListboxWindow",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listbox/ListboxWindow/002",
+      "control": "listbox",
+      "part": "ListboxWindow",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "listbox/SubEdit/001",
+      "control": "listbox",
+      "part": "SubEdit",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "listheader/Arrow/001",
+      "control": "listheader",
+      "part": "Arrow",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "extra": "up"
+      }
+    },
+    {
+      "cell_id": "listheader/Arrow/002",
+      "control": "listheader",
+      "part": "Arrow",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "extra": "down"
+      }
+    },
+    {
+      "cell_id": "listheader/Button/001",
+      "control": "listheader",
+      "part": "Button",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "listheader/Button/002",
+      "control": "listheader",
+      "part": "Button",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "listheader/Button/003",
+      "control": "listheader",
+      "part": "Button",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "listnet/Entire/001",
+      "control": "listnet",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/001",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/002",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/003",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/004",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/005",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/006",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/007",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "listnode/Entire/008",
+      "control": "listnode",
+      "part": "Entire",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "menubar/Entire/001",
+      "control": "menubar",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menubar/MenuItem/001",
+      "control": "menubar",
+      "part": "MenuItem",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menubar/MenuItem/002",
+      "control": "menubar",
+      "part": "MenuItem",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "menubar/MenuItem/003",
+      "control": "menubar",
+      "part": "MenuItem",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/Entire/001",
+      "control": "menupopup",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menupopup/MenuItem/001",
+      "control": "menupopup",
+      "part": "MenuItem",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menupopup/MenuItem/002",
+      "control": "menupopup",
+      "part": "MenuItem",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/MenuItem/003",
+      "control": "menupopup",
+      "part": "MenuItem",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/MenuItemCheckMark/001",
+      "control": "menupopup",
+      "part": "MenuItemCheckMark",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/MenuItemCheckMark/002",
+      "control": "menupopup",
+      "part": "MenuItemCheckMark",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/MenuItemRadioMark/001",
+      "control": "menupopup",
+      "part": "MenuItemRadioMark",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/MenuItemRadioMark/002",
+      "control": "menupopup",
+      "part": "MenuItemRadioMark",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "menupopup/Separator/001",
+      "control": "menupopup",
+      "part": "Separator",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menupopup/SubmenuArrow/001",
+      "control": "menupopup",
+      "part": "SubmenuArrow",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "menupopup/SubmenuArrow/002",
+      "control": "menupopup",
+      "part": "SubmenuArrow",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "multilineeditbox/Entire/001",
+      "control": "multilineeditbox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "multilineeditbox/Entire/002",
+      "control": "multilineeditbox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "multilineeditbox/Entire/003",
+      "control": "multilineeditbox",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "progress/Entire/001",
+      "control": "progress",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "progress/Entire/002",
+      "control": "progress",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "progress/TrackHorzArea/001",
+      "control": "progress",
+      "part": "TrackHorzArea",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "progress/TrackHorzArea/002",
+      "control": "progress",
+      "part": "TrackHorzArea",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/001",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/002",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/003",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/004",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/005",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/006",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "action"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/007",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "action",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/008",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "action",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/009",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 9,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "extra": "action"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/010",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 10,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "flat"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/011",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 11,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "flat",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/012",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 12,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "extra": "flat",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Entire/013",
+      "control": "pushbutton",
+      "part": "Entire",
+      "ordinal": 13,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "extra": "flat"
+      }
+    },
+    {
+      "cell_id": "pushbutton/Focus/001",
+      "control": "pushbutton",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "radiobutton/Entire/001",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/002",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/003",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/004",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/005",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/006",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/007",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "button-value": "false",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Entire/008",
+      "control": "radiobutton",
+      "part": "Entire",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "radiobutton/Focus/001",
+      "control": "radiobutton",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/ButtonDown/001",
+      "control": "scrollbar",
+      "part": "ButtonDown",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/ButtonLeft/001",
+      "control": "scrollbar",
+      "part": "ButtonLeft",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/ButtonRight/001",
+      "control": "scrollbar",
+      "part": "ButtonRight",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/ButtonUp/001",
+      "control": "scrollbar",
+      "part": "ButtonUp",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/Entire/001",
+      "control": "scrollbar",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/ThumbHorz/001",
+      "control": "scrollbar",
+      "part": "ThumbHorz",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbHorz/002",
+      "control": "scrollbar",
+      "part": "ThumbHorz",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbHorz/003",
+      "control": "scrollbar",
+      "part": "ThumbHorz",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbHorz/004",
+      "control": "scrollbar",
+      "part": "ThumbHorz",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbVert/001",
+      "control": "scrollbar",
+      "part": "ThumbVert",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbVert/002",
+      "control": "scrollbar",
+      "part": "ThumbVert",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbVert/003",
+      "control": "scrollbar",
+      "part": "ThumbVert",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "scrollbar/ThumbVert/004",
+      "control": "scrollbar",
+      "part": "ThumbVert",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "scrollbar/TrackHorzLeft/001",
+      "control": "scrollbar",
+      "part": "TrackHorzLeft",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/TrackHorzRight/001",
+      "control": "scrollbar",
+      "part": "TrackHorzRight",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/TrackVertLower/001",
+      "control": "scrollbar",
+      "part": "TrackVertLower",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "scrollbar/TrackVertUpper/001",
+      "control": "scrollbar",
+      "part": "TrackVertUpper",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "slider/Button/001",
+      "control": "slider",
+      "part": "Button",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "slider/Button/002",
+      "control": "slider",
+      "part": "Button",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "slider/Button/003",
+      "control": "slider",
+      "part": "Button",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "slider/Button/004",
+      "control": "slider",
+      "part": "Button",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "slider/Button/005",
+      "control": "slider",
+      "part": "Button",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "slider/TrackHorzLeft/001",
+      "control": "slider",
+      "part": "TrackHorzLeft",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "slider/TrackHorzLeft/002",
+      "control": "slider",
+      "part": "TrackHorzLeft",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "slider/TrackHorzRight/001",
+      "control": "slider",
+      "part": "TrackHorzRight",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "slider/TrackHorzRight/002",
+      "control": "slider",
+      "part": "TrackHorzRight",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "slider/TrackVertLower/001",
+      "control": "slider",
+      "part": "TrackVertLower",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "slider/TrackVertLower/002",
+      "control": "slider",
+      "part": "TrackVertLower",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "slider/TrackVertUpper/001",
+      "control": "slider",
+      "part": "TrackVertUpper",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "slider/TrackVertUpper/002",
+      "control": "slider",
+      "part": "TrackVertUpper",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonDown/001",
+      "control": "spinbox",
+      "part": "ButtonDown",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonDown/002",
+      "control": "spinbox",
+      "part": "ButtonDown",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonDown/003",
+      "control": "spinbox",
+      "part": "ButtonDown",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonDown/004",
+      "control": "spinbox",
+      "part": "ButtonDown",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonUp/001",
+      "control": "spinbox",
+      "part": "ButtonUp",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonUp/002",
+      "control": "spinbox",
+      "part": "ButtonUp",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonUp/003",
+      "control": "spinbox",
+      "part": "ButtonUp",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/ButtonUp/004",
+      "control": "spinbox",
+      "part": "ButtonUp",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbox/Entire/001",
+      "control": "spinbox",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/Entire/002",
+      "control": "spinbox",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "spinbox/Entire/003",
+      "control": "spinbox",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbox/Focus/001",
+      "control": "spinbox",
+      "part": "Focus",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "spinbox/SubEdit/001",
+      "control": "spinbox",
+      "part": "SubEdit",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "spinbuttons/ButtonDown/001",
+      "control": "spinbuttons",
+      "part": "ButtonDown",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonDown/002",
+      "control": "spinbuttons",
+      "part": "ButtonDown",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonDown/003",
+      "control": "spinbuttons",
+      "part": "ButtonDown",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonDown/004",
+      "control": "spinbuttons",
+      "part": "ButtonDown",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonLeft/001",
+      "control": "spinbuttons",
+      "part": "ButtonLeft",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonLeft/002",
+      "control": "spinbuttons",
+      "part": "ButtonLeft",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonLeft/003",
+      "control": "spinbuttons",
+      "part": "ButtonLeft",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonLeft/004",
+      "control": "spinbuttons",
+      "part": "ButtonLeft",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonRight/001",
+      "control": "spinbuttons",
+      "part": "ButtonRight",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonRight/002",
+      "control": "spinbuttons",
+      "part": "ButtonRight",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonRight/003",
+      "control": "spinbuttons",
+      "part": "ButtonRight",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonRight/004",
+      "control": "spinbuttons",
+      "part": "ButtonRight",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonUp/001",
+      "control": "spinbuttons",
+      "part": "ButtonUp",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonUp/002",
+      "control": "spinbuttons",
+      "part": "ButtonUp",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonUp/003",
+      "control": "spinbuttons",
+      "part": "ButtonUp",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "spinbuttons/ButtonUp/004",
+      "control": "spinbuttons",
+      "part": "ButtonUp",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "tabbody/Entire/001",
+      "control": "tabbody",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "tabheader/Entire/001",
+      "control": "tabheader",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "tabitem/Entire/001",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/002",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/003",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/004",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/005",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/006",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/007",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "tabitem/Entire/008",
+      "control": "tabitem",
+      "part": "Entire",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/001",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/002",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/003",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/004",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/005",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/006",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/007",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "tabitem/MenuItem/008",
+      "control": "tabitem",
+      "part": "MenuItem",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "enabled": "false",
+        "selected": "true"
+      }
+    },
+    {
+      "cell_id": "tabpane/Entire/001",
+      "control": "tabpane",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/Button/001",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/002",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 2,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/003",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 3,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/004",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 4,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/005",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 5,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "rollover": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/006",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 6,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "true",
+        "pressed": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/007",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 7,
+      "stateless": false,
+      "state": {
+        "enabled": "true",
+        "focused": "true"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/008",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 8,
+      "stateless": false,
+      "state": {
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "toolbar/Button/009",
+      "control": "toolbar",
+      "part": "Button",
+      "ordinal": 9,
+      "stateless": false,
+      "state": {
+        "button-value": "true",
+        "enabled": "false"
+      }
+    },
+    {
+      "cell_id": "toolbar/DrawBackgroundHorz/001",
+      "control": "toolbar",
+      "part": "DrawBackgroundHorz",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/DrawBackgroundVert/001",
+      "control": "toolbar",
+      "part": "DrawBackgroundVert",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/Entire/001",
+      "control": "toolbar",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/SeparatorHorz/001",
+      "control": "toolbar",
+      "part": "SeparatorHorz",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/SeparatorVert/001",
+      "control": "toolbar",
+      "part": "SeparatorVert",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/ThumbHorz/001",
+      "control": "toolbar",
+      "part": "ThumbHorz",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "toolbar/ThumbVert/001",
+      "control": "toolbar",
+      "part": "ThumbVert",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "tooltip/Entire/001",
+      "control": "tooltip",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "windowbackground/BackgroundDialog/001",
+      "control": "windowbackground",
+      "part": "BackgroundDialog",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "windowbackground/BackgroundWindow/001",
+      "control": "windowbackground",
+      "part": "BackgroundWindow",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    },
+    {
+      "cell_id": "windowbackground/Entire/001",
+      "control": "windowbackground",
+      "part": "Entire",
+      "ordinal": 1,
+      "stateless": false,
+      "state": {}
+    }
+  ]
+}

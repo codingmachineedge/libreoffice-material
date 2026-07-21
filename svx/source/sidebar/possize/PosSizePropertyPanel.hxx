@@ -81,6 +81,15 @@ public:
         const sal_uInt16 nSId,
         boost::property_tree::ptree& rState) override;
 
+    // No-selection / disabled policy (docs/design/11-impress-draw.md §11.2): keep
+    // every position/size/rotation/flip control visible but insensitive so the
+    // sidebar does not re-lay-out (no layout jump) when the canvas selection
+    // empties. Additive and shared-safe: existing update paths (DisableControls,
+    // NotifyItemUpdate) are untouched; a host view invokes this when it has no
+    // object selected, and any normal NotifyItemUpdate re-enables the controls.
+    // F4 Position and Size stays the numeric entry -- this only toggles sensitivity.
+    void ApplyNoSelectionDisabledPolicy();
+
 private:
     SvxRatioConnector m_aRatioTop;
     SvxRatioConnector m_aRatioBottom;

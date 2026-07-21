@@ -28,6 +28,15 @@ declared:
 Every native marker is matched against comment-stripped source, so commenting the wiring out -- or
 replacing it with a descriptive comment -- fails the contract. It is source evidence only: no native
 build, menu pixels, or runtime interaction are claimed.
+
+The ``context_menu`` registry section extends this contract with the WIN-NAV-002 delta (design-05 §2):
+the Material keyboard-first-highlight policy setting and its reversible reader/populate/baseline
+guard, the single native keyboard-vs-pointer capture at ``ImplCallCommand``, its one-shot consumption
+in ``PopupMenu::ImplExecute``, and *presence* markers pinning the shared-VCL behaviours §2 relies on
+(on-screen edge-flip and RTL mirroring in ``FloatingWindow::ImplCalcPos``, the ``StartPopupMode``
+anchor feed, focus save/return around a top-level context execute, Esc dismissal, and the
+Writer-canvas / Calc-sheet-tab invocation hooks) so removing any of them fails closed. See
+``validate_context_menu``.
 """
 
 from __future__ import annotations
@@ -98,6 +107,7 @@ def load_registry(registry_path: Path) -> dict:
         "menupopup_separator",
         "nwf_fields",
         "code_markers",
+        "context_menu",
     ):
         if key not in data:
             raise ValidationError(f"registry is missing required key {key!r}")
@@ -304,11 +314,71 @@ def validate_code_markers(repo_root: Path, markers: Sequence[dict]) -> None:
             )
 
 
+# --------------------------------------------------------------------------------------------------
+# WIN-NAV-002 context-menu section (additive, fail-closed extension of the NAV-001 contract)
+# --------------------------------------------------------------------------------------------------
+def _validate_marker_list(markers: object, label: str) -> None:
+    if not isinstance(markers, list) or not markers:
+        raise ValidationError(f"{label} must be a non-empty array")
+    seen: set[str] = set()
+    for index, marker in enumerate(markers):
+        if not isinstance(marker, dict):
+            raise ValidationError(f"{label} #{index} must be an object")
+        for field in ("id", "file", "pattern"):
+            value = marker.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ValidationError(f"{label} #{index} has empty required field {field!r}")
+        if marker["id"] in seen:
+            raise ValidationError(f"duplicate {label} id: {marker['id']}")
+        seen.add(marker["id"])
+
+
+def validate_context_menu(repo_root: Path, data: dict) -> None:
+    """Validate the design-05 §2 context-menu delta layered on top of the NAV-001 menu surface.
+
+    Two kinds of marker are pinned. The *new-behaviour* markers fail closed on the WIN-NAV-002 code
+    itself: the Material keyboard-first-highlight policy setting, its reader/populate/baseline guard
+    (reversible, live only while the Material file-definition theme is active), the single native
+    capture of keyboard-vs-pointer invocation at ``ImplCallCommand``, and its one-shot consumption in
+    ``PopupMenu::ImplExecute``. The *presence* markers pin the shared-VCL behaviours §2 relies on --
+    on-screen edge-flip and its RTL mirroring in ``FloatingWindow::ImplCalcPos``, the anchor-rect feed
+    into ``StartPopupMode``, focus save/return around a top-level context execute, the Esc dismissal,
+    and the Writer-canvas / Calc-sheet-tab invocation hooks -- so a future refactor that removed any of
+    them would fail this contract instead of silently regressing platform context menus. Source
+    evidence only: no build, menu pixels, or runtime interaction are claimed."""
+
+    section = data["context_menu"]
+    if not isinstance(section, dict):
+        raise ValidationError("registry context_menu must be an object")
+
+    setting = section.get("definition_setting")
+    if (
+        not isinstance(setting, dict)
+        or not isinstance(setting.get("name"), str)
+        or not isinstance(setting.get("value"), str)
+    ):
+        raise ValidationError(
+            "context_menu.definition_setting must be an object with string name and value"
+        )
+    root = _widgets_root(repo_root, data["definition_xml"])
+    validate_settings(root, {setting["name"]: setting["value"]})
+
+    for key in ("nwf_fields", "appdata_fields"):
+        fields = section.get(key)
+        if not isinstance(fields, list) or not fields:
+            raise ValidationError(f"context_menu.{key} must be a non-empty array")
+        validate_nwf_fields(repo_root, fields)
+
+    _validate_marker_list(section.get("code_markers"), "context_menu code_marker")
+    validate_code_markers(repo_root, section["code_markers"])
+
+
 def validate(repo_root: Path, registry_path: Path) -> dict:
     data = load_registry(registry_path)
     validate_definition(repo_root, data)
     validate_nwf_fields(repo_root, data["nwf_fields"])
     validate_code_markers(repo_root, data["code_markers"])
+    validate_context_menu(repo_root, data)
     return data
 
 
@@ -336,8 +406,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(
         "Windows menu-composition contract passed: definition.xml declares the menubar/menupopup "
         f"parts, {len(data['menu_settings'])} composition settings and the disabled-arrow @outline "
-        f"state, and {len(data['code_markers'])} real code markers carry them through the "
-        "settings -> NWF -> ImplCalcSize layout channel."
+        f"state, {len(data['code_markers'])} real code markers carry them through the "
+        "settings -> NWF -> ImplCalcSize layout channel, and "
+        f"{len(data['context_menu']['code_markers'])} context-menu markers pin the design-05 "
+        "§2 keyboard-first-highlight / edge-flip / RTL / focus-return delta."
     )
     return 0
 

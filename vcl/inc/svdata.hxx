@@ -177,6 +177,11 @@ struct ImplSVAppData
     DialogCancelMode meDialogCancel = DialogCancelMode::Off; // true: All Dialog::Execute() calls will be terminated immediately with return false
     bool mbRenderToBitmaps = false; // set via svp / headless plugin
     bool m_bUseSystemLoop = false;
+    // docs/design/05-navigation.md section 2: transient, set for the duration of a single context-menu
+    // execute to record whether it was invoked from the keyboard (Menu key / Shift+F10) rather than the
+    // pointer. Captured at ImplCallCommand for CommandEventId::ContextMenu and consumed exactly once by
+    // PopupMenu::ImplExecute, which only acts on it while the Material first-highlight policy is live.
+    bool mbContextMenuByKeyboard = false;
 
     DECL_STATIC_LINK(ImplSVAppData, ImplQuitMsg, void*, void);
 };
@@ -331,6 +336,11 @@ struct ImplSVNWFData
     int                     mnMenuItemHeight = 0;           // Material popup command-row minimum height (0 = platform default)
     int                     mnMenuPopupMinWidth = 0;        // Material drop-menu minimum width (0 = platform default)
     int                     mnMenuAccelColumnGap = 0;       // Material accelerator-column gap width (0 = platform default)
+    bool                    mbContextMenuKeyboardFirstHighlight = false; // Material policy: a keyboard-invoked
+                                                            // context menu (Menu key / Shift+F10) pre-highlights its
+                                                            // first enabled item; pointer-invoked ones do not
+                                                            // (docs/design/05-navigation.md section 2). Default false =
+                                                            // platform behaviour, so non-Material menus are untouched.
     ::Color                 maMenuBarHighlightTextColor = COL_TRANSPARENT; // override highlight text color
                                                             // in menubar if not transparent
     bool                    mbMenuBarDockingAreaCommonBG = false; // e.g. WinXP default theme

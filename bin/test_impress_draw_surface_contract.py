@@ -31,6 +31,10 @@ SCALECTRL = "sd/source/ui/app/scalectrl.cxx"
 STRINGS = "sd/inc/strings.hrc"
 LINE_PANEL = "svx/source/sidebar/line/LinePropertyPanelBase.cxx"
 AREA_PANEL = "svx/source/sidebar/area/AreaPropertyPanelBase.cxx"
+POSSIZE_PANEL = "svx/source/sidebar/possize/PosSizePropertyPanel.cxx"
+SHADOW_PANEL = "svx/source/sidebar/shadow/ShadowPropertyPanel.cxx"
+GRAPHIC_BAR = "sd/source/ui/view/GraphicObjectBar.cxx"
+TEXT_BAR_XML = "sd/uiconfig/sdraw/toolbar/textobjectbar.xml"
 
 
 class ImpressDrawSurfaceContractTest(unittest.TestCase):
@@ -157,6 +161,87 @@ class ImpressDrawSurfaceContractTest(unittest.TestCase):
         source = self.contents[toolbar].replace(".uno:SelectObject", ".uno:Nope", 1)
         errors = self.failures(contents=self.with_content(toolbar, source))
         self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    # -- object-property panels (possize / shadow) -------------------------
+    def test_checkbox_token_drift_fails(self) -> None:
+        # The checkbox Entire unchecked state is declared only by the new
+        # object-property-panel surfaces; radius="@corner-checkbox" is unique to it.
+        definition = self.contents[DEFINITION].replace(
+            'stroke="@on-surface-variant" fill="@surface" stroke-width="@stroke-standard" '
+            'radius="@corner-checkbox"',
+            'stroke="@on-surface-variant" fill="@surface-container" stroke-width="@stroke-standard" '
+            'radius="@corner-checkbox"',
+            1,
+        )
+        errors = self.failures(contents=self.with_content(DEFINITION, definition))
+        self.assertTrue(any("token drift" in e for e in errors), errors)
+
+    def test_possize_policy_missing_visible_fails(self) -> None:
+        source = self.contents[POSSIZE_PANEL].replace(
+            "    mxCbxScale->set_visible(true);\n", "", 1
+        )
+        errors = self.failures(contents=self.with_content(POSSIZE_PANEL, source))
+        self.assertTrue(
+            any("mxCbxScale not kept visible (no layout jump)" in e for e in errors), errors
+        )
+
+    def test_possize_policy_missing_disable_fails(self) -> None:
+        # Target the disable line inside the policy method (the visible+sensitive
+        # pairing is unique to it), not the unrelated existing sensitivity paths.
+        source = self.contents[POSSIZE_PANEL].replace(
+            "    mxMtrAngle->set_visible(true);\n    mxMtrAngle->set_sensitive(false);\n",
+            "    mxMtrAngle->set_visible(true);\n",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(POSSIZE_PANEL, source))
+        self.assertTrue(any("mxMtrAngle not disabled" in e for e in errors), errors)
+
+    def test_possize_policy_method_missing_fails(self) -> None:
+        source = self.contents[POSSIZE_PANEL].replace(
+            "void PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy()",
+            "void PosSizePropertyPanel::SomethingElse()",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(POSSIZE_PANEL, source))
+        self.assertTrue(any(":disabled-policy:method" in e and "not found" in e for e in errors), errors)
+
+    def test_shadow_policy_missing_disable_fails(self) -> None:
+        source = self.contents[SHADOW_PANEL].replace(
+            "    mxShowShadow->set_visible(true);\n    mxShowShadow->set_sensitive(false);\n",
+            "    mxShowShadow->set_visible(true);\n",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SHADOW_PANEL, source))
+        self.assertTrue(any("mxShowShadow not disabled" in e for e in errors), errors)
+
+    def test_shadow_owner_marker_missing_fails(self) -> None:
+        source = self.contents[SHADOW_PANEL].replace(
+            'weld_scale(u"transparency_slider"', 'weld_scale(u"nope"', 1
+        )
+        errors = self.failures(contents=self.with_content(SHADOW_PANEL, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    # -- object bars -------------------------------------------------------
+    def test_object_bar_marker_missing_fails(self) -> None:
+        source = self.contents[TEXT_BAR_XML].replace(".uno:Bold", ".uno:Nope", 1)
+        errors = self.failures(contents=self.with_content(TEXT_BAR_XML, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    def test_object_bar_shell_marker_missing_fails(self) -> None:
+        source = self.contents[GRAPHIC_BAR].replace(
+            "SFX_IMPL_INTERFACE(GraphicObjectBar", "SFX_IMPL_INTERFACE(Renamed", 1
+        )
+        errors = self.failures(contents=self.with_content(GRAPHIC_BAR, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    def test_missing_required_object_bars_fails(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["surfaces"] = [
+            s for s in registry["surfaces"] if s["surface_id"] != "impress.object-bars"
+        ]
+        registry["expected_surfaces"] = len(registry["surfaces"])
+        errors = self.failures(registry=registry)
+        self.assertTrue(any("missing required impress.object-bars" in e for e in errors), errors)
 
     # -- registry integrity ------------------------------------------------
     def test_runtime_verified_true_fails(self) -> None:

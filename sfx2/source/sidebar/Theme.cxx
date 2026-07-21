@@ -25,10 +25,29 @@
 #include <vcl/settings.hxx>
 #include <comphelper/diagnose_ex.hxx>
 
+#include <cstdlib>
+
 using namespace css;
 using namespace css::uno;
 
 namespace sfx2::sidebar {
+
+namespace {
+
+/** WIN-CON-007: the Material deck treatment (deck/title/panel on @surface, the
+    14px deck content inset, and the title/heading text colours) only applies
+    when the file-definition Material widget theme is the active VCL draw path --
+    the same VCL_DRAW_WIDGETS_FROM_FILE gate the rail (WIN-NAV-005) keys on. Every
+    other theme keeps the measured native deck colours and zero content padding,
+    so no non-Material sidebar geometry, colour, keyboard, a11y or RTL behaviour
+    changes off the Material path. */
+bool IsMaterialDeck()
+{
+    static const bool bMaterial = (std::getenv("VCL_DRAW_WIDGETS_FROM_FILE") != nullptr);
+    return bMaterial;
+}
+
+} // anonymous namespace
 
 Theme& Theme::GetCurrentTheme()
 {
@@ -107,26 +126,90 @@ void Theme::UpdateTheme()
         Color aSecondColor (aBaseBackgroundColor);
         aSecondColor.DecreaseLuminance(15);
 
+        // WIN-CON-007: on the Material draw path the properties deck, its title
+        // bar, and the panels all sit on @surface (design 06 s6.7 / site
+        // prototype writerBody()), one tonal step brighter than the
+        // @surface-container rail so the deck/rail hairline reads. The rail keeps
+        // @surface-container via Color_TabBarBackground below. Off the Material
+        // path every deck slot keeps its measured native value (dialog colour /
+        // luminance-stepped title bar), so no non-Material sidebar changes.
+        const bool bMaterialDeck (IsMaterialDeck());
+        const Color aDeckSurfaceColor (bMaterialDeck ? rStyle.GetWindowColor() : aBaseBackgroundColor);
+        const Color aPanelTitleColor (bMaterialDeck ? rStyle.GetWindowColor() : aSecondColor);
+
         setPropertyValue(
             maPropertyIdToNameMap[Color_DeckBackground],
-            Any(sal_Int32(aBaseBackgroundColor.GetRGBColor())));
+            Any(sal_Int32(aDeckSurfaceColor.GetRGBColor())));
 
         setPropertyValue(
             maPropertyIdToNameMap[Color_DeckTitleBarBackground],
-            Any(sal_Int32(aBaseBackgroundColor.GetRGBColor())));
+            Any(sal_Int32(aDeckSurfaceColor.GetRGBColor())));
         setPropertyValue(
             maPropertyIdToNameMap[Int_DeckSeparatorHeight],
             Any(sal_Int32(1)));
         setPropertyValue(
             maPropertyIdToNameMap[Color_PanelBackground],
-            Any(sal_Int32(aBaseBackgroundColor.GetRGBColor())));
+            Any(sal_Int32(aDeckSurfaceColor.GetRGBColor())));
 
         setPropertyValue(
             maPropertyIdToNameMap[Color_PanelTitleBarBackground],
-            Any(sal_Int32(aSecondColor.GetRGBColor())));
+            Any(sal_Int32(aPanelTitleColor.GetRGBColor())));
         setPropertyValue(
             maPropertyIdToNameMap[Color_TabBarBackground],
             Any(sal_Int32(aBaseBackgroundColor.GetRGBColor())));
+
+        // WIN-CON-007: the deck title text uses the `title` type role in
+        // @on-surface; 11px uppercase section headings use @on-surface-variant
+        // (design 06 s6.7). Both are sourced from the Material-mapped
+        // StyleSettings getter that resolves to the named token, so the deck
+        // follows whatever widget theme is active. Color_PanelSectionHeadingText
+        // is the pinned source of truth for the panel-heading treatment: the
+        // panel title bar is a weld::Expander, which exposes no font-colour API,
+        // so the 11px uppercase heading is drawn by the later native
+        // panel-heading paint row that reads this slot -- the absence of a getter
+        // consumer today is deliberate, not a wiring gap.
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_DeckTitleText],
+            Any(sal_Int32(rStyle.GetWindowTextColor().GetRGBColor())));
+        setPropertyValue(
+            maPropertyIdToNameMap[Color_PanelSectionHeadingText],
+            Any(sal_Int32(rStyle.GetGroupTextColor().GetRGBColor())));
+
+        // WIN-CON-007: the deck content inset is 14px on the Material path (design
+        // 06 s6.7 / site prototype) and the measured native zero otherwise. These
+        // existing Int_Deck*Padding slots are consumed unconditionally by
+        // Deck::GetContentArea, so the value itself is guarded here to keep the
+        // non-Material deck geometry untouched.
+        const sal_Int32 nDeckContentPadding (bMaterialDeck ? 14 : 0);
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckLeftPadding],
+            Any(sal_Int32(nDeckContentPadding)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckTopPadding],
+            Any(sal_Int32(nDeckContentPadding)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckRightPadding],
+            Any(sal_Int32(nDeckContentPadding)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckBottomPadding],
+            Any(sal_Int32(nDeckContentPadding)));
+
+        // WIN-CON-007: density-invariant Material deck metrics. Like the rail
+        // metrics these are pinned literals set unconditionally; each consumer
+        // (Deck scrollbar, DeckTitleBar title font, SidebarController overlay)
+        // applies them behind its own Material guard.
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckScrollbarThickness],
+            Any(sal_Int32(12)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckTitleScalePercent],
+            Any(sal_Int32(120)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_PanelSectionHeadingHeight],
+            Any(sal_Int32(11)));
+        setPropertyValue(
+            maPropertyIdToNameMap[Int_DeckOverlayMinWidth],
+            Any(sal_Int32(600)));
 
         // Material sidebar rail state palette (WIN-NAV-005). Each slot is
         // sourced from the Material-mapped StyleSettings getter that resolves to
@@ -513,6 +596,12 @@ void Theme::SetupPropertyMaps()
     maPropertyNameToIdMap[u"Color_TabBarSeparator"_ustr]=Color_TabBarSeparator;
     maPropertyIdToNameMap[Color_TabBarSeparator]="Color_TabBarSeparator";
 
+    maPropertyNameToIdMap[u"Color_DeckTitleText"_ustr]=Color_DeckTitleText;
+    maPropertyIdToNameMap[Color_DeckTitleText]="Color_DeckTitleText";
+
+    maPropertyNameToIdMap[u"Color_PanelSectionHeadingText"_ustr]=Color_PanelSectionHeadingText;
+    maPropertyIdToNameMap[Color_PanelSectionHeadingText]="Color_PanelSectionHeadingText";
+
 
     maPropertyNameToIdMap[u"Int_DeckBorderSize"_ustr]=Int_DeckBorderSize;
     maPropertyIdToNameMap[Int_DeckBorderSize]="Int_DeckBorderSize";
@@ -547,6 +636,18 @@ void Theme::SetupPropertyMaps()
     maPropertyNameToIdMap[u"Int_TabBarTopPadding"_ustr]=Int_TabBarTopPadding;
     maPropertyIdToNameMap[Int_TabBarTopPadding]="Int_TabBarTopPadding";
 
+    maPropertyNameToIdMap[u"Int_DeckScrollbarThickness"_ustr]=Int_DeckScrollbarThickness;
+    maPropertyIdToNameMap[Int_DeckScrollbarThickness]="Int_DeckScrollbarThickness";
+
+    maPropertyNameToIdMap[u"Int_DeckTitleScalePercent"_ustr]=Int_DeckTitleScalePercent;
+    maPropertyIdToNameMap[Int_DeckTitleScalePercent]="Int_DeckTitleScalePercent";
+
+    maPropertyNameToIdMap[u"Int_PanelSectionHeadingHeight"_ustr]=Int_PanelSectionHeadingHeight;
+    maPropertyIdToNameMap[Int_PanelSectionHeadingHeight]="Int_PanelSectionHeadingHeight";
+
+    maPropertyNameToIdMap[u"Int_DeckOverlayMinWidth"_ustr]=Int_DeckOverlayMinWidth;
+    maPropertyIdToNameMap[Int_DeckOverlayMinWidth]="Int_DeckOverlayMinWidth";
+
 
     maPropertyNameToIdMap[u"Bool_UseSystemColors"_ustr]=Bool_UseSystemColors;
     maPropertyIdToNameMap[Bool_UseSystemColors]="Bool_UseSystemColors";
@@ -574,6 +675,8 @@ Theme::PropertyType Theme::GetPropertyType (const ThemeItem eItem)
         case Color_TabItemFocusRing:
         case Color_TabItemDisabledText:
         case Color_TabBarSeparator:
+        case Color_DeckTitleText:
+        case Color_PanelSectionHeadingText:
             return PT_Color;
 
         case Int_DeckBorderSize:
@@ -587,6 +690,10 @@ Theme::PropertyType Theme::GetPropertyType (const ThemeItem eItem)
         case Int_TabItemIconSize:
         case Int_TabItemGap:
         case Int_TabBarTopPadding:
+        case Int_DeckScrollbarThickness:
+        case Int_DeckTitleScalePercent:
+        case Int_PanelSectionHeadingHeight:
+        case Int_DeckOverlayMinWidth:
             return PT_Integer;
 
         case Bool_UseSystemColors:

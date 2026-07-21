@@ -241,6 +241,39 @@ void ShadowPropertyPanel::UpdateControls()
     mxShadowDistance->set_value(nXY, FieldUnit::MM_100TH);
 }
 
+void ShadowPropertyPanel::ApplyNoSelectionDisabledPolicy()
+{
+    // Every control stays visible (no layout jump) but becomes insensitive, per
+    // the §11.2 no-selection policy. This mirrors the disabled states already
+    // defined for these controls (checkbox / combobox listbox / spinbox / slider)
+    // in the Material definition.xml. Existing enable/disable logic in
+    // UpdateControls is untouched; only sensitivity is toggled here.
+    mxShowShadow->set_visible(true);
+    mxShowShadow->set_sensitive(false);
+    mxFTAngle->set_visible(true);
+    mxFTAngle->set_sensitive(false);
+    mxShadowAngle->set_visible(true);
+    mxShadowAngle->set_sensitive(false);
+    mxFTDistance->set_visible(true);
+    mxFTDistance->set_sensitive(false);
+    mxShadowDistance->set_visible(true);
+    mxShadowDistance->set_sensitive(false);
+    mxFTColor->set_visible(true);
+    mxFTColor->set_sensitive(false);
+    mxLBShadowColor->set_visible(true);
+    mxLBShadowColor->set_sensitive(false);
+    mxFTBlur->set_visible(true);
+    mxFTBlur->set_sensitive(false);
+    mxShadowBlurMetric->set_visible(true);
+    mxShadowBlurMetric->set_sensitive(false);
+    mxFTTransparency->set_visible(true);
+    mxFTTransparency->set_sensitive(false);
+    mxShadowTransMetric->set_visible(true);
+    mxShadowTransMetric->set_sensitive(false);
+    mxShadowTransSlider->set_visible(true);
+    mxShadowTransSlider->set_sensitive(false);
+}
+
 void ShadowPropertyPanel::SetTransparencyValue(tools::Long nVal)
 {
     mxShadowTransSlider->set_value(nVal);

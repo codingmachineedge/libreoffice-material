@@ -290,6 +290,7 @@ struct NativeWidgetFrameworkBaseline
     int mnMenuItemHeight = 0;
     int mnMenuPopupMinWidth = 0;
     int mnMenuAccelColumnGap = 0;
+    bool mbContextMenuKeyboardFirstHighlight = false;
 };
 
 void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>& pDefinition)
@@ -319,6 +320,7 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
         rNWFData.mnMenuItemHeight = aBaseline.mnMenuItemHeight;
         rNWFData.mnMenuPopupMinWidth = aBaseline.mnMenuPopupMinWidth;
         rNWFData.mnMenuAccelColumnGap = aBaseline.mnMenuAccelColumnGap;
+        rNWFData.mbContextMenuKeyboardFirstHighlight = aBaseline.mbContextMenuKeyboardFirstHighlight;
         aBaseline.mbCaptured = false;
         return;
     }
@@ -339,6 +341,7 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
         aBaseline.mnMenuItemHeight = rNWFData.mnMenuItemHeight;
         aBaseline.mnMenuPopupMinWidth = rNWFData.mnMenuPopupMinWidth;
         aBaseline.mnMenuAccelColumnGap = rNWFData.mnMenuAccelColumnGap;
+        aBaseline.mbContextMenuKeyboardFirstHighlight = rNWFData.mbContextMenuKeyboardFirstHighlight;
         aBaseline.mbCaptured = true;
     }
 
@@ -370,6 +373,14 @@ void updateNativeWidgetFrameworkSettings(const std::shared_ptr<WidgetDefinition>
         = getSettingValueInteger(pSettings->msMenuPopupMinWidth, aBaseline.mnMenuPopupMinWidth);
     rNWFData.mnMenuAccelColumnGap
         = getSettingValueInteger(pSettings->msMenuAccelColumnGap, aBaseline.mnMenuAccelColumnGap);
+
+    // Material context-menu keyboard-first-highlight policy (docs/design/05-navigation.md section 2):
+    // when this is live, a context menu opened from the keyboard (Menu key / Shift+F10) pre-highlights
+    // its first enabled item while a pointer-opened one does not. Like the metrics above it is populated
+    // only while the Material file-definition theme is live; the baseline restore returns the captured
+    // platform value (false), so non-Material context menus keep their unchanged behaviour.
+    rNWFData.mbContextMenuKeyboardFirstHighlight = getSettingValueBool(
+        pSettings->msContextMenuKeyboardFirstHighlight, aBaseline.mbContextMenuKeyboardFirstHighlight);
 }
 
 tools::Long getLevelBarStateValue(tools::Long nValue, tools::Long nFullWidth)

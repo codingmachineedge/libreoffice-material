@@ -43,6 +43,7 @@ class MenuCompositionTest(unittest.TestCase):
         cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         files = {cls.registry["definition_xml"], VALIDATOR.SVDATA_HEADER}
         files.update(marker["file"] for marker in cls.registry["code_markers"])
+        files.update(marker["file"] for marker in cls.registry["context_menu"]["code_markers"])
         cls.tracked_files = sorted(files)
         cls.originals = {
             rel: (REPOSITORY / rel).read_text(encoding="utf-8") for rel in cls.tracked_files
@@ -233,16 +234,134 @@ class MenuCompositionTest(unittest.TestCase):
         )
         self.assert_fails("padding-consumer", files=files)
 
+    # -- WIN-NAV-002 context-menu section: new-behaviour markers fail closed ----------------------
+    def test_rejects_context_policy_default_flipped(self) -> None:
+        # The NWF policy must default to false so non-Material context menus are untouched; flipping
+        # the default (or otherwise breaking the "= false;" declaration) fails the contract.
+        files = self.mutated(
+            VALIDATOR.SVDATA_HEADER,
+            "mbContextMenuKeyboardFirstHighlight = false;",
+            "mbContextMenuKeyboardFirstHighlight = true;",
+        )
+        self.assert_fails("ctx-nwf-policy-field", files=files)
+
+    def test_rejects_missing_context_appdata_flag(self) -> None:
+        files = self.mutated(
+            VALIDATOR.SVDATA_HEADER,
+            "    bool mbContextMenuByKeyboard = false;",
+            "",
+        )
+        self.assert_fails("mbContextMenuByKeyboard", files=files)
+
+    def test_rejects_missing_context_reader_map(self) -> None:
+        files = self.mutated(
+            "vcl/source/gdi/WidgetDefinitionReader.cxx",
+            '        { "contextMenuKeyboardFirstHighlight",\n'
+            "          &rWidgetDefinition.mpSettings->msContextMenuKeyboardFirstHighlight },\n",
+            "",
+        )
+        self.assert_fails("ctx-reader-map", files=files)
+
+    def test_rejects_comment_only_context_populate(self) -> None:
+        # Commenting the populate out must fail: markers are matched against comment-stripped source,
+        # so the Material policy would never reach the NWF channel.
+        files = self.mutated(
+            "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+            "rNWFData.mbContextMenuKeyboardFirstHighlight = getSettingValueBool(",
+            "// rNWFData.mbContextMenuKeyboardFirstHighlight = getSettingValueBool(",
+        )
+        self.assert_fails("ctx-populate", files=files)
+
+    def test_rejects_missing_context_baseline_restore(self) -> None:
+        # Removing the restore leaks the Material policy into non-Material sessions: the guard must
+        # stay reversible.
+        files = self.mutated(
+            "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+            "rNWFData.mbContextMenuKeyboardFirstHighlight = "
+            "aBaseline.mbContextMenuKeyboardFirstHighlight;",
+            "",
+        )
+        self.assert_fails("ctx-baseline-restore", files=files)
+
+    def test_rejects_comment_only_keyboard_capture(self) -> None:
+        files = self.mutated(
+            "vcl/source/window/winproc.cxx",
+            "ImplGetSVData()->maAppData.mbContextMenuByKeyboard = !bMouse;",
+            "// ImplGetSVData()->maAppData.mbContextMenuByKeyboard = !bMouse;",
+        )
+        self.assert_fails("ctx-capture-keyboard", files=files)
+
+    def test_rejects_context_highlight_policy_gate_removed(self) -> None:
+        # Dropping the Material policy gate would pre-highlight keyboard-invoked context menus on every
+        # platform, regressing non-Material behaviour.
+        files = self.mutated(
+            "vcl/source/window/menu.cxx",
+            "&& pSVData->maNWFData.mbContextMenuKeyboardFirstHighlight;",
+            ";",
+        )
+        self.assert_fails("ctx-consume-highlight", files=files)
+
+    # -- WIN-NAV-002 context-menu section: presence markers guard against silent regression -------
+    def test_rejects_missing_edge_flip(self) -> None:
+        files = self.mutated(
+            "vcl/source/window/floatwin.cxx",
+            "for ( ; nArrangeIndex < nArrangeAttempts; nArrangeIndex++ )",
+            "for ( ; nArrangeIndex < 0; nArrangeIndex++ )",
+        )
+        self.assert_fails("ctx-edge-flip", files=files)
+
+    def test_rejects_missing_rtl_mirror(self) -> None:
+        files = self.mutated(
+            "vcl/source/window/floatwin.cxx",
+            "devRectRTL = pW->ImplOutputToUnmirroredAbsoluteScreenPixel( normRect );",
+            "devRectRTL = devRect;",
+        )
+        self.assert_fails("ctx-rtl-mirror", files=files)
+
+    def test_rejects_missing_writer_caret_hook(self) -> None:
+        files = self.mutated(
+            "sw/source/uibase/docvw/edtwin.cxx",
+            "aDocPos = rSh.GetCharRect().Center();",
+            "aDocPos = aDocPos;",
+        )
+        self.assert_fails("ctx-writer-hook", files=files)
+
+    def test_rejects_missing_calc_sheettab_hook(self) -> None:
+        files = self.mutated(
+            "sc/source/ui/view/tabcont.cxx",
+            'ExecutePopup( u"sheettab"_ustr );',
+            "return;",
+        )
+        self.assert_fails("ctx-calc-hook", files=files)
+
     # -- registry integrity -----------------------------------------------------------------------
     def test_rejects_missing_registry_key(self) -> None:
         registry = self.registry_copy()
         del registry["menu_settings"]
         self.assert_fails("missing required key 'menu_settings'", registry=registry)
 
+    def test_rejects_missing_context_menu_key(self) -> None:
+        registry = self.registry_copy()
+        del registry["context_menu"]
+        self.assert_fails("missing required key 'context_menu'", registry=registry)
+
+    def test_rejects_wrong_context_setting_value(self) -> None:
+        registry = self.registry_copy()
+        registry["context_menu"]["definition_setting"]["value"] = "false"
+        self.assert_fails(
+            "menu setting <contextMenuKeyboardFirstHighlight> must be false", registry=registry
+        )
+
     def test_rejects_duplicate_marker_id(self) -> None:
         registry = self.registry_copy()
         registry["code_markers"][1]["id"] = registry["code_markers"][0]["id"]
         self.assert_fails("duplicate code_marker id", registry=registry)
+
+    def test_rejects_duplicate_context_marker_id(self) -> None:
+        registry = self.registry_copy()
+        markers = registry["context_menu"]["code_markers"]
+        markers[1]["id"] = markers[0]["id"]
+        self.assert_fails("duplicate context_menu code_marker id", registry=registry)
 
 
 if __name__ == "__main__":

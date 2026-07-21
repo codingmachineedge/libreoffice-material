@@ -214,5 +214,118 @@
       "pattern": "maNWFData\\.mnMenuFormatBorderY",
       "why": "the floating drop-menu window honours the inner-border padding"
     }
-  ]
+  ],
+  "context_menu": {
+    "description": "WIN-NAV-002 context-menu delta on top of NAV-001 (docs/design/05-navigation.md section 2). New-behaviour markers fail closed on the Material keyboard-first-highlight policy and its reversible NWF guard, the single native keyboard-vs-pointer capture at ImplCallCommand, and its one-shot consumption in PopupMenu::ImplExecute. Presence markers pin the shared-VCL behaviours section 2 relies on so they cannot silently regress: on-screen edge-flip and RTL mirroring in FloatingWindow::ImplCalcPos, the StartPopupMode anchor feed, focus save/return around a top-level context execute, Esc dismissal, and the Writer-canvas / Calc-sheet-tab invocation hooks. Source evidence only; no build, menu pixels, or runtime interaction are claimed.",
+    "definition_setting": {
+      "name": "contextMenuKeyboardFirstHighlight",
+      "value": "true"
+    },
+    "nwf_fields": ["mbContextMenuKeyboardFirstHighlight"],
+    "appdata_fields": ["mbContextMenuByKeyboard"],
+    "code_markers": [
+      {
+        "id": "ctx-nwf-policy-field",
+        "file": "vcl/inc/svdata.hxx",
+        "pattern": "bool\\s+mbContextMenuKeyboardFirstHighlight\\s*=\\s*false;",
+        "why": "the Material keyboard-first-highlight policy is declared on the NWF channel (0/false = untouched platform behaviour)"
+      },
+      {
+        "id": "ctx-appdata-flag",
+        "file": "vcl/inc/svdata.hxx",
+        "pattern": "bool\\s+mbContextMenuByKeyboard\\s*=\\s*false;",
+        "why": "the transient keyboard-invocation flag is declared on the app-data channel"
+      },
+      {
+        "id": "ctx-reader-map",
+        "file": "vcl/source/gdi/WidgetDefinitionReader.cxx",
+        "pattern": "\"contextMenuKeyboardFirstHighlight\"\\s*,\\s*&rWidgetDefinition\\.mpSettings->msContextMenuKeyboardFirstHighlight",
+        "why": "the contextMenuKeyboardFirstHighlight setting is mapped into the widget definition"
+      },
+      {
+        "id": "ctx-populate",
+        "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+        "pattern": "rNWFData\\.mbContextMenuKeyboardFirstHighlight\\s*=\\s*getSettingValueBool\\(\\s*pSettings->msContextMenuKeyboardFirstHighlight",
+        "why": "the policy flows from the definition into NWF only while the Material theme is live"
+      },
+      {
+        "id": "ctx-baseline-capture",
+        "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+        "pattern": "aBaseline\\.mbContextMenuKeyboardFirstHighlight\\s*=\\s*rNWFData\\.mbContextMenuKeyboardFirstHighlight",
+        "why": "the platform baseline is captured so the policy guard is reversible on theme teardown"
+      },
+      {
+        "id": "ctx-baseline-restore",
+        "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+        "pattern": "rNWFData\\.mbContextMenuKeyboardFirstHighlight\\s*=\\s*aBaseline\\.mbContextMenuKeyboardFirstHighlight",
+        "why": "the platform baseline is restored so non-Material context menus are never touched"
+      },
+      {
+        "id": "ctx-capture-keyboard",
+        "file": "vcl/source/window/winproc.cxx",
+        "pattern": "nEvt\\s*==\\s*CommandEventId::ContextMenu\\s*\\)\\s*ImplGetSVData\\(\\)->maAppData\\.mbContextMenuByKeyboard\\s*=\\s*!bMouse",
+        "why": "the single native choke point records keyboard-vs-pointer invocation for every context menu"
+      },
+      {
+        "id": "ctx-consume-highlight",
+        "file": "vcl/source/window/menu.cxx",
+        "pattern": "bContextKeyboardFirstHighlight\\s*=\\s*bRealExecute\\s*&&\\s*!pStartedFrom\\s*&&\\s*bContextMenuByKeyboard\\s*&&\\s*pSVData->maNWFData\\.mbContextMenuKeyboardFirstHighlight",
+        "why": "pre-highlight is enabled only for a top-level keyboard-invoked context menu while the Material policy is live"
+      },
+      {
+        "id": "ctx-consume-applied",
+        "file": "vcl/source/window/menu.cxx",
+        "pattern": "Run\\(pWin,\\s*bRealExecute,\\s*bPreSelectFirst\\s*\\|\\|\\s*bContextKeyboardFirstHighlight",
+        "why": "the computed keyboard-first-highlight is folded into the ImplExecute -> Run pre-select path"
+      },
+      {
+        "id": "ctx-placement-feed",
+        "file": "vcl/source/window/menu.cxx",
+        "pattern": "pWin->StartPopupMode\\(rRect,\\s*nPopupModeFlags\\)",
+        "why": "the pointer-or-caret anchor rect feeds the FloatingWindow placement channel"
+      },
+      {
+        "id": "ctx-edge-flip",
+        "file": "vcl/source/window/floatwin.cxx",
+        "pattern": "for\\s*\\(\\s*;\\s*nArrangeIndex\\s*<\\s*nArrangeAttempts;\\s*nArrangeIndex\\+\\+\\s*\\)",
+        "why": "ImplCalcPos retries placement arrangements so a near-edge popup flips to stay on-screen"
+      },
+      {
+        "id": "ctx-rtl-mirror",
+        "file": "vcl/source/window/floatwin.cxx",
+        "pattern": "if\\(\\s*bRTL\\s*\\)\\s*devRectRTL\\s*=\\s*pW->ImplOutputToUnmirroredAbsoluteScreenPixel\\(\\s*normRect\\s*\\)",
+        "why": "the on-screen flip compares against unmirrored desktop coordinates so it mirrors in RTL"
+      },
+      {
+        "id": "ctx-focus-save",
+        "file": "vcl/source/window/menu.cxx",
+        "pattern": "!pStartedFrom\\s*\\)(?:(?!SaveFocus).)*?xFocusId\\s*=\\s*Window::SaveFocus\\(\\)",
+        "why": "a top-level context execute saves the invoking control's focus"
+      },
+      {
+        "id": "ctx-focus-return",
+        "file": "vcl/source/window/menufloatingwindow.cxx",
+        "pattern": "xFocusId\\(xSaveFocusId\\)(?:(?!EndSaveFocus).)*?Window::EndSaveFocus\\(xFocusId\\)",
+        "why": "closing the popup returns focus to the saved invoking control"
+      },
+      {
+        "id": "ctx-esc-dismiss",
+        "file": "vcl/source/window/menufloatingwindow.cxx",
+        "pattern": "case KEY_ESCAPE:(?:(?!case KEY_LEFT).)*?!pMenu->pStartedFrom\\s*\\)\\s*\\{\\s*StopExecute\\(\\);\\s*KillActivePopup\\(\\)",
+        "why": "Esc dismisses a top-level context menu, driving the focus-return path"
+      },
+      {
+        "id": "ctx-writer-hook",
+        "file": "sw/source/uibase/docvw/edtwin.cxx",
+        "pattern": "!rCEvt\\.IsMouseEvent\\(\\)\\s*\\)\\s*aDocPos\\s*=\\s*rSh\\.GetCharRect\\(\\)\\.Center\\(\\)",
+        "why": "the Writer-canvas nav-context hook opens a keyboard-invoked menu at the caret, not the pointer"
+      },
+      {
+        "id": "ctx-calc-hook",
+        "file": "sc/source/ui/view/tabcont.cxx",
+        "pattern": "CommandEventId::ContextMenu(?:(?!ExecutePopup).)*?ExecutePopup\\(\\s*u\"sheettab\"_ustr\\s*\\)",
+        "why": "the Calc sheet-tab-strip nav-context hook opens its context menu"
+      }
+    ]
+  }
 }

@@ -4,7 +4,7 @@
   "platform": "windows",
   "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
   "chapter": "docs/design/11-impress-draw.md",
-  "expected_surfaces": 3,
+  "expected_surfaces": 6,
   "surfaces": [
     {
       "surface_id": "draw.tool-rail",
@@ -169,6 +169,198 @@
           ]
         }
       ],
+      "disabled_policy": null,
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "impress.object-property-panel.possize",
+      "title": "Position and Size sidebar panel (shared weld, F4 numeric entry)",
+      "chapter_section": "11.2",
+      "status": "source-declared",
+      "notes": "sidebarpossize.ui is shared by Writer/Calc/Impress/Draw/Base. The controls are theme-drawn: outlined spinbox fields, a Material checkbox (Keep ratio), and toolbar Button flip/arrange/align commands. The no-selection policy is additive and does not alter DisableControls/NotifyItemUpdate; F4 Position and Size stays the numeric entry.",
+      "owner_sources": [
+        "vcl/uiconfig/theme_definitions/material/definition.xml",
+        "svx/uiconfig/ui/sidebarpossize.ui",
+        "svx/source/sidebar/possize/PosSizePropertyPanel.cxx"
+      ],
+      "owner_markers": [
+        {"source": "svx/source/sidebar/possize/PosSizePropertyPanel.cxx", "markers": ["weld_metric_spin_button(u\"selectwidth\"", "weld_check_button(u\"ratio\"", "weld_toolbar(u\"selectrotationtype\""]}
+      ],
+      "definition_parts": [
+        {
+          "control": "spinbox",
+          "part": "Entire",
+          "states": [
+            {"role": "outlined-field", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+            {"role": "focused", "attrs": {"enabled": "true", "focused": "true"}, "tokens": {"stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container"}},
+            {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@outline-variant", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+          ]
+        },
+        {
+          "control": "checkbox",
+          "part": "Entire",
+          "part_attrs": {"width": "@size-selection-control", "height": "@size-selection-control"},
+          "states": [
+            {"role": "unchecked", "attrs": {"enabled": "true", "button-value": "false"}, "tokens": {"stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}},
+            {"role": "checked", "attrs": {"enabled": "true", "button-value": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}},
+            {"role": "disabled", "attrs": {"enabled": "false", "button-value": "false"}, "tokens": {"stroke": "@outline", "fill": "@disabled-container", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}}
+          ]
+        },
+        {
+          "control": "toolbar",
+          "part": "Button",
+          "states": [
+            {"role": "checked", "attrs": {"enabled": "true", "button-value": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-toolbar"}},
+            {"role": "hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "radius": "@corner-toolbar"}},
+            {"role": "disabled-checked", "attrs": {"enabled": "false", "button-value": "true"}, "tokens": {"stroke": "@outline", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-toolbar"}}
+          ]
+        }
+      ],
+      "status_model": null,
+      "token_consumption": [],
+      "disabled_policy": [
+        {
+          "source": "svx/source/sidebar/possize/PosSizePropertyPanel.cxx",
+          "method": "PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy",
+          "controls": [
+            "mxFtPosX", "mxMtrPosX", "mxFtPosY", "mxMtrPosY",
+            "mxFtWidth", "mxMtrWidth", "mxFtHeight", "mxMtrHeight",
+            "mxCbxScale", "mxFtAngle", "mxMtrAngle", "mxFtFlip", "mxFlipTbx"
+          ]
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "impress.object-property-panel.shadow",
+      "title": "Shadow sidebar panel (shared weld, normative slider thumb)",
+      "chapter_section": "11.2",
+      "status": "source-declared",
+      "notes": "sidebarshadow.ui is shared by Writer/Calc/Impress/Draw. The controls are theme-drawn: the normative 28 px slider thumb (transparency), a Material combobox listbox (angle), a Material checkbox (Enable), and outlined spinbox fields. The no-selection policy is additive and does not alter UpdateControls.",
+      "owner_sources": [
+        "vcl/uiconfig/theme_definitions/material/definition.xml",
+        "svx/uiconfig/ui/sidebarshadow.ui",
+        "svx/source/sidebar/shadow/ShadowPropertyPanel.cxx"
+      ],
+      "owner_markers": [
+        {"source": "svx/source/sidebar/shadow/ShadowPropertyPanel.cxx", "markers": ["weld_scale(u\"transparency_slider\"", "weld_combo_box(u\"LB_ANGLE\"", "weld_check_button(u\"SHOW_SHADOW\"", "weld_metric_spin_button(u\"LB_DISTANCE\""]}
+      ],
+      "definition_parts": [
+        {
+          "control": "slider",
+          "part": "Button",
+          "part_attrs": {"width": "@size-compact-control", "height": "@size-compact-control"},
+          "states": [
+            {"role": "thumb-rest", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary", "radius": "@corner-control"}},
+            {"role": "thumb-hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"fill": "@primary-action-hover", "radius": "@corner-container"}},
+            {"role": "thumb-focused", "attrs": {"enabled": "true", "focused": "true"}, "tokens": {"stroke": "@on-surface", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-container"}},
+            {"role": "thumb-disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@outline", "fill": "@outline-variant", "radius": "@corner-control"}}
+          ]
+        },
+        {
+          "control": "slider",
+          "part": "TrackHorzLeft",
+          "states": [
+            {"role": "filled-track", "attrs": {"enabled": "true"}, "element": "line", "tokens": {"stroke": "@primary", "stroke-width": "@stroke-track"}}
+          ]
+        },
+        {
+          "control": "slider",
+          "part": "TrackHorzRight",
+          "states": [
+            {"role": "remainder-track", "attrs": {"enabled": "true"}, "element": "line", "tokens": {"stroke": "@outline-variant", "stroke-width": "@stroke-track"}}
+          ]
+        },
+        {
+          "control": "combobox",
+          "part": "Entire",
+          "states": [
+            {"role": "outlined-field", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+            {"role": "focused", "attrs": {"enabled": "true", "focused": "true"}, "tokens": {"stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container"}},
+            {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@outline-variant", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+          ]
+        },
+        {
+          "control": "combobox",
+          "part": "ButtonDown",
+          "part_attrs": {"width": "@size-standard-control", "height": "@size-standard-control"},
+          "states": [
+            {"role": "rest", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-container"}}
+          ]
+        },
+        {
+          "control": "spinbox",
+          "part": "Entire",
+          "states": [
+            {"role": "outlined-field", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+            {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@outline-variant", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+          ]
+        },
+        {
+          "control": "checkbox",
+          "part": "Entire",
+          "part_attrs": {"width": "@size-selection-control", "height": "@size-selection-control"},
+          "states": [
+            {"role": "unchecked", "attrs": {"enabled": "true", "button-value": "false"}, "tokens": {"stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}},
+            {"role": "disabled", "attrs": {"enabled": "false", "button-value": "false"}, "tokens": {"stroke": "@outline", "fill": "@disabled-container", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}}
+          ]
+        }
+      ],
+      "status_model": null,
+      "token_consumption": [],
+      "disabled_policy": [
+        {
+          "source": "svx/source/sidebar/shadow/ShadowPropertyPanel.cxx",
+          "method": "ShadowPropertyPanel::ApplyNoSelectionDisabledPolicy",
+          "controls": [
+            "mxShowShadow", "mxFTAngle", "mxShadowAngle", "mxFTDistance",
+            "mxShadowDistance", "mxFTColor", "mxLBShadowColor", "mxFTBlur",
+            "mxShadowBlurMetric", "mxFTTransparency", "mxShadowTransMetric", "mxShadowTransSlider"
+          ]
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "impress.object-bars",
+      "title": "Draw/Impress graphic and text object bars (command -> toolbar Button)",
+      "chapter_section": "11.2",
+      "status": "source-declared",
+      "notes": "The GraphicObjectBar and TextObjectBar SfxShells own the docked object bars; their commands are declared in the toolbar config XMLs and render through ControlType::Toolbar as toolbar/Entire background and toolbar/Button states. No app-side color code owns the fill; command semantics are unchanged.",
+      "owner_sources": [
+        "vcl/uiconfig/theme_definitions/material/definition.xml",
+        "sd/source/ui/view/GraphicObjectBar.cxx",
+        "sd/source/ui/view/drtxtob.cxx",
+        "sd/uiconfig/sdraw/toolbar/graphicobjectbar.xml",
+        "sd/uiconfig/sdraw/toolbar/textobjectbar.xml"
+      ],
+      "owner_markers": [
+        {"source": "sd/source/ui/view/GraphicObjectBar.cxx", "markers": ["SFX_IMPL_INTERFACE(GraphicObjectBar", "ShellClass_GraphicObjectBar"]},
+        {"source": "sd/source/ui/view/drtxtob.cxx", "markers": ["SFX_IMPL_INTERFACE(TextObjectBar", "ShellClass_TextObjectBar"]},
+        {"source": "sd/uiconfig/sdraw/toolbar/graphicobjectbar.xml", "markers": [".uno:TransformDialog", ".uno:XLineStyle", ".uno:FillShadow"]},
+        {"source": "sd/uiconfig/sdraw/toolbar/textobjectbar.xml", "markers": [".uno:Bold", ".uno:Italic", ".uno:Underline"]}
+      ],
+      "definition_parts": [
+        {
+          "control": "toolbar",
+          "part": "Entire",
+          "states": [
+            {"role": "bar-fill", "attrs": {}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container"}}
+          ]
+        },
+        {
+          "control": "toolbar",
+          "part": "Button",
+          "states": [
+            {"role": "rest", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-toolbar"}},
+            {"role": "checked", "attrs": {"enabled": "true", "button-value": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-toolbar"}},
+            {"role": "hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "radius": "@corner-toolbar"}},
+            {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-toolbar"}}
+          ]
+        }
+      ],
+      "status_model": null,
+      "token_consumption": [],
       "disabled_policy": null,
       "runtime_verified": false
     }

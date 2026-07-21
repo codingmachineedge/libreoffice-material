@@ -194,6 +194,7 @@
         <menuPopupMinWidth value="248"/>
         <menuAccelColumnGap value="14"/>
         <menuInnerBorder value="6"/>
+        <contextMenuKeyboardFirstHighlight value="true"/>
     </settings>
 
     <typography>

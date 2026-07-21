@@ -5,27 +5,39 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-"""Fail-closed source contract for the Material Impress/Draw shell surfaces.
+"""Fail-closed source contract for the Material Calc formula bar (ScInputWindow).
 
-``qa/windows-ui-contract/impress-draw-surfaces.json`` registers the Impress/Draw
-shell surfaces from docs/design/11-impress-draw.md §11.2 -- the tool rail, the
-Fill/Line property panel, the status bar, the Position-and-Size and Shadow object
-property panels (shared weld sidebars), and the graphic/text object bars -- and
-this checker cross-validates each declaration against the real tree:
+``qa/windows-ui-contract/calc-formula-bar.json`` registers the Calc formula-bar
+surface (WIN-CA-002) from docs/design/10-writer-calc.md 10.3 (formula bar row)
+and 10.4 (RTL order swap). The formula row is a ToolBox composing the Name Box
+(ScPosWnd combobox), the fx Function-Wizard / Sum items and the formula-input
+window (ScTextWnd editbox). This checker cross-validates what ``ScInputWindow`` /
+``ScTextWnd`` own natively and additively against the real tree:
 
-* ``definition_parts`` -- every declared (control, part) must exist in
-  vcl/uiconfig/theme_definitions/material/definition.xml, its ``<part>`` sizing
-  attributes must match, and every declared ``<state>`` must exist with the exact
-  fill / stroke / radius / stroke-width tokens. A renamed part, dropped state, or
-  changed token (token drift) fails closed.
-* ``token_consumption`` -- the declared owner source must include the token
-  accessor header and contain each marker in *code* (comments are stripped first),
-  so comment-only wiring cannot satisfy the contract.
-* ``status_model`` -- the status text resource must be defined with the expected
-  copy, and the composing source must carry each code marker.
-* ``disabled_policy`` -- the declared method body must set every listed control
-  both ``set_visible(true)`` and ``set_sensitive(false)`` (visible-but-disabled,
-  no layout jump). A missing control or missing method fails closed.
+* ``definition_parts`` -- the combobox / editbox / toolbar parts the Name Box,
+  formula input and fx/Sum items consume their tokens from must exist in
+  vcl/uiconfig/theme_definitions/material/definition.xml with the exact part
+  sizing attributes and, per declared ``<state>``, the exact fill / stroke /
+  radius / stroke-width tokens. A renamed part, dropped state or changed token
+  (token drift) fails closed. The definition file is read only, never mutated.
+* ``guarded_token_consumption`` -- the owner source must include the token
+  accessor header and carry, in *code* (comments stripped first), the
+  VCL_FILE_WIDGET_THEME activation guard, the high-contrast bypass guard, the
+  ``vcl::MaterialTokens`` sourcing and every declared token lookup, so comment-only
+  wiring cannot satisfy the contract.
+* ``paint_layout`` -- the additive ``ScInputWindow::Paint`` override must call the
+  base ``ToolBox::Paint`` (never replace it) and carry every layout marker, and
+  the header must declare the override plus the Material members/helpers.
+* ``field_token_centralization`` -- the centralized ``@surface`` field-fill and
+  ``@on-surface`` text-fill accessors must each hold both the resolved token and
+  the StyleSettings fallback, and every declared editbox fill site must funnel
+  through the accessor (call-site floor), so the token role is consumed
+  explicitly rather than via the generic slot alone and the lookup is not
+  duplicated across the owner-drawn paints.
+* ``rtl_order`` -- the 10.4 Name Box / formula-input order swap must be present as
+  the real logical item order (Name Box leading, formula input trailing) plus the
+  recorded RTL direction the additive row rule consumes, so the native-mirroring
+  swap cannot silently regress.
 
 The registry establishes source-complete migration scope; it never claims a
 native build or runtime evidence (``runtime_verified: false`` throughout).
@@ -34,28 +46,32 @@ native build or runtime evidence (``runtime_verified: false`` throughout).
 from __future__ import annotations
 
 import json
-import re
 import sys
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, Mapping
 
 
 REPOSITORY = Path(__file__).resolve().parents[1]
-REGISTRY_PATH = "qa/windows-ui-contract/impress-draw-surfaces.json"
+REGISTRY_PATH = "qa/windows-ui-contract/calc-formula-bar.json"
 DEFINITION_PATH = "vcl/uiconfig/theme_definitions/material/definition.xml"
 
-REQUIRED_SURFACE_IDS = {
-    "draw.tool-rail", "draw.property-panel", "draw.status-bar",
-    "impress.object-property-panel.possize", "impress.object-property-panel.shadow",
-    "impress.object-bars",
-}
+REQUIRED_SURFACE_IDS = {"calc.formula-bar"}
 
 # definition.xml <state> attribute keys, so declared attrs are validated as a
 # complete, exact signature (no partial match that could alias two states).
 STATE_ATTR_KEYS = (
     "enabled", "focused", "pressed", "rollover", "default", "selected",
     "button-value", "extra",
+)
+
+# Registry block keys whose "source"/"header" file paths must be loaded.
+_BLOCK_KEYS = (
+    "guarded_token_consumption",
+    "paint_layout",
+    "field_token_centralization",
+    "rtl_order",
 )
 
 
@@ -101,21 +117,13 @@ def load_repository(repo_root: Path = REPOSITORY) -> tuple[dict[str, Any], dict[
         for owner in surface.get("owner_sources", []):
             if isinstance(owner, str):
                 paths.add(owner)
-        status_model = surface.get("status_model")
-        if isinstance(status_model, dict):
-            for key in ("source", "resource_file"):
-                value = status_model.get(key)
-                if isinstance(value, str):
-                    paths.add(value)
-        for consumption in surface.get("token_consumption", []) or []:
-            if isinstance(consumption, dict) and isinstance(consumption.get("source"), str):
-                paths.add(consumption["source"])
-        for policy in surface.get("disabled_policy", []) or []:
-            if isinstance(policy, dict) and isinstance(policy.get("source"), str):
-                paths.add(policy["source"])
-        for owner_marker in surface.get("owner_markers", []) or []:
-            if isinstance(owner_marker, dict) and isinstance(owner_marker.get("source"), str):
-                paths.add(owner_marker["source"])
+        for key in _BLOCK_KEYS:
+            block = surface.get(key)
+            if isinstance(block, dict):
+                for path_key in ("source", "header"):
+                    value = block.get(path_key)
+                    if isinstance(value, str):
+                        paths.add(value)
     contents: dict[str, str] = {}
     for relative in paths:
         path = repo_root / relative
@@ -204,12 +212,6 @@ def _validate_definition_part(
                 f"{context}:definition-part:{control}/{part_name}:{role} state has no rect/line"
             )
             continue
-        expected_element = state_decl.get("element")
-        if isinstance(expected_element, str) and drawing.tag != expected_element:
-            errors.append(
-                f"{context}:definition-part:{control}/{part_name}:{role} element is "
-                f"<{drawing.tag}>, expected <{expected_element}>"
-            )
         tokens = state_decl.get("tokens", {})
         if not isinstance(tokens, dict):
             errors.append(f"{context}:definition-part:{control}/{part_name}:{role} tokens must be object")
@@ -223,94 +225,130 @@ def _validate_definition_part(
                 )
 
 
-def _validate_status_model(
-    context: str, model: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+def _validate_guarded_token_consumption(
+    context: str, block: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
-    source_path = model.get("source")
-    source = contents.get(source_path) if isinstance(source_path, str) else None
-    if source is None:
-        errors.append(f"{context}:status-model:source {source_path} missing")
-    resource = model.get("resource")
-    resource_file = model.get("resource_file")
-    resource_text = contents.get(resource_file) if isinstance(resource_file, str) else None
-    if resource_text is None:
-        errors.append(f"{context}:status-model:resource_file {resource_file} missing")
-    elif isinstance(resource, str):
-        define = re.search(
-            rf'#define\s+{re.escape(resource)}\b.*?NC_\("{re.escape(resource)}",\s*"([^"]*)"',
-            resource_text,
-            re.DOTALL,
-        )
-        if define is None:
-            errors.append(f"{context}:status-model:{resource} not defined in {resource_file}")
-        else:
-            wanted = model.get("resource_text_contains")
-            if isinstance(wanted, str) and wanted not in define.group(1):
-                errors.append(
-                    f"{context}:status-model:{resource} copy {define.group(1)!r} lacks {wanted!r}"
-                )
-    if source is not None:
-        code = _without_cpp_comments(source)
-        for marker in model.get("markers", []):
-            if isinstance(marker, str) and marker not in code:
-                errors.append(f"{context}:status-model:marker missing in code ({marker})")
-
-
-def _validate_token_consumption(
-    context: str, consumption: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
-) -> None:
-    source_path = consumption.get("source")
+    source_path = block.get("source")
     source = contents.get(source_path) if isinstance(source_path, str) else None
     if source is None:
         errors.append(f"{context}:token-consumption:source {source_path} missing")
         return
     code = _without_cpp_comments(source)
-    include = consumption.get("include")
+    include = block.get("include")
     if isinstance(include, str) and f"#include {include}" not in code:
         errors.append(f"{context}:token-consumption:missing #include {include}")
-    for marker in consumption.get("markers", []):
+    for guard_key, label in (("env_guard", "activation"), ("high_contrast_guard", "high-contrast")):
+        guard = block.get(guard_key)
+        if isinstance(guard, str) and guard not in code:
+            errors.append(f"{context}:token-consumption:missing {label} guard ({guard})")
+    for marker in block.get("markers", []):
         if isinstance(marker, str) and marker not in code:
             errors.append(f"{context}:token-consumption:marker missing in code ({marker})")
 
 
-def _validate_disabled_policy(
-    context: str, policy: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+def _validate_paint_layout(
+    context: str, block: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
-    source_path = policy.get("source")
-    method = policy.get("method")
+    source_path = block.get("source")
     source = contents.get(source_path) if isinstance(source_path, str) else None
     if source is None:
-        errors.append(f"{context}:disabled-policy:source {source_path} missing")
+        errors.append(f"{context}:paint-layout:source {source_path} missing")
+    else:
+        code = _without_cpp_comments(source)
+        override = block.get("override_signature")
+        base_call = block.get("base_call")
+        if isinstance(override, str) and override not in code:
+            errors.append(f"{context}:paint-layout:missing Paint override ({override})")
+        # The override must call the base paint, never replace it.
+        if isinstance(base_call, str) and base_call not in code:
+            errors.append(f"{context}:paint-layout:override must call the base paint ({base_call})")
+        for marker in block.get("markers", []):
+            if isinstance(marker, str) and marker not in code:
+                errors.append(f"{context}:paint-layout:marker missing in code ({marker})")
+
+    header_path = block.get("header")
+    header = contents.get(header_path) if isinstance(header_path, str) else None
+    if header is None:
+        errors.append(f"{context}:paint-layout:header {header_path} missing")
+    else:
+        header_code = _without_cpp_comments(header)
+        for marker in block.get("header_markers", []):
+            if isinstance(marker, str) and marker not in header_code:
+                errors.append(f"{context}:paint-layout:header marker missing ({marker})")
+
+
+def _validate_field_centralization(
+    context: str, block: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+) -> None:
+    source_path = block.get("source")
+    source = contents.get(source_path) if isinstance(source_path, str) else None
+    if source is None:
+        errors.append(f"{context}:field-centralization:source {source_path} missing")
         return
-    if not isinstance(method, str):
-        errors.append(f"{context}:disabled-policy:method must be a string")
-        return
-    body = _function_body(_without_cpp_comments(source), method + "(")
-    if body is None:
-        errors.append(f"{context}:disabled-policy:method {method} not found")
-        return
-    for control in policy.get("controls", []):
-        if not isinstance(control, str):
+    code = _without_cpp_comments(source)
+
+    for accessor in block.get("accessors", []):
+        if not isinstance(accessor, dict):
+            errors.append(f"{context}:field-centralization:accessor must be object")
             continue
-        if f"{control}->set_visible(true)" not in body:
-            errors.append(f"{context}:disabled-policy:{control} not kept visible (no layout jump)")
-        if f"{control}->set_sensitive(false)" not in body:
-            errors.append(f"{context}:disabled-policy:{control} not disabled")
+        signature = accessor.get("signature")
+        if not isinstance(signature, str):
+            errors.append(f"{context}:field-centralization:accessor signature must be a string")
+            continue
+        body = _function_body(code, signature)
+        if body is None:
+            errors.append(f"{context}:field-centralization:accessor {signature!r} not found in code")
+            continue
+        for marker in accessor.get("must_contain", []):
+            if isinstance(marker, str) and marker not in body:
+                errors.append(
+                    f"{context}:field-centralization:{signature!r} must contain {marker!r} "
+                    "(token role and StyleSettings fallback)"
+                )
+
+    for site in block.get("call_sites", []):
+        if not isinstance(site, dict):
+            errors.append(f"{context}:field-centralization:call_site must be object")
+            continue
+        call = site.get("call")
+        minimum = site.get("min")
+        if not isinstance(call, str) or not isinstance(minimum, int):
+            errors.append(f"{context}:field-centralization:call_site call/min invalid")
+            continue
+        seen = code.count(call)
+        if seen < minimum:
+            errors.append(
+                f"{context}:field-centralization:call site {call!r} used {seen} time(s), "
+                f"expected at least {minimum}; every editbox fill site must funnel through it"
+            )
 
 
-def _validate_owner_markers(
-    context: str, owner_marker: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+def _validate_rtl_order(
+    context: str, block: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
-    source_path = owner_marker.get("source")
+    source_path = block.get("source")
     source = contents.get(source_path) if isinstance(source_path, str) else None
     if source is None:
-        errors.append(f"{context}:owner-marker:source {source_path} missing")
+        errors.append(f"{context}:rtl-order:source {source_path} missing")
         return
-    is_cpp = source_path.endswith((".cxx", ".hxx", ".c", ".h"))
-    haystack = _without_cpp_comments(source) if is_cpp else source
-    for marker in owner_marker.get("markers", []):
-        if isinstance(marker, str) and marker not in haystack:
-            errors.append(f"{context}:owner-marker:{marker} missing in {source_path}")
+    code = _without_cpp_comments(source)
+
+    for marker in block.get("markers", []):
+        if isinstance(marker, str) and marker not in code:
+            errors.append(f"{context}:rtl-order:order marker missing in code ({marker})")
+
+    rule_fn = block.get("rule_function")
+    if isinstance(rule_fn, str):
+        body = _function_body(code, rule_fn)
+        if body is None:
+            errors.append(f"{context}:rtl-order:rule function {rule_fn!r} not found in code")
+        else:
+            for marker in block.get("rule_must_contain", []):
+                if isinstance(marker, str) and marker not in body:
+                    errors.append(
+                        f"{context}:rtl-order:the additive row rule must consume {marker!r} "
+                        "so the RTL direction is real, not comment-only"
+                    )
 
 
 def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list[str]:
@@ -318,7 +356,7 @@ def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list
 
     if registry.get("schema_version") != 1:
         errors.append("registry:schema_version:must be 1")
-    if registry.get("contract") != "material-impress-draw-surfaces":
+    if registry.get("contract") != "material-calc-formula-bar":
         errors.append("registry:contract:unexpected value")
     if registry.get("platform") != "windows":
         errors.append("registry:platform:must be windows")
@@ -360,26 +398,37 @@ def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list
             if isinstance(owner, str) and owner not in contents:
                 errors.append(f"{context}:owner_source:missing {owner}")
 
-        for owner_marker in surface.get("owner_markers", []) or []:
-            if isinstance(owner_marker, dict):
-                _validate_owner_markers(context, owner_marker, contents, errors)
-
         if root is not None:
-            for declaration in surface.get("definition_parts", []):
+            declarations = surface.get("definition_parts", [])
+            if not declarations:
+                errors.append(f"{context}:definition_parts:non-empty array required")
+            for declaration in declarations:
                 if isinstance(declaration, dict):
                     _validate_definition_part(context, root, declaration, errors)
 
-        status_model = surface.get("status_model")
-        if isinstance(status_model, dict):
-            _validate_status_model(context, status_model, contents, errors)
+        token_block = surface.get("guarded_token_consumption")
+        if isinstance(token_block, dict):
+            _validate_guarded_token_consumption(context, token_block, contents, errors)
+        else:
+            errors.append(f"{context}:guarded_token_consumption:object required")
 
-        for consumption in surface.get("token_consumption", []) or []:
-            if isinstance(consumption, dict):
-                _validate_token_consumption(context, consumption, contents, errors)
+        paint_block = surface.get("paint_layout")
+        if isinstance(paint_block, dict):
+            _validate_paint_layout(context, paint_block, contents, errors)
+        else:
+            errors.append(f"{context}:paint_layout:object required")
 
-        for policy in surface.get("disabled_policy", []) or []:
-            if isinstance(policy, dict):
-                _validate_disabled_policy(context, policy, contents, errors)
+        field_block = surface.get("field_token_centralization")
+        if isinstance(field_block, dict):
+            _validate_field_centralization(context, field_block, contents, errors)
+        else:
+            errors.append(f"{context}:field_token_centralization:object required")
+
+        rtl_block = surface.get("rtl_order")
+        if isinstance(rtl_block, dict):
+            _validate_rtl_order(context, rtl_block, contents, errors)
+        else:
+            errors.append(f"{context}:rtl_order:object required")
 
     missing_required = REQUIRED_SURFACE_IDS - seen_ids
     if missing_required:
@@ -399,13 +448,14 @@ def main() -> int:
     try:
         validate_repository()
     except (OSError, json.JSONDecodeError, ValidationError) as error:
-        print(f"Impress/Draw surface contract failed:\n{error}", file=sys.stderr)
+        print(f"Calc formula-bar contract failed:\n{error}", file=sys.stderr)
         return 1
     registry, _ = load_repository()
     print(
-        "Impress/Draw surface contract passed: "
-        f"{len(registry['surfaces'])} Draw shell surface(s) with definition-part token, "
-        "status-model, token-consumption and no-selection-policy fidelity"
+        "Calc formula-bar contract passed: "
+        f"{len(registry['surfaces'])} ScInputWindow surface(s) with combobox/editbox/toolbar "
+        "token fidelity, guarded token consumption, additive Paint override, centralized "
+        "@surface/@on-surface field-fill token consumption and the 10.4 RTL order swap"
     )
     return 0
 
