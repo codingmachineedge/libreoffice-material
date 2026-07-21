@@ -249,7 +249,7 @@ function Record-WindowEnumeration {
     $entry = [ordered]@{
         captured_at_utc = [DateTimeOffset]::UtcNow.ToString('o')
         phase = $Phase
-        desktop_window_count = [int]$Enumeration.count
+        desktop_window_count = $windows.Count
         payload_owned_window_count = $ownedWindows.Count
         windows = @($windows.ToArray())
     }
