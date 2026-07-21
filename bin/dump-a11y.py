@@ -377,8 +377,20 @@ def main():
         progress("report_written", output=str(args.output))
         if args.require_visible and not tree["visible_nodes"]:
             raise RuntimeError("No accessible node reported SHOWING or VISIBLE")
-        if args.terminate and not desktop.terminate():
-            raise RuntimeError("The dedicated office process rejected normal termination")
+        if args.terminate:
+            try:
+                terminated = desktop.terminate()
+            except Exception as error:
+                # LibreOffice can tear down the URP bridge before returning
+                # from the successful terminate() RPC.  The process exit is
+                # the authoritative result in that narrow race; preserve the
+                # accessibility report instead of misclassifying it as a
+                # failed no-nag run.
+                if type(error).__name__ != "DisposedException":
+                    raise
+                terminated = True
+            if not terminated:
+                raise RuntimeError("The dedicated office process rejected normal termination")
         progress("complete", terminated=args.terminate)
         return 0
     except Exception as error:
