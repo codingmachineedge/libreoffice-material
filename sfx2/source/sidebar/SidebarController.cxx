@@ -59,6 +59,8 @@
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <o3tl/string_view.hxx>
 
+#include <cstdlib>
+
 #include <com/sun/star/awt/XWindowPeer.hpp>
 #include <com/sun/star/frame/XDispatch.hpp>
 #include <com/sun/star/ui/ContextChangeEventMultiplexer.hpp>
@@ -113,6 +115,28 @@ namespace {
     /** When in doubt, show this deck.
     */
     constexpr OUString gsDefaultDeckId(u"PropertyDeck"_ustr);
+
+    /** WIN-CON-007: the Material deck behaviours are gated on the file-definition
+        Material widget draw path (the same VCL_DRAW_WIDGETS_FROM_FILE gate the
+        rail keys on), so the below-medium overlay degrade never changes docked
+        resize behaviour off the Material path. */
+    bool IsMaterialDeck()
+    {
+        static const bool bMaterial = (std::getenv("VCL_DRAW_WIDGETS_FROM_FILE") != nullptr);
+        return bMaterial;
+    }
+
+    /** WIN-CON-007: below the medium window class (canvas narrower than
+        Int_DeckOverlayMinWidth) the properties deck is specified to overlay the
+        canvas rather than compress it (design 06 s6.7 density). Until the floating
+        overlay compositor lands, the docked controller degrades safely by not
+        force-widening the sidebar into a compact canvas -- see OpenThenToggleDeck.
+        The pixel float-over-canvas presentation remains future work. */
+    bool ShouldDeckOverlayCanvas(sal_Int32 nWindowWidth)
+    {
+        return IsMaterialDeck() && nWindowWidth > 0
+            && nWindowWidth < Theme::GetInteger(Theme::Int_DeckOverlayMinWidth);
+    }
 }
 
 SidebarController::SidebarController (
@@ -688,9 +712,20 @@ void SidebarController::OpenThenToggleDeck (
     if (mpCurrentDeck && mpTabBar)
     {
         sal_Int32 nRequestedWidth = mpCurrentDeck->GetMinimalWidth() + TabBar::GetDefaultWidth();
+        // WIN-CON-007: below the medium window class the deck is specified to
+        // overlay the canvas instead of compressing it (design 06 s6.7). Until
+        // the floating overlay compositor exists, degrade safely on the Material
+        // path by not force-widening the docked sidebar into a compact canvas --
+        // keep the user's saved width so opening a deck on a narrow document
+        // window never eats the page. Non-Material and >=medium windows are
+        // untouched.
+        const sal_Int32 nCanvasWidth = mpViewFrame ? mpViewFrame->GetWindow().GetSizePixel().Width() : 0;
+        const bool bOverlayDegrade = ShouldDeckOverlayCanvas(nCanvasWidth);
         // if sidebar was dragged
         if(mnWidthOnSplitterButtonDown > 0 && mnWidthOnSplitterButtonDown > nRequestedWidth){
             SetChildWindowWidth(mnWidthOnSplitterButtonDown);
+        }else if(bOverlayDegrade && mnSavedSidebarWidth > TabBar::GetDefaultWidth()){
+            SetChildWindowWidth(mnSavedSidebarWidth);
         }else{
             // tdf#150639 The mnWidthOnSplitterButtonDown is initialized to 0 at program start.
             // This makes every call to take the else case until the user manually changes the

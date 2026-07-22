@@ -299,10 +299,13 @@ native build or runtime capture is claimed.
 
 ## Impress/Draw shell surfaces
 
-`impress-draw-surfaces.json` registers the Draw shell surfaces from
+`impress-draw-surfaces.json` registers the Draw/Impress shell and object
+surfaces from
 [`docs/design/11-impress-draw.md`](../../docs/design/11-impress-draw.md) §11.2 --
-`draw.tool-rail`, `draw.property-panel`, and `draw.status-bar`. Each surface
-declares its owner source(s), the required `definition.xml` parts (with exact
+the three Draw shell surfaces `draw.tool-rail`, `draw.property-panel`, and
+`draw.status-bar`, plus the three shared-weld object surfaces added in Wave-2
+Batch B (see the WIN-WR-004/WIN-IM-002 note below). Each surface declares its
+owner source(s), the required `definition.xml` parts (with exact
 fill/stroke/radius/stroke-width tokens and part sizing), any Material token
 consumption, the status text model, and the no-selection/disabled policy.
 
@@ -330,12 +333,37 @@ python bin/test_impress_draw_surface_contract.py
 
 Markers are checked in comment-stripped code, so comment-only wiring, a missing
 policy control, a renamed policy method, a dropped status marker, wrong status
-copy, or token drift each fail the 18 mutation tests. The dotted canvas grid /
+copy, or token drift each fail the 30 mutation tests. The dotted canvas grid /
 workspace fill (a decorative custom-draw per the §11.2 accessibility note) is
 deliberately out of scope and is not faked here. The surfaces are
 source-declared for the Windows-first migration target; `runtime_verified` stays
 `false` until an exact-build capture exists, and the contract claims no native
 build, screenshot, or runtime evidence.
+
+Wave-2 Batch B extends this registry from three to six surfaces
+(`expected_surfaces` 6), adding the shared-weld object-property panels and object
+bars that back the Writer sidebar (WIN-WR-004) and Impress authoring/object
+properties (WIN-IM-002):
+
+- `impress.object-property-panel.possize` -- the Position and Size panel over the
+  shared `svx/uiconfig/ui/sidebarpossize.ui`: outlined `spinbox` fields
+  (idle/focus/disabled), the Keep-ratio Material `checkbox`, and the
+  flip/arrange/align `toolbar` Buttons. `PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy`
+  keeps every listed control visible-but-disabled on an empty selection (no layout
+  jump) and is additive to `DisableControls`/`NotifyItemUpdate`, so F4 Position and
+  Size stays the numeric entry.
+- `impress.object-property-panel.shadow` -- the Shadow panel over
+  `svx/uiconfig/ui/sidebarshadow.ui`: the normative 28px (`@size-compact-control`)
+  `slider` thumb plus its filled/remainder tracks, the angle `combobox`, the Enable
+  `checkbox`, and outlined `spinbox` fields, with
+  `ShadowPropertyPanel::ApplyNoSelectionDisabledPolicy` additive to `UpdateControls`.
+- `impress.object-bars` -- the `GraphicObjectBar` and `TextObjectBar` SfxShells
+  whose commands are declared in the `sd` toolbar config XMLs and render through
+  `ControlType::Toolbar` as the `toolbar/Entire` background and `toolbar/Button`
+  states; no app-side colour code owns the fill and command semantics are unchanged.
+
+All three carry `runtime_verified: false` and, like the original trio, claim no
+native build, pixels, or runtime evidence.
 
 ## Wave-2 Batch A shell and surface contracts
 
@@ -365,7 +393,7 @@ python bin/check-windows-link-contract.py
 python bin/test_windows_link_contract.py
 ```
 
-### Menubar and drop menus (WIN-NAV-001)
+### Menubar, drop menus and context menus (WIN-NAV-001, WIN-NAV-002)
 
 `menu-composition.json` cross-validates the Material menubar/menupopup part and
 state declarations, the five composition settings (`menuBarHeight` 38,
@@ -376,11 +404,26 @@ them through the `settings -> NWF -> Menu::ImplCalcSize` layout channel: the
 `mnMenu*` fields in `vcl/inc/svdata.hxx`, the reader mapping in
 `WidgetDefinitionReader.cxx`, the Material-guarded population plus platform
 baseline capture/restore in `FileDefinitionWidgetDraw.cxx`, and the layout reads
-in `menu.cxx`. The 18 mutation tests fail closed on token/metric drift, a
-dropped NWF field, a lost baseline restore (which would leak the Material metrics
-into non-Material rendering), or a broken disabled-arrow state. Prototype-only
-fine geometry (title-drop offset, exact text insets, monospaced accelerator
-styling) is out of scope.
+in `menu.cxx`. Those WIN-NAV-001 mutation tests fail closed on token/metric
+drift, a dropped NWF field, a lost baseline restore (which would leak the
+Material metrics into non-Material rendering), or a broken disabled-arrow state.
+Prototype-only fine geometry (title-drop offset, exact text insets, monospaced
+accelerator styling) is out of scope.
+
+Wave-2 Batch B extends the same registry with a `context_menu` section for the
+WIN-NAV-002 context-menu delta (design [05](../../docs/design/05-navigation.md)
+§2). It adds the `contextMenuKeyboardFirstHighlight` setting -- read into a new
+`mbContextMenuKeyboardFirstHighlight` NWF field with the same reversible baseline
+capture/restore -- and 18 context-menu markers. New-behaviour markers fail closed
+on the Material keyboard-first-highlight policy and its guard, the single native
+keyboard-vs-pointer capture at `ImplCallCommand` (`winproc.cxx`, which records
+`mbContextMenuByKeyboard = !bMouse` for every context menu), and its one-shot
+consumption in `PopupMenu::ImplExecute`. Presence markers pin the shared-VCL
+behaviours §2 relies on so they cannot silently regress: on-screen edge-flip and
+RTL mirroring in `FloatingWindow::ImplCalcPos`, the `StartPopupMode` anchor feed,
+focus save/return around a top-level context execute, Esc dismissal, and the
+Writer-canvas (`edtwin.cxx`) / Calc-sheet-tab (`tabcont.cxx`) invocation hooks.
+The menu-composition suite is now 39 mutation tests.
 
 ### Sidebar rail (WIN-NAV-005)
 
@@ -482,3 +525,184 @@ rendering `deactiveTextColor` (`@outline`) as plain non-underlined non-focusable
 text, and an exposed visited state (`@visited-link`). The 25 mutation tests cover
 both surfaces. The full AT-SPI/IA2 visited accessibility-state flag is deferred
 because upstream has no `VISITED` `AccessibleStateType`.
+
+## Wave-2 Batch B shell, surface, and feedback contracts
+
+Wave-2 Batch B (2026-07-22) adds five more fail-closed source contracts -- the
+two Calc chrome surfaces, the component-gallery coverage ledger, the
+notification-producer ledger, and the sidebar deck/side-panes surface -- and
+extends two Batch-A registries (menu composition with the WIN-NAV-002
+context-menu delta, documented in its section above, and the Impress/Draw surface
+set with the WIN-WR-004/WIN-IM-002 object panels and object bars, documented in
+its section above). Each is source evidence only: markers are checked in
+comment-stripped code, every `runtime_verified` (where present) stays `false`,
+and none claims a native build, pixels, or runtime interaction. Validate the new
+cohort:
+
+```sh
+python bin/check-calc-chrome-contract.py
+python bin/test_calc_chrome_contract.py
+python bin/check-calc-formula-bar-contract.py
+python bin/test_calc_formula_bar_contract.py
+python bin/check-component-gallery-coverage.py
+python bin/test_component_gallery_coverage.py
+python bin/check-notification-producer-contract.py
+python bin/test_notification_producer_contract.py
+python bin/check-windows-sidebar-panels.py
+python bin/test_windows_sidebar_panels.py
+```
+
+### Calc classic chrome (WIN-CA-001)
+
+`calc-chrome.json` pins the Calc classic-chrome *composition* (design
+[10](../../docs/design/10-writer-calc.md) 10.1 shared chrome, 10.3 Calc). Because
+the toolbars and menu bar are data-driven uiconfig XML, the M-scope of this row is
+*pinning composition* -- command identity + order, separator placement,
+per-button visibility -- and grounding the Material treatment in the native
+toolbar part contract, never re-drawing controls. The checker parses the real
+tree fail-closed: the native `toolbar` band (`DrawBackgroundHorz` / `Entire`),
+`SeparatorVert`, and nine-state `Button`
+(enabled/rollover/pressed/checked/rollover-checked/pressed-checked/focused/disabled/disabled-checked)
+parts resolve to the exact fill/stroke/stroke-width/radius tokens in
+`definition.xml` (the Button at `@corner-toolbar` = 18px), every declared metric
+carries its value, and every palette role resolves in **both** the light and dark
+palettes; the FMT.calc formatting toolbar (`formatobjectbar.xml`) and the standard
+toolbar (`standardbar.xml`) match their pinned ordered composition exactly (a
+reorder, added/removed item, flipped visibility, or moved separator fails closed),
+each toolbar's `design_core` commands staying present and visible and its
+`preserved_commands` (expert commands such as `.uno:ConditionalFormatMenu`,
+`.uno:MergeCells`, `.uno:FreezePanes`) never rebound or removed; and the menu bar
+top-level id sequence matches. `density` (compact/comfortable row height and
+overflow collapse) and `combo_annotations` (prototype font-name/size widths) are
+honest carve-outs whose `status` must stay `specified` -- build-dependent, never
+promoted to an implemented claim. 25 mutation tests; the definition file is read
+only, never mutated, and `runtime_verified` stays `false`.
+
+### Calc formula bar (WIN-CA-002)
+
+`calc-formula-bar.json` registers the single `ScInputWindow` formula-row surface
+(design [10](../../docs/design/10-writer-calc.md) 10.3 formula bar row, 10.4 RTL).
+The row is a ToolBox composing the Name Box (`ScPosWnd` combobox), the fx
+Function-Wizard / Sum items, and the formula-input window (`ScTextWnd` editbox).
+The checker locks what `ScInputWindow` / `ScTextWnd` own natively and additively:
+the combobox / editbox / toolbar `definition.xml` parts the built controls
+consume, with exact part sizing and per-`<state>` tokens (Name Box idle/focus,
+chevron, input idle/focus, fx/Sum idle/hover); the guarded token consumption in
+`sc/source/ui/app/inputwin.cxx` -- the `<vcl/MaterialTokens.hxx>` include, the
+`VCL_FILE_WIDGET_THEME` activation guard, the high-contrast bypass, the
+`MaterialTokens::fromThemeDefinition` sourcing and every `findColor` /
+`findMetric` / `findRadius` lookup -- in comment-stripped code; the additive
+`ScInputWindow::Paint` override that *calls* `ToolBox::Paint` (never replaces it)
+and owner-draws only the `@outline-variant` `stroke-thin` bottom rule
+(`PaintMaterialFormulaRowRule`); the centralized `@surface` field-fill /
+`@on-surface` text-fill accessors, each holding both the resolved token and its
+`StyleSettings` fallback and funnelled through a call-site floor (>=6 field-fill,
+>=2 text-fill sites); and the 10.4 Name Box / formula order recorded via
+`mbFormulaRowRTL`. The JSON documents honest divergences: the built
+combobox/editbox parts carry the suite-wide `@size-standard-control` (36) height
+and `@corner-container` (12) radius rather than the chapter's 30px / corner-small;
+the fx/Sum hover, Name Box chevron and editbox focus stroke are rendered by the
+native parts (existence-guarded only, painting no pixel in this class); and the
+10.4 RTL swap itself is specified-but-not-yet-built. 27 mutation tests;
+`runtime_verified` stays `false`.
+
+### Component gallery coverage (WIN-CONCEPT-003)
+
+`component-gallery-coverage.json` is the generated, checked-in coverage ledger for
+the "Components" verification surface (archive surface #11 from
+`docs/design/00-windows-rewrite-contract.md`). Its M-gate is spelled "SRC or test
+fixture" -- a source-level artifact, not rendered pixels (pixels are the separate
+B/V gate) -- and this ledger is that artifact. The cell list is **generated** from
+`definition.xml`, never hand-maintained: silent rot is the failure mode it guards.
+Enumeration reuses `bin/check-material-theme.py` -- the full Material theme
+contract runs first (a gallery can never be built over a broken theme) and yields
+the authoritative part/state counts; the walk here maps every renderable control
+(every root child except the non-widget
+`palette`/`shapes`/`metrics`/`style`/`settings`/`typography` sections), part, and
+declared `<state>` to exactly one gallery cell (a stateless part still yields one
+representative cell), cross-checks its totals against the theme contract's counts
+so the two parsers cannot silently diverge, and requires every `REQUIRED_PARTS`
+control/part to resolve to a cell. The current ledger is 205 cells over 28
+controls / 79 parts / 205 states. Default mode fails closed on a missing,
+extra/phantom, or drifted cell, count drift, or any hand edit; `--regenerate`
+rewrites it deterministically (stable sort, no timestamps). 14 tests. The
+inventory owner is `unassigned`; the ledger records only the proposed
+`sfx2/uiconfig/ui/componentgallery.ui` fixture home without asserting it exists
+yet -- the native `.ui` and rendered pixels remain the separate B/V gate.
+
+### Notification producers (WIN-FBK-005, WIN-FBK-008)
+
+`notification-producer-policy.json` is the audited ledger of native
+`NotificationRouter` **producer** call sites -- the paths that emit a bottom-right
+notification instead of a transient modal message box (design
+[07](../../docs/design/07-feedback.md) 7.5). It is source-implementation evidence
+only and validates **only** the registered producers and the shared router seam;
+the unrouted legacy-dialog backlog stays in `dialog-notification-policy.csv`, so
+this contract never fails on an unrouted dialog, only on an unreal or mislabeled
+producer. The checker enforces, fail-closed against comment-stripped source: each
+producer's enclosing function, its `sfx2::NotificationRouter::<call>(` call, and
+its `"<source>"_ostr` display-source literal are real code; severity is honest (a
+`NotifyInfo` notice spells its `NotificationSeverity::<S>` at the call site; a
+`NotifyConfirmation` producer declares only Success/Information, the two outcomes
+the router maps); every producer is `informational_only` and its display source is
+inside the compiled `isApprovedSafeDisplaySource` allowlist (drift from that
+allowlist fails here instead of being silently redacted at runtime); and the
+shared seam is real (the router header declares `NotifyConfirmation`, the source
+defines it forwarding through `NotifyInfo` with both Success and Information, and
+`Classify` returns `NotificationRoute::Notification` for the informational case).
+
+The three producers are the printer-busy notice (`viewprn.cxx`, Warning) and the
+help-viewer "no matches" notice (`newhelp.cxx`, Information) plus the first
+transient **action-confirmation** (WIN-FBK-005): `svx/source/dialog/srchdlg.cxx`'s
+Find & Replace "Replace All" outcome is mirrored into the bottom-right stack via
+`lcl_NotifyMaterialReplaceOutcome` -> `NotifyConfirmation` -- **Success** for a
+completed replacement (the replacement count) and **Information** for the no-match
+empty-state outcome (WIN-FBK-008, empty/no-results states). That producer also
+declares `wiring_markers` that bind **reachability**, not just existence: the
+one-shot arming assignment (`g_bMaterialReplaceAllPending = (&rBtn == m_xReplaceAllBtn.get());`
+in `CommandHdl_Impl` before the synchronous `FID_SEARCH_NOW` dispatch), the
+consumption call in the `SetSearchLabel` outcome sink, and the
+`VCL_FILE_WIDGET_THEME` opt-in guard literal must all remain live -- so a partial
+revert that leaves the producer function defined but unreachable (dead code) fails
+closed here instead of passing on the surviving definition. 27 mutation tests; no
+native build, notification pixels, or runtime interaction are claimed.
+
+### Sidebar deck & side panes (WIN-CON-007)
+
+`sidebar-panels.json` records that the deck, its title bar, the panels, the 12px
+scrollbar, the collapse-to-rail and the below-medium overlay are
+**sidebar-framework** chrome (design [06](../../docs/design/06-containers.md) §6.7:
+"deck layout and the rail belong to the sidebar framework ... restyled per surface
+later"), so the Material metrics and colour palette live in the sfx2 sidebar
+`Theme` and are consumed by `Deck` / `DeckTitleBar` / `SidebarController` behind
+the `VCL_DRAW_WIDGETS_FROM_FILE` Material guard (`IsMaterialDeck`) -- **not** as a
+`definition.xml` part. This is a **documented divergence** from the row plan
+(which named `definition.xml` and DeckLayouter/Panel/PanelTitleBar/PanelFactory);
+the audit found those files need no change (the deck padding routes through the
+existing `Int_Deck*Padding` slots, the panel background inherits the deck fill,
+and the panel title bar is a `weld::Expander` with no font API) and the design
+chapter wins. This row consumes, and does not fork, the NAV-005 rail primitive.
+The checker enforces that the framework carries the contract as real, guarded
+native wiring: the deck / title / panel fills routed to `@surface` through the
+existing `Color_Deck*` / `Color_Panel*` slots (one tonal step brighter than the
+`@surface-container` rail so the deck/rail hairline reads); the 14px deck content
+inset guarded onto the existing `Int_Deck*Padding` slots; the deck title in the
+`title` type role (`@on-surface`, 120% scale, `WEIGHT_SEMIBOLD`); the 12px
+Material deck scrollbar; and click-active-to-collapse (`OpenThenToggleDeck` ->
+`RequestCloseDeck`) plus the below-medium overlay-degrade predicate
+(`ShouldDeckOverlayCanvas`, reading `Int_DeckOverlayMinWidth` = 600 and consumed in
+the deck-open path). Each new `Theme` slot is checked as a declared enum member,
+registered in both property-name maps, classified in `GetPropertyType`, and *set*
+in `UpdateTheme` (metrics to literal density-invariant values, colours from the
+Material-mapped `StyleSettings` getter). 22 mutation tests, all against
+comment/raw-string-stripped source.
+
+Two items are pinned but explicitly deferred: the 11px uppercase
+`@on-surface-variant` section-heading **paint** -- the panel title bar is a
+`weld::Expander` with no font API, so `Color_PanelSectionHeadingText` /
+`Int_PanelSectionHeadingHeight` fix the colour and height as the source of truth
+for the later panel-heading paint row -- and the actual **float-over-canvas**
+overlay presentation: until the floating overlay compositor lands, the docked
+controller only degrades safely by not force-widening a compact canvas, and the
+pixel float-over presentation remains future work. `runtime_verified` is not
+claimed; no native build, deck pixels, or runtime interaction are asserted.

@@ -1,0 +1,96 @@
+{
+  "_comment": [
+    "Audited inventory of native NotificationRouter *producer* call sites -- the code paths that",
+    "emit a bottom-right notification instead of a transient modal message box (docs/design/",
+    "07-feedback.md 7.5). It is a source-implementation ledger only: it does not claim a native",
+    "build, notification pixels, or runtime interaction. Each producer is verified fail-closed",
+    "against real (comment-stripped) source by bin/check-notification-producer-contract.py and its",
+    "mutation suite bin/test_notification_producer_contract.py.",
+    "",
+    "Scope: this contract validates ONLY the registered producers and the shared router seam. It",
+    "deliberately does NOT try to prove that every legacy dialog has been routed -- that unrouted",
+    "backlog is tracked by dialog-notification-policy.csv. It fails on an unreal producer (missing",
+    "file, function, router call, or source literal) or a mislabeled one (wrong severity, a source",
+    "outside the SafeDisplayText allowlist, or informational_only cleared).",
+    "",
+    "A producer may also declare an optional 'wiring_markers' list of {file, pattern, note} entries.",
+    "The field is optional -- producers without it (the Batch-A viewprn/newhelp notices) stay valid --",
+    "but when present the checker requires every anchored pattern to exist as real (comment-stripped)",
+    "source. That binds REACHABILITY, not just existence: a partial revert that removes only a",
+    "producer's arming/consumption/guard site leaves the producer function defined but as dead code,",
+    "which the existence checks alone would still pass; the wiring markers fail closed on it instead.",
+    "",
+    "Every producer routes purely informational text (a status/acknowledgement), so it is never a",
+    "modal input/destructive/credential/security prompt: informational_only is invariably true and",
+    "the router's Classify keeps the informational case non-modal. Display text is fixed, translated",
+    "and carries no document data, so it uses NotificationPrivacy::SafeDisplayText under an approved",
+    "source; the store redacts anything else regardless of this hint."
+  ],
+  "approved_display_sources": [
+    "libreoffice.core-ui",
+    "libreoffice.notification",
+    "libreoffice.update",
+    "cppunit"
+  ],
+  "approved_source_registry": "sfx2/source/notification/NotificationJson.cxx",
+  "router": {
+    "header": "include/sfx2/notificationrouter.hxx",
+    "source": "sfx2/source/notification/NotificationRouter.cxx",
+    "confirmation_entry_point": "NotifyConfirmation"
+  },
+  "confirmation_severities": ["Success", "Information"],
+  "required_producers": [
+    "viewprn-printer-busy",
+    "newhelp-no-search-text",
+    "srchdlg-replace-all-outcome"
+  ],
+  "producers": [
+    {
+      "id": "viewprn-printer-busy",
+      "file": "sfx2/source/view/viewprn.cxx",
+      "function": "SfxViewShell::ExecPrint_Impl",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Warning"],
+      "informational_only": true,
+      "purpose": "Printer-busy notice: the one-way abort is reported to the bottom-right stack instead of a modal OK box."
+    },
+    {
+      "id": "newhelp-no-search-text",
+      "file": "sfx2/source/appl/newhelp.cxx",
+      "function": "SfxHelpTextWindow_Impl::FindHdl",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Information"],
+      "informational_only": true,
+      "purpose": "Help-viewer 'no matches' notice: routed to the stack while the help search dialog stays interactive."
+    },
+    {
+      "id": "srchdlg-replace-all-outcome",
+      "file": "svx/source/dialog/srchdlg.cxx",
+      "function": "lcl_NotifyMaterialReplaceOutcome",
+      "router_call": "NotifyConfirmation",
+      "source": "libreoffice.core-ui",
+      "severity": ["Success", "Information"],
+      "informational_only": true,
+      "purpose": "First transient action-confirmation: mirrors the Find & Replace 'Replace All' outcome (replacement count / no-match) into the bottom-right stack; Success for a completed replacement, Information for no match.",
+      "wiring_markers": [
+        {
+          "file": "svx/source/dialog/srchdlg.cxx",
+          "pattern": "g_bMaterialReplaceAllPending = (&rBtn == m_xReplaceAllBtn.get());",
+          "note": "Arms the one-shot Replace All confirmation flag in CommandHdl_Impl before the synchronous FID_SEARCH_NOW dispatch. A partial revert removing only this arming leaves the producer defined but never armed -- dead code the existence checks alone would still pass."
+        },
+        {
+          "file": "svx/source/dialog/srchdlg.cxx",
+          "pattern": "lcl_NotifyMaterialReplaceOutcome(sStr);",
+          "note": "Consumes the armed flag by calling the producer in the SvxSearchDialogWrapper::SetSearchLabel outcome sink (both the SearchLabel and OUString overloads). Removing the call sites leaves the producer function unreachable while its definition survives."
+        },
+        {
+          "file": "svx/source/dialog/srchdlg.cxx",
+          "pattern": "std::getenv(\"VCL_FILE_WIDGET_THEME\")",
+          "note": "Material theme opt-in guard read by lcl_IsMaterialFeedbackActive; under any other VCL_FILE_WIDGET_THEME value the whole confirmation path is a no-op, so this literal must remain live."
+        }
+      ]
+    }
+  ]
+}

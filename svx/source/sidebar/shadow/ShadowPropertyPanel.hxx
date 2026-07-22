@@ -43,6 +43,14 @@ public:
 
     SfxBindings* GetBindings() { return mpBindings;}
 
+    // No-selection / disabled policy (docs/design/11-impress-draw.md §11.2): keep
+    // every shadow control visible but insensitive so the sidebar does not
+    // re-lay-out (no layout jump) when the canvas selection empties. Additive and
+    // shared-safe: the existing UpdateControls path is untouched; a host view
+    // invokes this when it has no object selected, and any normal NotifyItemUpdate
+    // re-enables the controls.
+    void ApplyNoSelectionDisabledPolicy();
+
     void Initialize();
 
     ShadowPropertyPanel(

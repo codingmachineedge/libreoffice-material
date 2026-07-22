@@ -47,6 +47,18 @@ void NotificationRouter::NotifyInfo(const OString& rSource, NotificationSeverity
     Notify(std::move(aDraft));
 }
 
+void NotificationRouter::NotifyConfirmation(const OString& rSource, const OUString& rMessage,
+                                            bool bSuccess)
+{
+    // Transient action-confirmation over the shared bottom-right stack. Success marks a completed
+    // action; Information marks a neutral outcome (e.g. no match). Both are informational, so
+    // Classify never forces the confirmation modal. Reuses NotifyInfo -> SafeDisplayText, so the
+    // store still redacts anything but an audited built-in string under an approved source.
+    NotifyInfo(rSource,
+               bSuccess ? NotificationSeverity::Success : NotificationSeverity::Information,
+               rMessage);
+}
+
 NotificationRoute NotificationRouter::Classify(bool bCollectsInput, bool bConfirmsDestructive,
                                                bool bCredential, bool bSecurity)
 {

@@ -298,6 +298,7 @@ public:
     virtual void    PixelInvalidate(const tools::Rectangle* pRectangle) override;
     virtual void    SetSizePixel( const Size& rNewSize ) override;
     virtual void    Resize() override;
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect ) override;
     virtual void    Select() override;
 
     void            SetFuncString( const OUString& rString, bool bDoEdit = true );
@@ -349,6 +350,12 @@ public:
 private:
     bool IsPointerAtResizePos();
 
+    // docs/design/10-writer-calc.md 10.3: additive Material formula-row bottom
+    // rule (stroke-thin @outline-variant), drawn only while the Material theme is
+    // the active documented theme and not under forced high contrast. Purely
+    // additive over ToolBox::Paint; the native / default rendering is untouched.
+    void PaintMaterialFormulaRowRule( vcl::RenderContext& rRenderContext );
+
     VclPtr<ScPosWnd>  aWndPos;
     VclPtr<ScInputBarGroup> mxTextWindow;
     ScInputHandler* pInputHdl;
@@ -357,6 +364,13 @@ private:
     tools::Long     mnStandardItemHeight;
     bool            bIsOkCancelMode;
     bool            bInResize;
+    // docs/design/10-writer-calc.md 10.4 Name Box / formula-input RTL order swap:
+    // the swap is produced by native ToolBox output-device mirroring of the
+    // logical item order. This only records the direction for that native
+    // contract; the additive row rule spans the full width and is mirror-
+    // invariant, so it does not branch on this flag. RTL is specified but not yet
+    // implemented or verified in a build (10.4).
+    bool            mbFormulaRowRTL;
 };
 
 class ScInputWindowWrapper : public SfxChildWindow

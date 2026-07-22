@@ -72,6 +72,14 @@ public:
         Color_TabItemFocusRing,
         Color_TabItemDisabledText,
         Color_TabBarSeparator,
+        // Material deck & side panes (WIN-CON-007): the properties deck sits on
+        // @surface (design 06 s6.7) with its title in the `title` type role
+        // (@on-surface) and 11px uppercase section headings in @on-surface-variant.
+        // The deck/panel/title fills are re-sourced to @surface on the Material
+        // draw path from the existing Color_Deck*/Color_Panel* slots; these two
+        // slots add the title/heading text colours the deck framework consumes.
+        Color_DeckTitleText,
+        Color_PanelSectionHeadingText,
 
         Color_Int_,
 
@@ -89,6 +97,17 @@ public:
         Int_TabItemIconSize,
         Int_TabItemGap,
         Int_TabBarTopPadding,
+        // Material deck & side panes metrics (WIN-CON-007), density-invariant:
+        // the 12px Material deck scrollbar (design 06 s6.5/6.7), the 120% title
+        // role scale, the 11px section-heading font height, and the below-medium
+        // window-class width (600) under which the deck is specified to overlay
+        // the canvas instead of compressing it. The 14px deck content inset is
+        // carried by the existing Int_Deck*Padding slots, re-valued on the
+        // Material path.
+        Int_DeckScrollbarThickness,
+        Int_DeckTitleScalePercent,
+        Int_PanelSectionHeadingHeight,
+        Int_DeckOverlayMinWidth,
 
         Int_Bool_,
 

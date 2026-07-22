@@ -998,6 +998,52 @@ void PosSizePropertyPanel::DisableControls()
         mxCbxScale->set_sensitive(false);
 }
 
+void PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy()
+{
+    // Keep the 13 field-anatomy controls -- the position labels/fields, the size
+    // labels/fields, the Keep-ratio checkbox, and the rotation and flip
+    // label/field pairs -- visible (no layout jump) but insensitive, per the
+    // §11.2 no-selection policy. This is exactly the control set registered in
+    // qa/windows-ui-contract/impress-draw-surfaces.json, and mirrors the disabled
+    // states already defined for those controls (spinbox / checkbox / toolbar
+    // Button) in the Material definition.xml; command semantics and F4 numeric
+    // entry are unchanged -- only sensitivity is toggled.
+    //
+    // The remaining controls at PosSizePropertyPanel.hxx:118-137 are deliberately
+    // out of scope. The arrange/align toolbars and the OLE-edit button dispatch
+    // UNO commands (ToolbarUnoDispatcher / DoVerb) and are never toggled by this
+    // panel, so the command framework governs their enablement and auto-disables
+    // them on no selection. The rotation dial (mxCtrlDial/mxDial) is the graphical
+    // twin of the mxMtrAngle field on the same SID_ATTR_TRANSFORM_ANGLE binding
+    // and is not part of the registered field anatomy.
+    mxFtPosX->set_visible(true);
+    mxFtPosX->set_sensitive(false);
+    mxMtrPosX->set_visible(true);
+    mxMtrPosX->set_sensitive(false);
+    mxFtPosY->set_visible(true);
+    mxFtPosY->set_sensitive(false);
+    mxMtrPosY->set_visible(true);
+    mxMtrPosY->set_sensitive(false);
+    mxFtWidth->set_visible(true);
+    mxFtWidth->set_sensitive(false);
+    mxMtrWidth->set_visible(true);
+    mxMtrWidth->set_sensitive(false);
+    mxFtHeight->set_visible(true);
+    mxFtHeight->set_sensitive(false);
+    mxMtrHeight->set_visible(true);
+    mxMtrHeight->set_sensitive(false);
+    mxCbxScale->set_visible(true);
+    mxCbxScale->set_sensitive(false);
+    mxFtAngle->set_visible(true);
+    mxFtAngle->set_sensitive(false);
+    mxMtrAngle->set_visible(true);
+    mxMtrAngle->set_sensitive(false);
+    mxFtFlip->set_visible(true);
+    mxFtFlip->set_sensitive(false);
+    mxFlipTbx->set_visible(true);
+    mxFlipTbx->set_sensitive(false);
+}
+
 void PosSizePropertyPanel::SetPosSizeMinMax(double fUIScale)
 {
     SdrPageView* pPV = mpView->GetSdrPageView();

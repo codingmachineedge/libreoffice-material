@@ -34,9 +34,25 @@
 #include <comphelper/lok.hxx>
 #include <tools/json_writer.hxx>
 
+#include <cstdlib>
+
 using namespace css;
 
 namespace sfx2::sidebar {
+
+namespace {
+
+/** WIN-CON-007: the Material deck treatment is gated on the file-definition
+    Material widget draw path (the same VCL_DRAW_WIDGETS_FROM_FILE gate the rail
+    keys on), so the 12px Material scrollbar override never touches the measured
+    native deck off the Material path. */
+bool IsMaterialDeck()
+{
+    static const bool bMaterial = (std::getenv("VCL_DRAW_WIDGETS_FROM_FILE") != nullptr);
+    return bMaterial;
+}
+
+} // anonymous namespace
 
 Deck::Deck(const DeckDescriptor& rDeckDescriptor, SidebarDockingWindow* pParentWindow,
            const std::function<void()>& rCloserAction)
@@ -58,6 +74,12 @@ Deck::Deck(const DeckDescriptor& rDeckDescriptor, SidebarDockingWindow* pParentW
 
     mxVerticalScrollBar->vadjustment_set_step_increment(10);
     mxVerticalScrollBar->vadjustment_set_page_increment(100);
+
+    // WIN-CON-007: a scrolled deck uses the 12px Material scrollbar gutter
+    // (design 06 s6.5 / s6.7). Only overridden on the Material draw path; every
+    // other theme keeps the platform scrollbar thickness.
+    if (IsMaterialDeck())
+        mxVerticalScrollBar->set_scroll_thickness(Theme::GetInteger(Theme::Int_DeckScrollbarThickness));
 
     // tdf#142458 Measure the preferred width of an empty ScrolledWindow
     // to add to the width of the union of panel widths when calculating

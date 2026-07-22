@@ -248,6 +248,17 @@ static bool ImplCallCommand( const VclPtr<vcl::Window>& pChild, CommandEventId n
     }
 
     CommandEvent    aCEvt( aPos, nEvt, bMouse, pData );
+
+    // docs/design/05-navigation.md section 2: record whether a context menu is being invoked from the
+    // keyboard (Menu key / Shift+F10 -> bMouse == false) rather than the pointer. This is the single
+    // native choke point every CommandEventId::ContextMenu passes through, so the generic
+    // PopupMenu::ImplExecute can pre-highlight the first enabled item on keyboard invocation only.
+    // Captured unconditionally here; ImplExecute gates the actual pre-highlight behind the Material
+    // NWF policy and consumes the flag exactly once, so non-context commands and non-Material paths
+    // are unaffected.
+    if ( nEvt == CommandEventId::ContextMenu )
+        ImplGetSVData()->maAppData.mbContextMenuByKeyboard = !bMouse;
+
     NotifyEvent     aNCmdEvt( NotifyEventType::COMMAND, pChild, &aCEvt );
     bool bPreNotify = ImplCallPreNotify( aNCmdEvt );
     if ( pChild->isDisposed() )

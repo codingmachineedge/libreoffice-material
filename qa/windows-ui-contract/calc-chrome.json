@@ -1,0 +1,857 @@
+{
+  "schema_version": 1,
+  "contract": "material-calc-chrome-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (10.1 shared chrome, 10.3 Calc)",
+  "note": "Pins the Calc classic-chrome composition (command identity+order, separator placement, per-button visibility) of the data-driven uiconfig XML, and grounds the Material treatment in the native toolbar part contract in definition.xml. Composition is source-declared only; overflow/adaptive collapse and density selection remain build-dependent and are carved out as spec-only below.",
+  "chrome_parts": {
+    "control": "toolbar",
+    "band": {
+      "part": "DrawBackgroundHorz",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "entire": {
+      "part": "Entire",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "separator": {
+      "part": "SeparatorVert",
+      "element": "line",
+      "tokens": {
+        "stroke": "@outline-variant",
+        "stroke-width": "@stroke-thin"
+      }
+    },
+    "button": {
+      "part": "Button",
+      "states": [
+        {
+          "role": "enabled",
+          "attrs": {
+            "enabled": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-container",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-hover",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "checked",
+          "attrs": {
+            "enabled": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover-checked",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed-checked",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-pressed",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "focused",
+          "attrs": {
+            "enabled": "true",
+            "focused": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-standard",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled",
+          "attrs": {
+            "enabled": "false"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled-checked",
+          "attrs": {
+            "enabled": "false",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@outline",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        }
+      ]
+    },
+    "metrics": [
+      {
+        "name": "corner-toolbar",
+        "container": "shapes",
+        "tag": "radius",
+        "value": "18"
+      },
+      {
+        "name": "stroke-none",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "0"
+      },
+      {
+        "name": "stroke-thin",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "1"
+      },
+      {
+        "name": "stroke-standard",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "2"
+      }
+    ],
+    "palette_colors": [
+      "primary",
+      "primary-container",
+      "primary-hover",
+      "primary-pressed",
+      "surface-container",
+      "disabled-container",
+      "outline",
+      "outline-variant"
+    ]
+  },
+  "toolbars": [
+    {
+      "id": "FMT.calc",
+      "file": "sc/uiconfig/scalc/toolbar/formatobjectbar.xml",
+      "design_reference": "docs/design/10-writer-calc.md 10.3 (FMT.calc composition)",
+      "design_core": [
+        ".uno:CharFontName",
+        ".uno:FontHeight",
+        ".uno:Bold",
+        ".uno:Italic",
+        ".uno:Underline",
+        ".uno:Color",
+        ".uno:BackgroundColor",
+        ".uno:AlignLeft",
+        ".uno:AlignHorizontalCenter",
+        ".uno:AlignRight",
+        ".uno:NumberFormatCurrency",
+        ".uno:NumberFormatPercent",
+        ".uno:NumberFormatIncDecimals",
+        ".uno:NumberFormatDecDecimals",
+        ".uno:ToggleMergeCells"
+      ],
+      "preserved_commands": [
+        ".uno:AlignBlock",
+        ".uno:Strikeout",
+        ".uno:SuperScript",
+        ".uno:SubScript",
+        ".uno:NumberFormatStandard",
+        ".uno:NumberFormatScientific",
+        ".uno:SetBorderStyle",
+        ".uno:ConditionalFormatMenu",
+        ".uno:MergeCells",
+        ".uno:SplitCell"
+      ],
+      "sequence": [
+        {
+          "command": ".uno:DesignerDialog",
+          "visible": false
+        },
+        {
+          "command": ".uno:StyleApply",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:CharFontName",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:FontHeight",
+          "visible": true
+        },
+        {
+          "command": ".uno:Grow",
+          "visible": false
+        },
+        {
+          "command": ".uno:Shrink",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Bold",
+          "visible": true
+        },
+        {
+          "command": ".uno:Italic",
+          "visible": true
+        },
+        {
+          "command": ".uno:Underline",
+          "visible": true
+        },
+        {
+          "command": ".uno:UnderlineDouble",
+          "visible": false
+        },
+        {
+          "command": ".uno:Strikeout",
+          "visible": false
+        },
+        {
+          "command": ".uno:SuperScript",
+          "visible": false
+        },
+        {
+          "command": ".uno:SubScript",
+          "visible": false
+        },
+        {
+          "command": ".uno:Overline",
+          "visible": false
+        },
+        {
+          "command": ".uno:OutlineFont",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Color",
+          "visible": true
+        },
+        {
+          "command": ".uno:BackgroundColor",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:AlignLeft",
+          "visible": true
+        },
+        {
+          "command": ".uno:AlignHorizontalCenter",
+          "visible": true
+        },
+        {
+          "command": ".uno:AlignRight",
+          "visible": true
+        },
+        {
+          "command": ".uno:AlignBlock",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:AlignTop",
+          "visible": true
+        },
+        {
+          "command": ".uno:AlignVCenter",
+          "visible": true
+        },
+        {
+          "command": ".uno:AlignBottom",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:WrapText",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ToggleMergeCells",
+          "visible": true
+        },
+        {
+          "command": ".uno:MergeCells",
+          "visible": true
+        },
+        {
+          "command": ".uno:SplitCell",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:NumberFormatStandard",
+          "visible": false
+        },
+        {
+          "command": ".uno:NumberFormatCurrency",
+          "visible": true
+        },
+        {
+          "command": ".uno:NumberFormatPercent",
+          "visible": true
+        },
+        {
+          "command": ".uno:NumberFormatDecimal",
+          "visible": true
+        },
+        {
+          "command": ".uno:NumberFormatDate",
+          "visible": true
+        },
+        {
+          "command": ".uno:NumberFormatScientific",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:NumberFormatIncDecimals",
+          "visible": true
+        },
+        {
+          "command": ".uno:NumberFormatDecDecimals",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:IncrementIndent",
+          "visible": true
+        },
+        {
+          "command": ".uno:DecrementIndent",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:SetBorderStyle",
+          "visible": true
+        },
+        {
+          "command": ".uno:LineStyle",
+          "visible": true
+        },
+        {
+          "command": ".uno:FrameLineColor",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ConditionalFormatMenu",
+          "visible": true
+        },
+        {
+          "command": ".uno:ToggleSheetGrid",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ParaLeftToRight",
+          "visible": true
+        },
+        {
+          "command": ".uno:ParaRightToLeft",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:TextdirectionLeftToRight",
+          "visible": true
+        },
+        {
+          "command": ".uno:TextdirectionTopToBottom",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "standard",
+      "file": "sc/uiconfig/scalc/toolbar/standardbar.xml",
+      "design_reference": "docs/design/10-writer-calc.md 10.1 (standard toolbar)",
+      "design_core": [
+        ".uno:AddDirect",
+        ".uno:OpenFromCalc",
+        ".uno:Save",
+        ".uno:Print",
+        ".uno:Cut",
+        ".uno:Copy",
+        ".uno:Paste",
+        ".uno:Undo",
+        ".uno:Redo",
+        ".uno:SearchDialog",
+        ".uno:DataFilterAutoFilter"
+      ],
+      "preserved_commands": [
+        ".uno:SaveAs",
+        ".uno:PrintDefault",
+        ".uno:Navigator",
+        ".uno:DataSort",
+        ".uno:GoalSeekDialog",
+        ".uno:DefinePrintArea",
+        ".uno:FreezePanes"
+      ],
+      "sequence": [
+        {
+          "command": ".uno:OpenUrl",
+          "visible": false
+        },
+        {
+          "command": ".uno:AddDirect",
+          "visible": true
+        },
+        {
+          "command": ".uno:NewDoc",
+          "visible": false
+        },
+        {
+          "command": ".uno:OpenFromCalc",
+          "visible": true
+        },
+        {
+          "command": ".uno:OpenRemote",
+          "visible": false
+        },
+        {
+          "command": ".uno:Save",
+          "visible": true
+        },
+        {
+          "command": ".uno:SaveAs",
+          "visible": false
+        },
+        {
+          "command": ".uno:SendMail",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:EditDoc",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ExportDirectToPDF",
+          "visible": true
+        },
+        {
+          "command": ".uno:PrintDefault",
+          "visible": false
+        },
+        {
+          "command": ".uno:Print",
+          "visible": true
+        },
+        {
+          "command": ".uno:PrintPreview",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Cut",
+          "visible": true
+        },
+        {
+          "command": ".uno:Copy",
+          "visible": true
+        },
+        {
+          "command": ".uno:Paste",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:FormatPaintbrush",
+          "visible": true
+        },
+        {
+          "command": ".uno:ResetAttributes",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Undo",
+          "visible": true
+        },
+        {
+          "command": ".uno:Redo",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:SearchDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:SpellDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:SpellOnline",
+          "visible": false
+        },
+        {
+          "command": ".uno:Navigator",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:RowOperations",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertRowsBefore",
+          "visible": false
+        },
+        {
+          "command": ".uno:InsertRowsAfter",
+          "visible": false
+        },
+        {
+          "command": ".uno:DeleteRows",
+          "visible": false
+        },
+        {
+          "command": ".uno:ColumnOperations",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertColumnsBefore",
+          "visible": false
+        },
+        {
+          "command": ".uno:InsertColumnsAfter",
+          "visible": false
+        },
+        {
+          "command": ".uno:DeleteColumns",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:DataSort",
+          "visible": true
+        },
+        {
+          "command": ".uno:SortAscending",
+          "visible": true
+        },
+        {
+          "command": ".uno:SortDescending",
+          "visible": true
+        },
+        {
+          "command": ".uno:DataFilterAutoFilter",
+          "visible": true
+        },
+        {
+          "command": ".uno:DataFilterStandardFilter",
+          "visible": false
+        },
+        {
+          "command": ".uno:DataFilterSpecialFilter",
+          "visible": false
+        },
+        {
+          "command": ".uno:GoalSeekDialog",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:InsertGraphic",
+          "visible": true
+        },
+        {
+          "command": ".uno:Gallery",
+          "visible": false
+        },
+        {
+          "command": ".uno:InsertObjectChart",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertObjectStarMath",
+          "visible": false
+        },
+        {
+          "command": ".uno:DataDataPilotRun",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertRowBreak",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:CharmapControl",
+          "visible": true
+        },
+        {
+          "command": ".uno:HyperlinkDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertAnnotation",
+          "visible": true
+        },
+        {
+          "command": ".uno:DrawText",
+          "visible": false
+        },
+        {
+          "command": ".uno:EditHeaderAndFooter",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:DefinePrintArea",
+          "visible": true
+        },
+        {
+          "command": ".uno:EditPrintArea",
+          "visible": false
+        },
+        {
+          "command": ".uno:DeletePrintArea",
+          "visible": false
+        },
+        {
+          "command": ".uno:FreezePanes",
+          "visible": true
+        },
+        {
+          "command": ".uno:SplitWindow",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Line",
+          "visible": false
+        },
+        {
+          "command": ".uno:BasicShapes",
+          "visible": false
+        },
+        {
+          "command": ".uno:InsertDraw",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ViewDataSourceBrowser",
+          "visible": false
+        },
+        {
+          "command": ".uno:Zoom",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:HelpIndex",
+          "visible": false
+        },
+        {
+          "command": ".uno:ExtendedHelp",
+          "visible": false
+        }
+      ]
+    }
+  ],
+  "menu": {
+    "file": "sc/uiconfig/scalc/menubar/menubar.xml",
+    "design_reference": "docs/design/10-writer-calc.md 10.1 (menu bar via menuBarColor roles)",
+    "top_level": [
+      ".uno:PickList",
+      ".uno:EditMenu",
+      ".uno:ViewMenu",
+      ".uno:InsertMenu",
+      ".uno:FormatMenu",
+      ".uno:FormatStylesMenu",
+      ".uno:SheetMenu",
+      ".uno:DataMenu",
+      ".uno:ToolsMenu",
+      ".uno:WindowList",
+      ".uno:HelpMenu"
+    ],
+    "design_core": [
+      ".uno:PickList",
+      ".uno:EditMenu",
+      ".uno:ViewMenu",
+      ".uno:InsertMenu",
+      ".uno:FormatMenu",
+      ".uno:SheetMenu",
+      ".uno:DataMenu",
+      ".uno:ToolsMenu",
+      ".uno:HelpMenu"
+    ]
+  },
+  "density": {
+    "status": "specified",
+    "note": "Density selection (compact/comfortable toolbar row height) and toolbar/ribbon overflow collapse are specified in docs/design/10-writer-calc.md but not implemented in the native metric layer; recorded here spec-only and carved out of the M source claim.",
+    "metrics": [
+      {
+        "name": "--tb",
+        "compact": "38",
+        "comfortable": "48"
+      },
+      {
+        "name": "--menu",
+        "compact": "30",
+        "comfortable": "38"
+      }
+    ]
+  },
+  "combo_annotations": {
+    "status": "specified",
+    "note": "Prototype combo geometry (font-name ~150px, size ~54px) is spec-only chrome composition; the native combobox/spinbox parts carry the state contract, not these widths.",
+    "fields": [
+      {
+        "toolbar": "FMT.calc",
+        "command": ".uno:CharFontName",
+        "prototype_width_px": 150
+      },
+      {
+        "toolbar": "FMT.calc",
+        "command": ".uno:FontHeight",
+        "prototype_width_px": 54
+      }
+    ]
+  }
+}

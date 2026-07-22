@@ -37,7 +37,7 @@ without treating shared-component compilation as application-surface proof.
 | 04 | [Inputs](04-inputs.md) | Text fields, edits, combos, spin buttons, search + regex builder, Find & Replace fields |
 | 05 | [Navigation](05-navigation.md) | Menubar, menus, tabs, notebookbar, sidebar rail, sheet tabs, title/status bars |
 | 06 | [Containers](06-containers.md) | Lists, trees, tables/grids, frames, scrollbars, cards, panels |
-| 07 | [Feedback](07-feedback.md) | Progress, level indicators, sliders, tooltips, snackbars, banners, empty states |
+| 07 | [Feedback](07-feedback.md) | Progress, level indicators, sliders, tooltips, transient confirmations via the notification stack, banners, empty states |
 | 08 | [Dialogs](08-dialogs.md) | Modal anatomy, Options, Save As, Print, Find & Replace, scrim and keyboard rules |
 | 09 | [Start Center](09-start-center.md) | Navigation column, Home, search, document card grid |
 | 10 | [Writer & Calc](10-writer-calc.md) | Page canvas, properties sidebar, formula bar, grid, sheet tabs |

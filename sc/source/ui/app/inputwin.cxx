@@ -19,6 +19,8 @@
 
 #include <memory>
 #include <algorithm>
+#include <cstdlib>
+#include <optional>
 #include <string_view>
 
 #include <editeng/eeitem.hxx>
@@ -46,6 +48,7 @@
 #include <vcl/settings.hxx>
 #include <svl/stritem.hxx>
 #include <vcl/svapp.hxx>
+#include <vcl/MaterialTokens.hxx>
 #include <vcl/weld/Menu.hxx>
 #include <vcl/weld/Window.hxx>
 #include <vcl/weld/weldutils.hxx>
@@ -88,6 +91,107 @@ const tools::Long INPUTWIN_MULTILINES = 6;      // Initial number of lines withi
 const tools::Long TOOLBOX_WINDOW_HEIGHT = 22;   // Height of toolbox window in pixels - TODO: The same on all systems?
 const tools::Long POSITION_COMBOBOX_WIDTH = 18; // Width of position combobox in characters
 const int RESIZE_HOTSPOT_HEIGHT = 4;
+
+namespace {
+
+// Material formula-bar tokens (docs/design/10-writer-calc.md 10.3 "Formula bar
+// row"), resolved from the single named-token table over definition.xml
+// (vcl::MaterialTokens) rather than any raw hex/pixel literal, and only while
+// VCL_FILE_WIDGET_THEME=material is the documented active theme. Under the
+// default/native theme, or forced high contrast, the resolver returns nothing
+// so the formula row keeps its existing StyleSettings rendering untouched.
+struct ScMaterialFormulaBarTokens
+{
+    // Only four members drive owner drawing in this class: aSurface (centralized
+    // editbox/Name Box field fill), aOnSurface (centralized text fill) and the
+    // aOutlineVariant + nStrokeThin pair (the additive bottom rule). The other
+    // members - aOutline, aPrimary, nStrokeStandard, nCornerContainer, nRowHeight
+    // - are resolved and gated but never painted here; they are existence-guards.
+    // Their visual roles (idle/focus stroke, @corner-container radius, field
+    // height) belong to the native combobox / editbox parts in definition.xml.
+    // Resolving them here fails the whole Material formula-row path closed if any
+    // of those shared token roles goes missing, without this class re-drawing
+    // what the native parts own. None of these guards drives a pixel here.
+    Color aSurface;            // @surface  editbox/Name Box idle fill (drawn via field accessor)
+    Color aOutline;            // @outline  existence-guard for native idle stroke
+    Color aOutlineVariant;     // @outline-variant  additive row bottom rule (drawn)
+    Color aPrimary;            // @primary  existence-guard for native focus stroke / fx glyph
+    Color aOnSurface;          // @on-surface  Name Box / formula text (drawn via text accessor)
+    sal_Int32 nStrokeThin;     // idle / bottom-rule thickness (drawn)
+    sal_Int32 nStrokeStandard; // existence-guard for native focus stroke thickness
+    sal_Int32 nCornerContainer;// existence-guard for native @corner-container radius
+    sal_Int32 nRowHeight;      // existence-guard for native @size-standard-control height
+};
+
+bool lcl_isMaterialFormulaBarActive()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return false;
+    // Resolved high contrast bypasses Material drawing and restores the captured
+    // native StyleSettings baseline (docs/design/10-writer-calc.md 10.3 HC note),
+    // so every Material formula-row path below must stay inert.
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return false;
+    return true;
+}
+
+std::optional<ScMaterialFormulaBarTokens> lcl_getMaterialFormulaBarTokens()
+{
+    if (!lcl_isMaterialFormulaBarActive())
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+
+    const std::optional<Color> oSurface = aTokens.findColor("surface");
+    const std::optional<Color> oOutline = aTokens.findColor("outline");
+    const std::optional<Color> oOutlineVariant = aTokens.findColor("outline-variant");
+    const std::optional<Color> oPrimary = aTokens.findColor("primary");
+    const std::optional<Color> oOnSurface = aTokens.findColor("on-surface");
+    const std::optional<sal_Int32> oStrokeThin = aTokens.findMetric("stroke-thin");
+    const std::optional<sal_Int32> oStrokeStandard = aTokens.findMetric("stroke-standard");
+    // @corner-container (12), not @corner-small (8): the native combobox/editbox
+    // "Entire" parts the Name Box and formula input consume in definition.xml
+    // carry @corner-container, so the guarded resolver must gate on that same
+    // shared role. This radius is an existence-guard only (see the struct note).
+    const std::optional<sal_Int32> oCornerContainer = aTokens.findRadius("corner-container");
+    const std::optional<sal_Int32> oRowHeight = aTokens.findMetric("size-standard-control");
+    if (!oSurface || !oOutline || !oOutlineVariant || !oPrimary || !oOnSurface || !oStrokeThin
+        || !oStrokeStandard || !oCornerContainer || !oRowHeight)
+        return std::nullopt;
+
+    return ScMaterialFormulaBarTokens{ *oSurface,        *oOutline,         *oOutlineVariant,
+                                       *oPrimary,         *oOnSurface,       *oStrokeThin,
+                                       *oStrokeStandard,  *oCornerContainer, *oRowHeight };
+}
+
+// Centralized field-fill lookup: the Name Box / editbox idle fill is the Material
+// @surface token when the theme is active, else the generic StyleSettings field
+// slot. Consuming the token role explicitly here (rather than only the generic
+// slot the 72-slot mapping routes) is the docs/design 10.3 requirement, and
+// funnelling every ScTextWnd / ScInputBarGroup fill site through this one
+// accessor keeps the lookup from being duplicated across the owner-drawn paints.
+Color lcl_getFormulaFieldColor(const StyleSettings& rStyleSettings)
+{
+    if (const std::optional<ScMaterialFormulaBarTokens> oTokens = lcl_getMaterialFormulaBarTokens())
+        return oTokens->aSurface;
+    return rStyleSettings.GetFieldColor();
+}
+
+// Centralized text-fill lookup: the Name Box / formula text is @on-surface under
+// the Material theme (docs/design 10.3), else the generic window-text slot.
+Color lcl_getFormulaTextColor(const StyleSettings& rStyleSettings)
+{
+    if (const std::optional<ScMaterialFormulaBarTokens> oTokens = lcl_getMaterialFormulaBarTokens())
+        return oTokens->aOnSurface;
+    return rStyleSettings.GetWindowTextColor();
+}
+
+}
 
 using com::sun::star::uno::Reference;
 using com::sun::star::uno::UNO_QUERY;
@@ -172,7 +276,8 @@ ScInputWindow::ScInputWindow( vcl::Window* pParent, const SfxBindings* pBind ) :
         mnMaxY          (0),
         mnStandardItemHeight(0),
         bIsOkCancelMode ( false ),
-        bInResize       ( false )
+        bInResize       ( false ),
+        mbFormulaRowRTL ( AllSettings::GetLayoutRTL() )
 {
     // #i73615# don't rely on SfxViewShell::Current while constructing the input line
     // (also for GetInputHdl below)
@@ -278,6 +383,17 @@ ScInputWindow::ScInputWindow( vcl::Window* pParent, const SfxBindings* pBind ) :
     }
 
     SetToolbarLayoutMode( ToolBoxLayoutMode::Locked );
+
+    // docs/design/10-writer-calc.md 10.4: in an RTL locale the Name Box and the
+    // formula input swap ends of the formula row. The ToolBox composes the items
+    // in logical order - Name Box leading, the fx/Sum items, then the
+    // formula-input window trailing - and native output-device mirroring of that
+    // logical order produces the visual swap. Nothing in this class re-orders the
+    // items or repaints for RTL: native ToolBox mirroring owns the swap. The
+    // direction is only recorded here for that native-mirroring contract. Per
+    // 10.4 this RTL behaviour is specified but not yet implemented or verified in
+    // a build.
+    mbFormulaRowRTL = AllSettings::GetLayoutRTL();
 
     SetAccessibleName(ScResId(STR_ACC_TOOLBAR_FORMULA));
 }
@@ -510,6 +626,45 @@ void ScInputWindow::Resize()
         SetSizePixel(aSize);
 
     Invalidate();
+}
+
+void ScInputWindow::Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect )
+{
+    // The ToolBox base owns item layout, the Name Box / fx / Sum items and the
+    // embedded formula-input window; the Material formula-row rule is purely
+    // additive on top so the native / default theme rendering is left untouched.
+    ToolBox::Paint( rRenderContext, rRect );
+
+    if ( lcl_isMaterialFormulaBarActive() )
+        PaintMaterialFormulaRowRule( rRenderContext );
+}
+
+void ScInputWindow::PaintMaterialFormulaRowRule( vcl::RenderContext& rRenderContext )
+{
+    const std::optional<ScMaterialFormulaBarTokens> oTokens = lcl_getMaterialFormulaBarTokens();
+    if ( !oTokens )
+        return;
+
+    // stroke-thin @outline-variant bottom rule closing the formula row onto the
+    // grid (docs/design/10-writer-calc.md 10.3). The row sits on @surface; the
+    // rule is drawn additively along the bottom edge at the resolved @stroke-thin
+    // thickness. It spans the full row width edge to edge, so it is invariant
+    // under RTL mirroring: the 10.4 Name Box / formula-input swap is produced by
+    // native ToolBox output-device mirroring (see the constructor note), not by
+    // any endpoint selection here, so no mbFormulaRowRTL branch is needed.
+    rRenderContext.Push( vcl::PushFlags::LINECOLOR | vcl::PushFlags::FILLCOLOR );
+
+    const Size aOutputSize = GetOutputSizePixel();
+    const tools::Long nThickness = std::max<tools::Long>( 1, oTokens->nStrokeThin );
+
+    rRenderContext.SetLineColor( oTokens->aOutlineVariant );
+    for ( tools::Long i = 0; i < nThickness; ++i )
+    {
+        const tools::Long nY = aOutputSize.Height() - 1 - i;
+        rRenderContext.DrawLine( Point( 0, nY ), Point( aOutputSize.Width() - 1, nY ) );
+    }
+
+    rRenderContext.Pop();
 }
 
 void ScInputWindow::NotifyLOKClient()
@@ -886,8 +1041,9 @@ void ScInputBarGroup::SetBackgrounds()
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
     SetBackground(rStyleSettings.GetFaceColor());
     // match to bg used in ScTextWnd::SetDrawingArea to the margin area is drawn with the
-    // same desired bg
-    mxBackground->set_background(rStyleSettings.GetFieldColor());
+    // same desired bg; under the Material theme this resolves the @surface editbox
+    // idle-fill token explicitly (docs/design/10-writer-calc.md 10.3).
+    mxBackground->set_background(lcl_getFormulaFieldColor(rStyleSettings));
 }
 
 void ScInputBarGroup::DataChanged(const DataChangedEvent& rDCEvt)
@@ -1301,7 +1457,7 @@ IMPL_LINK_NOARG(ScTextWndGroup, Impl_ScrollHdl, weld::ScrolledWindow&, void)
 void ScTextWnd::Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect )
 {
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-    Color aBgColor = rStyleSettings.GetFieldColor();
+    Color aBgColor = lcl_getFormulaFieldColor(rStyleSettings);
     rRenderContext.SetBackground(aBgColor);
 
     // tdf#137713 we rely on GetEditView creating it if it doesn't already exist so
@@ -1582,7 +1738,7 @@ void ScTextWnd::InitEditEngine()
     m_xEditView->SetInsertMode(bIsInsertMode);
 
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-    Color aBgColor = rStyleSettings.GetFieldColor();
+    Color aBgColor = lcl_getFormulaFieldColor(rStyleSettings);
     m_xEditView->SetBackgroundColor(aBgColor);
 
     if (pAcc)
@@ -2133,7 +2289,7 @@ void ScTextWnd::MakeDialogEditView()
     m_xEditView->setEditViewCallbacks(this);
 
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-    Color aBgColor = rStyleSettings.GetFieldColor();
+    Color aBgColor = lcl_getFormulaFieldColor(rStyleSettings);
     m_xEditView->SetBackgroundColor(aBgColor);
 
     if (pAcc)
@@ -2162,8 +2318,8 @@ void ScTextWnd::ImplInitSettings()
 
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
 
-    Color aBgColor= rStyleSettings.GetFieldColor();
-    Color aTxtColor= rStyleSettings.GetWindowTextColor();
+    Color aBgColor= lcl_getFormulaFieldColor(rStyleSettings);
+    Color aTxtColor= lcl_getFormulaTextColor(rStyleSettings);
 
     aTextFont.SetFillColor   ( aBgColor );
     aTextFont.SetColor       (aTxtColor);
@@ -2202,8 +2358,8 @@ void ScTextWnd::SetDrawingArea(weld::DrawingArea* pDrawingArea)
 
     const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
 
-    Color aBgColor = rStyleSettings.GetFieldColor();
-    Color aTxtColor = rStyleSettings.GetWindowTextColor();
+    Color aBgColor = lcl_getFormulaFieldColor(rStyleSettings);
+    Color aTxtColor = lcl_getFormulaTextColor(rStyleSettings);
 
     aTextFont.SetTransparent(true);
     aTextFont.SetFillColor(aBgColor);

@@ -1,0 +1,74 @@
+{
+  "surface": "sidebar deck & side panes (WIN-CON-007)",
+  "design_refs": [
+    "docs/design/06-containers.md#6.7 Panels & side panes",
+    "docs/design/06-containers.md#6.5 Scrollbars",
+    "site/prototype.html writerBody() properties deck + rail"
+  ],
+  "note": "The deck, its title, the panels, the 12px scrollbar, the collapse-to-rail and the below-medium overlay are sidebar-framework chrome (design 06 s6.7 platform notes: 'deck layout and the rail belong to the sidebar framework ... restyled per surface later'), so the Material metrics and colour palette live in the sfx2 sidebar Theme and are consumed by Deck / DeckTitleBar / SidebarController behind the VCL_DRAW_WIDGETS_FROM_FILE Material guard -- NOT as a VCL widget-definition part. This row consumes the NAV-005 rail primitive (Color_TabBar*/Int_Tab* in the same Theme) and does not fork it. The row plan named definition.xml and DeckLayouter/Panel/PanelTitleBar/PanelFactory; per the audit the deck padding routes through the existing Int_Deck*Padding slots consumed by Deck::GetContentArea, the panel background inherits the deck fill, and the panel title bar is a weld::Expander with no font API, so those files need no change and the design chapter (framework, not a definition part) wins over the plan.",
+  "guard_env": "VCL_DRAW_WIDGETS_FROM_FILE",
+  "guard_helper": "IsMaterialDeck",
+  "theme_header": "include/sfx2/sidebar/Theme.hxx",
+  "theme_source": "sfx2/source/sidebar/Theme.cxx",
+  "deck_source": "sfx2/source/sidebar/Deck.cxx",
+  "deck_title_source": "sfx2/source/sidebar/DeckTitleBar.cxx",
+  "controller_source": "sfx2/source/sidebar/SidebarController.cxx",
+  "deck_surface": {
+    "token": "surface",
+    "getter": "GetWindowColor",
+    "guard_selector": "bMaterialDeck ? rStyle.GetWindowColor()",
+    "role": "deck / deck title / panel / panel title fill (@surface on Material, native dialog/second colour otherwise)",
+    "slots": [
+      "Color_DeckBackground",
+      "Color_DeckTitleBarBackground",
+      "Color_PanelBackground",
+      "Color_PanelTitleBarBackground"
+    ]
+  },
+  "deck_padding": {
+    "value": 14,
+    "guard_selector": "bMaterialDeck ? 14 : 0",
+    "value_symbol": "nDeckContentPadding",
+    "role": "14px deck content inset on Material, native zero otherwise",
+    "slots": [
+      "Int_DeckLeftPadding",
+      "Int_DeckTopPadding",
+      "Int_DeckRightPadding",
+      "Int_DeckBottomPadding"
+    ]
+  },
+  "colors": [
+    { "slot": "Color_DeckTitleText", "token": "on-surface", "getter": "GetWindowTextColor", "role": "deck/panel title text (title role)" },
+    { "slot": "Color_PanelSectionHeadingText", "token": "on-surface-variant", "getter": "GetGroupTextColor", "role": "11px uppercase section heading text (pinned; panel-heading paint row)" }
+  ],
+  "metrics": [
+    { "slot": "Int_DeckScrollbarThickness", "value": 12, "role": "12px Material deck scrollbar gutter" },
+    { "slot": "Int_DeckTitleScalePercent", "value": 120, "role": "title type role scale (120%)" },
+    { "slot": "Int_PanelSectionHeadingHeight", "value": 11, "role": "section heading font height" },
+    { "slot": "Int_DeckOverlayMinWidth", "value": 600, "role": "below-medium window-class overlay threshold" }
+  ],
+  "states": [
+    { "name": "deck", "fill": "surface" },
+    { "name": "deck-title", "text": "on-surface" },
+    { "name": "section-heading", "text": "on-surface-variant" },
+    { "name": "scrolled", "note": "12px Material scrollbar (design 06 s6.5)" },
+    { "name": "collapsed", "note": "rail only (48px) via OpenThenToggleDeck -> RequestCloseDeck" },
+    { "name": "overlay-below-medium", "note": "canvas < 600px degrades safely (no force-widen)" }
+  ],
+  "deck_fill_marker": "m_xContainer->set_background(Theme::GetColor(Theme::Color_DeckBackground))",
+  "deck_scrollbar_marker": "set_scroll_thickness(Theme::GetInteger(Theme::Int_DeckScrollbarThickness))",
+  "deck_title_markers": [
+    "set_font_color(",
+    "Theme::GetColor(Theme::Color_DeckTitleText)",
+    "WEIGHT_SEMIBOLD",
+    "Theme::GetInteger(Theme::Int_DeckTitleScalePercent)"
+  ],
+  "collapse_function": "OpenThenToggleDeck",
+  "collapse_markers": [
+    "IsDeckVisible(",
+    "RequestCloseDeck()"
+  ],
+  "overlay_function": "ShouldDeckOverlayCanvas",
+  "overlay_threshold_marker": "Theme::GetInteger(Theme::Int_DeckOverlayMinWidth)",
+  "overlay_consume_marker": "ShouldDeckOverlayCanvas("
+}

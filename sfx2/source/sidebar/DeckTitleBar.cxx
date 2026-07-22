@@ -21,7 +21,9 @@
 #include <sfx2/sidebar/Theme.hxx>
 
 #include <utility>
+#include <cstdlib>
 #include <vcl/bitmap.hxx>
+#include <vcl/font.hxx>
 #include <vcl/outdev.hxx>
 #include <vcl/ptrstyle.hxx>
 #include <vcl/weld/customweld.hxx>
@@ -31,6 +33,37 @@
 #endif
 
 namespace sfx2::sidebar {
+
+namespace {
+
+/** WIN-CON-007: the Material deck title treatment is gated on the file-definition
+    Material widget draw path (the same VCL_DRAW_WIDGETS_FROM_FILE gate the rail
+    keys on), so the title-role restyle never touches the measured native deck
+    title off the Material path. */
+bool IsMaterialDeck()
+{
+    static const bool bMaterial = (std::getenv("VCL_DRAW_WIDGETS_FROM_FILE") != nullptr);
+    return bMaterial;
+}
+
+/** WIN-CON-007: the deck title uses the Material `title` type role -- 120% scale,
+    semibold weight, @on-surface on the @surface deck (design 06 s6.7 / site
+    prototype "Properties"). Applied only on the Material path and re-applied on
+    DataChanged so a live theme switch keeps the title role. */
+void ApplyMaterialDeckTitleStyle(weld::Label& rLabel)
+{
+    if (!IsMaterialDeck())
+        return;
+    vcl::Font aFont(rLabel.get_font());
+    aFont.SetWeight(WEIGHT_SEMIBOLD);
+    Size aFontSize(aFont.GetFontSize());
+    aFontSize.setHeight(aFontSize.Height() * Theme::GetInteger(Theme::Int_DeckTitleScalePercent) / 100);
+    aFont.SetFontSize(aFontSize);
+    rLabel.set_font(aFont);
+    rLabel.set_font_color(Theme::GetColor(Theme::Color_DeckTitleText));
+}
+
+} // anonymous namespace
 
 class GripWidget : public weld::CustomWidgetController
 {
@@ -72,6 +105,7 @@ DeckTitleBar::DeckTitleBar (const OUString& rsTitle,
     , mbIsCloserVisible(false)
 {
     mxLabel->set_label(rsTitle);
+    ApplyMaterialDeckTitleStyle(*mxLabel);
     mxGripWidget->SetPointer(PointerStyle::Move);
 
     if (maCloserAction)
@@ -130,6 +164,7 @@ void DeckTitleBar::DataChanged()
 {
     mxToolBox->set_item_icon_name(u"button"_ustr, u"sfx2/res/closedoc.png"_ustr);
     TitleBar::DataChanged();
+    ApplyMaterialDeckTitleStyle(*mxLabel);
 }
 
 } // end of namespace sfx2::sidebar

@@ -51,6 +51,7 @@
 
 #include <sfx2/app.hxx>
 #include <sfx2/RegexSearchController.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <toolkit/helper/vclunohelper.hxx>
 
 #include <svx/srchdlg.hxx>
@@ -76,6 +77,7 @@
 
 #include <cstdlib>
 #include <memory>
+#include <string_view>
 
 #include <findtextfield.hxx>
 
@@ -1318,6 +1320,47 @@ void SvxSearchDialog::ClickHdl_Impl(const weld::Widget* pCtrl)
         SaveToModule_Impl();
 }
 
+namespace
+{
+// Material feedback guard. The transient Replace-outcome confirmation is emitted only under the
+// documented Material file-widget theme (VCL_FILE_WIDGET_THEME=material) -- the same explicit
+// opt-in idiom as sfx2 startcentercard.cxx and sd scalectrl.cxx. Under any other theme this is
+// false and the whole confirmation path below is a complete no-op, so classic keyboard, mouse,
+// a11y and RTL behaviour of Find & Replace is unchanged.
+bool lcl_IsMaterialFeedbackActive()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    return pThemeName && std::string_view(pThemeName) == "material";
+}
+
+// One-shot pending flag, raised by CommandHdl_Impl for a Replace All and consumed by the outcome
+// sink (SvxSearchDialogWrapper::SetSearchLabel) during the synchronous FID_SEARCH_NOW dispatch.
+// It scopes the confirmation to the Replace All outcome only: it is never set for incremental
+// find, Find All, single Replace, or the transient End/Start/wrapped navigation reminders that
+// share the same label sink. Main-thread only (Find & Replace and its synchronous dispatch both
+// run on the VCL main thread), so a plain bool is sufficient and no re-entrancy is possible.
+bool g_bMaterialReplaceAllPending = false;
+
+// First native transient action-confirmation producer (docs/design/07-feedback.md 7.5). Mirrors
+// the Find & Replace "Replace All" outcome the view shell just posted -- a translated replacement
+// count, or the no-match notice -- into the landed bottom-right notification stack as a non-modal,
+// informational status. It is pure reinforcement: the inline findbar/dialog label set alongside it
+// remains the persistent, screen-reader-visible record, so non-Material builds lose nothing. The
+// outcome strings are fixed and translated and carry at most an integer count (no document data,
+// paths or secrets), so they route under the audited "libreoffice.core-ui" SafeDisplayText source;
+// severity is Success for a completed replacement and Information for the no-match notice. Kept
+// informational so NotificationRouter::Classify never forces it modal, and the router preserves the
+// reduced-motion immediate-appearance and polite role=status announce contracts of the shared
+// stack. Registered in qa/windows-ui-contract/notification-producer-policy.json.
+void lcl_NotifyMaterialReplaceOutcome(const OUString& rOutcome)
+{
+    if (rOutcome.isEmpty() || !lcl_IsMaterialFeedbackActive())
+        return;
+    const bool bNoMatch = (rOutcome == SvxResId(RID_SVXSTR_SEARCH_NOT_FOUND));
+    sfx2::NotificationRouter::NotifyConfirmation("libreoffice.core-ui"_ostr, rOutcome, !bNoMatch);
+}
+}
+
 IMPL_LINK(SvxSearchDialog, CommandHdl_Impl, weld::Button&, rBtn, void)
 {
     bool bInclusive = (m_xLayoutBtn->get_label() == m_sLayoutStr);
@@ -1418,7 +1461,13 @@ IMPL_LINK(SvxSearchDialog, CommandHdl_Impl, weld::Button&, rBtn, void)
         }
         m_nModifyFlag = ModifyFlags::NONE;
         const SfxPoolItem* ppArgs[] = { m_pSearchItem.get(), nullptr };
+        // Arm the Material Replace-outcome confirmation only for Replace All. The view shell posts
+        // its outcome label back through SvxSearchDialogWrapper::SetSearchLabel during this
+        // synchronous dispatch, where the flag is consumed; it is cleared again immediately after so
+        // no later, unrelated label update can pick it up.
+        g_bMaterialReplaceAllPending = (&rBtn == m_xReplaceAllBtn.get());
         m_rBindings.ExecuteSynchron(FID_SEARCH_NOW, ppArgs);
+        g_bMaterialReplaceAllPending = false;
     }
     else if ( &rBtn == m_xCloseBtn.get() )
     {
@@ -2550,6 +2599,15 @@ void SvxSearchDialogWrapper::SetSearchLabel(const SearchLabel& rSL)
 
     lcl_SetSearchLabelWindow(sStr, *pViewFrame);
 
+    // Consume the one-shot Replace All confirmation flag (the no-match outcome arrives here as
+    // SearchLabel::NotFound). Only ever fires inside a Replace All dispatch; navigation reminders
+    // reach this sink with the flag clear and are ignored.
+    if (g_bMaterialReplaceAllPending && !sStr.isEmpty())
+    {
+        g_bMaterialReplaceAllPending = false;
+        lcl_NotifyMaterialReplaceOutcome(sStr);
+    }
+
     if (SvxSearchDialogWrapper *pWrp = static_cast<SvxSearchDialogWrapper*>( pViewFrame->
             GetChildWindow( SvxSearchDialogWrapper::GetChildWindowId() )))
         pWrp->getDialog()->SetSearchLabel(sStr);
@@ -2562,6 +2620,15 @@ void SvxSearchDialogWrapper::SetSearchLabel(const OUString& sStr)
         return;
 
     lcl_SetSearchLabelWindow(sStr, *pViewFrame);
+
+    // Consume the one-shot Replace All confirmation flag (the replacement-count outcome arrives
+    // here as the translated count string). Empty clears leave the flag armed for the real outcome.
+    if (g_bMaterialReplaceAllPending && !sStr.isEmpty())
+    {
+        g_bMaterialReplaceAllPending = false;
+        lcl_NotifyMaterialReplaceOutcome(sStr);
+    }
+
     if (SvxSearchDialogWrapper *pWrp = static_cast<SvxSearchDialogWrapper*>( pViewFrame->
             GetChildWindow( SvxSearchDialogWrapper::GetChildWindowId() )))
         pWrp->getDialog()->SetSearchLabel(sStr);

@@ -37,7 +37,7 @@ semantic role. Values are the native palette declarations in
 | `@on-warning-container` | `#2A1800` | `#FFDDB3` | Warning banner text/icon |
 | `@error-container` | `#F9DEDC` | `#8C1D18` | Error banner surface, critical level band |
 | `@on-error-container` | `#410E0B` | `#F9DEDC` | Error banner text/icon |
-| `@inverse-surface` | `#313033` | `#E6E0E9` | Tooltip surface, snackbar surface |
+| `@inverse-surface` | `#313033` | `#E6E0E9` | Tooltip surface, control bar surface |
 | `@inverse-on-surface` | `#F4EFF4` | `#322F35` | Tooltip text |
 | `@on-surface-variant` | `#49454F` | `#CAC4D0` | Empty-state and counter text |
 
@@ -316,8 +316,8 @@ A tooltip is a single inverse-surface plate with the small corner radius.
 Because the native dark palette declares `@inverse-surface` as a light value
 (`#E6E0E9`) with a dark `@inverse-on-surface`, native tooltips follow the
 standard MD3 inversion: dark plate on light themes, light plate on dark
-themes. This is the opposite of the snackbar's deliberate always-dark chrome
-(§7.5) — the divergence is scoped to the snackbar/control bar, not to
+themes. This is the opposite of the control bar's deliberate always-dark chrome
+(§7.5) — the divergence is scoped to the control bar, not to
 tooltips. The prototype relies on browser-native `title` tooltips and does
 not restyle them (prototype gap, not a design decision).
 
@@ -379,87 +379,123 @@ VCL drawing are out of scope for this definition.
 
 ### Anatomy & tokens
 
-A snackbar (the prototype calls it a toast) is a transient confirmation plate
-that appears bottom-centre of the window. There is no native `snackbar`
-control in `definition.xml`; the anatomy below is the prototype reference and
-is otherwise *specified here, not yet implemented* natively.
+**Shipped decision: toasts are folded into the bottom-right notification
+stack; there is no separate bottom-centre snackbar plate.** An earlier draft of
+this section specified a distinct dark plate centred on the window's bottom
+edge. Both the native implementation and the prototype superseded that: a
+transient confirmation is now a Success/Information card emitted through
+`sfx2::NotificationRouter` and rendered by the same
+[`NotificationStackController`](../../sfx2/source/notification/NotificationStackController.cxx)
+/ [`NotificationOverlayWindow`](../../sfx2/source/notification/NotificationOverlayWindow.cxx)
+(`RepositionBottomRight`) that hosts every other notification. This section
+records that shipped surface rather than a parallel one; the older bottom-centre
+anatomy is retired.
 
-| Region | Prototype value | Status |
+| Region | Shipped value | Status |
 | --- | --- | --- |
-| Plate | fixed, bottom 26 px, horizontally centred; padding 13 px 20 px; radius 8 px (= `corner-small`); background `--inv-s`; text `--on-inv-s`; shadow `0 10px 30px rgba(0,0,0,.4)` | prototype-only |
-| Content row | icon + message, 12 px gap; leading `bolt` icon at 20 px in `--p`; message at `500 13px/1` | prototype-only |
-| Entrance | `lo-pop` 160 ms ease (opacity 0, translateY(−4px), scale .98 → identity) | prototype-only |
-| Auto-dismiss | 1 900 ms; a newer toast supersedes the pending dismissal (token guard) | prototype-only |
+| Host | bottom-right stack, per-frame child overlay, inset by `HorizontalInset`/`VerticalInset` (16 px default), width `Preferences.Width` (420 px), up to `MaxVisible` (3) cards then a "+N more" affordance | implemented (native `NotificationStackController`; prototype `notificationCards()`) |
+| Card | `@surface` fill, `@outline-variant` hairline, 4 px leading severity accent at `corner-container` radius, padding 13 px 12 px 12 px 14 px, elevated shadow | implemented (native card renderer; prototype `.lo-notification-card`) |
+| Content | severity icon + title, message body; Success/Information severities for confirmations | implemented |
+| Entrance | `lo-slide-in` 180 ms ease, suppressed to an immediate appearance when animations are disabled (reduced motion) | prototype `.lo-notification-card`; native `Preferences.Animations` |
+| Auto-dismiss | after `Preferences.TimeoutSeconds` (8 s) the card archives; a newer card supersedes without evicting the record (it moves to the manager) | implemented |
 
-**Deliberate dark-chrome divergence.** The prototype's `--inv-s` matches the
-native light `@inverse-surface` (`#313033`) but deliberately uses `#2B2930`
-in dark mode instead of the native dark `@inverse-surface` (`#E6E0E9`): the
-control bar and snackbar remain dark chrome with light `--on-inv-s` text in
-every theme, rather than following the MD3 light inverse-surface convention.
-This is recorded as intentional fidelity to the source design in both
-[`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) and the prototype's palette
-comment. A future native snackbar must implement this divergence explicitly
-rather than reusing `@inverse-surface` unmodified in dark mode — unlike
-tooltips, which do invert (§7.4).
+**Dark-chrome divergence now belongs to the control bar, not the toast.** The
+folded-in confirmation card uses the standard `@surface` notification card, not
+a dark inverse plate, so it inverts with the theme like the rest of the stack.
+The deliberate always-dark chrome (`--inv-s` `#2B2930` in dark mode instead of
+the native dark `@inverse-surface` `#E6E0E9`) is retained only for the
+command/control bar, recorded as intentional fidelity to the source design in
+both [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md) and the prototype palette
+comment. Tooltips still invert per MD3 (§7.4).
 
 ### States
 
 | State | Visual treatment | Source |
 | --- | --- | --- |
-| Shown | Dark plate, light text, elevated shadow; `lo-pop` entrance | prototype `#toast.show` |
-| Superseded | New message replaces content; timer restarts; no stacking | prototype token guard |
-| Dismissed | Removed after 1 900 ms; no exit animation | prototype |
+| Shown | Card slides into the bottom-right stack above the manager button; severity accent + `role="status"` | prototype `notificationCards()`; native stack |
+| Superseded | Newest cards render; beyond `MaxVisible` the overflow collapses into "+N more notifications" — no record is lost, unlike the old single-plate replace | prototype `notificationShell()`; native `MaxVisible` |
+| Auto-dismissed | Archived after the timeout; still recoverable in the notification manager | implemented |
 
-Snackbars are non-interactive in the current design: no action button,
-no hover state, no dismissal control. If a future surface needs an action,
-it must be added to this spec first.
+Confirmation cards are non-interactive acknowledgements: no action button is
+required for the Find & Replace outcome. If a future confirmation needs an
+action, it is a standard button added to the card contract, not a return to a
+separate snackbar.
 
 ### Interaction
 
-None directly: the snackbar accepts no pointer or keyboard input and never
-takes focus. It reports the outcome of an action performed elsewhere (e.g.
-Find & Replace posts "Replaced 3 occurrences …" or "No matches to replace").
-Under reduced motion the 160 ms entrance must map to an immediate appearance
-per the motion contract in
-[`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md).
+None directly: the card accepts no pointer or keyboard input and never steals
+top-level focus (`NotificationOverlayWindow` is a frame child, never a
+`FloatingWindow`), so typing continues in the document. It reports the outcome
+of an action performed elsewhere — Find & Replace posts "*N* replacements made"
+or "Search key not found" (§7.8). Under reduced motion the `lo-slide-in`
+entrance maps to an immediate appearance per the motion contract in
+[`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md); the native stack honours the
+same `Preferences.Animations` guard.
+
+### First native confirmation producer
+
+The first real transient action-confirmation is the Find & Replace **Replace
+All** outcome, wired in
+[`svx/source/dialog/srchdlg.cxx`](../../svx/source/dialog/srchdlg.cxx): the
+outcome the view shell posts through `SvxSearchDialogWrapper::SetSearchLabel`
+(the shared, cross-application Find & Replace result sink) is mirrored into the
+stack via `sfx2::NotificationRouter::NotifyConfirmation` — `Success` for a
+completed replacement, `Information` for the no-match notice. It is emitted only
+under the documented Material file-widget theme, only for the Replace All
+command (never for incremental find, Find All, or the transient navigation
+reminders that share the same label sink), and only as reinforcement: the inline
+findbar/dialog label remains the persistent, screen-reader-visible record, so
+classic-theme builds and assistive technology lose nothing. The outcome strings
+are fixed, translated, and carry at most an integer count (no document data), so
+they route under the audited `libreoffice.core-ui` `SafeDisplayText` source, and
+they are kept informational so `NotificationRouter::Classify` never forces them
+modal. The audited producer inventory is
+[`notification-producer-policy.json`](../../qa/windows-ui-contract/notification-producer-policy.json),
+enforced fail-closed against source by
+[`bin/check-notification-producer-contract.py`](../../bin/check-notification-producer-contract.py).
 
 ### Accessibility
 
-The prototype marks the toast `role="status"` with `aria-live="polite"`, so
-assistive technology announces the message without focus theft; the native
-equivalent must use the corresponding non-interruptive announcement path.
-Because the plate auto-dismisses in under 2 seconds, the same information
-must remain available elsewhere (status bar, dialog result) — the snackbar is
-reinforcement, never the sole record. Text contrast uses the inverse pair in
-all themes; in the prototype's high-contrast palette the plate is `#000000`
-on `#FFFFFF` text.
+The stack marks each card `role="status"` with an `aria-live="polite"` region,
+so assistive technology announces the message without focus theft; the native
+overlay uses the corresponding non-interruptive announcement path. Because a
+card auto-dismisses, the same information remains available in the inline
+findbar/dialog label and in the notification manager — the confirmation is
+reinforcement, never the sole record. Text contrast uses the standard card
+`@surface`/`@on-surface` pair in both themes; under resolved high contrast the
+Material card drawing is bypassed and the native baseline restored.
 
 ### Density
 
-Plate metrics (13 px × 20 px padding, 13 px text) are fixed across compact
-and comfortable profiles; only its distance from other chrome changes with
-window size.
+Card metrics (padding, 13 px text) are fixed across compact and comfortable
+profiles; only the stack's inset from the frame edge follows the notification
+preferences, not the density profile.
 
 ### RTL & localization
 
-The plate stays bottom-centre in both directions; the icon leads in reading
-order, so it renders to the right of the text in RTL. Long messages widen the
-plate up to the window margin, then wrap.
+The stack anchors to the reading-end bottom corner and the card content follows
+the writing direction; the severity icon leads in reading order. Count strings
+use translatable format strings with a `%1`/`XX` placeholder, never
+concatenation. Long messages wrap within the fixed card width.
 
 ### Platform notes
 
-Windows-first. A native implementation would be a borderless VCL float on
-the document frame; no OS notification-centre integration is implied —
-snackbars are in-window feedback only.
+Windows-first. The card is a borderless VCL frame-child overlay
+(`NotificationOverlayWindow`), never an OS notification-centre item — toasts are
+in-window feedback only. Unsupported / high-contrast configurations restore the
+native baseline.
 
 ### Verification hooks
 
-- Once a native snackbar exists: captures of the plate in light, dark, and
-  high contrast proving the always-dark chrome (and the high-contrast
-  exception), a reduced-motion run showing immediate appearance, and an
-  accessibility trace showing a polite announcement without focus change.
-- Until then, the behaviour is verifiable only in the prototype and no
-  runtime claim is made.
+- Source: the producer contract (`check-notification-producer-contract.py` +
+  `notification-producer-policy.json`) verifies the Find & Replace confirmation
+  call site, its severity, and its informational-only routing against real code,
+  alongside the two earlier informational producers (printer-busy, help
+  no-matches).
+- Future captures once a build exists: a Replace All confirmation card in the
+  bottom-right stack (light, dark, high contrast), a reduced-motion run showing
+  immediate appearance, and an accessibility trace showing a polite announcement
+  without focus change. Until then no runtime or pixel claim is made.
 
 ---
 
@@ -580,7 +616,7 @@ illustration, no card.
 | Start Center, filtered card grid | "No recent match this pattern." / "No templates match this pattern." — spans the full grid row, 34 px padding, centred, `@on-surface-variant`, `400 13px/1.5` | prototype-only |
 | Gallery command search counter | "*N* of *M* commands match — open the builder for tokens & flags"; the count is `@primary` at weight 700 | prototype-only |
 | Features catalog header | "*N* of *M* commands" beside the title; capped lists append "Showing the first 400 matches — refine your search to narrow further." (14 px 12 px padding, centred, `@on-surface-variant`, 12 px text) | prototype-only |
-| Find & Replace outcome | "No matches to replace" via snackbar (§7.5) | prototype-only |
+| Find & Replace outcome | "No matches to replace" via the bottom-right confirmation stack (§7.5) | native producer + prototype `toast()` |
 
 The pattern-sensitive wording ("… match this pattern") acknowledges the regex
 search builder: the message names the cause (the active pattern), satisfying
