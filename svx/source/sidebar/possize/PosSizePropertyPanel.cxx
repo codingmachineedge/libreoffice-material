@@ -1000,11 +1000,22 @@ void PosSizePropertyPanel::DisableControls()
 
 void PosSizePropertyPanel::ApplyNoSelectionDisabledPolicy()
 {
-    // Every control stays visible (no layout jump) but becomes insensitive, per
-    // the §11.2 no-selection policy. This mirrors the disabled states already
-    // defined for these controls (spinbox / checkbox / toolbar Button) in the
-    // Material definition.xml; command semantics and F4 numeric entry are
-    // unchanged -- only sensitivity is toggled.
+    // Keep the 13 field-anatomy controls -- the position labels/fields, the size
+    // labels/fields, the Keep-ratio checkbox, and the rotation and flip
+    // label/field pairs -- visible (no layout jump) but insensitive, per the
+    // §11.2 no-selection policy. This is exactly the control set registered in
+    // qa/windows-ui-contract/impress-draw-surfaces.json, and mirrors the disabled
+    // states already defined for those controls (spinbox / checkbox / toolbar
+    // Button) in the Material definition.xml; command semantics and F4 numeric
+    // entry are unchanged -- only sensitivity is toggled.
+    //
+    // The remaining controls at PosSizePropertyPanel.hxx:118-137 are deliberately
+    // out of scope. The arrange/align toolbars and the OLE-edit button dispatch
+    // UNO commands (ToolbarUnoDispatcher / DoVerb) and are never toggled by this
+    // panel, so the command framework governs their enablement and auto-disables
+    // them on no selection. The rotation dial (mxCtrlDial/mxDial) is the graphical
+    // twin of the mxMtrAngle field on the same SID_ATTR_TRANSFORM_ANGLE binding
+    // and is not part of the registered field anatomy.
     mxFtPosX->set_visible(true);
     mxFtPosX->set_sensitive(false);
     mxMtrPosX->set_visible(true);

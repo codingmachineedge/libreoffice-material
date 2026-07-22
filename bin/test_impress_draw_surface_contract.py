@@ -34,6 +34,8 @@ AREA_PANEL = "svx/source/sidebar/area/AreaPropertyPanelBase.cxx"
 POSSIZE_PANEL = "svx/source/sidebar/possize/PosSizePropertyPanel.cxx"
 SHADOW_PANEL = "svx/source/sidebar/shadow/ShadowPropertyPanel.cxx"
 GRAPHIC_BAR = "sd/source/ui/view/GraphicObjectBar.cxx"
+TEXT_OBJECT_BAR = "sd/source/ui/view/drtxtob.cxx"
+GRAPHIC_BAR_XML = "sd/uiconfig/sdraw/toolbar/graphicobjectbar.xml"
 TEXT_BAR_XML = "sd/uiconfig/sdraw/toolbar/textobjectbar.xml"
 
 
@@ -205,6 +207,13 @@ class ImpressDrawSurfaceContractTest(unittest.TestCase):
         errors = self.failures(contents=self.with_content(POSSIZE_PANEL, source))
         self.assertTrue(any(":disabled-policy:method" in e and "not found" in e for e in errors), errors)
 
+    def test_possize_owner_marker_missing_fails(self) -> None:
+        source = self.contents[POSSIZE_PANEL].replace(
+            'weld_check_button(u"ratio"', 'weld_check_button(u"nope"', 1
+        )
+        errors = self.failures(contents=self.with_content(POSSIZE_PANEL, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
     def test_shadow_policy_missing_disable_fails(self) -> None:
         source = self.contents[SHADOW_PANEL].replace(
             "    mxShowShadow->set_visible(true);\n    mxShowShadow->set_sensitive(false);\n",
@@ -232,6 +241,18 @@ class ImpressDrawSurfaceContractTest(unittest.TestCase):
             "SFX_IMPL_INTERFACE(GraphicObjectBar", "SFX_IMPL_INTERFACE(Renamed", 1
         )
         errors = self.failures(contents=self.with_content(GRAPHIC_BAR, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    def test_graphic_object_bar_xml_marker_missing_fails(self) -> None:
+        source = self.contents[GRAPHIC_BAR_XML].replace(".uno:TransformDialog", ".uno:Nope", 1)
+        errors = self.failures(contents=self.with_content(GRAPHIC_BAR_XML, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    def test_text_object_bar_shell_marker_missing_fails(self) -> None:
+        source = self.contents[TEXT_OBJECT_BAR].replace(
+            "SFX_IMPL_INTERFACE(TextObjectBar", "SFX_IMPL_INTERFACE(Renamed", 1
+        )
+        errors = self.failures(contents=self.with_content(TEXT_OBJECT_BAR, source))
         self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
 
     def test_missing_required_object_bars_fails(self) -> None:
