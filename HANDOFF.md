@@ -204,6 +204,20 @@ and statically validated only.
   already has all four (and passed earlier in the very same run, proving
   the pattern works in this CI environment). Fix: added the same four
   macros to `notificationstore.mk`. Pushed as `2cd1c5cf3`.
+- **Cross-platform confirmation**: `df5239f63`'s `Build Windows MSI` run
+  (`29882830485`) finished independently ~2h48m after it started (it does
+  not share the Linux job's concurrency-cancel group) and hit the *exact
+  same* crash at the *exact same* test — `Run required native C++
+  regression tests` got through `CppunitTest_sfx2_regexsearch` fine, then
+  `CppunitTest_sfx2_notificationstore` died silently right after starting
+  `NotificationViewModelTest::testVisibleCardsNewestFirstAndCap` (no
+  CppUnit failure message, abrupt step termination — Windows equivalent
+  of the Linux SIGSEGV). It also independently confirms the Windows a11y
+  fix: `Link critical Windows desktop library` (the step containing the
+  `sfx.a11yerrors` gate) passed cleanly. Since `sfx2/
+  CppunitTest_sfx2_notificationstore.mk` is a platform-agnostic gbuild
+  file, the `2cd1c5cf3` fix applies to both platforms identically — this
+  was expected, not a second bug.
 - **Hosted-CI verification of `2cd1c5cf3` in flight** (`Build Windows MSI`
   run `29889642513`, `Validate Linux native sources` run `29889642528`)
   at time of writing — **do not treat either as green until confirmed**;
