@@ -218,18 +218,23 @@ and statically validated only.
   CppunitTest_sfx2_notificationstore.mk` is a platform-agnostic gbuild
   file, the `2cd1c5cf3` fix applies to both platforms identically — this
   was expected, not a second bug.
-- **Hosted-CI verification of `2cd1c5cf3` in flight** (`Build Windows MSI`
-  run `29889642513`, `Validate Linux native sources` run `29889642528`)
-  at time of writing — **do not treat either as green until confirmed**;
-  check `gh run list --repo codingmachineedge/libreoffice-material
-  --branch main --limit 5` for the actual outcome before claiming the CI
-  gate is clean. `Windows UI contract` on this commit already passed
-  (unaffected fast check). Note `windows-msi-<sha>` is the Windows
-  workflow's concurrency group (one run per commit, not per branch), so
-  older in-flight Windows runs for `df5239f63`/`6deee3d41` keep running to
-  completion instead of being cancelled — their eventual (likely stale/
-  failing, since they predate the notificationstore fix) results are not
-  informative and can be ignored once `2cd1c5cf3`'s run is green.
+- **`Validate Linux native sources` run `29889642528` on `2cd1c5cf3`:
+  CONFIRMED GREEN** (11m30s, ccache warm) — `Linux focused native C++
+  tests` job passed outright, all five required targets including the
+  two sfx2 CppunitTests. **This CI leg is fully fixed at this tip.**
+- **`Build Windows MSI` run `29889642513` on `2cd1c5cf3`: still in flight**
+  at time of writing — check `gh run list --repo
+  codingmachineedge/libreoffice-material --branch main --limit 5` (or
+  `gh run view 29889642513 --repo codingmachineedge/libreoffice-material`)
+  for the actual outcome before claiming the Windows leg is clean; it has
+  historically taken 45m–2h48m. `Windows UI contract` on this commit
+  already passed (unaffected fast check). Note `windows-msi-<sha>` is the
+  Windows workflow's concurrency group (one run per commit, not per
+  branch), so older in-flight/completed Windows runs for
+  `df5239f63`/`6deee3d41`/`3f74ebf18`/`8315a4893` are separate — the
+  `df5239f63` one already finished (see cross-platform confirmation
+  above); the others are docs-only pushes rebuilding the identical source
+  tree and are redundant with `29889642513`, not additional signal.
 
 ## Resume guidance
 
