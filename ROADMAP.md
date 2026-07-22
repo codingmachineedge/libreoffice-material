@@ -539,6 +539,37 @@ accent (`calc-sheet-tabs`, 22 tests). No build or runtime evidence exists for an
 of it: the `B V I A L P C` inventory gates are untouched and every row's pixel,
 interaction, and accessibility proof stays pending a native build.
 
+Wave-2 Batch B then assessed nine more rows across shell navigation, application
+chrome, surfaces, and feedback, again each locked build-free by a new or extended
+checker plus JSON registry plus mutation suite. Five landed as new fail-closed
+contracts: the Calc classic-chrome composition (command identity/order, separator
+placement, nine-state toolbar Button at `@corner-toolbar`, with density and combo
+geometry recorded spec-only) (`calc-chrome`, WIN-CA-001); the `ScInputWindow`
+formula row additively painted over `ToolBox::Paint` with guarded
+`@corner-container` token consumption and `@surface`/`@on-surface` centralization,
+RTL specified-not-built (`calc-formula-bar`, WIN-CA-002); the Components-gallery
+coverage ledger binding every state generated from `material/definition.xml` (205
+cells, reusing the theme validator) with a 14-test suite
+(`component-gallery-coverage`, WIN-CONCEPT-003); the audited `NotificationRouter`
+producer seam — the Find & Replace Replace-All Success card and no-match
+Information card folded into the bottom-right notification stack (design 07 §7.5,
+no standalone snackbar plate) with wiring-marker reachability
+(`notification-producer`, WIN-FBK-005/WIN-FBK-008); and the sidebar deck /
+side-pane Material layout (deck `@surface` fills, 14 px inset, deck-title role,
+12 px scrollbar, collapse-to-rail and below-medium overlay-degrade)
+(`sidebar-panels`, WIN-CON-007). Two existing contracts were extended:
+menu-composition gained 18 context-menu markers (keyboard-first highlight,
+placement feed, focus save/return, Esc dismiss) for WIN-NAV-002, and
+impress-draw-surfaces gained the shared svx Position-and-Size and Shadow panels
+plus the Draw/Impress object bars for WIN-WR-004/WIN-IM-002. Two of the nine rows
+landed with deliberately narrowed scope: WIN-WR-004 covers only the shared svx
+field anatomy — the planned `writer-surface-sidebar` checker was not built and
+the Writer deck composition is untouched — and WIN-FBK-008 covers only the §7.8
+empty-state outcome of those two routed producers, not the general
+empty/no-results pattern. As with Batch A, no build or runtime evidence exists
+for any of it: the `B V I A L P C` inventory gates stay untouched and every row's
+pixel, interaction, and accessibility proof remains pending a native build.
+
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
 - common file, print, export, properties, options, extension, and template flows;

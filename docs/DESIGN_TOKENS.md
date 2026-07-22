@@ -30,7 +30,7 @@ The light and dark columns below use the native palette values from `vcl/uiconfi
 | `outline` | `#79747E` | `#938F99` | `#000000` | `--outline` / `PAL.*.outline` |
 | `outline-variant` | `#CAC4D0` | `#49454F` | `#000000` | `--outline-v` / `PAL.*.outlineV` |
 | `error` | `#B3261E` | `#F2B8B5` | `#B3000C` | Prototype-only base error: `--err-base` / `PAL.*.errBase`. The native palette does not declare an `error` role; it declares `error-container` (`#F9DEDC` light, `#8C1D18` dark) and `on-error-container` (`#410E0B` light, `#F9DEDC` dark), exposed by the prototype as `--err` and `--on-err`. |
-| `inverse-surface` | `#313033` | `#E6E0E9` | `#000000` | Native values are shown. Prototype `--inv-s` matches light (`#313033`) and uses `#000000` in high contrast, but deliberately uses `#2B2930` in dark mode: its control bar and snackbar remain dark chrome with light `--on-inv-s` text instead of following the MD3 light inverse-surface convention. |
+| `inverse-surface` | `#313033` | `#E6E0E9` | `#000000` | Native values are shown. Prototype `--inv-s` matches light (`#313033`) and uses `#000000` in high contrast, but deliberately uses `#2B2930` in dark mode: its command/control bar remains dark chrome with light `--on-inv-s` text instead of following the MD3 light inverse-surface convention. The transient confirmation surface was folded into the notification stack and no longer uses this dark plate (see [`07-feedback.md`](design/07-feedback.md) §7.5). |
 
 The prototype's light and dark values otherwise match the corresponding native roles in this table. Its `--err` name is shorthand for the native `error-container`, not for the base `error` row.
 

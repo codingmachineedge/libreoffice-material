@@ -66,10 +66,20 @@ and statically validated only.
     (`find-replace-fieldset`, 25 tests); WIN-NAV-006 Calc `ScTabControl` strip
     top rule and selection-independent tab-colour accent (`calc-sheet-tabs`, 22
     tests). No build or runtime evidence exists for any of it.
-- **Static gate**: all **45** build-free validators pass at this tip (29 from
-  the wave-1 tip + 16 wave-2 Batch A: 8 checker/mutation-suite pairs). Run them
-  with `py`/`node` from the repo root; the list is in `bin/` (`check-*` +
-  `test_*` pairs plus `validate-prototype.mjs`).
+- **Static gate**: all **54** build-free Material validators pass at this tip.
+  Enumeration method (run yourself, not inherited): every `bin/check-*.py` that
+  reads a `qa/windows-ui-contract` registry or Material source — 26, i.e. all
+  `bin/check-*.py` except the six stock upstream linters (`check-autocorr`,
+  `check-icon-sizes`, `check-implementer-notes`, `check-missing-export-asserts`,
+  `check-missing-unittests`, `check-sid-slots`) — plus every `bin/test_*.py`
+  mutation suite (27) plus `bin/validate-prototype.mjs` (1) = **54**. Wave-2
+  Batch B added exactly five checker+suite pairs (calc-chrome,
+  calc-formula-bar, component-gallery-coverage, notification-producer,
+  sidebar-panels) = 10 new files over the enumerated pre-Batch-B baseline of
+  **44** on `main`. (The earlier handoff's "45" was a one-off over-count;
+  re-enumerating the actual `main` tree yields 44.) All 54 were run green here
+  with `py`/`node` from the repo root: 26 checkers exit 0, 27 suites pass,
+  `validate-prototype.mjs` reports 9/9.
 
 ## Important boundaries
 
@@ -131,15 +141,31 @@ and statically validated only.
   required native targets compile, before any new feature work. The Windows
   MSI run for the pre-fix tip was in progress at handoff time and will fail
   the same way; watch the run triggered by `b420ce9ae` instead.
-- **Wave-2 Batch B is an UNVALIDATED WIP snapshot** on
-  `origin/claude/wave2-batch-b` (`7785d5282`), stopped mid-implementation on
-  operator request. It contains partial work for nine rows (WIN-NAV-002,
-  WIN-CON-007, WIN-WR-004, WIN-FBK-005, WIN-FBK-008, WIN-CA-001, WIN-CA-002,
-  WIN-IM-002, WIN-CONCEPT-003) plus five new checker/registry pairs. The accidental debris (`design/**` archive extraction, stray `e*.txt`)
-  has already been stripped at this tip, and main's weld include fixes are
-  merged in. Before ANY merge: complete the nine rows and run the full
-  build-free gate to green. Do not delete this branch until its work is merged or
-  consciously superseded.
+- **Wave-2 Batch B has landed and validated at source level** on
+  `claude/wave2-batch-b` (working tip `851fcd6dd` plus the finishing edits the
+  orchestrator will commit). Nine rows were assessed (WIN-NAV-002, WIN-CON-007,
+  WIN-WR-004, WIN-FBK-005, WIN-FBK-008, WIN-CA-001, WIN-CA-002, WIN-IM-002,
+  WIN-CONCEPT-003) and locked by **five new fail-closed contracts** (calc-chrome
+  → WIN-CA-001, calc-formula-bar → WIN-CA-002, component-gallery-coverage →
+  WIN-CONCEPT-003, notification-producer → WIN-FBK-005/WIN-FBK-008,
+  sidebar-panels → WIN-CON-007) plus **two extended contracts**
+  (menu-composition gained 18 context-menu markers and a 39-test suite for
+  WIN-NAV-002; impress-draw-surfaces gained the shared svx PosSize/Shadow and
+  the Draw/Impress object-bar surfaces, 6 surfaces / 30 tests, for
+  WIN-WR-004/WIN-IM-002). The component-gallery mutation suite was authored (14
+  tests) and the CI workflow `windows-ui-contract.yml` was reconciled to run
+  every Material checker+suite pair. **Two honest scope notes**: WIN-WR-004
+  landed as the shared svx PosSize/Shadow field anatomy only — the planned
+  dedicated `writer-surface-sidebar` checker was NOT built and the Writer
+  properties/styles/navigation deck composition is untouched; and WIN-FBK-008
+  landed as the design 07 §7.8 empty-state outcome for the Find & Replace and
+  help-search routed producers only, carried by the notification-producer
+  contract, not the general empty/no-results pattern. All 54 build-free
+  validators are green at this tip. **Honesty boundary unchanged**: this is
+  source-implementation evidence only — no native build ran, and no
+  notification/formula/menu/sidebar/gallery runtime, pixels, or screenshots were
+  produced for any Batch B row; the `B V I A L P C` inventory gates stay
+  untouched, and CI-green ≠ UI-verified.
 - **Wave-2 Batch C (staged, not started)**: WIN-SYS-001, -002, -003, -004,
   -005, -006, -007, -009, -010, -011, -015 (system dialog flows),
   WIN-CONCEPT-001 (Features catalog), plus the 15 honest-gap search fields
@@ -149,8 +175,19 @@ and statically validated only.
   CRLF (`menu.cxx`, `svdata.hxx`, `sw/qa/unit/swmodeltestbase.cxx`); a
   wholesale line-ending flip in a diff is a defect, not a change. A third
   instance hit `solenv/sanitizers/ui/sfx.suppr` while fixing the a11y gate
-  below and was caught and reverted to LF before commit — check `git diff
-  --stat` for suspiciously large line counts on small edits.
+  below and was caught and reverted to LF before commit. A **fourth instance**
+  flipped six Batch-B source files (`sc/source/ui/app/inputwin.cxx`,
+  `sc/source/ui/inc/inputwin.hxx`,
+  `svx/source/sidebar/possize/PosSizePropertyPanel.{cxx,hxx}`,
+  `svx/source/sidebar/shadow/ShadowPropertyPanel.{cxx,hxx}`) and was normalized
+  back to LF in commit `851fcd6dd` (6 files, 5120 insertions / 5120 deletions —
+  a pure line-ending revert). A **fifth instance** re-flipped
+  `sw/qa/unit/swmodeltestbase.cxx` in the working tree; it was caught and
+  restored to LF before any commit (now byte-identical to `main`, verified
+  CRLF=0). Check `git diff --stat` for suspiciously large line counts on small
+  edits, and confirm line endings with a byte-level scan — Git Bash
+  `grep $'\r'` gives FALSE positives on this host, so use Python
+  `open(f,'rb').read().count(b'\r')` instead.
 
 ## CI iteration continued (2026-07-21/22, `df5239f63`)
 
@@ -251,12 +288,17 @@ and statically validated only.
    legs. Still open: the headless harness matrix (no-nag proof, UI
    screenshots) needs an actual running build host — CI does not produce
    that evidence — before claiming any `B`/`V` gate.
-2. Finish wave-2 Batch B from the WIP branch (strip debris, complete, gate,
-   merge), then Batch C, each row with its fail-closed contract per the
-   established checker + mutation-suite pattern.
+2. Wave-2 Batch B is done at source level and gate-green pending merge to
+   `main` (nine rows assessed, five new + two extended fail-closed contracts,
+   gallery suite authored, CI wiring reconciled). Next: Wave-2 Batch C rows,
+   each with its own fail-closed checker + JSON registry + mutation suite per
+   the established pattern.
 3. Producer migration: extend the notification-producer registry in bounded,
    registered informational-only tranches (never input/destructive/
    credential/security prompts).
+4. Build-host-bound evidence: every Batch A and Batch B row still needs its
+   `B V I A L P C` gates proved on a real Windows build host —
+   source-implemented and CI-green are not build/runtime/pixel proof.
 
 ## Repository state
 
