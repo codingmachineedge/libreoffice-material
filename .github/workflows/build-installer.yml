@@ -90,6 +90,11 @@ jobs:
 
       - name: Configure lean native test build
         run: |
+          # Keep database connectivity enabled: svx/Library_svxcore.mk compiles
+          # svx/source/{fmcomp,form}/* unconditionally (only the dbtools *link*
+          # is gated on DBCONNECTIVITY), and the sfx2 CppunitTests below pull in
+          # svxcore transitively via their services.rdb, so --disable-database-
+          # connectivity leaves gridcell.cxx etc. with undefined dbtools symbols.
           ./autogen.sh \
             --enable-online-update \
             --with-privacy-policy-url=https://github.com/Ding-Ding-Projects/libreoffice-material/blob/main/PRIVACY.md \
@@ -100,8 +105,7 @@ jobs:
             --without-myspell-dicts \
             --without-doxygen \
             --disable-odk \
-            --disable-pdfium \
-            --disable-database-connectivity
+            --disable-pdfium
 
       - name: Run required native C++ tests serially
         run: |

@@ -59,3 +59,7 @@ sfx2/uiconfig/ui/password.ui://GtkLevelBar[@id='pass2bar'] no-labelled-by
 sfx2/uiconfig/ui/password.ui://GtkLabel[@id='pass2policylabel'] orphan-label
 sfx2/uiconfig/ui/propertychip.ui://GtkLabel[@id='label'] orphan-label
 sfx2/uiconfig/ui/propertycategoryrow.ui://GtkLabel[@id='label'] orphan-label
+sfx2/uiconfig/ui/notificationcard.ui://GtkDrawingArea[@id='sev_strip'] no-labelled-by
+sfx2/uiconfig/ui/notificationcard.ui://GtkImage[@id='sev_icon'] no-labelled-by
+sfx2/uiconfig/ui/notificationmanager.ui://GtkImage[@id='header_icon'] no-labelled-by
+sfx2/uiconfig/ui/notificationstack.ui://GtkButton[@id='overflow_button'] button-no-label
