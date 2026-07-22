@@ -33,4 +33,11 @@ $(eval $(call gb_CppunitTest_use_libraries,sfx2_notificationstore, \
 
 $(eval $(call gb_CppunitTest_use_sdk_api,sfx2_notificationstore))
 
+$(eval $(call gb_CppunitTest_use_ure,sfx2_notificationstore))
+$(eval $(call gb_CppunitTest_use_vcl,sfx2_notificationstore))
+
+$(eval $(call gb_CppunitTest_use_rdb,sfx2_notificationstore,services))
+
+$(eval $(call gb_CppunitTest_use_configuration,sfx2_notificationstore))
+
 # vim: set noet sw=4 ts=4:

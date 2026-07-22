@@ -428,6 +428,7 @@
                     <property name="model">notiflist_store</property>
                     <property name="headers-visible">False</property>
                     <property name="show-expanders">False</property>
+                    <property name="tooltip-text" translatable="yes" context="notification|list_view">Notification list</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="list_selection"/>
                     </child>
@@ -706,6 +707,7 @@
                     <property name="model">notifhistory_store</property>
                     <property name="headers-visible">False</property>
                     <property name="show-expanders">False</property>
+                    <property name="tooltip-text" translatable="yes" context="notification|history_view">Notification history</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="history_selection"/>
                     </child>

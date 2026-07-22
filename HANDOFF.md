@@ -73,12 +73,16 @@ and statically validated only.
 
 ## Important boundaries
 
-- **No build or runtime evidence exists for any of the above.** The `B V I A
-  L P C` inventory gates are untouched. The next build host (or the hosted
-  `windows-installer.yml` CI on a `main` push) must compile the five required
-  native targets, run the registered CppUnit coverage (notification view
-  model, store service, regex foundation), and produce fresh headless
-  evidence before any runtime claim.
+- **Updated 2026-07-22**: the five required native targets now DO compile
+  and run green on both Linux (`29889642528`) and Windows
+  (`29889642513`), including the notification view model/store-service/
+  regex-foundation CppUnit coverage — see "CI iteration continued" below.
+  That is real build+run evidence for those specific native targets and
+  for the Windows MSI packaging step, but it is **not** the same as
+  headless UI/screenshot evidence for the Material rewrite itself: the
+  `B V I A L P C` inventory gates covering the actual on-screen appearance
+  of wave-1/wave-2 surfaces are still untouched, and no screenshots exist.
+  Do not conflate "CI is green" with "the UI looks/behaves as designed."
 - The previous handoff's retained build root
   `C:\Users\cntow\lo-material-vs2026-577059e27` does not exist on this host.
   The Package-phase resume commands from the 2026-07-20 handoff apply only on
@@ -128,14 +132,13 @@ and statically validated only.
   MSI run for the pre-fix tip was in progress at handoff time and will fail
   the same way; watch the run triggered by `b420ce9ae` instead.
 - **Wave-2 Batch B is an UNVALIDATED WIP snapshot** on
-  `origin/claude/wave2-batch-b` (`3ffad98ac`), stopped mid-implementation on
+  `origin/claude/wave2-batch-b` (`7785d5282`), stopped mid-implementation on
   operator request. It contains partial work for nine rows (WIN-NAV-002,
   WIN-CON-007, WIN-WR-004, WIN-FBK-005, WIN-FBK-008, WIN-CA-001, WIN-CA-002,
-  WIN-IM-002, WIN-CONCEPT-003) plus five new checker/registry pairs. Before
-  ANY merge: strip the accidental debris committed with it (`design/**` — an
-  extraction of the operator archive that must never live in the repo;
-  `e1.txt`, `e2.txt`, `err.txt`), complete the nine rows, run the full gate
-  to green. Do not delete this branch until its work is merged or
+  WIN-IM-002, WIN-CONCEPT-003) plus five new checker/registry pairs. The accidental debris (`design/**` archive extraction, stray `e*.txt`)
+  has already been stripped at this tip, and main's weld include fixes are
+  merged in. Before ANY merge: complete the nine rows and run the full
+  build-free gate to green. Do not delete this branch until its work is merged or
   consciously superseded.
 - **Wave-2 Batch C (staged, not started)**: WIN-SYS-001, -002, -003, -004,
   -005, -006, -007, -009, -010, -011, -015 (system dialog flows),
@@ -144,14 +147,110 @@ and statically validated only.
   build-host-bound per the audit.
 - **Recurring defect to watch**: agent editors twice flipped whole files to
   CRLF (`menu.cxx`, `svdata.hxx`, `sw/qa/unit/swmodeltestbase.cxx`); a
-  wholesale line-ending flip in a diff is a defect, not a change.
+  wholesale line-ending flip in a diff is a defect, not a change. A third
+  instance hit `solenv/sanitizers/ui/sfx.suppr` while fixing the a11y gate
+  below and was caught and reverted to LF before commit — check `git diff
+  --stat` for suspiciously large line counts on small edits.
+
+## CI iteration continued (2026-07-21/22, `df5239f63`)
+
+- **Windows MSI `sfx.a11yerrors` fatal (was blocking `Build Windows MSI` on
+  every push since `b420ce9ae`)**: `bin/gla11y` flagged 6 new FATAL warnings
+  in the wave-1 notification `.ui` files — `sev_strip`/`sev_icon`
+  (`notificationcard.ui`), `header_icon` (`notificationmanager.ui`, all
+  decorative, no-labelled-by), `overflow_button` (`notificationstack.ui`,
+  `button-no-label` — its text is set at runtime via
+  `NotificationStackController::set_label`), and `list_view`/`history_view`
+  (`notificationmanager.ui`, `no-labelled-by`). Fixed: suppression entries in
+  `solenv/sanitizers/ui/sfx.suppr` for the four decorative/runtime-labelled
+  widgets (matching existing precedent — `documentinfopage.ui` icon,
+  `loadtemplatedialog.ui` drawing area, `extrabutton.ui` button), plus real
+  translatable `tooltip-text` on the two tree views since they carry primary
+  content. Verified locally by running `bin/gla11y` directly against the
+  three files with `-s solenv/sanitizers/ui/sfx.suppr`: 0 new fatals.
+- **`Validate Linux native sources` failing since `62fa5d025`** (when the
+  `sfx2_regexsearch`/`sfx2_notificationstore` CppunitTests were added): those
+  targets pull `Library_svxcore` into the build graph via `services.rdb` for
+  the first time in this workflow. `svx/Library_svxcore.mk` compiles
+  `svx/source/{fmcomp,form}/*` unconditionally and only gates the `dbtools`
+  *link* on `DBCONNECTIVITY` — identical to upstream `LibreOffice/core`, so
+  not a regression to "fix" in that file. With
+  `--disable-database-connectivity` (present in `build-installer.yml` since
+  its first commit), `gridcell.cxx`/`fmgridcl.cxx`/`formcontroller.cxx` etc.
+  reference `dbtools::`/`connectivity::` symbols that never get linked in →
+  `undefined reference` → `Library_svxcore` link failure →
+  `CppunitTest_sfx2_regexsearch` target failure. Fix: removed
+  `--disable-database-connectivity` from `build-installer.yml`.
+  `configure.ac` documents that flag as "Work in progress, use only if you
+  are hacking on it"; `windows-installer.yml` never disables it and links
+  svxcore fine, so this restores the default/supported configuration rather
+  than patching around it in vendor makefiles.
+- **Full build-free gate reran green** after both fixes (all 29 checker/test
+  pairs + `validate-prototype.mjs`).
+- **Pushed as `df5239f63`** on top of `4896547c0`. CONFIRMED: the
+  `DBCONNECTIVITY` fix was correct — run `29882830508` restored external
+  tarballs, configured, and got all the way through `Library_svxcore`
+  linking and most of `CppunitTest_sfx2_regexsearch`/
+  `CppunitTest_sfx2_notificationstore` (1h40m total). No missing
+  system-dep/tarball issue was observed; `apt-get build-dep libreoffice`
+  did cover the newly-enabled DB connectivity stack.
+- **New failure surfaced by getting further: a SIGSEGV**, not a build
+  error. `NotificationViewModelTest::testVisibleCardsNewestFirstAndCap`
+  crashed inside `cppu::_copyConstructAnyFromData`. Full chain from the
+  coredump backtrace: `NotificationViewModel::MakeRow` →
+  `lclRelativeTime` (`NotificationViewModel.cxx`) → `SfxResId` →
+  `SvtSysLocale`/`SvtSysLocaleOptions_Impl` → `utl::ConfigManager::
+  acquireTree`/`addConfigItem`. None of that can run safely without a
+  bootstrapped UNO type-description manager and configuration provider.
+  Root cause: `sfx2/CppunitTest_sfx2_notificationstore.mk` never called
+  `gb_CppunitTest_use_ure` / `_use_vcl` / `_use_rdb(...,services)` /
+  `_use_configuration` — its sibling `CppunitTest_sfx2_regexsearch.mk`
+  already has all four (and passed earlier in the very same run, proving
+  the pattern works in this CI environment). Fix: added the same four
+  macros to `notificationstore.mk`. Pushed as `2cd1c5cf3`.
+- **Cross-platform confirmation**: `df5239f63`'s `Build Windows MSI` run
+  (`29882830485`) finished independently ~2h48m after it started (it does
+  not share the Linux job's concurrency-cancel group) and hit the *exact
+  same* crash at the *exact same* test — `Run required native C++
+  regression tests` got through `CppunitTest_sfx2_regexsearch` fine, then
+  `CppunitTest_sfx2_notificationstore` died silently right after starting
+  `NotificationViewModelTest::testVisibleCardsNewestFirstAndCap` (no
+  CppUnit failure message, abrupt step termination — Windows equivalent
+  of the Linux SIGSEGV). It also independently confirms the Windows a11y
+  fix: `Link critical Windows desktop library` (the step containing the
+  `sfx.a11yerrors` gate) passed cleanly. Since `sfx2/
+  CppunitTest_sfx2_notificationstore.mk` is a platform-agnostic gbuild
+  file, the `2cd1c5cf3` fix applies to both platforms identically — this
+  was expected, not a second bug.
+- **`Validate Linux native sources` run `29889642528` on `2cd1c5cf3`:
+  CONFIRMED GREEN** (11m30s, ccache warm) — `Linux focused native C++
+  tests` job passed outright, all five required targets including the
+  two sfx2 CppunitTests.
+- **`Build Windows MSI` run `29889642513` on `2cd1c5cf3`: CONFIRMED GREEN**
+  (2h54m29s, full MSI build + native regression tests). One pre-existing,
+  non-fatal annotation (`C:\cygwin64\bin\git.exe` exit 128, `.github#16`)
+  appeared but did not affect the run's success and is unrelated to this
+  session's changes (present on prior failing runs too, e.g.
+  `29882830485`) — not investigated further since it did not block a
+  green result; revisit only if it starts failing the build outright.
+- **BOTH REQUIRED CI LEGS ARE GREEN AT `main` TIP `ce7276f8e`** (and every
+  commit from `2cd1c5cf3` onward, since later pushes were docs-only). The
+  five required native targets (`tools_test`, `extensions_test_update`,
+  `vcl_widget_definition_reader_test`, `vcl_file_definition_widget_draw_test`,
+  `vcl_treeview`) plus the two sfx2 CppunitTests
+  (`sfx2_regexsearch`, `sfx2_notificationstore`) are now genuinely
+  build+run verified on both Linux and Windows — this is real runtime
+  evidence, not just source-implemented. The Windows MSI artifact itself
+  (installer packaging) was also produced successfully in this run.
 
 ## Resume guidance
 
-1. Drive the hosted CI (or a local build per `docs/LOCAL_WINDOWS_BUILD.md`)
-   to compile the five required native targets at `main`, fixing compile
-   errors as the first work item; then run the registered CppUnit coverage
-   and the headless harness matrix before claiming any `B`/`V` gate.
+1. DONE as of `2cd1c5cf3`/`ce7276f8e`: the five required native targets
+   compile and their registered CppUnit coverage (notification view
+   model, store service, regex foundation) runs green on both hosted CI
+   legs. Still open: the headless harness matrix (no-nag proof, UI
+   screenshots) needs an actual running build host — CI does not produce
+   that evidence — before claiming any `B`/`V` gate.
 2. Finish wave-2 Batch B from the WIP branch (strip debris, complete, gate,
    merge), then Batch C, each row with its fail-closed contract per the
    established checker + mutation-suite pattern.
