@@ -365,8 +365,11 @@ private:
     bool            bIsOkCancelMode;
     bool            bInResize;
     // docs/design/10-writer-calc.md 10.4 Name Box / formula-input RTL order swap:
-    // the swap is produced by native output-device mirroring of the logical item
-    // order; this records the direction consumed by the additive row rule.
+    // the swap is produced by native ToolBox output-device mirroring of the
+    // logical item order. This only records the direction for that native
+    // contract; the additive row rule spans the full width and is mirror-
+    // invariant, so it does not branch on this flag. RTL is specified but not yet
+    // implemented or verified in a build (10.4).
     bool            mbFormulaRowRTL;
 };
 

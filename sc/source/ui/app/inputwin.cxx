@@ -102,15 +102,25 @@ namespace {
 // so the formula row keeps its existing StyleSettings rendering untouched.
 struct ScMaterialFormulaBarTokens
 {
-    Color aSurface;            // @surface  formula row + editbox/Name Box idle fill
-    Color aOutline;            // @outline  Name Box / editbox idle stroke
-    Color aOutlineVariant;     // @outline-variant  row bottom rule
-    Color aPrimary;            // @primary  fx glyph + editbox/Name Box focus stroke
-    Color aOnSurface;          // @on-surface  Name Box / formula text
-    sal_Int32 nStrokeThin;     // idle stroke thickness / bottom-rule thickness
-    sal_Int32 nStrokeStandard; // focus stroke thickness
-    sal_Int32 nCornerSmall;    // Name Box / editbox corner radius (design 10.3)
-    sal_Int32 nRowHeight;      // @size-standard-control field height role
+    // Only four members drive owner drawing in this class: aSurface (centralized
+    // editbox/Name Box field fill), aOnSurface (centralized text fill) and the
+    // aOutlineVariant + nStrokeThin pair (the additive bottom rule). The other
+    // members - aOutline, aPrimary, nStrokeStandard, nCornerContainer, nRowHeight
+    // - are resolved and gated but never painted here; they are existence-guards.
+    // Their visual roles (idle/focus stroke, @corner-container radius, field
+    // height) belong to the native combobox / editbox parts in definition.xml.
+    // Resolving them here fails the whole Material formula-row path closed if any
+    // of those shared token roles goes missing, without this class re-drawing
+    // what the native parts own. None of these guards drives a pixel here.
+    Color aSurface;            // @surface  editbox/Name Box idle fill (drawn via field accessor)
+    Color aOutline;            // @outline  existence-guard for native idle stroke
+    Color aOutlineVariant;     // @outline-variant  additive row bottom rule (drawn)
+    Color aPrimary;            // @primary  existence-guard for native focus stroke / fx glyph
+    Color aOnSurface;          // @on-surface  Name Box / formula text (drawn via text accessor)
+    sal_Int32 nStrokeThin;     // idle / bottom-rule thickness (drawn)
+    sal_Int32 nStrokeStandard; // existence-guard for native focus stroke thickness
+    sal_Int32 nCornerContainer;// existence-guard for native @corner-container radius
+    sal_Int32 nRowHeight;      // existence-guard for native @size-standard-control height
 };
 
 bool lcl_isMaterialFormulaBarActive()
@@ -144,15 +154,19 @@ std::optional<ScMaterialFormulaBarTokens> lcl_getMaterialFormulaBarTokens()
     const std::optional<Color> oOnSurface = aTokens.findColor("on-surface");
     const std::optional<sal_Int32> oStrokeThin = aTokens.findMetric("stroke-thin");
     const std::optional<sal_Int32> oStrokeStandard = aTokens.findMetric("stroke-standard");
-    const std::optional<sal_Int32> oCornerSmall = aTokens.findRadius("corner-small");
+    // @corner-container (12), not @corner-small (8): the native combobox/editbox
+    // "Entire" parts the Name Box and formula input consume in definition.xml
+    // carry @corner-container, so the guarded resolver must gate on that same
+    // shared role. This radius is an existence-guard only (see the struct note).
+    const std::optional<sal_Int32> oCornerContainer = aTokens.findRadius("corner-container");
     const std::optional<sal_Int32> oRowHeight = aTokens.findMetric("size-standard-control");
     if (!oSurface || !oOutline || !oOutlineVariant || !oPrimary || !oOnSurface || !oStrokeThin
-        || !oStrokeStandard || !oCornerSmall || !oRowHeight)
+        || !oStrokeStandard || !oCornerContainer || !oRowHeight)
         return std::nullopt;
 
-    return ScMaterialFormulaBarTokens{ *oSurface,        *oOutline,        *oOutlineVariant,
-                                       *oPrimary,         *oOnSurface,      *oStrokeThin,
-                                       *oStrokeStandard,  *oCornerSmall,    *oRowHeight };
+    return ScMaterialFormulaBarTokens{ *oSurface,        *oOutline,         *oOutlineVariant,
+                                       *oPrimary,         *oOnSurface,       *oStrokeThin,
+                                       *oStrokeStandard,  *oCornerContainer, *oRowHeight };
 }
 
 // Centralized field-fill lookup: the Name Box / editbox idle fill is the Material
@@ -372,12 +386,13 @@ ScInputWindow::ScInputWindow( vcl::Window* pParent, const SfxBindings* pBind ) :
 
     // docs/design/10-writer-calc.md 10.4: in an RTL locale the Name Box and the
     // formula input swap ends of the formula row. The ToolBox composes the items
-    // in logical order - Name Box leading (InsertWindow position 0), the fx/Sum
-    // items, then the formula-input window trailing (position 7) - and the RTL
-    // output device mirrors that whole layout, so the swap is produced by native
-    // mirroring. Reversing the insertion order here would double-mirror it, so
-    // the direction is recorded (mbFormulaRowRTL) and consumed by the additive
-    // Material row rule rather than re-ordered.
+    // in logical order - Name Box leading, the fx/Sum items, then the
+    // formula-input window trailing - and native output-device mirroring of that
+    // logical order produces the visual swap. Nothing in this class re-orders the
+    // items or repaints for RTL: native ToolBox mirroring owns the swap. The
+    // direction is only recorded here for that native-mirroring contract. Per
+    // 10.4 this RTL behaviour is specified but not yet implemented or verified in
+    // a build.
     mbFormulaRowRTL = AllSettings::GetLayoutRTL();
 
     SetAccessibleName(ScResId(STR_ACC_TOOLBAR_FORMULA));
@@ -633,20 +648,20 @@ void ScInputWindow::PaintMaterialFormulaRowRule( vcl::RenderContext& rRenderCont
     // stroke-thin @outline-variant bottom rule closing the formula row onto the
     // grid (docs/design/10-writer-calc.md 10.3). The row sits on @surface; the
     // rule is drawn additively along the bottom edge at the resolved @stroke-thin
-    // thickness. The line is walked from the leading to the trailing edge so the
-    // RTL output device mirrors it in lockstep with the swapped item order (10.4).
+    // thickness. It spans the full row width edge to edge, so it is invariant
+    // under RTL mirroring: the 10.4 Name Box / formula-input swap is produced by
+    // native ToolBox output-device mirroring (see the constructor note), not by
+    // any endpoint selection here, so no mbFormulaRowRTL branch is needed.
     rRenderContext.Push( vcl::PushFlags::LINECOLOR | vcl::PushFlags::FILLCOLOR );
 
     const Size aOutputSize = GetOutputSizePixel();
-    const tools::Long nLeadingX = mbFormulaRowRTL ? aOutputSize.Width() - 1 : 0;
-    const tools::Long nTrailingX = mbFormulaRowRTL ? 0 : aOutputSize.Width() - 1;
     const tools::Long nThickness = std::max<tools::Long>( 1, oTokens->nStrokeThin );
 
     rRenderContext.SetLineColor( oTokens->aOutlineVariant );
     for ( tools::Long i = 0; i < nThickness; ++i )
     {
         const tools::Long nY = aOutputSize.Height() - 1 - i;
-        rRenderContext.DrawLine( Point( nLeadingX, nY ), Point( nTrailingX, nY ) );
+        rRenderContext.DrawLine( Point( 0, nY ), Point( aOutputSize.Width() - 1, nY ) );
     }
 
     rRenderContext.Pop();

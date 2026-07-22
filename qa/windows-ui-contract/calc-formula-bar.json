@@ -12,7 +12,7 @@
       "title": "Calc formula bar / Name Box / function controls (ScInputWindow)",
       "chapter_section": "10.3",
       "status": "source-declared",
-      "notes": "WIN-CA-002 (docs/design/10-writer-calc.md 10.3 formula bar row, 10.4 RTL). The formula row is a ToolBox composing the Name Box (ScPosWnd combobox), the fx Function-Wizard and Sum items, and the formula-input window (ScTextWnd editbox). This contract covers what ScInputWindow / ScTextWnd own natively and additively: the stroke-thin @outline-variant row bottom rule drawn additively over ToolBox::Paint, the centralized @surface field-fill / @on-surface text-fill token consumption at every editbox fill site, the Name Box combobox and editbox token roles the built controls consume from definition.xml, the fx/Sum toolbar-button @primary-container hover role, and the 10.4 Name Box/formula RTL order swap produced by native output-device mirroring of the logical item order. DIVERGENCES noted honestly: (a) the chapter table lists a 30px field height and corner-small Name Box/editbox radius; the built combobox/editbox parts in definition.xml carry the @size-standard-control height role (36) and @corner-container radius (12) suite-wide, which this contract pins as the actual consumed role rather than mutating the shared control class; (b) the fx/Sum hover, Name Box chevron and editbox focus stroke are rendered by the native combobox/editbox/toolbar parts (definition.xml), not owner-drawn in inputwin.cxx, matching the chapter's prototype-only marking for those cells. No native build, formula-bar pixels or runtime interaction are claimed.",
+      "notes": "WIN-CA-002 (docs/design/10-writer-calc.md 10.3 formula bar row, 10.4 RTL). The formula row is a ToolBox composing the Name Box (ScPosWnd combobox), the fx Function-Wizard and Sum items, and the formula-input window (ScTextWnd editbox). This contract covers what ScInputWindow / ScTextWnd own natively and additively: the stroke-thin @outline-variant row bottom rule drawn additively over ToolBox::Paint, the centralized @surface field-fill / @on-surface text-fill token consumption at every editbox fill site, the Name Box combobox and editbox token roles the built controls consume from definition.xml, the fx/Sum toolbar-button @primary-container hover role, and the 10.4 Name Box/formula RTL order swap produced by native output-device mirroring of the logical item order. DIVERGENCES noted honestly: (a) the chapter table lists a 30px field height and corner-small Name Box/editbox radius; the built combobox/editbox parts in definition.xml carry the @size-standard-control height role (36) and @corner-container radius (12) suite-wide, which this contract pins as the actual consumed role rather than mutating the shared control class; (b) the fx/Sum hover, Name Box chevron and editbox focus stroke are rendered by the native combobox/editbox/toolbar parts (definition.xml), not owner-drawn in inputwin.cxx, matching the chapter's prototype-only marking for those cells; (c) inputwin.cxx owner-draws only the additive @outline-variant bottom rule (its @outline-variant + @stroke-thin tokens) and centralizes the @surface field fill / @on-surface text fill, so of the resolved token set aOutline, aPrimary, @stroke-standard, @corner-container and @size-standard-control are existence-guards only -- resolved and gated so the whole Material path fails closed if any shared role goes missing, but consumed visually by the native combobox/editbox parts (definition.xml), never painted here and driving no pixel in this class; (d) the 10.4 RTL swap is owned entirely by native ToolBox output-device mirroring of the logical item order -- the additive bottom rule spans the full row width and is mirror-invariant, so ScInputWindow only records the mbFormulaRowRTL direction for that native contract and does not re-order items or branch on direction when painting; per 10.4 this RTL behaviour is specified but not yet implemented or verified in a build. No native build, formula-bar pixels or runtime interaction are claimed.",
       "runtime_verified": false,
       "owner_sources": [
         "sc/source/ui/app/inputwin.cxx",
@@ -68,7 +68,7 @@
           "findColor(\"on-surface\")",
           "findMetric(\"stroke-thin\")",
           "findMetric(\"stroke-standard\")",
-          "findRadius(\"corner-small\")",
+          "findRadius(\"corner-container\")",
           "findMetric(\"size-standard-control\")",
           "isValid()"
         ]
@@ -109,12 +109,10 @@
       "rtl_order": {
         "source": "sc/source/ui/app/inputwin.cxx",
         "rule_function": "void ScInputWindow::PaintMaterialFormulaRowRule",
-        "rule_must_contain": ["mbFormulaRowRTL", "DrawLine("],
+        "rule_must_contain": ["aOutputSize.Width() - 1", "DrawLine("],
         "markers": [
-          "mbFormulaRowRTL",
-          "AllSettings::GetLayoutRTL()",
-          "aWndPos.get(), ToolBoxItemBits::NONE, 0",
-          "mxTextWindow.get(), ToolBoxItemBits::NONE, 7"
+          "mbFormulaRowRTL ( AllSettings::GetLayoutRTL() )",
+          "mbFormulaRowRTL = AllSettings::GetLayoutRTL();"
         ]
       }
     }

@@ -177,23 +177,42 @@ class CalcFormulaBarContractTest(unittest.TestCase):
             any(":field-centralization:" in e and "call site" in e for e in errors), errors
         )
 
-    # -- 10.4 RTL order swap ----------------------------------------------
-    def test_rtl_order_marker_missing_fails(self) -> None:
+    # -- 10.4 RTL: recorded direction + mirror-invariant full-width rule --
+    # The 10.4 Name Box / formula-input order swap is owned by native ToolBox
+    # output-device mirroring, not by this class. The contract only pins that the
+    # direction is recorded on this row's own code (the flag's member-init and its
+    # explicit init assignment) and that the additive bottom rule spans the full
+    # row width so it is mirror-invariant. Each re-anchored marker is proven
+    # fail-closed below.
+    def test_rtl_flag_declaration_marker_missing_fails(self) -> None:
+        # The flag member-init in the constructor records the layout direction.
         source = self.contents[INPUTWIN].replace(
-            "mxTextWindow.get(), ToolBoxItemBits::NONE, 7",
-            "mxTextWindow.get(), ToolBoxItemBits::NONE, 3",
+            "mbFormulaRowRTL ( AllSettings::GetLayoutRTL() )",
+            "mbFormulaRowRTL ( false )",
             1,
         )
         self.assert_mutation_changed(INPUTWIN, source)
         errors = self.failures(contents=self.with_content(INPUTWIN, source))
         self.assertTrue(any(":rtl-order:order marker missing" in e for e in errors), errors)
 
-    def test_rtl_rule_must_consume_direction_fails(self) -> None:
+    def test_rtl_flag_init_marker_missing_fails(self) -> None:
+        # The explicit init assignment in the constructor body.
         source = self.contents[INPUTWIN].replace(
-            "const tools::Long nLeadingX = mbFormulaRowRTL ? aOutputSize.Width() - 1 : 0;\n"
-            "    const tools::Long nTrailingX = mbFormulaRowRTL ? 0 : aOutputSize.Width() - 1;",
-            "const tools::Long nLeadingX = 0;\n"
-            "    const tools::Long nTrailingX = aOutputSize.Width() - 1;",
+            "mbFormulaRowRTL = AllSettings::GetLayoutRTL();",
+            "mbFormulaRowRTL = false;",
+            1,
+        )
+        self.assert_mutation_changed(INPUTWIN, source)
+        errors = self.failures(contents=self.with_content(INPUTWIN, source))
+        self.assertTrue(any(":rtl-order:order marker missing" in e for e in errors), errors)
+
+    def test_rtl_rule_full_width_span_required(self) -> None:
+        # Collapse the trailing endpoint: the additive bottom rule must span the
+        # full row width (mirror-invariant) so native mirroring, not an endpoint
+        # branch, owns the 10.4 swap.
+        source = self.contents[INPUTWIN].replace(
+            "rRenderContext.DrawLine( Point( 0, nY ), Point( aOutputSize.Width() - 1, nY ) );",
+            "rRenderContext.DrawLine( Point( 0, nY ), Point( 0, nY ) );",
             1,
         )
         self.assert_mutation_changed(INPUTWIN, source)
