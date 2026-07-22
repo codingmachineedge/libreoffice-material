@@ -64,3 +64,111 @@ jobs:
 
       - name: Run notification-store mutation regressions
         run: python3 bin/test_notification_store_contract.py
+
+      # --- wave-1 backfill: Material contract pairs not yet run by any workflow ---
+
+      - name: Validate Material dialog anatomy policy
+        run: python3 bin/check-material-dialog-anatomy.py
+
+      - name: Run Material dialog anatomy mutation regressions
+        run: python3 bin/test_material_dialog_anatomy.py
+
+      - name: Validate Material token accessor contract
+        run: python3 bin/check-material-token-accessor.py
+
+      - name: Run Material token accessor mutation regressions
+        run: python3 bin/test_material_token_accessor.py
+
+      - name: Validate Impress/Draw editing-surface contract
+        run: python3 bin/check-impress-draw-surface-contract.py
+
+      - name: Run Impress/Draw surface mutation regressions
+        run: python3 bin/test_impress_draw_surface_contract.py
+
+      - name: Validate Windows UI registered-inventory closure
+        run: python3 bin/check-windows-ui-registry-closure.py
+
+      - name: Run Windows UI registry closure mutation regressions
+        run: python3 bin/test_windows_ui_registry_closure.py
+
+      # --- Batch A backfill: Material contract pairs not yet run by any workflow ---
+
+      - name: Validate Windows menu composition
+        run: python3 bin/check-windows-menu-composition.py
+
+      - name: Run Windows menu composition mutation regressions
+        run: python3 bin/test_windows_menu_composition.py
+
+      - name: Validate Material infobar severity contract
+        run: python3 bin/check-material-infobar-contract.py
+
+      - name: Run Material infobar mutation regressions
+        run: python3 bin/test_material_infobar_contract.py
+
+      - name: Validate Windows link contract
+        run: python3 bin/check-windows-link-contract.py
+
+      - name: Run Windows link contract mutation regressions
+        run: python3 bin/test_windows_link_contract.py
+
+      - name: Validate Windows sidebar rail
+        run: python3 bin/check-windows-sidebar-rail.py
+
+      - name: Run Windows sidebar rail mutation regressions
+        run: python3 bin/test_windows_sidebar_rail.py
+
+      - name: Validate Windows status bar composition
+        run: python3 bin/check-windows-statusbar-composition.py
+
+      - name: Run Windows status bar composition mutation regressions
+        run: python3 bin/test_windows_statusbar_composition.py
+
+      - name: Validate Windows Start Center cards
+        run: python3 bin/check-windows-startcenter-cards.py
+
+      - name: Run Windows Start Center cards mutation regressions
+        run: python3 bin/test_windows_startcenter_cards.py
+
+      - name: Validate Windows Find & Replace fieldset
+        run: python3 bin/check-windows-find-replace-fieldset.py
+
+      - name: Run Windows Find & Replace fieldset mutation regressions
+        run: python3 bin/test_windows_find_replace_fieldset.py
+
+      - name: Validate Windows Calc sheet tabs
+        run: python3 bin/check-windows-calc-sheet-tabs.py
+
+      - name: Run Windows Calc sheet tabs mutation regressions
+        run: python3 bin/test_windows_calc_sheet_tabs.py
+
+      # --- Batch B: new and modified Material contract pairs ---
+
+      - name: Validate Calc chrome contract
+        run: python3 bin/check-calc-chrome-contract.py
+
+      - name: Run Calc chrome mutation regressions
+        run: python3 bin/test_calc_chrome_contract.py
+
+      - name: Validate Calc formula bar contract
+        run: python3 bin/check-calc-formula-bar-contract.py
+
+      - name: Run Calc formula bar mutation regressions
+        run: python3 bin/test_calc_formula_bar_contract.py
+
+      - name: Validate notification producer contract
+        run: python3 bin/check-notification-producer-contract.py
+
+      - name: Run notification producer mutation regressions
+        run: python3 bin/test_notification_producer_contract.py
+
+      - name: Validate Windows sidebar panels
+        run: python3 bin/check-windows-sidebar-panels.py
+
+      - name: Run Windows sidebar panels mutation regressions
+        run: python3 bin/test_windows_sidebar_panels.py
+
+      - name: Validate component gallery coverage
+        run: python3 bin/check-component-gallery-coverage.py
+
+      - name: Run component gallery coverage mutation regressions
+        run: python3 bin/test_component_gallery_coverage.py
