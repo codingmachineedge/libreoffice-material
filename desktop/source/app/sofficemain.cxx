@@ -46,6 +46,14 @@
 
 #include <postwin.h>
 
+#ifdef _WIN32
+// getenv / _putenv_s / _stricmp for the default-on Material activation that runs at
+// the top of soffice_main() below. Plain C runtime headers only: this must stay
+// usable before any framework/UNO initialization.
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 #ifdef ANDROID
 #  include <jni.h>
 #  include <android/log.h>
@@ -57,6 +65,50 @@
 
 extern "C" int DESKTOP_DLLPUBLIC soffice_main()
 {
+#ifdef _WIN32
+    // Fork default: this build ships the Material widget theme active on Windows.
+    // Upstream keeps the file-defined widget-draw path and the "material" theme
+    // selection opt-in behind two environment variables that a stock product never
+    // sets -- vcl/source/gdi/salgdilayout.cxx gates FileDefinitionWidgetDraw on
+    // VCL_DRAW_WIDGETS_FROM_FILE, and the theme-name guards read VCL_FILE_WIDGET_THEME
+    // -- so the shipped Material assets (vcl/Package_theme_definitions.mk installs
+    // material/definition.xml) stay dormant. Default both variables ON here, at the
+    // very top of soffice_main() before any consumer in this process reads them
+    // (initWidgetDrawBackends and the getenv() theme guards all run later, inside
+    // SVMain()). A user override always wins, and the whole activation can be turned
+    // off with LIBREOFFICE_MATERIAL_THEME=off. Plain C runtime only -- this runs
+    // before any framework/UNO/VCL initialization, so no OUString/VCL/UNO here. This
+    // is source-declared wiring only; it makes no runtime or visual-verification claim.
+    {
+        // Full opt-out: LIBREOFFICE_MATERIAL_THEME=off (or =0), case-insensitive,
+        // leaves the process environment exactly as the user set it.
+        const char* pMaterialOptOut = getenv("LIBREOFFICE_MATERIAL_THEME");
+        const bool bMaterialOptedOut = pMaterialOptOut != nullptr
+            && (_stricmp(pMaterialOptOut, "off") == 0 || _stricmp(pMaterialOptOut, "0") == 0);
+        if (!bMaterialOptedOut)
+        {
+            const char* pWidgetTheme = getenv("VCL_FILE_WIDGET_THEME");
+            if (pWidgetTheme != nullptr)
+            {
+                // User override wins: never overwrite a theme the user already chose.
+                // Only fill in the draw switch when it is unset AND the pre-set theme
+                // is non-empty (an explicit empty theme still means "no file widgets").
+                if (pWidgetTheme[0] != '\0'
+                    && getenv("VCL_DRAW_WIDGETS_FROM_FILE") == nullptr)
+                    _putenv_s("VCL_DRAW_WIDGETS_FROM_FILE", "1");
+            }
+            else
+            {
+                // Default on: select the Material theme and, unless the user already
+                // set it, enable the file-defined widget-draw path.
+                _putenv_s("VCL_FILE_WIDGET_THEME", "material");
+                if (getenv("VCL_DRAW_WIDGETS_FROM_FILE") == nullptr)
+                    _putenv_s("VCL_DRAW_WIDGETS_FROM_FILE", "1");
+            }
+        }
+    }
+#endif
+
 #if defined _WIN32
     // If this is a UI test, we may need to switch to a dedicated desktop
     if (o3tl::IsRunningUITest())
