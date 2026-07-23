@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "contract": "material-theme-resolution-routing",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/01-foundations.md",
+  "chapter_section": "3",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "opt_in_flag": "VCL_DRAW_WIDGETS_FROM_FILE",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-FND-002. Composition pin over the already-compiled theme-resolution routing chain from docs/design/01-foundations.md section 3: high contrast > dark > light precedence, the officecfg HighContrast override layer, the Windows platform HC (SPI_GETHIGHCONTRAST) and dark-mode (uxtheme.dll ordinal 132 ShouldAppsUseDarkMode) signal reads, and the WM_SETTINGCHANGE -> SalEvent::SettingsChanged -> Application::MergeSystemSettings app-wide re-resolution loop. This closes no source gap (the chain is already present and compiled); it locks control-flow ordering and platform-signal call sites against drift. Source evidence only: runtime_verified is false. The platform matrix (named Windows contrast themes, 100/125/200% scale, RTL/CJK), live-toggle interaction, and the settings-cascade performance budget stay the separate build/runtime gates and are not claimed here.",
+  "checkpoints": [
+    {
+      "id": "hc-precedence",
+      "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "note": "updateSettings short-circuits on resolved high contrast: it sets mbHighContrast, restores the captured native baseline via updateNativeWidgetFrameworkSettings(nullptr), and returns false so no Material HC paint runs.",
+      "markers": [
+        "if (rSettings.GetStyleSettings().GetHighContrastMode())",
+        "m_pThemeState->mbHighContrast = true;",
+        "updateNativeWidgetFrameworkSettings(nullptr);"
+      ]
+    },
+    {
+      "id": "native-fallback-gate",
+      "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "note": "usesNativeFallback() keys off mbHighContrast alone (not a stale resolved mpDefinition); isNativeControlSupported dispatches to the native backend on it, so under HC every control routes to the platform theme.",
+      "markers": [
+        "bool FileDefinitionWidgetDraw::usesNativeFallback() const",
+        "return m_pThemeState->mbHighContrast;",
+        "if (usesNativeFallback())",
+        "return m_rGraphics.IsNativeControlSupportedNative(eType, ePart);"
+      ]
+    },
+    {
+      "id": "dark-platform-signal",
+      "source": "vcl/win/gdi/salnativewidgets-luna.cxx",
+      "note": "UseDarkMode() layers the AUTO/LIGHT/DARK app colour mode; on AUTO it reads the undocumented uxtheme.dll ordinal 132 ShouldAppsUseDarkMode signal. Anchored on the ordinal literal + typedef so a prose reword cannot false-fail.",
+      "markers": [
+        "bool UseDarkMode()",
+        "MiscSettings::GetAppColorMode()",
+        "ShouldAppsUseDarkMode_t",
+        "MAKEINTRESOURCEA(132)",
+        "case AppearanceMode::AUTO:",
+        "case AppearanceMode::LIGHT:",
+        "case AppearanceMode::DARK:"
+      ]
+    },
+    {
+      "id": "officecfg-override-layer",
+      "source": "vcl/source/window/settings.cxx",
+      "note": "The generic global-settings pipeline applies the SAL_FORCE_HC env then the Accessibility::HighContrast officecfg override (0 Automatic / 1 Disable / 2 Enable), then captures the native baseline and invokes the Material bridge -- so the resolved HighContrastMode the Material overlay sees already reflects the override layer.",
+      "markers": [
+        "getenv( \"SAL_FORCE_HC\" )",
+        "officecfg::Office::Common::Accessibility::HighContrast::get()",
+        "CaptureFileDefinitionNativeSettings(rSettings)",
+        "UpdateFileDefinitionSettings(rSettings, ImplGetFrame()->GetUseDarkMode())"
+      ]
+    },
+    {
+      "id": "opt-in-gate",
+      "source": "vcl/source/gdi/salgdilayout.cxx",
+      "note": "The file-definition widget draw backend is opt-in behind VCL_DRAW_WIDGETS_FROM_FILE; initWidgetDrawBackends only constructs the FileDefinitionWidgetDraw overlay when the flag is set (or a caller forces it).",
+      "markers": [
+        "getenv(\"VCL_DRAW_WIDGETS_FROM_FILE\")",
+        "initWidgetDrawBackends"
+      ]
+    },
+    {
+      "id": "platform-hc-read",
+      "source": "vcl/win/window/salframe.cxx",
+      "note": "The Windows frame reads the platform high-contrast flag via SPI_GETHIGHCONTRAST / HCF_HIGHCONTRASTON and feeds it into StyleSettings.SetHighContrastMode, upstream of the officecfg override and the Material bridge.",
+      "markers": [
+        "SystemParametersInfoW( SPI_GETHIGHCONTRAST, hc.cbSize, &hc, 0 )",
+        "hc.dwFlags & HCF_HIGHCONTRASTON"
+      ]
+    },
+    {
+      "id": "live-refresh",
+      "source": "vcl/win/window/salframe.cxx",
+      "note": "On WM_SETTINGCHANGE the frame refreshes dark mode (UpdateDarkMode) and marks the theme changed, then dispatches SalEvent::SettingsChanged -- the live half of a running-app contrast/colour switch.",
+      "markers": [
+        "ImplHandleSettingsChangeMsg",
+        "nMsg == WM_SETTINGCHANGE",
+        "UpdateDarkMode(hWnd);",
+        "GetSalData()->mbThemeChanged = true;"
+      ]
+    },
+    {
+      "id": "app-cascade",
+      "source": "vcl/source/window/winproc.cxx",
+      "note": "ImplHandleSalSettings closes the loop app-wide on a SettingsChanged event: it re-merges system settings, lets the app override, and re-applies -- re-running the full resolution (which re-invokes the Material bridge per window).",
+      "markers": [
+        "ImplHandleSalSettings",
+        "SalEvent::SettingsChanged",
+        "Application::MergeSystemSettings",
+        "Application::SetSettings"
+      ]
+    }
+  ],
+  "contiguous": [
+    {
+      "id": "hc-shortcircuit-order",
+      "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "note": "The HC short-circuit must set the flag, restore the native baseline, and return false without any Material paint, in that exact order -- a reordered or comment-only bypass fails closed here even though the individual markers still resolve.",
+      "statement": "if (rSettings.GetStyleSettings().GetHighContrastMode()) { { std::scoped_lock aGuard(m_pThemeState->maMutex); m_pThemeState->mbHighContrast = true; } updateNativeWidgetFrameworkSettings(nullptr); return false; }"
+    },
+    {
+      "id": "capture-before-update-order",
+      "source": "vcl/source/window/settings.cxx",
+      "note": "The native StyleSettings baseline must be captured before the Material overlay runs, so resolved high contrast can restore genuine platform colours: capture precedes update as a contiguous pair.",
+      "statement": "pGraphics->CaptureFileDefinitionNativeSettings(rSettings); pGraphics->UpdateFileDefinitionSettings(rSettings, ImplGetFrame()->GetUseDarkMode());"
+    },
+    {
+      "id": "settings-cascade-order",
+      "source": "vcl/source/window/winproc.cxx",
+      "note": "The app-wide re-resolution must merge system settings, apply the app override, then set the settings, in that order.",
+      "statement": "Application::MergeSystemSettings( aSettings ); pApp->OverrideSystemSettings( aSettings ); Application::SetSettings( aSettings );"
+    }
+  ]
+}

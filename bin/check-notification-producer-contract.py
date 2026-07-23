@@ -17,6 +17,10 @@ call site that emits a bottom-right notification instead of a transient modal me
 * the declared severity is honest -- an informational-notice producer (``NotifyInfo``) spells its
   ``NotificationSeverity::<Severity>`` at the call site; a confirmation producer
   (``NotifyConfirmation``) declares only Success/Information, the two outcomes the router maps;
+* the registered producers span at least ``min_producer_modules`` distinct owning modules (the first
+  path segment of each producer file) -- the cross-module diversity proxy for the observable-feedback
+  convention, so a collapse back toward a single module fails closed even though each surviving
+  producer's own existence checks would still pass;
 * every producer is informational-only (it routes as a notification, never a modal prompt), and its
   display source is inside the compiled ``isApprovedSafeDisplaySource`` allowlist -- so a mislabeled
   entry that would be silently redacted at runtime fails here instead;
@@ -186,7 +190,7 @@ def load_registry(registry_path: Path) -> dict:
         raise ValidationError("registry root must be a JSON object")
 
     for key in ("approved_display_sources", "approved_source_registry", "router",
-                "confirmation_severities", "required_producers", "producers"):
+                "confirmation_severities", "min_producer_modules", "required_producers", "producers"):
         if key not in data:
             raise ValidationError(f"registry is missing required key {key!r}")
 
@@ -196,6 +200,10 @@ def load_registry(registry_path: Path) -> dict:
         raise ValidationError(
             f"confirmation_severities must be {sorted(CONFIRMATION_SEVERITIES)}"
         )
+    # bool is a subclass of int, so exclude it explicitly -- true/false is not a module count.
+    minimum_modules = data["min_producer_modules"]
+    if isinstance(minimum_modules, bool) or not isinstance(minimum_modules, int) or minimum_modules < 1:
+        raise ValidationError("min_producer_modules must be a positive integer")
 
     router = data["router"]
     if not isinstance(router, dict):
@@ -239,6 +247,33 @@ def load_registry(registry_path: Path) -> dict:
     if missing:
         raise ValidationError("required producer(s) not registered: " + ", ".join(missing))
     return data
+
+
+# --------------------------------------------------------------------------------------------------
+# Cross-module producer diversity
+# --------------------------------------------------------------------------------------------------
+def _producer_module(rel: str) -> str:
+    """The owning module of a producer file: the first path segment (e.g. 'sfx2', 'sw', 'svx')."""
+    return rel.replace("\\", "/").split("/", 1)[0]
+
+
+def validate_module_diversity(data: dict) -> None:
+    """Fail closed if the producers no longer span at least ``min_producer_modules`` modules.
+
+    This is the cross-module diversity proxy for the observable-feedback convention: it binds the
+    registry to spanning several owning modules (sfx2/sw/svx), so a partial revert that collapses the
+    audited producers back toward a single module -- which every per-producer existence check would
+    still individually pass -- fails here instead. The threshold is pinned with zero slack at the
+    current diversity, so dropping below it is always a deliberate, reviewed edit to the number.
+    """
+
+    minimum = data["min_producer_modules"]
+    modules = {_producer_module(producer["file"]) for producer in data["producers"]}
+    if len(modules) < minimum:
+        raise ValidationError(
+            "producer module diversity is below min_producer_modules: "
+            f"{len(modules)} module(s) {sorted(modules)} < required {minimum}"
+        )
 
 
 # --------------------------------------------------------------------------------------------------
@@ -345,6 +380,7 @@ def validate_producers(repo_root: Path, data: dict) -> None:
 
 def validate(repo_root: Path, registry_path: Path) -> dict:
     data = load_registry(registry_path)
+    validate_module_diversity(data)
     validate_display_source_allowlist(repo_root, data)
     validate_router(repo_root, data)
     validate_producers(repo_root, data)
@@ -374,11 +410,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     producers = data["producers"]
     confirmations = sum(1 for p in producers if p["router_call"] == "NotifyConfirmation")
+    modules = sorted({_producer_module(p["file"]) for p in producers})
     print(
         "Notification producer contract passed: "
         f"{len(producers)} audited producer(s) "
-        f"({confirmations} transient confirmation(s)) verified against real source, "
-        "each SafeDisplayText under the compiled allowlist and informational-only."
+        f"({confirmations} transient confirmation(s)) across {len(modules)} module(s) {modules} "
+        "verified against real source, each SafeDisplayText under the compiled allowlist and "
+        "informational-only."
     )
     return 0
 

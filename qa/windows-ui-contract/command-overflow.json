@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "contract": "windows-command-overflow",
+  "platform": "windows",
+  "chapter": "docs/design/05-navigation.md",
+  "chapter_section": "1.3/4.3",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "satisfies_material_gate": false,
+  "notes": "WIN-SHL-002. Presence-only pins of the REAL, pre-existing, non-Material toolbar-overflow reachability/order mechanism that docs/design/01-foundations.md 7 and docs/design/05-navigation.md 1.3/4.3 rely on when they promise 'every command remains reachable (overflow is a designed state, never silent removal); keyboard order is stable across reflows' and 'arrows traverse commands in stable declared order'. A clipped toolbar item stays mbVisible=true (only its rect empties, distinguishing overflow from removal); both the native custom-menu builder and the framework floating overflow toolbar walk items in original declared order; and arrow-key highlight cycling folds the '>>' menu button into the sequence at both wrap points. IMPORTANT HONESTY BOUND: this contract MUST NOT be reported as advancing the row's M (Material-specific) gate. The inventory legend states 'Existing upstream UI source does not satisfy M', and none of this code is Material-specific -- there is no VCL_FILE_WIDGET_THEME guard and no definition.xml token for the overflow affordance (definition.xml has no <toolbar> MenuButton/chevron part). This code predates and is independent of the Material redesign; the contract only proves the design chapter's reachability/order promise is grounded in real, non-vaporware code today, exactly like the WIN-NAV-002 context_menu presence-marker precedent. Scope excludes: any new Material visual composition for the overflow chevron/menu-button (none specified anywhere today), and the three compact/medium/expanded window-width classes from 01-foundations.md 7 (unimplemented, owned by the separate row WIN-FND-006, not this one). Source evidence only: no Windows build, toolbar pixels, or runtime resize/keyboard interaction are claimed (runtime_verified false).",
+  "code_markers": [
+    {
+      "id": "impltoolitem-isclipped-keeps-visible",
+      "file": "vcl/source/window/toolbox2.cxx",
+      "pattern": "ImplToolItem::IsClipped\\(\\)\\s*const\\s*\\{\\s*return\\s*\\(\\s*meType == ToolBoxItemType::BUTTON\\s*&&\\s*mbVisible\\s*&&\\s*maRect\\.IsEmpty\\(\\)",
+      "why": "A clipped item stays mbVisible=true with only an empty rect -- overflow is not removal (IsItemHidden is the separate !mbVisible case)."
+    },
+    {
+      "id": "toolbox-isitemclipped-query",
+      "file": "vcl/source/window/toolbox2.cxx",
+      "pattern": "ToolBox::IsItemClipped\\(\\s*ToolBoxItemId nItemId\\s*\\)\\s*const\\s*\\{.*?return pItem->IsClipped\\(\\)",
+      "why": "The per-item clipped query the framework overflow builder consumes."
+    },
+    {
+      "id": "toolbox-implhasclippeditems-gate",
+      "file": "vcl/source/window/toolbox2.cxx",
+      "pattern": "ToolBox::ImplHasClippedItems\\(\\)\\s*\\{\\s*ImplFormat\\(\\);\\s*return std::any_of\\(mpData->m_aItems\\.begin\\(\\), mpData->m_aItems\\.end\\(\\),\\s*\\[\\]\\(const ImplToolItem& rItem\\)\\s*\\{\\s*return rItem\\.IsClipped\\(\\)",
+      "why": "The std::any_of gate that reports whether an overflow affordance is needed at all."
+    },
+    {
+      "id": "toolbox-updatecustommenu-declared-order",
+      "file": "vcl/source/window/toolbox2.cxx",
+      "pattern": "ToolBox::UpdateCustomMenu\\(PopupMenu\\* pMenu\\).*?for \\( const auto& rItem : mpData->m_aItems \\).*?if\\( rItem\\.IsClipped\\(\\) \\).*?pMenu->InsertItem\\(.*?pMenu->InsertSeparator\\(\\);.*?if\\( rItem\\.IsItemHidden\\(\\) \\)",
+      "why": "Ascending walk over m_aItems inserts the clipped group in declared order, one separator, then the hidden group -- never reordered or dropped. (The source comment 'in the order they would usually appear in the toolbar' is stripped before matching; the loop structure is what is pinned.)"
+    },
+    {
+      "id": "toolbox-highlight-menubutton-in-sequence",
+      "file": "vcl/source/window/toolbox.cxx",
+      "pattern": "ToolBox::ImplChangeHighlightUpDn\\(.*?ImplHasClippedItems\\(\\) && IsMenuEnabled\\(\\) && !ImplIsFloatingMode\\(\\).*?mpData->mbMenubuttonSelected = true;\\s*InvalidateMenuButton\\(\\)",
+      "why": "Arrow-key highlight cycling folds the '>>' menu button into the sequence at a wrap point, so keyboard traversal reaches overflow in stable order rather than skipping it."
+    },
+    {
+      "id": "toolbox-drawmenubutton-gated",
+      "file": "vcl/source/window/toolbox.cxx",
+      "pattern": "ToolBox::ImplDrawMenuButton\\(.*?if \\(!ImplHasClippedItems\\(\\)\\)\\s*return;",
+      "why": "The '>>' affordance paints only when items are actually clipped (a designed state, not always-on chrome)."
+    },
+    {
+      "id": "toolbarmanager-menubutton-wiring",
+      "file": "framework/source/uielement/toolbarmanager.cxx",
+      "pattern": "SetMenuButtonHdl\\(\\s*LINK\\(\\s*pManager,\\s*ToolBarManager,\\s*MenuButton\\s*\\)\\s*\\)",
+      "why": "The vcl-to-framework glue that joins the native menu-button to the framework overflow handler -- the actual triad joint."
+    },
+    {
+      "id": "toolbarmanager-filloverflow-declared-order",
+      "file": "framework/source/uielement/toolbarmanager.cxx",
+      "pattern": "ToolBarManager::FillOverflowToolbar\\(.*?for \\( ToolBox::ImplToolItems::size_type i = 0; i < pParent->GetItemCount\\(\\); \\+\\+i \\).*?if \\( pParent->IsItemClipped\\( nId \\) \\).*?m_pToolBar->InsertItem\\( nId,",
+      "why": "The floating overflow popup toolbar independently walks ascending indices, tests IsItemClipped, and re-inserts in that order -- preserving declared order a second, independent way."
+    }
+  ]
+}

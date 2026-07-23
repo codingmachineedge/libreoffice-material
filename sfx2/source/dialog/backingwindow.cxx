@@ -65,6 +65,9 @@
 #include <sfx2/styfitem.hxx>
 #include <sfx2/objsh.hxx>
 #include <sfx2/tplpitem.hxx>
+#include <sfx2/destructiveconfirmation.hxx>
+#include <sfx2/sfxresid.hxx>
+#include <sfx2/strings.hrc>
 
 #include <svl/itemset.hxx>
 using namespace ::com::sun::star;
@@ -617,8 +620,18 @@ IMPL_LINK (BackingWindow, MenuSelectHdl, const OUString&, rId, void)
 {
     if (rId == "clear_all")
     {
-        SvtHistoryOptions::Clear(EHistoryType::PickList, false);
-        mxAllRecentThumbnails->Reload();
+        // Clearing the whole recent-documents list is irreversible: route the confirmation
+        // through the shared Material destructive-confirmation helper (docs/design/08-dialogs.md
+        // 8.1) so the safe (Cancel) action is the initial focus and Enter default, and only
+        // clear the list when the user explicitly confirms.
+        sfx2::DestructiveConfirmation aConfirm;
+        aConfirm.sPrimaryText = SfxResId(STR_QUICKSTART_RECENTDOC);
+        aConfirm.sSecondaryText = SfxResId(STR_QUERY_CLR_UNAVAILABLE_DOCS_TEXT);
+        if (sfx2::ConfirmDestructiveAction(m_xContainer.get(), aConfirm))
+        {
+            SvtHistoryOptions::Clear(EHistoryType::PickList, false);
+            mxAllRecentThumbnails->Reload();
+        }
         return;
     }
     else if(rId == "clear_unavailable")

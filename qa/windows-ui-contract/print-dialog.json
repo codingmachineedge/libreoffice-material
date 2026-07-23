@@ -1,0 +1,159 @@
+{
+  "_comment": [
+    "WIN-DLG-004 -- Print dialog. Composition-PINNING contract (check-pdf-export-dialog-contract.py",
+    "pattern: a GtkNotebook-hosted GenericDialogController whose Material look is delivered entirely",
+    "by shared vcl parts already in definition.xml) over the real upstream Print dialog",
+    "(vcl/uiconfig/ui/printdialog.ui + vcl/source/window/printdlg.cxx + vcl/inc/printdlg.hxx). The",
+    "M-scope is pinning composition, never re-drawing controls.",
+    "",
+    "The inventory row's second citation, sfx2/source/doc/printhelper.cxx, is SfxPrintHelper's",
+    "headless XPrintable/print-job dispatch -- orthogonal to the dialog's visual composition, which",
+    "lives in printdialog.ui + printdlg.cxx/.hxx. This contract anchors to the latter.",
+    "",
+    "Pinned fail-closed: (1) the footer action-widgets help(-11)/ok(-5, label '_Print', has-default)/",
+    "cancel(-6) against the pushbutton extra=\"action\" family (ok carries suggested-action ->",
+    "setAction(true)); (2) the Range radio trio order rbAllPages/rbRangePages/rbRangeSelection inside",
+    "GtkFrame frPrintRange against radiobutton/Entire at @corner-control (the real 24px square that",
+    "design 8.4 notes overrides the prototype's 20px circle); (3) the Printer field frPrinterName ->",
+    "printersbox GtkComboBoxText + setup GtkButton against combobox; (4) the Copies field copycount",
+    "GtkSpinButton bound to adjustment2 (lower 1 / upper 16384) against spinbox + spinbuttons (no tag",
+    "literally named 'spinbutton' exists); (5) the real FOUR-button preview pager btnFirst/backward/",
+    "forward/btnLast plus the pageedit GtkEntry and the totalnumpages GtkLabel '/ %n' -- correcting",
+    "design 8.4's simplified 'two 32px buttons + 1/3 label' prototype prose to the actual upstream",
+    "composition; (6) previewbox GtkCheckButton and the tabcontrol GtkNotebook against checkbox and",
+    "tabitem/tabpane/tabbody; (7) a read-only cross-check that printdialog.ui::PrintDialog stays",
+    "native-exclusion/KeepModal in dialog-notification-policy.csv.",
+    "",
+    "Carved out spec-only (build-dependent, never promoted): the Writer/Calc/Impress runtime-injected",
+    "extra option tabs (PrinterOptionsHelper-driven, no static AddTabPage marker), preview-thumbnail /",
+    "GDI printer-DC rendering (excluded from file-widget theming by 8.1/8.4), the circular-radio /",
+    "32px-pager-icon prototype geometry, and the sub-766px adaptive stacking layout.",
+    "",
+    "Source evidence only: runtime_verified is false throughout -- no native build, print-dialog pixels,",
+    "or runtime interaction are claimed."
+  ],
+  "schema_version": 1,
+  "contract": "material-print-dialog-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.4 Print)",
+  "dialog_ui": "vcl/uiconfig/ui/printdialog.ui",
+  "footer": {
+    "action_widgets": [
+      {"id": "help", "response": "-11"},
+      {"id": "ok", "response": "-5"},
+      {"id": "cancel", "response": "-6"}
+    ],
+    "primary": {"id": "ok", "label": "_Print", "has_default": true}
+  },
+  "structure": {
+    "notebook": {"id": "tabcontrol", "class": "GtkNotebook"},
+    "previewbox": {"id": "previewbox", "class": "GtkCheckButton"},
+    "range_group": {
+      "frame_id": "frPrintRange",
+      "radios": ["rbAllPages", "rbRangePages", "rbRangeSelection"]
+    },
+    "printer_group": {
+      "frame_id": "frPrinterName",
+      "combo": {"id": "printersbox", "class": "GtkComboBoxText"},
+      "setup": {"id": "setup", "class": "GtkButton"}
+    },
+    "copies": {
+      "spin": {"id": "copycount", "class": "GtkSpinButton"},
+      "adjustment": {"id": "adjustment2", "lower": "1", "upper": "16384"}
+    },
+    "pager": {
+      "page_buttons": ["btnFirst", "backward", "forward", "btnLast"],
+      "page_entry": {"id": "pageedit", "class": "GtkEntry"},
+      "total_label": {"id": "totalnumpages", "class": "GtkLabel", "text": "/ %n"}
+    }
+  },
+  "native_parts": {
+    "state_parts": [
+      {"name": "pushbutton-action", "control": "pushbutton", "part": "Entire", "states": [
+        {"role": "action-enabled", "attrs": {"enabled": "true", "extra": "action"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "action-rollover", "attrs": {"enabled": "true", "rollover": "true", "extra": "action"}, "element": "rect",
+         "tokens": {"stroke": "@primary-action-hover", "fill": "@primary-action-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "action-pressed", "attrs": {"enabled": "true", "pressed": "true", "extra": "action"}, "element": "rect",
+         "tokens": {"stroke": "@primary-action-pressed", "fill": "@primary-action-pressed", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "action-disabled", "attrs": {"enabled": "false", "extra": "action"}, "element": "rect",
+         "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}}
+      ]},
+      {"name": "radiobutton", "control": "radiobutton", "part": "Entire", "states": [
+        {"role": "unchecked", "attrs": {"enabled": "true", "button-value": "false"}, "element": "rect",
+         "tokens": {"stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-control"}},
+        {"role": "checked", "attrs": {"enabled": "true", "button-value": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-control"}}
+      ]},
+      {"name": "tabitem", "control": "tabitem", "part": "Entire", "states": [
+        {"role": "enabled", "attrs": {"enabled": "true"}, "element": "rect",
+         "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "selected", "attrs": {"enabled": "true", "selected": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}}
+      ]}
+    ],
+    "simple_parts": [
+      {"name": "combobox-entire", "control": "combobox", "part": "Entire", "attrs": {"enabled": "true"}, "element": "rect",
+       "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+      {"name": "checkbox-entire", "control": "checkbox", "part": "Entire", "attrs": {"enabled": "true", "button-value": "false"}, "element": "rect",
+       "tokens": {"stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox"}},
+      {"name": "spinbox-entire", "control": "spinbox", "part": "Entire", "attrs": {"enabled": "true"}, "element": "rect",
+       "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+      {"name": "tabpane", "control": "tabpane", "part": "Entire", "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+      {"name": "tabbody", "control": "tabbody", "part": "Entire", "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+    ],
+    "present_parts": [
+      {"name": "spinbuttons", "control": "spinbuttons", "part": "ButtonUp"}
+    ],
+    "metrics": [
+      {"name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20"},
+      {"name": "corner-control", "container": "shapes", "tag": "radius", "value": "10"},
+      {"name": "corner-container", "container": "shapes", "tag": "radius", "value": "12"},
+      {"name": "corner-checkbox", "container": "shapes", "tag": "radius", "value": "3"}
+    ],
+    "palette_roles": [
+      "primary",
+      "primary-action-hover",
+      "primary-action-pressed",
+      "disabled-container",
+      "on-surface-variant",
+      "surface",
+      "surface-container",
+      "primary-container",
+      "outline",
+      "outline-variant"
+    ]
+  },
+  "modal_exclusions": [
+    {
+      "ui_path": "vcl/uiconfig/ui/printdialog.ui",
+      "object_id": "PrintDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The Print dialog collects input; it stays KeepModal and is never routed into the notification stack."
+    }
+  ],
+  "carveouts": {
+    "runtime_injected_tabs": {
+      "status": "specified",
+      "note": "The Writer/Calc/Impress app-specific extra option tabs are runtime-injected from PrinterOptionsHelper UNO property sequences with no static AddTabPage-equivalent marker; build-dependent, not pinned as a source-position check."
+    },
+    "preview_thumbnail_rendering": {
+      "status": "specified",
+      "note": "The preview thumbnail is drawn through the Windows printer DC, explicitly excluded from file-widget theming by 8.1/8.4; out of scope even with a build."
+    },
+    "prototype_geometry": {
+      "status": "specified",
+      "note": "The circular-radio and 32px-pager-icon prototype geometry is prototype-only; the native @corner-control square and the real four-button pager are authoritative."
+    },
+    "adaptive_stacking": {
+      "status": "specified",
+      "note": "The sub-766px adaptive stacking layout is design-only; no source exists to pin build-free."
+    }
+  }
+}

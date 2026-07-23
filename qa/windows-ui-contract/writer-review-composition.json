@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "contract": "material-writer-review-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (Review, tracked changes and comments composition) -- cited by section title, not number (chapter-10 review subsection authored concurrently).",
+  "note": "WIN-WR-005. Composition-pinning contract over Writer's three real, already-registered review/collaboration surfaces: (1) the Track Changes toolbar (changes.xml, registered as private:resource/toolbar/changes / UIName 'Track Changes' in WriterWindowState.xcu) whose ordered command sequence spans review+comments+tracked-changes+collaboration; (2) the Comments sidebar deck (Sidebar.xcu CommentsDeck/CommentsPanel -> SwPanelFactory /CommentsPanel -> CommentsPanel.cxx over commentspanel.ui + the per-thread Comment widget over commentwidget.ui); (3) the Manage Changes sidebar deck (Sidebar.xcu SwManageChangesDeck/SwManageChangesPanel -> SwPanelFactory /ManageChangesPanel -> redlndlg.cxx SwRedlineAcceptPanel, which mounts the SHARED svx accept/reject control SvxAcceptChgCtr rather than a Writer-private widget). The contract pins toolbar command identity+order+separator placement, the Id/DeckId/ImplementationURL registry chain, the factory dispatch, and every weld-id binding cross-checked against its .ui, so a renamed/dropped id, reordered command, or broken resource-URL dispatch fails closed. It reuses the already-validated generic native toolbar Button nine-state part (WIN-CA-001) -- no new tokens are invented. Search is excluded (owned by regex-search-integrations.json / search-field-coverage.json). The Manage Changes deck asserts only that Writer MOUNTS the shared svx control, not the control's own internal layout (which belongs at the svx level, shared with any future Calc tracked-changes row). runtime_verified is false throughout: no native build, toolbar/deck pixels, or runtime interaction are claimed; today these surfaces render with zero Material differentiation (no VCL_FILE_WIDGET_THEME guard in the panel .cxx).",
+  "toolbar": {
+    "id": "changes",
+    "file": "sw/uiconfig/swriter/toolbar/changes.xml",
+    "registration": {
+      "source": "officecfg/registry/data/org/openoffice/Office/UI/WriterWindowState.xcu",
+      "markers": [
+        "private:resource/toolbar/changes",
+        "<value xml:lang=\"en-US\">Track Changes</value>"
+      ]
+    },
+    "design_core": [
+      ".uno:ShowTrackedChanges",
+      ".uno:TrackChanges",
+      ".uno:AcceptTrackedChange",
+      ".uno:RejectTrackedChange",
+      ".uno:AcceptAllTrackedChanges",
+      ".uno:RejectAllTrackedChanges",
+      ".uno:InsertAnnotation",
+      ".uno:CompareDocuments",
+      ".uno:MergeDocuments"
+    ],
+    "sequence": [
+      {
+        "command": ".uno:ShowTrackedChanges",
+        "visible": true
+      },
+      {
+        "command": ".uno:TrackChanges",
+        "visible": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "command": ".uno:PreviousTrackedChange",
+        "visible": true
+      },
+      {
+        "command": ".uno:NextTrackedChange",
+        "visible": true
+      },
+      {
+        "command": ".uno:AcceptTrackedChange",
+        "visible": true
+      },
+      {
+        "command": ".uno:RejectTrackedChange",
+        "visible": true
+      },
+      {
+        "command": ".uno:AcceptAllTrackedChanges",
+        "visible": true
+      },
+      {
+        "command": ".uno:RejectAllTrackedChanges",
+        "visible": true
+      },
+      {
+        "command": ".uno:AcceptTrackedChangeToNext",
+        "visible": true
+      },
+      {
+        "command": ".uno:RejectTrackedChangeToNext",
+        "visible": true
+      },
+      {
+        "command": ".uno:AcceptTrackedChanges",
+        "visible": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "command": ".uno:InsertAnnotation",
+        "visible": true
+      },
+      {
+        "command": ".uno:CommentChangeTracking",
+        "visible": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "command": ".uno:ProtectTraceChangeMode",
+        "visible": true
+      },
+      {
+        "command": ".uno:CompareDocuments",
+        "visible": true
+      },
+      {
+        "command": ".uno:MergeDocuments",
+        "visible": true
+      }
+    ]
+  },
+  "decks": [
+    {
+      "surface_id": "writer.review.comments",
+      "title": "Comments sidebar deck (CommentsPanel + per-thread Comment widget)",
+      "status": "source-declared",
+      "runtime_verified": false,
+      "registration": {
+        "source": "officecfg/registry/data/org/openoffice/Office/UI/Sidebar.xcu",
+        "markers": [
+          "<node oor:name=\"CommentsDeck\" oor:op=\"replace\">",
+          "<node oor:name=\"CommentsPanel\" oor:op=\"replace\">",
+          "private:resource/toolpanel/SwPanelFactory/CommentsPanel"
+        ]
+      },
+      "factory": {
+        "source": "sw/source/uibase/sidebar/SwPanelFactory.cxx",
+        "resource_suffix": "/CommentsPanel",
+        "create_call": "sw::sidebar::CommentsPanel::Create"
+      },
+      "panels": [
+        {
+          "name": "comments-panel",
+          "source": "sw/source/uibase/sidebar/CommentsPanel.cxx",
+          "ui_file": "sw/uiconfig/swriter/ui/commentspanel.ui",
+          "ui_load": "modules/swriter/ui/commentspanel.ui",
+          "widgets": [
+            {
+              "id": "filter_author",
+              "weld_marker": "weld_combo_box(\"filter_author\")"
+            },
+            {
+              "id": "filter_date",
+              "weld_marker": "weld_menu_button(\"filter_date\")"
+            },
+            {
+              "id": "reset",
+              "weld_marker": "weld_button(\"reset\")"
+            },
+            {
+              "id": "show_time",
+              "weld_marker": "weld_check_button(\"show_time\")"
+            },
+            {
+              "id": "show_resolved",
+              "weld_marker": "weld_check_button(\"show_resolved\")"
+            },
+            {
+              "id": "show_reference",
+              "weld_marker": "weld_check_button(\"show_reference\")"
+            },
+            {
+              "id": "sortby_position",
+              "weld_marker": "weld_radio_button(\"sortby_position\")"
+            },
+            {
+              "id": "sortby_time",
+              "weld_marker": "weld_radio_button(\"sortby_time\")"
+            },
+            {
+              "id": "comment_threads",
+              "weld_marker": "weld_box(\"comment_threads\")"
+            }
+          ]
+        },
+        {
+          "name": "comment-widget",
+          "source": "sw/source/uibase/sidebar/CommentsPanel.cxx",
+          "ui_file": "sw/uiconfig/swriter/ui/commentwidget.ui",
+          "ui_load": "modules/swriter/ui/commentwidget.ui",
+          "widgets": [
+            {
+              "id": "Comment",
+              "weld_marker": "weld_container(\"Comment\")"
+            },
+            {
+              "id": "expander",
+              "weld_marker": "weld_expander(\"expander\")"
+            },
+            {
+              "id": "authorlabel",
+              "weld_marker": "weld_label(\"authorlabel\")"
+            },
+            {
+              "id": "datelabel",
+              "weld_marker": "weld_label(\"datelabel\")"
+            },
+            {
+              "id": "timelabel",
+              "weld_marker": "weld_label(\"timelabel\")"
+            },
+            {
+              "id": "replybutton",
+              "weld_marker": "weld_button(\"replybutton\")"
+            },
+            {
+              "id": "resolvebutton",
+              "weld_marker": "weld_check_button(\"resolvebutton\")"
+            },
+            {
+              "id": "textview",
+              "weld_marker": "weld_text_view(\"textview\")"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "surface_id": "writer.review.manage-changes",
+      "title": "Manage Changes sidebar deck (SwRedlineAcceptPanel mounting shared svx SvxAcceptChgCtr)",
+      "status": "source-declared",
+      "runtime_verified": false,
+      "registration": {
+        "source": "officecfg/registry/data/org/openoffice/Office/UI/Sidebar.xcu",
+        "markers": [
+          "<node oor:name=\"SwManageChangesDeck\" oor:op=\"replace\">",
+          "<node oor:name=\"SwManageChangesPanel\" oor:op=\"replace\">",
+          "private:resource/toolpanel/SwPanelFactory/ManageChangesPanel"
+        ]
+      },
+      "factory": {
+        "source": "sw/source/uibase/sidebar/SwPanelFactory.cxx",
+        "resource_suffix": "/ManageChangesPanel",
+        "create_call": "std::make_unique<SwRedlineAcceptPanel>(pParent)"
+      },
+      "panels": [
+        {
+          "name": "manage-changes-panel",
+          "source": "sw/source/uibase/misc/redlndlg.cxx",
+          "ui_file": "sw/uiconfig/swriter/ui/managechangessidebar.ui",
+          "ui_load": "modules/swriter/ui/managechangessidebar.ui",
+          "widgets": [
+            {
+              "id": "content_area",
+              "weld_marker": "weld_container(u\"content_area\"_ustr)"
+            }
+          ]
+        }
+      ],
+      "shared_mount": {
+        "source": "sw/source/uibase/misc/redlndlg.cxx",
+        "note": "Writer's Manage Changes deck constructs SwRedlineAcceptDlg which mounts the SHARED svx accept/reject control SvxAcceptChgCtr; this pins that Writer MOUNTS the shared control, not the control's own internal layout (that belongs at the svx level, shared with any future Calc row).",
+        "markers": [
+          "mpImplDlg.reset(new SwRedlineAcceptDlg(nullptr, m_xBuilder.get(), mxContentArea.get()))",
+          "SwRedlineAcceptDlg::SwRedlineAcceptDlg(",
+          "new SvxAcceptChgCtr(pContentArea)"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "contract": "material-chart-editor-composition",
+  "platform": "windows",
+  "inventory_row": "WIN-CH-001",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/12-base-math-shared.md (Chart embedded-object editor shared surface)",
+  "chapter": "docs/design/12-base-math-shared.md",
+  "note": "Pins the chart embedded-object editor's in-place composition (the OLE-edit toolbar and menubar command identity+order, the sidebar factory routes, and the sidebar panel .ui ids) and grounds the Material treatment in the already-implemented native toolbar Entire/Button parts in definition.xml -- claiming NO new Material chart source. Composition is source-declared only; the custom-drawn drawinglayer chart canvas, live preview, data-table grid, and 3D scene have no .ui and no themeable definition.xml part, so they are build-bound and carved out spec-only below. Registry-closure assignment (chart2/ -> WIN-CH-001) is already satisfied by the prefix rule in bin/check-windows-ui-registry-closure.py, so no registry-closure work is done here. runtime_verified is false throughout: no native build, chart pixels, OLE activation, or runtime interaction are claimed.",
+  "chrome_parts": {
+    "control": "toolbar",
+    "band": {
+      "part": "DrawBackgroundHorz",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "entire": {
+      "part": "Entire",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "separator": {
+      "part": "SeparatorVert",
+      "element": "line",
+      "tokens": {
+        "stroke": "@outline-variant",
+        "stroke-width": "@stroke-thin"
+      }
+    },
+    "button": {
+      "part": "Button",
+      "states": [
+        {
+          "role": "enabled",
+          "attrs": {
+            "enabled": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-container",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-hover",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "checked",
+          "attrs": {
+            "enabled": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover-checked",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed-checked",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-pressed",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "focused",
+          "attrs": {
+            "enabled": "true",
+            "focused": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-standard",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled",
+          "attrs": {
+            "enabled": "false"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled-checked",
+          "attrs": {
+            "enabled": "false",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@outline",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        }
+      ]
+    },
+    "metrics": [
+      {
+        "name": "corner-toolbar",
+        "container": "shapes",
+        "tag": "radius",
+        "value": "18"
+      },
+      {
+        "name": "stroke-none",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "0"
+      },
+      {
+        "name": "stroke-thin",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "1"
+      },
+      {
+        "name": "stroke-standard",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "2"
+      }
+    ],
+    "palette_colors": [
+      "primary",
+      "primary-container",
+      "primary-hover",
+      "primary-pressed",
+      "surface-container",
+      "disabled-container",
+      "outline",
+      "outline-variant"
+    ]
+  },
+  "toolbars": [
+    {
+      "id": "chart-inplace",
+      "file": "chart2/uiconfig/toolbar/toolbar.xml",
+      "design_reference": "docs/design/12-base-math-shared.md (chart in-place toolbar composition)",
+      "design_core": [
+        ".uno:ChartElementSelector",
+        ".uno:DiagramType",
+        ".uno:DataRanges",
+        ".uno:DiagramData",
+        ".uno:ToggleLegend"
+      ],
+      "preserved_commands": [
+        ".uno:View3D",
+        ".uno:DiagramAxisAll",
+        ".uno:ToggleGridHorizontal",
+        ".uno:ScaleText",
+        ".uno:NewArrangement"
+      ],
+      "sequence": [
+        { "command": ".uno:ChartElementSelector", "visible": true },
+        { "command": ".uno:FormatSelection", "visible": true },
+        { "command": ".uno:FontDialog", "visible": true },
+        { "separator": true },
+        { "command": ".uno:DiagramType", "visible": true },
+        { "command": ".uno:DiagramArea", "visible": true },
+        { "command": ".uno:DiagramWall", "visible": true },
+        { "command": ".uno:View3D", "visible": true },
+        { "separator": true },
+        { "command": ".uno:DataRanges", "visible": true },
+        { "command": ".uno:DiagramData", "visible": true },
+        { "separator": true },
+        { "command": ".uno:InsertMenuTitles", "visible": true },
+        { "separator": true },
+        { "command": ".uno:ToggleLegend", "visible": true },
+        { "command": ".uno:Legend", "visible": true },
+        { "separator": true },
+        { "command": ".uno:ToggleGridHorizontal", "visible": true },
+        { "command": ".uno:ToggleGridVertical", "visible": true },
+        { "separator": true },
+        { "command": ".uno:DiagramAxisX", "visible": true },
+        { "command": ".uno:DiagramAxisY", "visible": true },
+        { "command": ".uno:DiagramAxisZ", "visible": true },
+        { "command": ".uno:DiagramAxisAll", "visible": true },
+        { "separator": true },
+        { "command": ".uno:ScaleText", "visible": false },
+        { "command": ".uno:NewArrangement", "visible": false }
+      ]
+    }
+  ],
+  "menu": {
+    "file": "chart2/uiconfig/menubar/menubar.xml",
+    "design_reference": "docs/design/12-base-math-shared.md (chart in-place menubar composition)",
+    "top_level": [
+      ".uno:PickList",
+      ".uno:EditMenu",
+      ".uno:ViewMenu",
+      ".uno:InsertMenu",
+      ".uno:FormatMenu",
+      ".uno:ToolsMenu",
+      ".uno:WindowList",
+      ".uno:HelpMenu"
+    ],
+    "design_core": [
+      ".uno:InsertMenu",
+      ".uno:FormatMenu"
+    ]
+  },
+  "factory": {
+    "source": "chart2/source/controller/sidebar/Chart2PanelFactory.cxx",
+    "implementation_name": "org.libreoffice.comp.chart2.sidebar.ChartPanelFactory",
+    "routes": [
+      "/ElementsPanel",
+      "/TypePanel",
+      "/SeriesPanel",
+      "/AxisPanel",
+      "/ErrorBarPanel",
+      "/AreaPanel",
+      "/LinePanel",
+      "/ColorsPanel"
+    ]
+  },
+  "sidebar_panels": [
+    { "file": "chart2/uiconfig/ui/sidebarelements.ui", "root_id": "ChartElementsPanel" },
+    { "file": "chart2/uiconfig/ui/sidebartype.ui", "root_id": "ChartTypePanel" },
+    { "file": "chart2/uiconfig/ui/sidebarseries.ui", "root_id": "ChartSeriesPanel" },
+    { "file": "chart2/uiconfig/ui/sidebaraxis.ui", "root_id": "ChartAxisPanel" },
+    { "file": "chart2/uiconfig/ui/sidebarerrorbar.ui", "root_id": "ChartErrorBarPanel" },
+    { "file": "chart2/uiconfig/ui/sidebarcolors.ui", "root_id": "ChartColorsPanel" }
+  ],
+  "carveouts": {
+    "chart_canvas": {
+      "status": "specified",
+      "note": "The chart drawing surface is custom-drawn by chart2 drawinglayer with no .ui and no themeable definition.xml part; its Material re-theme is build-bound (M is a roadmap target only, no Material-specific chart source exists) and never promoted by this composition pin."
+    },
+    "live_preview": {
+      "status": "specified",
+      "note": "Double-click-to-edit OLE activation and the live chart preview are runtime-only; not observable by a static contract."
+    },
+    "data_table_grid": {
+      "status": "specified",
+      "note": "The chart data-table grid editing surface is runtime interaction; carved out spec-only."
+    },
+    "scene_3d": {
+      "status": "specified",
+      "note": "The 3D chart scene (geometry/appearance/illumination) is custom-rendered and build-bound; carved out spec-only."
+    }
+  }
+}

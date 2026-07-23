@@ -1,0 +1,154 @@
+{
+  "_comment": [
+    "WIN-ACT-001 -- push buttons (filled, tonal, outlined, text). Composition-PINNING contract",
+    "over the three push-button variants that are actually compiled in definition.xml today, plus",
+    "an honest 'specified, blocked on new native source' carve-out for the two open gaps (outlined",
+    "variant, default-button emphasis). It pins nothing that a build-free session cannot prove from",
+    "source, and never promotes a target to an implemented claim.",
+    "",
+    "Compiled reality (pinned fail-closed against definition.xml, read-only): the pushbutton/Entire",
+    "part carries exactly 13 <state> tuples -- tonal/plain (x5), filled extra=\"action\" (x4), text",
+    "extra=\"flat\" (x4, two of which are intentionally empty) -- and the shared 4-line pushbutton/",
+    "Focus ring (@primary, stroke-standard, inset 0.04-0.96) that every variant, including the",
+    "future outlined one, reuses. The <style> section deliberately pairs defaultActionButtonTextColor",
+    "== actionButtonTextColor (@on-primary) and defaultButtonTextColor == buttonTextColor",
+    "(@on-primary-container): that pairing is decision D-020's recorded deferral of distinct default",
+    "styling, so the checker pins it so the deferred state cannot drift toward OR away from distinct",
+    "default styling without a conscious edit.",
+    "",
+    "TEMPORARY negative guard: extra=\"outlined\" must NOT appear in the <pushbutton> block, and the",
+    "ControlType::Pushbutton branch of WidgetDefinitionPart::getStates (vcl/source/gdi/",
+    "WidgetDefinition.cxx) must still resolve sExtra only from mbIsAction / m_bFlatButton with no",
+    "'outlined' signal. Adding outlined XML states today would be unreachable dead markup, because",
+    "the native selector has no third field. This guard fails closed the instant someone adds",
+    "outlined XML without the matching native signal, and MUST be inverted the day the real signal",
+    "lands (see target.outlined.blocked_on).",
+    "",
+    "It is source/composition evidence only: runtime_verified is false throughout -- no native build,",
+    "button pixels, or runtime interaction are claimed."
+  ],
+  "schema_version": 1,
+  "contract": "material-pushbutton-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/02-actions.md (1. Push buttons; 1.3 keyboard-default button D-020)",
+  "design_source": "docs/design/02-actions.md",
+  "native_signal_source": "vcl/source/gdi/WidgetDefinition.cxx",
+  "gallery_registry": "qa/windows-ui-contract/component-gallery-coverage.json",
+  "compiled": {
+    "control": "pushbutton",
+    "entire_part": "Entire",
+    "states": [
+      {"role": "tonal-enabled", "attrs": {"enabled": "true"}, "element": "rect",
+       "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "tonal-rollover", "attrs": {"enabled": "true", "rollover": "true"}, "element": "rect",
+       "tokens": {"stroke": "@primary-hover", "fill": "@primary-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "tonal-pressed", "attrs": {"enabled": "true", "pressed": "true"}, "element": "rect",
+       "tokens": {"stroke": "@primary-pressed", "fill": "@primary-pressed", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "tonal-selected", "attrs": {"enabled": "true", "selected": "true"}, "element": "rect",
+       "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "tonal-disabled", "attrs": {"enabled": "false"}, "element": "rect",
+       "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "action-enabled", "attrs": {"enabled": "true", "extra": "action"}, "element": "rect",
+       "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "action-rollover", "attrs": {"enabled": "true", "rollover": "true", "extra": "action"}, "element": "rect",
+       "tokens": {"stroke": "@primary-action-hover", "fill": "@primary-action-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "action-pressed", "attrs": {"enabled": "true", "pressed": "true", "extra": "action"}, "element": "rect",
+       "tokens": {"stroke": "@primary-action-pressed", "fill": "@primary-action-pressed", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "action-disabled", "attrs": {"enabled": "false", "extra": "action"}, "element": "rect",
+       "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+      {"role": "flat-enabled", "attrs": {"enabled": "true", "extra": "flat"}, "element": "empty",
+       "note": "Text/flat idle draws no container: the <state> is intentionally empty."},
+      {"role": "flat-rollover", "attrs": {"enabled": "true", "rollover": "true", "extra": "flat"}, "element": "rect",
+       "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+      {"role": "flat-pressed", "attrs": {"enabled": "true", "pressed": "true", "extra": "flat"}, "element": "rect",
+       "tokens": {"stroke": "@primary-hover", "fill": "@primary-hover", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+      {"role": "flat-disabled", "attrs": {"enabled": "false", "extra": "flat"}, "element": "empty",
+       "note": "Text/flat disabled draws no container: the <state> is intentionally empty."}
+    ],
+    "focus_part": {
+      "part": "Focus",
+      "element": "line",
+      "stroke": "@primary",
+      "stroke-width": "@stroke-standard",
+      "lines": [
+        {"x1": "0.04", "y1": "0.04", "x2": "0.96", "y2": "0.04"},
+        {"x1": "0.96", "y1": "0.04", "x2": "0.96", "y2": "0.96"},
+        {"x1": "0.96", "y1": "0.96", "x2": "0.04", "y2": "0.96"},
+        {"x1": "0.04", "y1": "0.96", "x2": "0.04", "y2": "0.04"}
+      ]
+    },
+    "style_slots": {
+      "default_pairs": [
+        {"default": "defaultActionButtonTextColor", "sibling": "actionButtonTextColor", "value": "@on-primary",
+         "note": "D-020: filled default button looks identical to its action siblings."},
+        {"default": "defaultButtonTextColor", "sibling": "buttonTextColor", "value": "@on-primary-container",
+         "note": "D-020: tonal default button looks identical to its plain siblings."}
+      ],
+      "flat_slot": {"slot": "flatButtonTextColor", "value": "@primary"}
+    },
+    "metrics": [
+      {"name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20"},
+      {"name": "corner-focus", "container": "shapes", "tag": "radius", "value": "6"},
+      {"name": "stroke-none", "container": "metrics", "tag": "metric", "value": "0"},
+      {"name": "stroke-thin", "container": "metrics", "tag": "metric", "value": "1"},
+      {"name": "stroke-standard", "container": "metrics", "tag": "metric", "value": "2"}
+    ],
+    "palette_roles": [
+      "primary",
+      "primary-container",
+      "primary-hover",
+      "primary-pressed",
+      "primary-action-hover",
+      "primary-action-pressed",
+      "disabled-container"
+    ]
+  },
+  "gallery_cardinality": {
+    "control": "pushbutton",
+    "entire_cells": 13,
+    "focus_cells": 1,
+    "note": "Cross-check against component-gallery-coverage.json so a partial/orphaned state addition is caught by a cardinality mismatch."
+  },
+  "target": {
+    "outlined": {
+      "status": "specified",
+      "runtime_verified": false,
+      "blocked_on": [
+        "vcl/source/gdi/WidgetDefinition.cxx: add a new `sExtra = \"outlined\"` branch to the ControlType::Pushbutton case of WidgetDefinitionPart::getStates, gated on a new native signal.",
+        "vcl/inc/salgtype-adjacent PushButtonValue: add a new boolean member (e.g. m_bOutlineButton) alongside mbIsAction / m_bFlatButton.",
+        "vcl/source/window/builder.cxx: recognise a new style class in BuilderBase::handleStyle() (today's allow-list has context-*, priority-*, suggested-action, small-button, destructive-action, novertpad -- no 'outlined').",
+        "definition.xml: only then may the <pushbutton> block legitimately gain extra=\"outlined\" states (transparent fill + @outline border at stroke-thin + @primary label, reusing the shared Focus part)."
+      ],
+      "note": "The outlined variant has no reachable native pushbutton state today; adding outlined XML now would be dead markup. Requires a real build across the above files, not text editing."
+    },
+    "default_emphasis": {
+      "status": "specified",
+      "runtime_verified": false,
+      "decision": "D-020",
+      "blocked_on": [
+        ".codex/memory/decision-log.md D-020: every VclButtonBox member is already setAction(true), so a distinct default treatment would restyle the whole dialog button box; revisiting requires a real build and captures.",
+        "definition.xml <style>: distinct default styling would break the pinned defaultActionButtonTextColor==actionButtonTextColor and defaultButtonTextColor==buttonTextColor pairing, which is a conscious decision-log change, not a silent edit."
+      ],
+      "note": "Recorded design decision, not an open build-free task. The default button currently looks identical to its action/plain siblings; affordance is the platform focus/default border plus Enter activation."
+    }
+  },
+  "negative_guard": {
+    "definition_forbidden_extra": "outlined",
+    "native_branch": {
+      "file": "vcl/source/gdi/WidgetDefinition.cxx",
+      "case_marker": "case ControlType::Pushbutton:",
+      "required_signals": ["rPushButtonValue.mbIsAction", "rPushButtonValue.m_bFlatButton"],
+      "required_extras": ["sExtra = \"action\"", "sExtra = \"flat\""],
+      "forbidden_token": "outlined",
+      "note": "TEMPORARY: this guard proves the outlined native signal does not exist yet, so the definition.xml carve-out is honest. Invert (drop forbidden_token, add the outlined signal as required) the day target.outlined lands."
+    }
+  },
+  "design_anchors": [
+    "The outlined variant has no native",
+    "keyboard-default button (deliberately deferred"
+  ]
+}

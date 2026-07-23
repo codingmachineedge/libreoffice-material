@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "contract": "windows-version-history-seeded-state",
+  "inventory_row": "WIN-CONCEPT-002",
+  "surface": "Version history",
+  "platform": "windows",
+  "generator": "bin/check-version-history-seeded-state.py",
+  "prototype": "site/prototype.html",
+  "design_reference": "docs/design/12-base-math-shared.md",
+  "runtime_verified": false,
+  "source_note": "Deterministic source-level seeded-state coverage ledger for WIN-CONCEPT-002. Regenerate with --regenerate. Source of truth is the inline seeded HISTORY/DOCS fixture in site/prototype.html plus a provenance map to real upstream versdlg.cxx SIDs. This is prototype-internal coverage + concept-vs-reality provenance, NOT a claim that a native auto-commit version engine, restore-as-replace, or any runtime evidence exists.",
+  "proposed_fixture": {
+    "owner": "unassigned",
+    "candidate_home": "sfx2 document model",
+    "note": "Candidate native owner for a Version-history timeline surface. The native .ui, the auto-commit engine, and rendered pixels are the separate build gates; this ledger is the source-level seeded-state coverage contract only."
+  },
+  "counts": {
+    "entries": 12,
+    "current": 1,
+    "docs": 6,
+    "with_snapshot": 10,
+    "groups": 2
+  },
+  "gating": {
+    "restore_gated_on_snapshot": "var restoreBtn = hdoc ?",
+    "current_gated_on_current_flag": "var currentBtn = hs.current ?",
+    "snapshot_gated_on_docIx": "var hdoc=(hs.docIx!=null)?DOCS[hs.docIx]:null;",
+    "compare_present": "Compare with current",
+    "selection_dispatch": "data-act=\"set:histSel:"
+  },
+  "provenance": {
+    "backed": [
+      {
+        "affordance": "compare-with-current",
+        "upstream": "SID_DOCUMENT_COMPARE",
+        "source": "sfx2/source/dialog/versdlg.cxx"
+      },
+      {
+        "affordance": "view-comment",
+        "upstream": "SfxViewVersionDialog_Impl",
+        "source": "sfx2/source/dialog/versdlg.cxx"
+      }
+    ],
+    "concept_only": [
+      "branch",
+      "export",
+      "restore-as-replace",
+      "whole-project-scope",
+      "auto-commit",
+      "word-delta",
+      "commit-hash"
+    ]
+  },
+  "entries": [
+    {
+      "id": 0,
+      "time": "Now",
+      "group": "Today",
+      "action": "Working copy",
+      "icon": "edit",
+      "hash": "e9c4f2a",
+      "author": "Alex Rivera",
+      "added": 0,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 5,
+      "current": true
+    },
+    {
+      "id": 1,
+      "time": "2:41 PM",
+      "group": "Today",
+      "action": "Bold applied to “record 121%”",
+      "icon": "format_bold",
+      "hash": "7b1d0c8",
+      "author": "Alex Rivera",
+      "added": 1,
+      "removed": 1,
+      "file": "Q3 Board Report.odt",
+      "docIx": 5,
+      "current": false
+    },
+    {
+      "id": 2,
+      "time": "2:39 PM",
+      "group": "Today",
+      "action": "Typed “Net retention reached a record 121%.”",
+      "icon": "keyboard",
+      "hash": "3a9f5e1",
+      "author": "Alex Rivera",
+      "added": 11,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 5,
+      "current": false
+    },
+    {
+      "id": 3,
+      "time": "2:32 PM",
+      "group": "Today",
+      "action": "Inserted “Highlights” section",
+      "icon": "title",
+      "hash": "c22a7b4",
+      "author": "Alex Rivera",
+      "added": 34,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 4,
+      "current": false
+    },
+    {
+      "id": 4,
+      "time": "2:20 PM",
+      "group": "Today",
+      "action": "Paragraph aligned justified",
+      "icon": "format_align_justify",
+      "hash": "0d84f60",
+      "author": "Alex Rivera",
+      "added": 0,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 3,
+      "current": false
+    },
+    {
+      "id": 5,
+      "time": "2:02 PM",
+      "group": "Today",
+      "action": "Recalculated “2026 Operating Budget.ods”",
+      "icon": "table_chart",
+      "hash": "55e1aa9",
+      "author": "Alex Rivera",
+      "added": 6,
+      "removed": 6,
+      "file": "2026 Operating Budget.ods",
+      "docIx": null,
+      "current": false
+    },
+    {
+      "id": 6,
+      "time": "1:58 PM",
+      "group": "Today",
+      "action": "Typed second paragraph",
+      "icon": "keyboard",
+      "hash": "9f3c2d7",
+      "author": "Alex Rivera",
+      "added": 42,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 3,
+      "current": false
+    },
+    {
+      "id": 7,
+      "time": "1:44 PM",
+      "group": "Today",
+      "action": "Title changed to “Q3 Board Report”",
+      "icon": "edit",
+      "hash": "2b7e884",
+      "author": "Alex Rivera",
+      "added": 3,
+      "removed": 1,
+      "file": "Q3 Board Report.odt",
+      "docIx": 2,
+      "current": false
+    },
+    {
+      "id": 8,
+      "time": "11:20 AM",
+      "group": "Today",
+      "action": "Applied Heading 1 style",
+      "icon": "format_size",
+      "hash": "a1c9f30",
+      "author": "Alex Rivera",
+      "added": 0,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 1,
+      "current": false
+    },
+    {
+      "id": 9,
+      "time": "Yesterday 4:12 PM",
+      "group": "Yesterday",
+      "action": "Added “Executive summary”",
+      "icon": "title",
+      "hash": "6e0b512",
+      "author": "Alex Rivera",
+      "added": 12,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 1,
+      "current": false
+    },
+    {
+      "id": 10,
+      "time": "Yesterday 3:50 PM",
+      "group": "Yesterday",
+      "action": "Updated slide 3 layout in “Product Launch.odp”",
+      "icon": "co_present",
+      "hash": "44d3928",
+      "author": "Priya Shah",
+      "added": 0,
+      "removed": 0,
+      "file": "Product Launch.odp",
+      "docIx": null,
+      "current": false
+    },
+    {
+      "id": 11,
+      "time": "Yesterday 3:50 PM",
+      "group": "Yesterday",
+      "action": "Document created",
+      "icon": "note_add",
+      "hash": "0000001",
+      "author": "Alex Rivera",
+      "added": 0,
+      "removed": 0,
+      "file": "Q3 Board Report.odt",
+      "docIx": 0,
+      "current": false
+    }
+  ]
+}

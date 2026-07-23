@@ -79,7 +79,7 @@ The body below the command area is a horizontal split: document canvas
 
 | Region | Size (prototype) | Tokens | Status |
 | --- | --- | --- | --- |
-| Document canvas | flexible width; vertical padding 26px; scrollable | background `@surface-container-low` | canvas colour implemented in definition.xml (compiled; surface state unverified) via the `workspaceColor` style slot = `@surface-container-low`; composition prototype-only |
+| Document canvas | flexible width; vertical padding 26px; scrollable | prototype background `@surface-container-low` | **canvas colour is not Material-token-wired**: the real canvas-outside-page fill is `SwViewOption::GetDocColor()` → `svtools::ColorConfig` `DOCCOLOR`, whose default is the hardcoded auto pair `COL_WHITE` (light) / `Color(0x1C1C1C)` (dark), **not** the `workspaceColor`/`@surface-container-low` slot the prototype implies. `DOCCOLOR` reaches `StyleSettings` only in the forced-high-contrast branch, and there via `GetWindowColor()`/`@surface`. Composition prototype-only |
 | Page | 640px wide (`max-width: 92%`), centred; `64px 72px` inner padding; min-height 760px | `@surface` fill; `stroke-thin` `@outline-variant` border; shadow `0 4px 20px rgba(0,0,0,.10)` | prototype-only (page rendering is document content, not chrome) |
 | Properties sidebar | 300px total: 252px panel + 48px icon rail; `stroke-thin` `@outline-variant` left rule | panel on `@surface`, rail on `@surface-container` | prototype-only composition |
 | Sidebar rail | 48px wide; buttons 38×38px at `corner-small`, 22px icons, 4px gap, 10px top padding | active `@primary-container` / `@on-primary-container`; inactive transparent / `@on-surface-variant` | prototype-only; hover/checked treatment matches `toolbar`/`Button` semantics (implemented in definition.xml; compiled, surface state unverified) |
@@ -113,6 +113,31 @@ section:
   leading icon; prototype content "Spacing above paragraph: 0.00"".
   Prototype-only.
 
+#### Page style and Navigator panels
+
+Two further Writer-owned sidebar decks route to real production panel classes
+through `SwPanelFactory` and carry a load-bearing visibility state machine each;
+their outer deck chrome is already covered generically by the WIN-CON-007
+sidebar-deck contract, so only their content composition is documented here
+(pinned source-only by `qa/windows-ui-contract/writer-sidebar-decks.json`):
+
+- **Page style panel** (WriterPageDeck ▸ Styles = `PageStylesPanel` over
+  `pagestylespanel.ui`): the background group exposes four fill controls —
+  colour, gradient, hatching, bitmap — as a **mutually exclusive** set switched
+  by the fill-type combo. `PageStylesPanel::Update()`'s `switch` over the fill
+  style shows exactly one control (or, for GRADIENT, the colour + gradient pair)
+  and hides the rest, then relayouts via `TriggerDeckLayouting()`. Controls are
+  stock weld widgets (combobox, colour list box) already themed generically —
+  implemented in definition.xml (compiled; surface state unverified) — no
+  panel-specific token treatment.
+- **Navigator panel** (NavigatorDeck = `SwNavigationPI` over
+  `navigatorpanel.ui`): a single content-tree ⇄ global-tree toggle
+  (`ToggleTree()` shows the content-tree widget set and hides the global set, or
+  the mirror, calling `SetGlobalMode()`), plus the six content-type toolbars.
+  Tree-row height, indent, icon and selection pixels are deferred to a
+  build-time checkpoint (see [06-containers](06-containers.md)); this deck's
+  Material composition is specified here, not yet implemented.
+
 #### Formatting toolbar composition (classic)
 
 Left to right (prototype `FMT.writer`), separated by 1×22px `@outline-variant`
@@ -131,6 +156,53 @@ in the prototype; toggle buttons show checked state as `@primary-container`
 fill with `@on-primary-container` glyph and expose `aria-pressed`.
 Composition prototype-only; each control's parts and states implemented in
 definition.xml (compiled; surface state unverified).
+
+#### Review, tracked changes and comments composition
+
+Writer's review/collaboration surfaces are real, registered upstream chrome that
+today carry zero Material-specific differentiation; their composition/wiring is
+pinned source-only by `qa/windows-ui-contract/writer-review-composition.json`,
+and every line here is **specified here, not yet implemented**:
+
+- **Track Changes toolbar** (`sw/uiconfig/swriter/toolbar/changes.xml`,
+  `private:resource/toolbar/changes`): a fixed ordered command sequence spanning
+  review + comments + tracked-changes + collaboration — Show/Record changes
+  toggles, Previous/Next, Accept / Reject (single, all, to-next),
+  Insert Comment / comment-on-change, Protect, and the file-level
+  Compare/Merge Documents. It reuses the generic nine-state `toolbar`/`Button`
+  part at `@corner-toolbar` (no new tokens).
+- **Comments deck** (Sidebar.xcu `CommentsDeck`/`CommentsPanel` →
+  `SwPanelFactory` → `CommentsPanel` over `commentspanel.ui` + `commentwidget.ui`):
+  a filter/options header (author, date, show-time/resolved/reference, sort) over
+  a stack of per-thread comment widgets (author/date/time labels, reply and
+  resolve controls, text view).
+- **Manage Changes deck** (Sidebar.xcu `SwManageChangesDeck` → `SwRedlineAcceptPanel`
+  over `managechangessidebar.ui`): mounts the **shared** svx accept/reject control
+  `SvxAcceptChgCtr` (`svx/source/dialog/ctredlin.cxx`) rather than a Writer-private
+  widget — so this deck is a real mount of shared review infrastructure, and the
+  control's own internal layout is owned at the svx level, not duplicated here.
+
+Search within these surfaces (comment filter, find bar) and document-level error
+states are covered by other rows and the generic banner pattern respectively, so
+they are deliberately out of this composition.
+
+#### Format dialogs (Character, Paragraph, Table, Picture/Frame)
+
+Writer's high-traffic tab dialogs are applications of the shared modal anatomy
+and the left-icon-rail tab-dialog pattern (the same generic dialog chrome
+documented in [08-dialogs](08-dialogs.md) and the tab-bar native part contract
+in [05-navigation](05-navigation.md) §3) — **no novel visual design**. Four are
+pinned as real `SfxTabDialogController` left-icon-rail notebooks
+(`qa/windows-ui-contract/writer-format-dialogs.json`): Character
+(`characterproperties.ui` / `chardlg.cxx`), Paragraph (`paradialog.ui` /
+`pardlg.cxx`), Table Properties (`tableproperties.ui` / `tabledlg.cxx`) and
+Picture/Frame (`picturedialog.ui` + `framedialog.ui` / `frmdlg.cxx`, one class
+serving three dialog identities). Each is a modal notebook with a left tab rail
+and the shared reset/ok/cancel/help footer, and each reuses shared svx tab pages
+(Border, Area, Transparency) validated once and cross-referenced rather than
+re-drawn. Composition/anatomy only; icon downscale, rail width, and pill
+geometry are build-host pixel gates, so this is specified here, not yet
+implemented (`runtime_verified: false`).
 
 ### Key user flows
 
@@ -263,25 +335,49 @@ cells render as `=` plus the raw value with thousands separators stripped.
 
 #### Grid
 
-The grid is application-drawn (not a VCL native-control part), so its colour
-behaviour flows through the 72-slot `StyleSettings` mapping — implemented in
-definition.xml (compiled; surface state unverified) — while its geometry rules are specified here and
-mirrored by the prototype.
+The grid is application-drawn (not a VCL native-control part). Its **idle**
+header colours (face, label, rule line) do flow through the 72-slot
+`StyleSettings` mapping — implemented in definition.xml (compiled; surface state
+unverified) — but its **selection and gridline** colours route through
+`svtools::ColorConfig` (Tools ▸ Options ▸ Application Colors) instead, not the
+file-widget/definition.xml pipe (see the grid-colour-routing note below). Its
+geometry rules are specified here and mirrored by the prototype.
 
 | Element | Value | Tokens | Status |
 | --- | --- | --- | --- |
 | Corner cell | 44×26px | `@surface-container` fill | prototype-only |
 | Column headers | 26px high, one per column | idle `@surface-container` fill, 12px medium `@on-surface-variant` text; `stroke-thin` `@outline-variant` cell rules | prototype-only geometry; colours via `highlightColor` family below |
 | Row headers | 44px wide, `--row` high | same idle/selected treatment as column headers | prototype-only geometry |
-| Header selection highlight | header containing the active cell | `@primary-container` fill, `@on-primary-container` text (native `highlightColor` / `highlightTextColor` slots) | colour roles implemented in definition.xml (compiled; surface state unverified); header rule specified here |
+| Header selection highlight | header containing the active cell | **fill `@primary`** (via `CALCCELLFOCUS` → `GetAccentColor()`, not `@primary-container`); label text `@on-primary-container` (`GetHighlightTextColor()`) | source-declared, runtime unverified; see grid-colour-routing note below |
 | Data columns | **76px compact / 92px comfortable** default width | — | prototype-only density rule |
-| Data rows | `--row`: **26px compact / 32px comfortable** | `stroke-thin` `@outline-variant` gridlines | prototype-only density rule |
+| Data rows | `--row`: **26px compact / 32px comfortable** | `stroke-thin` `@outline-variant` gridlines (**target only — not yet Material-routed**) | prototype-only density rule; gridline colour (`CALCGRID`) resolves through the fixed `cAutoColors` default, not `@outline-variant` — see note below |
 | Cells | `0 8px` inline padding, 13px `@on-surface` text | text starts with a digit or `(` → right-aligned; otherwise left-aligned | prototype-only heuristic illustrating the standard numeric/text alignment rule |
-| Cell selection ring | 2px inset ring (`stroke-standard`) in `@primary`; selected cell fill `@surface` against the transparent grid | `@primary`, `@surface` | prototype-only; specified here for native (the accent resolves through the `accentColor` = `@primary` slot, implemented in definition.xml; compiled, surface state unverified) |
+| Cell selection ring | 2px inset ring (`stroke-standard`) in `@primary`; selected cell fill `@surface` against the transparent grid | `@primary`, `@surface` | prototype-only; the `accentColor` = `@primary` slot is compiled in definition.xml, but Calc's cursor does **not** read it directly — it resolves through `svtools::ColorConfig`'s `CALCCELLFOCUS` entry (default → `GetAccentColor()` → `@primary`), and only when the stored Application-Colors value is "Automatic" — see note below |
 | Alternating rows (where enabled) | `@surface-container-low` via `alternatingRowColor` | implemented in definition.xml (compiled; surface state unverified) |
 
 The prototype grid shows 8 columns (A–H) and 14 rows with an income-statement
 fixture (`Category/Q1…Q4/Total`, totals row `15,410`).
+
+**Note — grid colour routing (source-verified, runtime unverified).** Calc's
+grid is not on the file-widget/definition.xml colour pipe for its selection and
+gridline colours; it routes through `svtools::ColorConfig`
+(`svtools/source/config/colorcfg.cxx`) instead. `CALCCELLFOCUS`/`CALCDBFOCUS` —
+which paint the active-cell cursor ring, the AutoFilter/DB-range highlight, the
+autofill handle and the selected-header fill — default to
+`StyleSettings::GetAccentColor()` (= the compiled `accentColor` = `@primary`
+slot) **only** when the user's stored Application-Colors value is `COL_AUTO`
+("Automatic"); a customized profile bypasses the Material accent entirely. The
+selected-header fill is therefore `@primary` paired with `@on-primary-container`
+label text — a pairing whose contrast is a build-bound verification follow-up,
+not a current claim. Gridlines (`CALCGRID`) are **not** special-cased in
+`ColorConfig::GetDefaultColor` at all: they fall through to the fixed
+`cAutoColors` table (`COL_GRAY3` light / `COL_GRAY7` dark), so the
+"`@outline-variant` gridlines" target above is a divergence from the wired code,
+not an implemented mapping. Density (compact/comfortable column-width and
+row-height defaults) likewise has no native selection code and stays specified,
+not implemented. These facts are pinned source-only (`runtime_verified: false`)
+by `qa/windows-ui-contract/calc-grid-selection.json` (WIN-CA-003) and
+`qa/windows-ui-contract/data-grid-header-selection.json` (WIN-CON-003).
 
 #### Sheet tab bar
 

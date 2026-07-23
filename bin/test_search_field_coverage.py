@@ -53,15 +53,39 @@ sys.modules[SPEC.name] = validator
 SPEC.loader.exec_module(validator)
 
 
-def _shipping(ui_file: str, widget_id: str, coverage_id: str = "test.shipping") -> dict[str, str]:
-    return {
+_GAP_TAXONOMY = {
+    "recovered_categories": sorted(validator.GAP_CATEGORIES_RECOVERED),
+    "provisional_categories": [
+        {
+            "category": category,
+            "coined_for": "fixture.surface",
+            "status": "needs-design-sign-off",
+        }
+        for category in validator.GAP_CATEGORIES_PROVISIONAL
+    ],
+}
+
+
+def _shipping(
+    ui_file: str,
+    widget_id: str,
+    coverage_id: str = "test.shipping",
+    *,
+    integration_status: str = "gap",
+) -> dict[str, str]:
+    entry = {
         "coverage_id": coverage_id,
         "surface": "Fixture shipping search",
         "ui_file": ui_file,
         "widget_id": widget_id,
         "query_scope": "fixture values",
         "regex_builder": "adjacent-advanced-builder",
+        "integration_status": integration_status,
     }
+    if integration_status == "gap":
+        entry["gap_category"] = "stub surface"
+        entry["gap_evidence"] = "fixture/source.cxx: OnFilter is a // STUB body with no backing model"
+    return entry
 
 
 def _planned(ui_file: str, widget_id: str, coverage_id: str = "test.planned") -> dict[str, str]:
@@ -92,10 +116,15 @@ def _registry(
     shipping: list[dict[str, str]] | None = None,
     planned: list[dict[str, str]] | None = None,
     excluded: list[dict[str, str]] | None = None,
+    gap_taxonomy: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     shipping = shipping or []
     planned = planned or []
     excluded = excluded or []
+    source_integrated = sum(
+        1 for entry in shipping if entry.get("integration_status") == "source-integrated"
+    )
+    gap_fields = sum(1 for entry in shipping if entry.get("integration_status") == "gap")
     return {
         "schema_version": 1,
         "contract": "windows-native-text-query-coverage",
@@ -105,6 +134,8 @@ def _registry(
             "shipping_fields": len(shipping),
             "planned_fields": len(planned),
             "excluded_candidates": len(excluded),
+            "source_integrated_fields": source_integrated,
+            "gap_fields": gap_fields,
         },
         "scanner_contract": {
             "widget_classes": sorted(validator.TEXT_WIDGET_CLASSES),
@@ -112,6 +143,7 @@ def _registry(
             "semantic_properties": sorted(validator.SEMANTIC_PROPERTIES),
             "find_icon": validator.FIND_ICON,
         },
+        "gap_taxonomy": _GAP_TAXONOMY if gap_taxonomy is None else gap_taxonomy,
         "shipping_fields": shipping,
         "planned_fields": planned,
         "excluded_candidates": excluded,
@@ -278,6 +310,161 @@ class SearchFieldCoverageTests(unittest.TestCase):
         self.assertIn(("sfx2/uiconfig/ui/startcenter.ui", "start_search"), actual_shipping)
         self.assertSetEqual(EXPECTED_SHIPPING_CONTROLS, actual_shipping)
         self.assertSetEqual(set(), actual_planned)
+
+    def test_repository_integration_split_is_thirteen_and_fourteen(self) -> None:
+        _, stats = validator.validate_registry(REPO_ROOT, REGISTRY_PATH)
+        self.assertEqual(13, stats.source_integrated_fields)
+        self.assertEqual(14, stats.gap_fields)
+
+
+class IntegrationLedgerTests(unittest.TestCase):
+    """Fail-closed coverage for the integration_status / gap-ledger schema and reconciliation."""
+
+    def _root_with_search_entry(self, root: Path) -> str:
+        ui_file = "module/uiconfig/ui/search.ui"
+        _write_ui(root, ui_file, '  <object class="GtkEntry" id="search"/>')
+        return ui_file
+
+    def test_missing_integration_status_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search")
+            del field["integration_status"]
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("integration_status must be one of" in error for error in errors), errors
+        )
+
+    def test_unknown_integration_status_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search")
+            field["integration_status"] = "half-done"
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("integration_status must be one of" in error for error in errors), errors
+        )
+
+    def test_gap_field_requires_gap_category(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search", integration_status="gap")
+            del field["gap_category"]
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("requires a non-empty gap_category" in error for error in errors), errors
+        )
+
+    def test_unknown_gap_category_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search", integration_status="gap")
+            field["gap_category"] = "an unrecovered made-up reason"
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("not in the recovered gap taxonomy" in error for error in errors), errors
+        )
+
+    def test_gap_field_requires_gap_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search", integration_status="gap")
+            del field["gap_evidence"]
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("requires non-empty gap_evidence" in error for error in errors), errors
+        )
+
+    def test_source_integrated_must_not_carry_gap_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(
+                ui_file, "search", "mod.search", integration_status="source-integrated"
+            )
+            field["gap_category"] = "stub surface"
+            errors, _ = validator.validate_registry_data(root, _registry(shipping=[field]))
+        self.assertTrue(
+            any("must not carry gap_category" in error for error in errors), errors
+        )
+
+    def test_coverage_source_integrated_without_registered_integration_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(
+                ui_file, "search", "mod.search", integration_status="source-integrated"
+            )
+            errors, _ = validator.validate_registry_data(
+                root, _registry(shipping=[field]), integration_ids=set()
+            )
+        self.assertTrue(
+            any("has no matching integration" in error for error in errors), errors
+        )
+
+    def test_registered_integration_without_coverage_marker_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(ui_file, "search", "mod.search", integration_status="gap")
+            errors, _ = validator.validate_registry_data(
+                root, _registry(shipping=[field]), integration_ids={"ghost.integration"}
+            )
+        self.assertTrue(
+            any("does not mark it" in error for error in errors), errors
+        )
+
+    def test_integration_count_must_reconcile(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ui_file = self._root_with_search_entry(root)
+            field = _shipping(
+                ui_file, "search", "mod.search", integration_status="source-integrated"
+            )
+            registry = _registry(shipping=[field])
+            registry["expected_counts"]["source_integrated_fields"] = 5
+            errors, _ = validator.validate_registry_data(
+                root, registry, integration_ids={"mod.search"}
+            )
+        self.assertTrue(
+            any("source_integrated_fields is 5" in error for error in errors), errors
+        )
+
+    def test_gap_taxonomy_recovered_categories_are_pinned(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            broken = {
+                "recovered_categories": ["only one category"],
+                "provisional_categories": _GAP_TAXONOMY["provisional_categories"],
+            }
+            errors, _ = validator.validate_registry_data(
+                root, _registry(gap_taxonomy=broken)
+            )
+        self.assertTrue(
+            any("recovered_categories must be exactly" in error for error in errors), errors
+        )
+
+    def test_gap_taxonomy_provisional_requires_signoff_flag(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            broken = {
+                "recovered_categories": sorted(validator.GAP_CATEGORIES_RECOVERED),
+                "provisional_categories": [
+                    {"category": category, "coined_for": "x", "status": "approved"}
+                    for category in validator.GAP_CATEGORIES_PROVISIONAL
+                ],
+            }
+            errors, _ = validator.validate_registry_data(
+                root, _registry(gap_taxonomy=broken)
+            )
+        self.assertTrue(
+            any("needs-design-sign-off" in error for error in errors), errors
+        )
 
 
 if __name__ == "__main__":

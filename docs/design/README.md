@@ -42,7 +42,7 @@ without treating shared-component compilation as application-surface proof.
 | 09 | [Start Center](09-start-center.md) | Navigation column, Home, search, document card grid |
 | 10 | [Writer & Calc](10-writer-calc.md) | Page canvas, properties sidebar, formula bar, grid, sheet tabs |
 | 11 | [Impress & Draw](11-impress-draw.md) | Slide panel, canvas, layouts, tool rail, object properties |
-| 12 | [Base, Math & shared](12-base-math-shared.md) | Database shell, formula editor, Features catalog, history, suite-wide rules |
+| 12 | [Base, Math & shared](12-base-math-shared.md) | Database shell, formula editor, chart editor, Features catalog, history, suite-wide rules |
 
 ## How a spec becomes "done"
 

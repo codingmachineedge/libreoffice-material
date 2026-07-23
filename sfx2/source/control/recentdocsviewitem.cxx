@@ -14,6 +14,7 @@
 #include <com/sun/star/util/URLTransformer.hpp>
 
 #include <comphelper/base64.hxx>
+#include <comphelper/DirectoryHelper.hxx>
 #include <comphelper/propertyvalue.hxx>
 #include <drawinglayer/primitive2d/discretebitmapprimitive2d.hxx>
 #include <drawinglayer/processor2d/baseprocessor2d.hxx>
@@ -34,6 +35,7 @@
 #include <map>
 
 #include <bitmaps.hlst>
+#include <startcentercard.hxx>
 #include "recentdocsviewitem.hxx"
 
 using namespace basegfx;
@@ -128,6 +130,14 @@ RecentDocsViewItem::RecentDocsViewItem(sfx2::RecentDocsView &rView, const OUStri
     : ThumbnailViewItem(rView, nId),
       mrParentView(rView),
       maURL(rURL),
+      // Material Start Center design 9.5 "Unavailable file thumbnails": flag a
+      // recent card whose backing file is already gone so the card renderer dims
+      // its preview. Mirrors the comphelper::DirectoryHelper::fileExists() probe
+      // clearUnavailableFiles() performs on demand, but only when the Material file
+      // widget is live -- under the default/native theme the flag stays false and
+      // no per-item stat() is paid at load time.
+      m_bUnavailable(sfx2::IsMaterialStartCenterActive()
+                     && !comphelper::DirectoryHelper::fileExists(rURL)),
       m_isReadOnly(isReadOnly),
       m_bRemoveIconHighlighted(false),
       m_aRemoveRecentBitmap(BMP_RECENTDOC_REMOVE),

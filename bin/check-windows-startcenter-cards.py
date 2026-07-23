@@ -25,7 +25,10 @@ declaration against the real tree:
 * ``views`` -- each Start Center view source must include the renderer header,
   invoke the guarded renderer, pass its localized empty-grid resource, keep the
   non-Material base paint as the fallback, and lay the grid out with the card
-  metrics. Each empty-grid resource must be defined with the expected copy.
+  metrics. Each empty-grid resource must be defined with the expected copy. Any
+  ``pinned_markers`` a view declares must survive in code too, pinning the
+  first-run gate (empty item list stays on the legacy native screen rather than
+  the filter-implying "no match" copy) against silent regression.
 
 The registry establishes source-complete scope; it never claims a native build,
 card pixels or runtime evidence (``runtime_verified: false`` throughout).
@@ -275,6 +278,19 @@ def _validate_views(
                 f"{context}:non-Material fallback missing ({fallthrough}); "
                 "the default paint path must be preserved"
             )
+
+        # Pinned first-run fallback: the Material card path is gated on a non-empty
+        # item list, so a genuinely-empty (first-run) grid falls through to the
+        # legacy native screen instead of the filter-implying "no match" copy. Each
+        # pinned marker must survive in code, so a future edit cannot silently drop
+        # the gate and start showing "no documents match this pattern" on a blank
+        # first run (see the view's pinned_fallback rationale).
+        for marker in view.get("pinned_markers", []):
+            if isinstance(marker, str) and marker not in code:
+                errors.append(
+                    f"{context}:pinned first-run fallback marker missing in code ({marker}); "
+                    "the empty-list-stays-native gate must be preserved"
+                )
 
         resource = view.get("empty_message_resource")
         if isinstance(resource, str) and resource_text is not None:

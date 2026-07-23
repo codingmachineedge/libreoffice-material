@@ -40,6 +40,7 @@
 #include <svtools/svtresid.hxx>
 #include <svtools/htmlcfg.hxx>
 #include <sfx2/app.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <sfx2/objface.hxx>
 #include <sfx2/toolbarids.hxx>
 #include <sfx2/viewfrm.hxx>
@@ -601,9 +602,12 @@ void SwSrcView::StartSearchAndReplace(const SvxSearchItem& rSearchItem,
 
     if(bNotFoundMessage)
     {
-        std::unique_ptr<weld::Builder> xBuilder(Application::CreateBuilder(nullptr, u"modules/swriter/ui/infonotfounddialog.ui"_ustr));
-        std::unique_ptr<weld::MessageDialog> xInfoBox(xBuilder->weld_message_dialog(u"InfoNotFoundDialog"_ustr));
-        xInfoBox->run();
+        // Route the "search key not found" notice to the bottom-right notification stack instead of
+        // a modal OK box (docs/design/07-feedback.md 7.5). Fixed built-in string with no document
+        // data, so it routes as SafeDisplayText under the audited core-ui source.
+        sfx2::NotificationRouter::NotifyInfo(
+            "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Information,
+            SwResId(STR_SRCVIEW_SEARCH_NOT_FOUND));
     }
     else if(!bRecursive)
     {

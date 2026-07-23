@@ -10,8 +10,8 @@
     "ui_surfaces": 1260,
     "native_surfaces": 10,
     "total_surfaces": 1270,
-    "assigned": 836,
-    "unassigned": 434
+    "assigned": 1020,
+    "unassigned": 250
   },
   "mapping": {
     "overrides": [
@@ -22,6 +22,30 @@
       {
         "surface": "cui/uiconfig/ui/aboutdialog.ui",
         "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/additionsdialog.ui",
+        "inventory_id": "WIN-SYS-005"
+      },
+      {
+        "surface": "cui/uiconfig/ui/additionsfragment.ui",
+        "inventory_id": "WIN-SYS-005"
+      },
+      {
+        "surface": "cui/uiconfig/ui/certdialog.ui",
+        "inventory_id": "WIN-SYS-007"
+      },
+      {
+        "surface": "cui/uiconfig/ui/connpooloptions.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/dbregisterpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/entrycontextmenu.ui",
+        "inventory_id": "WIN-NAV-002"
       },
       {
         "surface": "cui/uiconfig/ui/hangulhanjaadddialog.ui",
@@ -68,8 +92,180 @@
         "inventory_id": "WIN-SYS-015"
       },
       {
+        "surface": "cui/uiconfig/ui/langtoolconfigpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optaccessibilitypage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optadvancedpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optasianpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optbasicidepage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optchartcolorspage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optctlpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optemailpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optfltrembedpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optfltrpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optfontspage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optgeneralpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/opthtmlpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
         "surface": "cui/uiconfig/ui/optionsdialog.ui",
         "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optjsearchpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optlanguagespage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optlingupage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optonlineupdatepage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optpathspage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optproxypage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optsavepage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optsecuritypage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optuserpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/optviewpage.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querychangelineenddialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletebitmapdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletechartcolordialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletecolordialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletedictionarydialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletegradientdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletehatchdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletelineenddialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydeletelinestyledialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querydialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/queryduplicatedialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querynoloadedfiledialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querynosavefiledialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/querysavelistdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/queryupdategalleryfilelistdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "cui/uiconfig/ui/securityoptionsdialog.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/signatureline.ui",
+        "inventory_id": "WIN-SYS-007"
+      },
+      {
+        "surface": "cui/uiconfig/ui/signsignatureline.ui",
+        "inventory_id": "WIN-SYS-007"
+      },
+      {
+        "surface": "cui/uiconfig/ui/spelloptionsdialog.ui",
+        "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/storedwebconnectiondialog.ui",
+        "inventory_id": "WIN-SYS-007"
       },
       {
         "surface": "cui/uiconfig/ui/thesaurus.ui",
@@ -78,6 +274,10 @@
       {
         "surface": "cui/uiconfig/ui/tipofthedaydialog.ui",
         "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/tsaurldialog.ui",
+        "inventory_id": "WIN-SYS-007"
       },
       {
         "surface": "desktop/uiconfig/ui/updatedialog.ui",
@@ -90,6 +290,14 @@
       {
         "surface": "desktop/uiconfig/ui/updaterequireddialog.ui",
         "inventory_id": "WIN-SYS-012"
+      },
+      {
+        "surface": "editeng/uiconfig/ui/spellmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "sd/uiconfig/simpress/ui/presentationdialog.ui",
+        "inventory_id": "WIN-IM-003"
       },
       {
         "surface": "sfx2/uiconfig/ui/documentpropertiesdialog.ui",
@@ -116,16 +324,352 @@
         "inventory_id": "WIN-SYS-004"
       },
       {
+        "surface": "svtools/uiconfig/ui/fileviewmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svtools/uiconfig/ui/graphicexport.ui",
+        "inventory_id": "WIN-SYS-002"
+      },
+      {
+        "surface": "svtools/uiconfig/ui/printersetupdialog.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "svtools/uiconfig/ui/querydeletedialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svtools/uiconfig/ui/restartdialog.ui",
+        "inventory_id": "WIN-SYS-013"
+      },
+      {
+        "surface": "svx/uiconfig/ui/acceptrejectchangesdialog.ui",
+        "inventory_id": "WIN-WR-005"
+      },
+      {
+        "surface": "svx/uiconfig/ui/addconditiondialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/adddataitemdialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/addinstancedialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/addmodeldialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/addnamespacedialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/addsubmissiondialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/cellmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/charsetmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/classificationdialog.ui",
+        "inventory_id": "WIN-SYS-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/clipboardmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/colsmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/crashreportdlg.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/datanavigator.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/defaultshapespanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/docrecoverybrokendialog.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/docrecoveryprogressdialog.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/docrecoveryrecoverdialog.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/docrecoverysavedialog.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/filtermenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
         "surface": "svx/uiconfig/ui/findreplacedialog.ui",
         "inventory_id": "WIN-DLG-005"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formdatamenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formfielddialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formlinkwarndialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formnavigator.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formnavimenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/formpropertydialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/functionmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/gallerymenu1.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/gallerymenu2.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/imapmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/inspectortextpanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/namespacedialog.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/presetmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querydeletecontourdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querydeleteobjectdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querydeletethemedialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querymodifyimagemapchangesdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querynewcontourdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querysavecontchangesdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/querysaveimagemapchangesdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/queryunlinkgraphicsdialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/redlinecontrol.ui",
+        "inventory_id": "WIN-WR-005"
+      },
+      {
+        "surface": "svx/uiconfig/ui/redlinefilterpage.ui",
+        "inventory_id": "WIN-WR-005"
+      },
+      {
+        "surface": "svx/uiconfig/ui/redlineviewpage.ui",
+        "inventory_id": "WIN-WR-005"
+      },
+      {
+        "surface": "svx/uiconfig/ui/rowsmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/rulermenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/safemodedialog.ui",
+        "inventory_id": "WIN-SYS-009"
+      },
+      {
+        "surface": "svx/uiconfig/ui/savemodifieddialog.ui",
+        "inventory_id": "WIN-DLG-001"
+      },
+      {
+        "surface": "svx/uiconfig/ui/selectionmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebararea.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebareffect.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarempty.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarfontwork.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebargallery.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebargraphic.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarline.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarlists.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarparagraph.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarpossize.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarshadow.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebarstylespanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebartextcolumnspanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebartexteffect.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/sidebartextpanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/stylemenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/themeselectorpanel.ui",
+        "inventory_id": "WIN-CON-007"
+      },
+      {
+        "surface": "svx/uiconfig/ui/xformspage.ui",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/xmlsecstatmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "svx/uiconfig/ui/zoommenu.ui",
+        "inventory_id": "WIN-NAV-002"
       },
       {
         "surface": "vcl/uiconfig/ui/aboutbox.ui",
         "inventory_id": "WIN-SYS-015"
       },
       {
+        "surface": "vcl/uiconfig/ui/cupspassworddialog.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/editmenu.ui",
+        "inventory_id": "WIN-NAV-002"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/errornocontentdialog.ui",
+        "inventory_id": "WIN-SYS-011"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/errornoprinterdialog.ui",
+        "inventory_id": "WIN-SYS-011"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/openlockedquerybox.ui",
+        "inventory_id": "WIN-SYS-011"
+      },
+      {
         "surface": "vcl/uiconfig/ui/printdialog.ui",
         "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/printerdevicepage.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/printerpaperpage.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/printerpropertiesdialog.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/printprogressdialog.ui",
+        "inventory_id": "WIN-DLG-004"
+      },
+      {
+        "surface": "vcl/uiconfig/ui/querydialog.ui",
+        "inventory_id": "WIN-DLG-001"
       }
     ],
     "prefix_rules": [
@@ -146,8 +690,24 @@
         "inventory_id": "WIN-SYS-005"
       },
       {
+        "prefix": "extensions/uiconfig/sabpilot/",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
+        "prefix": "extensions/uiconfig/sbibliography/",
+        "inventory_id": "WIN-BA-001"
+      },
+      {
+        "prefix": "extensions/uiconfig/spropctrlr/",
+        "inventory_id": "WIN-BA-002"
+      },
+      {
         "prefix": "filter/",
         "inventory_id": "WIN-SYS-002"
+      },
+      {
+        "prefix": "formula/",
+        "inventory_id": "WIN-CA-002"
       },
       {
         "prefix": "fpicker/",
@@ -800,15 +1360,15 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/additionsdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/additionsfragment.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -940,8 +1500,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/certdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -996,8 +1556,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/connpooloptions.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1031,8 +1591,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/dbregisterpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1080,8 +1640,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/entrycontextmenu.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1367,8 +1927,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/langtoolconfigpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1535,85 +2095,85 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optaccessibilitypage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optadvancedpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optasianpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optbasicidepage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optchartcolorspage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optctlpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optemailpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optfltrembedpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optfltrpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optfontspage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optgeneralpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/opthtmlpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1626,22 +2186,22 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optjsearchpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optlanguagespage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optlingupage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1654,50 +2214,50 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optonlineupdatepage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optpathspage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optproxypage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optsavepage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optsecuritypage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optuserpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/optviewpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1822,106 +2382,106 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querychangelineenddialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletebitmapdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletechartcolordialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletecolordialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletedictionarydialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletegradientdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletehatchdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletelineenddialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydeletelinestyledialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querydialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/queryduplicatedialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querynoloadedfiledialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querynosavefiledialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/querysavelistdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/queryupdategalleryfilelistdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1969,8 +2529,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/securityoptionsdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1997,15 +2557,15 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/signatureline.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/signsignatureline.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -2060,8 +2620,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/spelloptionsdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -2081,8 +2641,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/storedwebconnectiondialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -2158,8 +2718,8 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/tsaurldialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -2844,169 +3404,169 @@
       "kind": "ui-file",
       "surface": "editeng/uiconfig/ui/spellmenu.ui",
       "owner": "editeng",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/contentfieldpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/contenttablepage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/datasourcepage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/defaultfieldselectionpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/fieldassignpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/fieldlinkpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/gridfieldsselectionpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/groupradioselectionpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/invokeadminpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/optiondbfieldpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/optionsfinalpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/optionvaluespage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/selecttablepage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/selecttypepage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sabpilot/ui/tableselectionpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/autofiltermenu.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/choosedatasourcedialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/combobox.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/editbox.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/generalpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/mappingdialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/querydialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/sbibliography/ui/toolbar.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-001",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
@@ -3026,155 +3586,155 @@
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/browserline.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/browserpage.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/colorlistbox.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/combobox.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/controlfontdialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/datatypedialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/datefield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/datetimefield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/formattedcontrol.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/formattedsample.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/formlinksdialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/formproperties.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/hyperlinkfield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/labelselectiondialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/listbox.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/listselectdialog.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/multiline.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/numericfield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/taborder.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/textfield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/timefield.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "extensions/uiconfig/spropctrlr/ui/urlcontrol.ui",
       "owner": "extensions",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
@@ -3271,29 +3831,29 @@
       "kind": "ui-file",
       "surface": "formula/uiconfig/ui/formuladialog.ui",
       "owner": "formula",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "formula/uiconfig/ui/functionpage.ui",
       "owner": "formula",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "formula/uiconfig/ui/parameter.ui",
       "owner": "formula",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
       "surface": "formula/uiconfig/ui/structpage.ui",
       "owner": "formula",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CA-002",
+      "mapped_by": "prefix"
     },
     {
       "kind": "ui-file",
@@ -5259,8 +5819,8 @@
       "kind": "ui-file",
       "surface": "sd/uiconfig/simpress/ui/presentationdialog.ui",
       "owner": "sd",
-      "inventory_id": "WIN-IM-001",
-      "mapped_by": "prefix"
+      "inventory_id": "WIN-IM-003",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6029,8 +6589,8 @@
       "kind": "ui-file",
       "surface": "svtools/uiconfig/ui/fileviewmenu.ui",
       "owner": "svtools",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6050,8 +6610,8 @@
       "kind": "ui-file",
       "surface": "svtools/uiconfig/ui/graphicexport.ui",
       "owner": "svtools",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6106,22 +6666,22 @@
       "kind": "ui-file",
       "surface": "svtools/uiconfig/ui/printersetupdialog.ui",
       "owner": "svtools",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svtools/uiconfig/ui/querydeletedialog.ui",
       "owner": "svtools",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svtools/uiconfig/ui/restartdialog.ui",
       "owner": "svtools",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-013",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6190,8 +6750,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/acceptrejectchangesdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-WR-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6211,43 +6771,43 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/addconditiondialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/adddataitemdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/addinstancedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/addmodeldialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/addnamespacedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/addsubmissiondialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6267,15 +6827,15 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/cellmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/charsetmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6302,15 +6862,15 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/classificationdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/clipboardmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6323,8 +6883,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/colsmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6344,8 +6904,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/crashreportdlg.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6358,15 +6918,15 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/datanavigator.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/defaultshapespanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6428,29 +6988,29 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/docrecoverybrokendialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/docrecoveryprogressdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/docrecoveryrecoverdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/docrecoverysavedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6477,8 +7037,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/filtermenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6596,64 +7156,64 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formdatamenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formfielddialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formlinkwarndialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formnavigator.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formnavimenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/formpropertydialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/functionmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/gallerymenu1.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/gallerymenu2.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6708,15 +7268,15 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/imapmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/inspectortextpanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6778,8 +7338,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/namespacedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -6834,225 +7394,225 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/presetmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querydeletecontourdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querydeleteobjectdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querydeletethemedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querymodifyimagemapchangesdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querynewcontourdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querysavecontchangesdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/querysaveimagemapchangesdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/queryunlinkgraphicsdialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/redlinecontrol.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-WR-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/redlinefilterpage.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-WR-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/redlineviewpage.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-WR-005",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/rowsmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/rulermenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/safemodedialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-009",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/savemodifieddialog.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/selectionmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebararea.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebareffect.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarempty.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarfontwork.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebargallery.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebargraphic.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarline.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarlists.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarparagraph.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarpossize.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarshadow.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebarstylespanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebartextcolumnspanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebartexteffect.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/sidebartextpanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -7065,8 +7625,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/stylemenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -7149,8 +7709,8 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/themeselectorpanel.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-CON-007",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -7163,22 +7723,22 @@
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/xformspage.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-BA-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/xmlsecstatmenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "svx/uiconfig/ui/zoommenu.ui",
       "owner": "svx",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -8906,8 +9466,8 @@
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/cupspassworddialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -8920,22 +9480,22 @@
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/editmenu.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-NAV-002",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/errornocontentdialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-011",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/errornoprinterdialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-011",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -8955,8 +9515,8 @@
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/openlockedquerybox.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-011",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -8969,36 +9529,36 @@
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/printerdevicepage.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/printerpaperpage.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/printerpropertiesdialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/printprogressdialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-004",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "vcl/uiconfig/ui/querydialog.ui",
       "owner": "vcl",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-DLG-001",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",

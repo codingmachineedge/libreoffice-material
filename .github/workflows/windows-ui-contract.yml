@@ -254,3 +254,211 @@ jobs:
 
       - name: Run Material default-on activation mutation regressions
         run: python3 bin/test_material_default_activation.py
+
+      # --- Mega wave: foundations, widget/dialog, nav, writer, calc,
+      #     impress/chart, and base/math pins (33 new fail-closed triads) ---
+
+      # foundations (WIN-FND-002..007, WIN-CONCEPT-002, WIN-SYS-014)
+      - name: Validate theme resolution routing contract
+        run: python3 bin/check-windows-theme-resolution-routing.py
+
+      - name: Run theme resolution routing mutation regressions
+        run: python3 bin/test_windows_theme_resolution_routing.py
+
+      - name: Validate elevation strategy contract
+        run: python3 bin/check-windows-elevation-contract.py
+
+      - name: Run elevation strategy mutation regressions
+        run: python3 bin/test_windows_elevation_contract.py
+
+      - name: Validate reduced-motion signal contract
+        run: python3 bin/check-windows-reduced-motion-contract.py
+
+      - name: Run reduced-motion mutation regressions
+        run: python3 bin/test_windows_reduced_motion_contract.py
+
+      - name: Validate density contract
+        run: python3 bin/check-windows-density-contract.py
+
+      - name: Run density mutation regressions
+        run: python3 bin/test_windows_density_contract.py
+
+      - name: Validate version-history seeded-state ledger
+        run: python3 bin/check-version-history-seeded-state.py
+
+      - name: Run version-history seeded-state mutation regressions
+        run: python3 bin/test_version_history_seeded_state.py
+
+      - name: Validate adaptive-layout ledger
+        run: python3 bin/check-windows-adaptive-layout-ledger.py
+
+      - name: Run adaptive-layout ledger mutation regressions
+        run: python3 bin/test_windows_adaptive_layout_ledger.py
+
+      - name: Validate icon-theme pipeline contract
+        run: python3 bin/check-windows-icon-theme-pipeline.py
+
+      - name: Run icon-theme pipeline mutation regressions
+        run: python3 bin/test_windows_icon_theme_pipeline.py
+
+      - name: Validate render/scale neutrality contract
+        run: python3 bin/check-windows-render-scale-matrix.py
+
+      - name: Run render/scale neutrality mutation regressions
+        run: python3 bin/test_windows_render_scale_matrix.py
+
+      # widgets and dialogs (WIN-ACT-001/003, WIN-DLG-002/003/004/005)
+      - name: Validate pushbutton contract
+        run: python3 bin/check-windows-pushbutton-contract.py
+
+      - name: Run pushbutton mutation regressions
+        run: python3 bin/test_windows_pushbutton_contract.py
+
+      - name: Validate icon-button contract
+        run: python3 bin/check-windows-icon-button-contract.py
+
+      - name: Run icon-button mutation regressions
+        run: python3 bin/test_windows_icon_button_contract.py
+
+      - name: Validate Options dialog contract
+        run: python3 bin/check-windows-options-dialog-contract.py
+
+      - name: Run Options dialog mutation regressions
+        run: python3 bin/test_windows_options_dialog_contract.py
+
+      - name: Validate Office file-picker contract
+        run: python3 bin/check-windows-office-filepicker-contract.py
+
+      - name: Run Office file-picker mutation regressions
+        run: python3 bin/test_windows_office_filepicker_contract.py
+
+      - name: Validate Print dialog contract
+        run: python3 bin/check-windows-print-dialog-contract.py
+
+      - name: Run Print dialog mutation regressions
+        run: python3 bin/test_windows_print_dialog_contract.py
+
+      - name: Validate Find & Replace dialog closure contract
+        run: python3 bin/check-windows-find-replace-dialog-contract.py
+
+      - name: Run Find & Replace dialog mutation regressions
+        run: python3 bin/test_windows_find_replace_dialog_contract.py
+
+      # navigation chrome (WIN-NAV-004/007, WIN-SHL-002)
+      - name: Validate notebookbar composition contract
+        run: python3 bin/check-windows-notebookbar-composition.py
+
+      - name: Run notebookbar composition mutation regressions
+        run: python3 bin/test_windows_notebookbar_composition.py
+
+      - name: Validate title bar composition contract
+        run: python3 bin/check-windows-titlebar-composition.py
+
+      - name: Run title bar composition mutation regressions
+        run: python3 bin/test_windows_titlebar_composition.py
+
+      - name: Validate command overflow contract
+        run: python3 bin/check-windows-command-overflow.py
+
+      - name: Run command overflow mutation regressions
+        run: python3 bin/test_windows_command_overflow.py
+
+      # Writer surfaces (WIN-WR-001..005)
+      - name: Validate Writer chrome contract
+        run: python3 bin/check-writer-chrome-contract.py
+
+      - name: Run Writer chrome mutation regressions
+        run: python3 bin/test_writer_chrome_contract.py
+
+      - name: Validate Writer ruler token contract
+        run: python3 bin/check-windows-writer-ruler-contract.py
+
+      - name: Run Writer ruler mutation regressions
+        run: python3 bin/test_windows_writer_ruler_contract.py
+
+      - name: Validate Writer format dialogs contract
+        run: python3 bin/check-writer-format-dialogs-contract.py
+
+      - name: Run Writer format dialogs mutation regressions
+        run: python3 bin/test_writer_format_dialogs_contract.py
+
+      - name: Validate Writer sidebar deck contract
+        run: python3 bin/check-writer-sidebar-deck-contract.py
+
+      - name: Run Writer sidebar deck mutation regressions
+        run: python3 bin/test_writer_sidebar_deck_contract.py
+
+      - name: Validate Writer review composition contract
+        run: python3 bin/check-windows-writer-review-composition.py
+
+      - name: Run Writer review composition mutation regressions
+        run: python3 bin/test_windows_writer_review_composition.py
+
+      # Calc containers (WIN-CA-003/004/005, WIN-CON-003)
+      - name: Validate Calc grid selection contract
+        run: python3 bin/check-calc-grid-selection-contract.py
+
+      - name: Run Calc grid selection mutation regressions
+        run: python3 bin/test_calc_grid_selection_contract.py
+
+      - name: Validate Calc sheet-tabs upstream pin
+        run: python3 bin/check-windows-calc-sheet-tabs-upstream-pin.py
+
+      - name: Run Calc sheet-tabs upstream pin mutation regressions
+        run: python3 bin/test_windows_calc_sheet_tabs_upstream_pin.py
+
+      - name: Validate Calc data dialogs contract
+        run: python3 bin/check-windows-calc-data-dialog-contract.py
+
+      - name: Run Calc data dialogs mutation regressions
+        run: python3 bin/test_windows_calc_data_dialog_contract.py
+
+      - name: Validate data-grid header/selection contract
+        run: python3 bin/check-windows-data-grid-header-selection.py
+
+      - name: Run data-grid header/selection mutation regressions
+        run: python3 bin/test_windows_data_grid_header_selection.py
+
+      # Impress, presenter and chart (WIN-IM-003/004, WIN-CH-001)
+      - name: Validate Impress slideshow settings contract
+        run: python3 bin/check-impress-slideshow-settings-contract.py
+
+      - name: Run Impress slideshow settings mutation regressions
+        run: python3 bin/test_impress_slideshow_settings_contract.py
+
+      - name: Validate Impress presenter surfaces contract
+        run: python3 bin/check-windows-impress-presenter-surfaces.py
+
+      - name: Run Impress presenter surfaces mutation regressions
+        run: python3 bin/test_windows_impress_presenter_surfaces.py
+
+      - name: Validate chart editor contract
+        run: python3 bin/check-chart-editor-contract.py
+
+      - name: Run chart editor mutation regressions
+        run: python3 bin/test_chart_editor_contract.py
+
+      # Base and Math (WIN-BA-001/002, WIN-MA-001/002)
+      - name: Validate Base rail/workspace contract
+        run: python3 bin/check-windows-base-rail-workspace.py
+
+      - name: Run Base rail/workspace mutation regressions
+        run: python3 bin/test_windows_base_rail_workspace.py
+
+      - name: Validate Base Add-Table tree contract
+        run: python3 bin/check-windows-base-addtable-tree-contract.py
+
+      - name: Run Base Add-Table tree mutation regressions
+        run: python3 bin/test_windows_base_addtable_tree_contract.py
+
+      - name: Validate Math editor elements contract
+        run: python3 bin/check-math-editor-elements-contract.py
+
+      - name: Run Math editor elements mutation regressions
+        run: python3 bin/test_math_editor_elements_contract.py
+
+      - name: Validate Math editor contract
+        run: python3 bin/check-math-editor-contract.py
+
+      - name: Run Math editor mutation regressions
+        run: python3 bin/test_math_editor_contract.py

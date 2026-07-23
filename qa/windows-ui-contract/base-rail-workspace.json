@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "contract": "material-base-rail-workspace",
+  "platform": "windows",
+  "inventory_row": "WIN-BA-001",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/12-base-math-shared.md",
+  "chapter_section": "12.1",
+  "runtime_verified": false,
+  "notes": "Guarded-material-source contract for the Base (dbaccess) navigation rail and its two-pane object-workspace shell (docs/design/12-base-math-shared.md 12.1). Four dbaccess-owned surfaces gain their first real Material token consumption, reusing the env + high-contrast guard idiom sc/source/ui/app/inputwin.cxx and sfx2/source/control/startcentercard.cxx already established: (a) the rail container fills @surface-container; (b) the rail/workspace divider (a named 1px GtkBox in appborderwindow.ui) is tinted @outline-variant; (c) OApplicationIconControl re-points the selected rail entry to @primary-container/@on-primary-container via a guarded UpdateColors override; (d) the shared OTitleWindow gains a Kicker style variant (@on-surface-variant, bold) used only for the 'Database' rail head, defaulting to Heading everywhere else. Every C++ marker runs against comment/raw-string-stripped source so commented-out wiring fails closed. All paint/token logic stays in dbaccess-owned files (ThumbnailView and thumbnailviewitem.hxx are untouched, so the Start Center is not reskinned). Source-declared only: no dbu build, no rail pixels, no runtime interaction is claimed (runtime_verified:false throughout). The B/V/I/A/L/P/C gates named by the inventory row stay open pending an exact-source Windows build.",
+  "guard": {
+    "env": "VCL_FILE_WIDGET_THEME",
+    "value_marker": "!= \"material\"",
+    "high_contrast_marker": "GetHighContrastMode()",
+    "token_include": "<vcl/MaterialTokens.hxx>",
+    "resolver_markers": [
+      "MaterialTokens::fromThemeDefinition",
+      "findColor("
+    ]
+  },
+  "palette_tokens": [
+    "surface-container",
+    "outline-variant",
+    "primary-container",
+    "on-primary-container",
+    "on-surface-variant"
+  ],
+  "metric_tokens": [
+    "stroke-thin"
+  ],
+  "shape_tokens": {
+    "corner-container": "12"
+  },
+  "expected_markers": 4,
+  "markers": [
+    {
+      "id": "rail_surface_container_fill",
+      "role": "OApplicationSwapWindow rail container @surface-container fill",
+      "chapter_ref": "12.1 'Database nav rail' (@surface-container fill)",
+      "source": "dbaccess/source/ui/app/AppSwapWindow.cxx",
+      "guarded": true,
+      "tokens": ["surface-container"],
+      "code_markers": [
+        "lcl_getMaterialRailFill",
+        "set_background(",
+        "set_stack_background()"
+      ],
+      "ui": "dbaccess/uiconfig/ui/appswapwindow.ui",
+      "ui_markers": ["id=\"valueset\"", "id=\"scroll\""],
+      "runtime_verified": false
+    },
+    {
+      "id": "panel_detail_hairline",
+      "role": "OAppBorderWindow rail/workspace divider @outline-variant hairline",
+      "chapter_ref": "12.1 'Database nav rail' (right hairline @outline-variant at stroke-thin)",
+      "source": "dbaccess/source/ui/app/AppView.cxx",
+      "guarded": true,
+      "tokens": ["outline-variant"],
+      "code_markers": [
+        "lcl_getMaterialPanelHairline",
+        "m_xPanelDetailHairline",
+        "set_background("
+      ],
+      "header": "dbaccess/source/ui/app/AppView.hxx",
+      "header_markers": ["m_xPanelDetailHairline"],
+      "ui": "dbaccess/uiconfig/ui/appborderwindow.ui",
+      "ui_markers": ["id=\"panelhairline\"", "<property name=\"width_request\">1</property>"],
+      "runtime_verified": false
+    },
+    {
+      "id": "rail_entry_selection",
+      "role": "OApplicationIconControl selected rail entry @primary-container/@on-primary-container",
+      "chapter_ref": "12.1 'Rail entries' selected @primary-container / @on-primary-container",
+      "source": "dbaccess/source/ui/app/AppIconControl.cxx",
+      "guarded": true,
+      "tokens": ["primary-container", "on-primary-container"],
+      "code_markers": [
+        "lcl_getMaterialRailSelection",
+        "OApplicationIconControl::UpdateColors",
+        "ThumbnailView::UpdateColors",
+        "maHighlightColor",
+        "maHighlightTextColor"
+      ],
+      "header": "dbaccess/source/ui/app/AppIconControl.hxx",
+      "header_markers": ["virtual void UpdateColors(const StyleSettings& rSettings) override;"],
+      "runtime_verified": false
+    },
+    {
+      "id": "rail_kicker",
+      "role": "OTitleWindow Kicker style variant @on-surface-variant",
+      "chapter_ref": "12.1 'Rail kicker' (uppercase 11px/700 @on-surface-variant)",
+      "source": "dbaccess/source/ui/app/AppTitleWindow.cxx",
+      "guarded": true,
+      "tokens": ["on-surface-variant"],
+      "code_markers": [
+        "lcl_getMaterialKickerColor",
+        "TitleStyle::Kicker",
+        "set_font_color(",
+        "SetWeight(WEIGHT_BOLD)"
+      ],
+      "header": "dbaccess/source/ui/app/AppTitleWindow.hxx",
+      "header_markers": ["enum class TitleStyle", "Kicker,"],
+      "ui": "dbaccess/uiconfig/ui/titlewindow.ui",
+      "ui_markers": ["id=\"title\""],
+      "runtime_verified": false
+    }
+  ],
+  "kicker_call_site": {
+    "role": "the 'Database' rail head is the only OTitleWindow constructed with the Kicker variant; task/object-list headings keep the default Heading",
+    "source": "dbaccess/source/ui/app/AppView.cxx",
+    "markers": [
+      "OTitleWindow(m_xPanelParent.get(), STR_DATABASE,",
+      "OTitleWindow::TitleStyle::Kicker"
+    ]
+  }
+}

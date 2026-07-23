@@ -68,6 +68,26 @@ tree: `listnode` disclosure at `size-tree-node` (20 px) and the empty
 `listnet`/`Entire` state that suppresses connector nets — implemented in
 definition.xml (compiled at commit 577059e274; surface state unverified).
 
+The **Rail kicker** ("Database") and the workspace **Section heading**
+("Tasks", "Tables") are the same native control — `OTitleWindow`
+(`dbaccess/uiconfig/ui/titlewindow.ui`), instantiated for both roles — so the
+two treatments are an explicit style variant on one class, not two elements: a
+`Kicker` variant (bold `@on-surface-variant` label, used only for the rail
+head) and the default `Heading` variant (the `title`-role section headings). The
+variant and the rail's Material token consumption are source-pinned by
+[`bin/check-windows-base-rail-workspace.py`](../../bin/check-windows-base-rail-workspace.py)
+against
+[`base-rail-workspace.json`](../../qa/windows-ui-contract/base-rail-workspace.json):
+a guarded `OApplicationSwapWindow` rail fill of `@surface-container`, a named
+`@outline-variant` rail/workspace divider hairline in `appborderwindow.ui`, the
+selected rail entry re-pointed to `@primary-container` / `@on-primary-container`
+via a guarded `OApplicationIconControl` colour override, and the `Kicker`
+`OTitleWindow` on the "Database" head. All paint stays in `dbaccess`-owned code
+(the shared `ThumbnailView` base is untouched, so the Start Center is not
+reskinned). Source-declared only (guarded-material-source); `runtime_verified`
+is false and no rail pixels are claimed — the label geometry above stays
+prototype-only.
+
 ### Chrome variants
 
 Classic chrome gives Base the shared menubar plus standard and formatting
@@ -204,6 +224,38 @@ Format menu.
    markup; the canvas highlights the corresponding sub-expression. Specified
    here, not yet implemented.
 
+### Source binding
+
+The three formula-editing behaviours this section declares normative are
+source-pinned against upstream StarMath by
+[`bin/check-math-editor-contract.py`](../../bin/check-math-editor-contract.py)
+against [`math-editor.json`](../../qa/windows-ui-contract/math-editor.json):
+
+- **Placeholder navigation** binds to `.uno:NextMark` / `.uno:PrevMark`
+  (`SID_NEXTMARK` / `SID_PREVMARK`), dispatched in `starmath/source/view.cxx`
+  with a focus-return `GrabFocus()`, moving the caret between the literal `<?>`
+  marks located by `SmEditTextWindow::SelNextMark` / `SelPrevMark`
+  (`starmath/source/edit.cxx`).
+- **Error recovery** binds to `.uno:NextError` / `.uno:PrevError`
+  (`SID_NEXTERR` / `SID_PREVERR`): `ShowError` pairs the `SmErrorDesc` text with
+  a `MarkError` selection of the offending token by (row, column), and
+  `ShowError(nullptr)` is the non-destructive clear-on-successful-parse path —
+  the canvas keeps its last valid render rather than blanking.
+- **Symbol insertion** binds to the elements panel emitting its markup
+  (`ElementsDockingWindow::ElementActivatedHandler` →
+  `maSelectHdlLink.Call(GetElementSource(id))`), after which `InsertText`
+  returns focus to the editor and lands the caret on the first inserted `<?>`.
+
+The command editor's native `multilineeditbox` enabled/focused/disabled states
+in `definition.xml` are pinned in both palettes. This is a **D-gate source pin
+only**: per the inventory gate contract, existing upstream StarMath source never
+satisfies the Material (M) gate, so the pin proves the substrate is present and
+unregressed but claims no Material treatment. The three Material differentiators
+— the symbol-cell hover/focus treatment, the canvas sub-expression highlight
+synced to placeholder navigation, and the inline `@error-container` error
+banner — stay `status: specified`, build-bound, and the checker fails closed if
+any is promoted. `runtime_verified` is false.
+
 ### Empty, loading & error states
 
 - **Empty document** — the canvas shows a dimmed placeholder formula and a
@@ -231,7 +283,8 @@ implemented.
 | Key | Action |
 | --- | --- |
 | `F6` / `Shift+F6` | Cycle: canvas → editor → elements panel |
-| `F4` | Next placeholder (`<?>`) in markup |
+| `F4` / `Shift+F4` | Next / previous placeholder (`<?>`) in markup (`.uno:NextMark` / `.uno:PrevMark`) |
+| `F3` / `Shift+F3` | Next / previous markup error (`.uno:NextError` / `.uno:PrevError`) |
 | Arrow keys | Caret movement in editor; cell movement in the symbol grid |
 | `Enter` / `Space` | Insert focused symbol from the grid |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / redo markup edits |
@@ -443,6 +496,28 @@ working copy after confirmation — an explicit dialog, since restore is
 destructive to unsaved state); compare with current; branch or export a
 snapshot. Restore must never be a single silent click.
 
+### Source binding
+
+A deterministic seeded-state coverage ledger,
+[`version-history-seeded-state.json`](../../qa/windows-ui-contract/version-history-seeded-state.json)
+(regenerated and pinned by
+[`bin/check-version-history-seeded-state.py`](../../bin/check-version-history-seeded-state.py)),
+grounds this concept at source. Its source of truth is the inline seeded
+`HISTORY` / `DOCS` fixture in [`site/prototype.html`](../../site/prototype.html):
+it enumerates the twelve seeded entries, checks the render gating (restore shown
+only for a restorable snapshot, the current entry's static pill, and the
+compare/branch/export affordances), and asserts restore is never wired to a
+silent destructive dispatch. It also records a concept-vs-reality provenance
+map: exactly two affordances have real upstream backing — **Compare with
+current** (`SID_DOCUMENT_COMPARE`) and the per-version comment view
+(`SfxViewVersionDialog_Impl`, `sfx2/source/dialog/versdlg.cxx`) — while Branch,
+Export, restore-as-replace, whole-project scope, auto-commit, word deltas, and
+commit hashes are recorded as **concept-only**. This is prototype-internal
+coverage plus an upstream-provenance ledger — explicitly weaker than a
+bind-to-real-data ledger and **not** a claim that a native auto-commit version
+engine exists. `runtime_verified` is false; every B/V/I/A/L/P/C gate stays open
+pending a build host.
+
 ### Empty, loading & error states
 
 A new document shows a single "NOW" entry and an explanatory empty state in
@@ -530,3 +605,135 @@ them before it can enter the verification gate in
     [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) is satisfied
      for an exact commit. The accepted Start Center run does not cover a surface
      in this chapter; its current surface-specific capture count is **0**.
+
+---
+
+## 12.6 Chart — embedded object editor
+
+The chart editor is an embedded OLE surface entered *in place* from Calc,
+Writer, Impress, and Draw — a single shared editing context owned by no one
+application chapter — so it lives here among the shared suite surfaces and is
+governed by the [§12.5](#125-suite-wide-consistency-rules-for-new-surfaces)
+suite-wide rules. It is prototype-only as a surface: there is **no
+Material-specific chart source today** (a roadmap target), so this section
+specifies the composition and grounds it only in already-implemented native
+parts, claiming no new Material chart code.
+
+### Layout & regions
+
+While a chart OLE object is being edited, the host frame swaps in the chart's
+own in-place menubar and toolbar, and the sidebar exposes chart-specific
+property panels; the chart drawing itself is a custom-rendered canvas from the
+`chart2` drawing layer.
+
+| Region | Treatment | Status |
+| --- | --- | --- |
+| In-place toolbar | Shared `toolbar` chrome (`Entire`/`Button` parts, `@corner-toolbar` (18) radius, `@surface-container` band, `@primary-container` rollover) — the same app-agnostic band the other module chromes reuse | toolbar parts implemented in definition.xml (compiled at commit 577059e274; surface state unverified); composition source-declared |
+| In-place menubar | Shared `menubar` part with the chart command set | source-declared composition |
+| Sidebar chart deck | Shared panel deck ([06 §6.7](06-containers.md)) hosting the chart property panels | prototype-only |
+| Chart canvas | Custom `chart2` drawing-layer render (no `.ui`, no themeable `definition.xml` part) | specified here, not yet implemented (build-bound) |
+
+### Chrome variants
+
+The in-place **toolbar** (`chart2/uiconfig/toolbar/toolbar.xml`) leads with the
+element selector and the core diagram commands: its design core is
+`.uno:ChartElementSelector`, `.uno:DiagramType`, `.uno:DataRanges`,
+`.uno:DiagramData`, and `.uno:ToggleLegend`, followed by the axis, grid,
+legend, and 3D-view commands. Two commands (`.uno:ScaleText`,
+`.uno:NewArrangement`) are present but `visible="false"` and are preserved as
+such, not dropped. The in-place **menubar**
+(`chart2/uiconfig/menubar/menubar.xml`) is the eight-item sequence
+`.uno:PickList`, `.uno:EditMenu`, `.uno:ViewMenu`, `.uno:InsertMenu`,
+`.uno:FormatMenu`, `.uno:ToolsMenu`, `.uno:WindowList`, `.uno:HelpMenu`, whose
+design core is the chart-specific Insert and Format menus. Both variants render
+under the shared notebookbar/classic treatment of
+[05 — Navigation](05-navigation.md); the exact composition is source-pinned (see
+Source binding).
+
+### Sidebar deck
+
+The chart sidebar is served by
+`org.libreoffice.comp.chart2.sidebar.ChartPanelFactory`
+(`chart2/source/controller/sidebar/Chart2PanelFactory.cxx`), which routes eight
+panel URLs — `/ElementsPanel`, `/TypePanel`, `/SeriesPanel`, `/AxisPanel`,
+`/ErrorBarPanel`, `/AreaPanel`, `/LinePanel`, `/ColorsPanel` — onto six panel
+`.ui` roots (`ChartElementsPanel`, `ChartTypePanel`, `ChartSeriesPanel`,
+`ChartAxisPanel`, `ChartErrorBarPanel`, `ChartColorsPanel`). Each panel consumes
+the shared field, selection, list, and colour components of chapters
+[03](03-selection.md)/[04](04-inputs.md)/[06](06-containers.md); no new panel
+anatomy is introduced.
+
+### Dialog set
+
+Chart type, data table, data ranges, insert legend/axis/grid/title, trend line,
+error bars, and the 3D view are modal dialogs applying the
+[08 §8.1](08-dialogs.md) shared modal anatomy with the shared components — no
+novel visual design, cross-referenced rather than respecified.
+
+### Key user flows
+
+1. **Enter edit.** Double-click a chart (or *Edit ▸ Object ▸ Edit*) activates
+   in-place editing; the host chrome is replaced by the chart menubar/toolbar
+   and the sidebar chart deck.
+2. **Restyle.** Change diagram type, series, axes, and colours from the toolbar,
+   dialogs, or sidebar panels.
+3. **Exit.** Clicking outside the object (or `Esc`) deactivates the OLE context
+   and restores the host application chrome.
+
+### Empty, loading & error states
+
+A newly inserted chart shows the default column diagram over the sample data
+range; a chart whose data source is missing shows the shared empty/error
+treatment ([07 — Feedback](07-feedback.md)) naming the recovery action. These
+are specified here, not yet implemented for the Material canvas.
+
+### Density & adaptive width
+
+Toolbar, menubar, and sidebar metrics follow the shared density table and the
+sidebar deck's own adaptive behaviour ([06 §6.7](06-containers.md)); the chart
+canvas scales with the OLE object frame. Specified here, not yet implemented.
+
+### Keyboard map
+
+`F6`/`Shift+F6` cycle the in-place panes; `Esc` exits the OLE edit context;
+`Tab` moves between chart elements on the canvas; element and dialog access
+follow the shared menu/toolbar keyboard rules ([05 — Navigation](05-navigation.md)).
+
+### Accessibility notes
+
+The toolbar and menubar commands carry their standard accessible names; sidebar
+panels are named decks; the chart canvas exposes the chart's accessible
+structure through the existing `chart2` accessibility implementation (roles,
+names, and focus are a build-bound verification item, not claimed here).
+
+### RTL & localization
+
+Chrome mirrors per the suite rule; the chart canvas follows its own
+data-driven layout, and axis/title/legend text localizes as document content.
+Specified here, not yet implemented.
+
+### Source binding
+
+The in-place composition is source-pinned by
+[`bin/check-chart-editor-contract.py`](../../bin/check-chart-editor-contract.py)
+against [`chart-editor.json`](../../qa/windows-ui-contract/chart-editor.json):
+the exact ordered toolbar and menubar command composition (including the two
+`visible="false"` toolbar items), the eight `ChartPanelFactory` routes and six
+sidebar panel `.ui` roots, and the shared native `toolbar` `Entire`/`Button`
+parts in `definition.xml` resolving in both palettes. It claims **no new
+Material chart source** — the treatment is grounded only in the already-compiled
+generic toolbar parts. The custom-drawn `chart2` drawing-layer canvas, the
+double-click OLE activation and live preview, the data-table grid editor, and
+the 3D scene have no `.ui` and no themeable `definition.xml` part, so they are
+carried as `status: specified` build-bound carve-outs. Registry-closure
+assignment (`chart2/` → WIN-CH-001) is already satisfied by the prefix rule in
+`bin/check-windows-ui-registry-closure.py`. `runtime_verified` is false
+throughout: no build, chart pixels, OLE activation, or interaction are claimed.
+
+### Verification checkpoints
+
+Once a build exists: capture the in-place toolbar/menubar and the chart sidebar
+deck in light, dark, and high contrast at 100 % / 200 % scale; verify the chart
+canvas re-themes (M-gate, currently unwritten); verify keyboard entry/exit of
+the OLE context and sidebar-panel traversal; verify ODF and OOXML chart
+round-trip. Per rule 10, this surface's current capture count is **0**.

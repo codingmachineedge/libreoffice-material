@@ -24,7 +24,15 @@
     "modal input/destructive/credential/security prompt: informational_only is invariably true and",
     "the router's Classify keeps the informational case non-modal. Display text is fixed, translated",
     "and carries no document data, so it uses NotificationPrivacy::SafeDisplayText under an approved",
-    "source; the store redacts anything else regardless of this hint."
+    "source; the store redacts anything else regardless of this hint.",
+    "",
+    "Cross-module diversity: 'min_producer_modules' requires the registered producers to span at least",
+    "that many distinct owning modules (the first path segment of each producer file). It is the",
+    "checkable evidence that observable-feedback routing is a suite-wide convention rather than a",
+    "single-file trick: if the registry ever collapses back toward one module the rule fails closed.",
+    "The value is pinned at the exact current diversity (sfx2/sw/svx = 3) with zero slack, so removing",
+    "or renaming a producer down to fewer modules must be a deliberate, reviewed change to this number,",
+    "never a silent regression."
   ],
   "approved_display_sources": [
     "libreoffice.core-ui",
@@ -39,10 +47,16 @@
     "confirmation_entry_point": "NotifyConfirmation"
   },
   "confirmation_severities": ["Success", "Information"],
+  "min_producer_modules": 3,
   "required_producers": [
     "viewprn-printer-busy",
     "newhelp-no-search-text",
-    "srchdlg-replace-all-outcome"
+    "srchdlg-replace-all-outcome",
+    "mailmodel-no-email-client",
+    "srcview-search-not-found",
+    "labfmt-predefined-label-locked",
+    "wrtsh1-readonly-content-notice",
+    "textfld-readonly-content-notice"
   ],
   "producers": [
     {
@@ -89,6 +103,91 @@
           "file": "svx/source/dialog/srchdlg.cxx",
           "pattern": "std::getenv(\"VCL_FILE_WIDGET_THEME\")",
           "note": "Material theme opt-in guard read by lcl_IsMaterialFeedbackActive; under any other VCL_FILE_WIDGET_THEME value the whole confirmation path is a no-op, so this literal must remain live."
+        }
+      ]
+    },
+    {
+      "id": "mailmodel-no-email-client",
+      "file": "sfx2/source/dialog/mailmodel.cxx",
+      "function": "SfxMailModel::Send",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Warning"],
+      "informational_only": true,
+      "purpose": "No working mail client on 'Send as email': the one-way CANCELLED notice routes to the bottom-right stack instead of the modal ErrorFindEmailDialog OK box; sfx2-module producer, the same module as the router.",
+      "wiring_markers": [
+        {
+          "file": "sfx2/source/dialog/mailmodel.cxx",
+          "pattern": "SfxResId(STR_ERROR_FIND_EMAIL_PRIMARY)",
+          "note": "The converted notice routes the audited primary string in the !bSend branch of SfxMailModel::Send. A revert to the modal ErrorFindEmailDialog removes this reference, leaving the producer function defined but the notification dead."
+        }
+      ]
+    },
+    {
+      "id": "srcview-search-not-found",
+      "file": "sw/source/uibase/uiview/srcview.cxx",
+      "function": "SwSrcView::StartSearchAndReplace",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Information"],
+      "informational_only": true,
+      "purpose": "Writer HTML/Basic source-view Find 'search key not found': routed to the bottom-right stack instead of the modal InfoNotFoundDialog OK box -- a distinct sw-module feature, sibling of the sfx2 newhelp no-search-text notice.",
+      "wiring_markers": [
+        {
+          "file": "sw/source/uibase/uiview/srcview.cxx",
+          "pattern": "SwResId(STR_SRCVIEW_SEARCH_NOT_FOUND)",
+          "note": "The converted notice routes the audited string in the bNotFoundMessage branch of StartSearchAndReplace. Reverting to the modal InfoNotFoundDialog removes this reference, leaving the producer function defined but the notification dead."
+        }
+      ]
+    },
+    {
+      "id": "labfmt-predefined-label-locked",
+      "file": "sw/source/ui/envelp/labfmt.cxx",
+      "function": "IMPL_LINK_NOARG(SwSaveLabelDlg, OkHdl, weld::Button&, void)",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Warning"],
+      "informational_only": true,
+      "purpose": "Label Format 'predefined label cannot be overwritten': routed to the bottom-right stack instead of the modal CannotSaveLabelDialog OK box while the Label Format dialog itself stays open. NOTE: the enclosing-function anchor is a bare IMPL_LINK_NOARG macro invocation, not a Class::Method definition -- a deliberate deviation from the other producers' anchor style, flagged for reviewer sign-off.",
+      "wiring_markers": [
+        {
+          "file": "sw/source/ui/envelp/labfmt.cxx",
+          "pattern": "SwResId(STR_CANNOT_SAVE_LABEL_PRIMARY)",
+          "note": "The converted notice routes the audited primary string in the IsPredefinedLabel branch of the OkHdl handler. Reverting to the modal CannotSaveLabelDialog removes this reference, leaving the handler defined but the notification dead."
+        }
+      ]
+    },
+    {
+      "id": "wrtsh1-readonly-content-notice",
+      "file": "sw/source/uibase/wrtsh/wrtsh1.cxx",
+      "function": "SwWrtShell::InfoReadOnlyDialog",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Information"],
+      "informational_only": true,
+      "purpose": "Read-only-content notice (edit attempt on write-protected content): both the former sync and async InfoReadonlyDialog paths now route one non-blocking notice to the bottom-right stack, keeping the conditional folded-outline text variant. Paired unit with textfld-readonly-content-notice (same InfoReadonlyDialog .ui).",
+      "wiring_markers": [
+        {
+          "file": "sw/source/uibase/wrtsh/wrtsh1.cxx",
+          "pattern": "SwResId(STR_INFORODLG_PRIMARY)",
+          "note": "The converted notice routes the audited default primary string in InfoReadOnlyDialog. Reverting to the modal InfoReadonlyDialog removes this reference, leaving the producer function defined but the notification dead."
+        }
+      ]
+    },
+    {
+      "id": "textfld-readonly-content-notice",
+      "file": "sw/source/uibase/shells/textfld.cxx",
+      "function": "SwTextShell::ExecField",
+      "router_call": "NotifyInfo",
+      "source": "libreoffice.core-ui",
+      "severity": ["Information"],
+      "informational_only": true,
+      "purpose": "Read-only-content notice on a field-insert request into a write-protected selection: the async InfoReadonlyDialog inside SwTextShell::ExecField is routed to the bottom-right stack (plain-text variant, no folded case). Paired unit with wrtsh1-readonly-content-notice (same InfoReadonlyDialog .ui).",
+      "wiring_markers": [
+        {
+          "file": "sw/source/uibase/shells/textfld.cxx",
+          "pattern": "SwResId(STR_INFORODLG_PRIMARY)",
+          "note": "The converted notice routes the audited default primary string in the HasReadonlySel branch of ExecField. Reverting to the modal InfoReadonlyDialog removes this reference, leaving the producer's routing dead."
         }
       ]
     }

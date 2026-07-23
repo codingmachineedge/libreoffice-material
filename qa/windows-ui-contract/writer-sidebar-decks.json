@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "contract": "material-writer-sidebar-decks",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (Writer sidebar rail/decks; Page style and Navigator panels) -- cited by title/purpose.",
+  "note": "WIN-WR-004. Composition-pinning triad for the two real, non-experimental Writer-owned sidebar decks that SwPanelFactory routes to production panel classes: the WriterPageDeck 'Styles' panel (PageStylesPanel over pagestylespanel.ui) and the NavigatorDeck panel (SwNavigationPI over navigatorpanel.ui). For each surface this contract pins, fail-closed: (a) every real .ui widget id the .cxx binds via m_xBuilder->weld_*(id) exists in the .ui with the matching GtkBuilder class; (b) SwPanelFactory.cxx still routes the ImplementationURL suffix to the real Create() call; (c) the one load-bearing mutually-exclusive visibility state machine each panel owns is intact as source code, extracted by brace-matched per-branch bodies -- PageStylesPanel::Update()'s switch(eXFS) over {NONE,SOLID,GRADIENT,HATCH,BITMAP/PATTERN} (GRADIENT is the real two-visible case: mxBgColorLB AND mxBgGradientLB both shown) plus the post-switch TriggerDeckLayouting() relayout; and SwNavigationPI::ToggleTree()'s global-vs-content mode branches (show/hide sets + SetGlobalMode(bool)). This asserts NO new definition.xml part/state: the controls (combobox, ColorListBox/menu-button, toolbar, treeview) are stock weld widgets already covered by generic control theming outside this row's scope. The SwNavigationPI::ToggleTree LOK early-return path (comphelper::LibreOfficeKit::isActive() -> HideTree + return) is deliberately OUT of scope and recorded as a carve-out, not pinned. runtime_verified is false throughout: no native build, deck pixels, or runtime interaction are claimed. Experimental SwStylePresetsPanel/SwThemePanel (SwDesignDeck, IsExperimental=true) are excluded; cross-app Properties-deck panels (ParaPropertyPanel/TextPropertyPanel live in svx via SvxPanelFactory) are not sw-owned and excluded.",
+  "expected_surfaces": 2,
+  "surfaces": [
+    {
+      "surface_id": "writer.sidebar.page-styles",
+      "title": "WriterPageDeck Styles panel (PageStylesPanel background-fill switch)",
+      "status": "source-declared",
+      "runtime_verified": false,
+      "owner_sources": [
+        "sw/source/uibase/sidebar/PageStylesPanel.cxx",
+        "sw/source/uibase/sidebar/PageStylesPanel.hxx"
+      ],
+      "ui_file": "sw/uiconfig/swriter/ui/pagestylespanel.ui",
+      "widget_source": "sw/source/uibase/sidebar/PageStylesPanel.cxx",
+      "widget_bindings": [
+        {"id": "lbcolor", "gtk_class": "GtkMenuButton", "weld_accessor": "weld_menu_button"},
+        {"id": "lbhatching", "gtk_class": "GtkComboBox", "weld_accessor": "weld_combo_box"},
+        {"id": "lbgradient", "gtk_class": "GtkMenuButton", "weld_accessor": "weld_menu_button"},
+        {"id": "lbbitmap", "gtk_class": "GtkComboBox", "weld_accessor": "weld_combo_box"},
+        {"id": "layoutbox", "gtk_class": "GtkComboBoxText", "weld_accessor": "weld_combo_box"},
+        {"id": "columnbox", "gtk_class": "GtkComboBoxText", "weld_accessor": "weld_combo_box"},
+        {"id": "numberbox", "gtk_class": "GtkComboBoxText", "weld_accessor": "weld_combo_box"},
+        {"id": "bgselect", "gtk_class": "GtkComboBoxText", "weld_accessor": "weld_combo_box"},
+        {"id": "customlabel", "gtk_class": "GtkLabel", "weld_accessor": "weld_label"}
+      ],
+      "factory_routing": {
+        "source": "sw/source/uibase/sidebar/SwPanelFactory.cxx",
+        "resource_suffix": "/PageStylesPanel",
+        "create_call": "PageStylesPanel::Create"
+      },
+      "visibility_switch": {
+        "source": "sw/source/uibase/sidebar/PageStylesPanel.cxx",
+        "function_signature": "PageStylesPanel::Update(",
+        "method_side_effects": ["m_pPanel->TriggerDeckLayouting()"],
+        "branches": [
+          {"name": "NONE", "anchor": "case NONE:", "shown": [], "hidden": ["mxBgColorLB", "mxBgHatchingLB", "mxBgGradientLB", "mxBgBitmapLB"]},
+          {"name": "SOLID", "anchor": "case SOLID:", "shown": ["mxBgColorLB"], "hidden": ["mxBgBitmapLB", "mxBgGradientLB", "mxBgHatchingLB"]},
+          {"name": "GRADIENT", "anchor": "case GRADIENT:", "shown": ["mxBgColorLB", "mxBgGradientLB"], "hidden": ["mxBgBitmapLB", "mxBgHatchingLB"]},
+          {"name": "HATCH", "anchor": "case HATCH:", "shown": ["mxBgHatchingLB"], "hidden": ["mxBgColorLB", "mxBgGradientLB", "mxBgBitmapLB"]},
+          {"name": "BITMAP-PATTERN", "anchor": "case BITMAP:", "shown": ["mxBgBitmapLB"], "hidden": ["mxBgColorLB", "mxBgGradientLB", "mxBgHatchingLB"]}
+        ]
+      }
+    },
+    {
+      "surface_id": "writer.sidebar.navigator",
+      "title": "NavigatorDeck panel (SwNavigationPI content/global toggle)",
+      "status": "source-declared",
+      "runtime_verified": false,
+      "owner_sources": [
+        "sw/source/uibase/utlui/navipi.cxx",
+        "sw/source/uibase/inc/navipi.hxx"
+      ],
+      "ui_file": "sw/uiconfig/swriter/ui/navigatorpanel.ui",
+      "widget_source": "sw/source/uibase/utlui/navipi.cxx",
+      "widget_bindings": [
+        {"id": "contentbox", "gtk_class": "GtkBox", "weld_accessor": "weld_widget"},
+        {"id": "globalbox", "gtk_class": "GtkBox", "weld_accessor": "weld_widget"},
+        {"id": "contenttree", "gtk_class": "GtkTreeView", "weld_accessor": "weld_tree_view"},
+        {"id": "globaltree", "gtk_class": "GtkTreeView", "weld_accessor": "weld_tree_view"},
+        {"id": "content1", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "content2", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "content3", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "content4", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "content5", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "content6", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "global", "gtk_class": "GtkToolbar", "weld_accessor": "weld_toolbar"},
+        {"id": "documents", "gtk_class": "GtkComboBoxText", "weld_accessor": "weld_combo_box"}
+      ],
+      "factory_routing": {
+        "source": "sw/source/uibase/sidebar/SwPanelFactory.cxx",
+        "resource_suffix": "/NavigatorPanel",
+        "create_call": "SwNavigationPI::Create"
+      },
+      "visibility_switch": {
+        "source": "sw/source/uibase/utlui/navipi.cxx",
+        "function_signature": "SwNavigationPI::ToggleTree(",
+        "method_side_effects": [],
+        "lok_carveout": {
+          "marker": "if (comphelper::LibreOfficeKit::isActive())",
+          "note": "The LOK early-return branch (hide global tree + return before the mode toggle) is deliberately out of scope; it is not one of the pinned mode branches."
+        },
+        "branches": [
+          {
+            "name": "global-mode",
+            "anchor": "if (!IsGlobalMode() && bGlobalDoc)",
+            "shown": ["m_xGlobalBox", "m_xGlobalToolBox"],
+            "hidden": ["m_xContentBox", "m_xContent1ToolBox", "m_xContent2ToolBox", "m_xContent3ToolBox", "m_xContent4ToolBox", "m_xContent5ToolBox", "m_xContent6ToolBox", "m_xDocListBox"],
+            "side_effects": ["m_xGlobalTree->ShowTree()", "m_xContentTree->HideTree()", "SetGlobalMode(true)"]
+          },
+          {
+            "name": "content-mode",
+            "anchor": "else",
+            "shown": ["m_xContentBox", "m_xContent1ToolBox", "m_xContent2ToolBox", "m_xContent5ToolBox", "m_xContent6ToolBox", "m_xDocListBox"],
+            "hidden": ["m_xGlobalBox", "m_xGlobalToolBox"],
+            "side_effects": ["m_xGlobalTree->HideTree()", "m_xContentTree->ShowTree()", "SetGlobalMode(false)"]
+          }
+        ]
+      }
+    }
+  ]
+}

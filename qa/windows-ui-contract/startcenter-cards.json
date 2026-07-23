@@ -4,7 +4,7 @@
   "platform": "windows",
   "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
   "chapter": "docs/design/06-containers.md",
-  "chapter_sections": ["6.6", "9.1", "9.10"],
+  "chapter_sections": ["6.6", "9.1", "9.5", "9.10"],
   "notes": "Start Center Recent Documents / Templates card grids drawn natively by the RecentDocsView and TemplateDefaultView ThumbnailView subclasses. Cards are Start Center application drawing over @surface, not a definition.xml control (06-containers 6.6 platform notes); the palette/shape tokens below are the card's token contract with definition.xml and drift fails closed. Source-declared only: no native build, card pixels or runtime interaction is claimed.",
   "renderer": {
     "source": "sfx2/source/control/startcentercard.cxx",
@@ -44,7 +44,8 @@
     "primary-container",
     "on-primary-container",
     "on-surface",
-    "on-surface-variant"
+    "on-surface-variant",
+    "disabled-container"
   ],
   "shape_tokens": {
     "corner-container": "12",
@@ -91,6 +92,12 @@
       "role": "empty-grid-message",
       "chapter": "06-containers 6.6 / 09-start-center 9.5 (full-width centred @on-surface-variant message)",
       "markers": ["rEmptyMessage", "SC_CARD_EMPTY_PADDING", "SC_CARD_EMPTY_TEXT"]
+    },
+    {
+      "role": "unavailable-preview",
+      "chapter": "09-start-center 9.5 (Unavailable file thumbnails: a recent card whose backing file is missing dims its page preview with the archived @outline-variant/@disabled-container 'Disabled (container)' state pair while keeping the caption; an application of an existing palette pattern, source-declared only)",
+      "markers": ["rItem.isUnavailable()", "bUnavailable", "\"disabled-container\"", "\"outline-variant\""],
+      "notes": "Availability is a per-item flag computed from comphelper::DirectoryHelper::fileExists() at RecentDocsViewItem construction (the same probe clearUnavailableFiles() runs on demand); the base ThumbnailViewItem::isUnavailable() default is false so no non-Start-Center ThumbnailView consumer is dimmed. runtime_verified:false: the dimmed contrast against @surface-container-low (V/A gates) and the mid-session file-vanish update (I gate) both remain build-bound."
     }
   ],
   "empty_message_resource_file": "include/sfx2/strings.hrc",
@@ -111,6 +118,12 @@
         "SfxResId(STR_SC_NO_RECENT_MATCH)",
         "SC_CARD_PREVIEW_HEIGHT"
       ],
+      "pinned_markers": [
+        "IsMaterialStartCenterActive() && !mItemList.empty()",
+        "STR_WELCOME_LINE1",
+        "STR_WELCOME_LINE2"
+      ],
+      "pinned_fallback": "09-start-center 9.5: the Material card path is gated on a non-empty item list, so a genuinely-empty (first-run) recent list deliberately falls through to the legacy Welcome screen (STR_WELCOME_LINE1/2) rather than the filter-implying STR_SC_NO_RECENT_MATCH 'no match' copy. Pinned so a future edit can't silently show 'no recent documents match this pattern' on a blank first run.",
       "runtime_verified": false
     },
     {
@@ -128,6 +141,10 @@
         "SfxResId(STR_SC_NO_TEMPLATE_MATCH)",
         "SC_CARD_PREVIEW_HEIGHT"
       ],
+      "pinned_markers": [
+        "IsMaterialStartCenterActive() && !mItemList.empty()"
+      ],
+      "pinned_fallback": "09-start-center 9.5: same non-empty gate as RecentDocsView -- with no templates at all the Material path is skipped and TemplateLocalView::Paint runs, so a first-run empty template grid never shows the filter-implying STR_SC_NO_TEMPLATE_MATCH 'no match' copy.",
       "runtime_verified": false
     }
   ],

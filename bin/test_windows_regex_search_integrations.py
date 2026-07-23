@@ -1699,5 +1699,86 @@ class TemplatesManagerRegisteredTest(unittest.TestCase):
         )
 
 
+class CertificateChooserRegisteredTest(unittest.TestCase):
+    """The 13th field (Select Certificate issuer search) must validate against real source.
+
+    It is the second forward-to-site / live-predicate integration after Extension Manager: the
+    changed handler forwards to the enumeration (ImplInitialize), the enumeration compiles the shared
+    matcher exactly once, and the per-certificate predicate (matchCertificate) applies the
+    compatibility route. These mutations flip the real xmlsecurity anchors and assert fail-closed.
+    """
+
+    def setUp(self) -> None:
+        self.registry, self.coverage, self.contents = VALIDATOR.load_repository(REPOSITORY)
+        self.entry = next(
+            item
+            for item in self.registry["integrations"]
+            if item.get("coverage_id") == "security.certificate-search"
+        )
+
+    def failures(self, *, contents=None) -> list[str]:
+        return VALIDATOR.violations(
+            self.registry, self.coverage, self.contents if contents is None else contents
+        )
+
+    def test_certificate_chooser_is_registered_and_clean(self) -> None:
+        self.assertEqual("controller-driven-search-sites", self.entry["matcher_strategy"])
+        self.assertEqual("live-predicate", self.entry["search_sites"][0]["site_route"])
+        self.assertEqual([], self.failures())
+
+    def test_enumeration_compiles_matcher_once(self) -> None:
+        # The compile lives in ImplInitialize (the enumeration); removing it must fail closed.
+        contents = dict(self.contents)
+        source_file = self.entry["source_file"]
+        contents[source_file] = contents[source_file].replace(
+            "m_xSearchMatcher = std::make_unique<utl::TextSearch>("
+            "m_xRegexSearchController->GetSearchOptions());",
+            "m_xSearchMatcher.reset();",
+            1,
+        )
+        self.assertTrue(
+            any(
+                "enum-compiled-matcher" in e or "enum-compile-target" in e or "undeclared-matcher" in e
+                for e in self.failures(contents=contents)
+            )
+        )
+
+    def test_predicate_legacy_route_is_pinned(self) -> None:
+        # Dropping the legacy indexOf branch from matchCertificate must fail closed.
+        contents = dict(self.contents)
+        source_file = self.entry["source_file"]
+        contents[source_file] = contents[source_file].replace(
+            "(bLegacyCompatibleLiteral && rIssuer.indexOf(rState.Pattern) >= 0)\n",
+            "\n",
+            1,
+        )
+        self.assertTrue(
+            any(
+                "predicate-route" in e or "predicate-legacy-literal" in e
+                for e in self.failures(contents=contents)
+            )
+        )
+
+    def test_forward_trigger_required_in_changed_handler(self) -> None:
+        contents = dict(self.contents)
+        source_file = self.entry["source_file"]
+        contents[source_file] = contents[source_file].replace(
+            "    ImplInitialize(true);\n", "    (void)0;\n", 1
+        )
+        self.assertTrue(
+            any("changed-handler-trigger" in e for e in self.failures(contents=contents))
+        )
+
+    def test_matcher_member_declaration_required(self) -> None:
+        contents = dict(self.contents)
+        header_file = self.entry["header_file"]
+        contents[header_file] = contents[header_file].replace(
+            "    std::unique_ptr<utl::TextSearch> m_xSearchMatcher;\n", "", 1
+        )
+        self.assertTrue(
+            any("matcher-member" in e for e in self.failures(contents=contents))
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

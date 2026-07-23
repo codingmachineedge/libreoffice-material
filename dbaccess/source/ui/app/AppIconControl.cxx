@@ -28,8 +28,55 @@
 #include <vcl/mnemonic.hxx>
 #include <vcl/settings.hxx>
 #include <vcl/svapp.hxx>
+#include <vcl/MaterialTokens.hxx>
+#include <tools/color.hxx>
 #include <callbacks.hxx>
 #include <AppElementType.hxx>
+
+#include <cstdlib>
+#include <optional>
+#include <string_view>
+
+namespace
+{
+// Guarded Material Base navigation-rail selection colours (docs/design 12.1). Same
+// env + high-contrast guard idiom as sc/source/ui/app/inputwin.cxx's formula-bar
+// resolver: only while the documented Material file-widget theme is active (and not
+// forced high contrast) does the rail resolve tokens.
+bool lcl_isMaterialBaseActive()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return false;
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return false;
+    return true;
+}
+
+// The selected rail entry pairs @primary-container fill with @on-primary-container
+// text (12.1 "Rail entries" selected state).
+struct MaterialRailSelection
+{
+    Color aFill;
+    Color aText;
+};
+
+std::optional<MaterialRailSelection> lcl_getMaterialRailSelection()
+{
+    if (!lcl_isMaterialBaseActive())
+        return std::nullopt;
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+    const std::optional<Color> oFill = aTokens.findColor("primary-container");
+    const std::optional<Color> oText = aTokens.findColor("on-primary-container");
+    if (!oFill || !oText)
+        return std::nullopt;
+    return MaterialRailSelection{ *oFill, *oText };
+}
+} // namespace
 
 namespace dbaui
 {
@@ -209,6 +256,23 @@ void OApplicationIconControl::LoseFocus()
 {
     ThumbnailView::LoseFocus();
     Invalidate(); // redraw focus rect
+}
+
+void OApplicationIconControl::UpdateColors(const StyleSettings& rSettings)
+{
+    // Keep the generic StyleSettings baseline, then, while the Material theme is
+    // active, re-point the selected/highlighted rail entry to the Material
+    // @primary-container / @on-primary-container pair (docs/design 12.1). Paint()
+    // re-invokes UpdateColors + updateItemAttrsFromColors every frame, so these
+    // members feed the item attributes on the next draw. Non-Material paths are
+    // untouched; the whole surface stays source-declared (runtime_verified:false).
+    ThumbnailView::UpdateColors(rSettings);
+
+    if (const std::optional<MaterialRailSelection> oSelection = lcl_getMaterialRailSelection())
+    {
+        maHighlightColor = oSelection->aFill;
+        maHighlightTextColor = oSelection->aText;
+    }
 }
 
 tools::Rectangle OApplicationIconControl::GetFocusRect()

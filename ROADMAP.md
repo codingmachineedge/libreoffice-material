@@ -617,6 +617,42 @@ runtime evidence exists for any of it: every registry carrying a
 the row credits move only `D` (`△`→`✓` where design detail was the gap) and `M`
 (`·`→`△` for the new source contracts).
 
+The 2026-07-23 mega wave then advanced 43 rows in parallel — reaching beyond the
+shared-shell scope of this phase into the foundations of Phase 1 and the Writer,
+Calc, Impress/Draw, Base, Math, and chart surfaces of Phases 3–6 — as 33 new
+fail-closed build-free triads plus five in-place contract extensions, 562 new
+mutation tests, all green. Foundations gained regression/precondition pins for
+theme-resolution routing, elevation, reduced motion, density, adaptive layout, the
+icon-theme pipeline, render/scale neutrality, and a version-history seeded-state
+ledger; the widget and dialog layer gained pushbutton, icon-button, Options,
+file-picker, print, and Find & Replace closure contracts; navigation chrome gained
+notebookbar (a guarded `@surface` group-area edit), title-bar, and command-overflow
+pins; and Writer, Calc, Impress, Base, Math, and the embedded chart editor each
+gained composition or source-consumption contracts. Genuine guarded-material-source
+edits landed in `notebookbar.cxx`, the two svx overlay files
+(`viewobjectcontactofsdrpage.cxx`, `sdrpaintwindow.cxx` — cross-application blast
+radius, both sequenced to lose to high contrast), the four dbaccess rail surfaces,
+five acknowledgement-modal→`NotifyInfo` conversions, two more
+`sfx2::ConfirmDestructiveAction` migrations (raising `MAX_MIGRATIONS` 8→10), and a
+`certificatechooser.cxx` search predicate split (a 13th source-integrated search
+field). The registry-closure campaign moved 184 surfaces out of the `unassigned`
+baseline (836→1020 assigned, 434→250 unassigned, 1270 total unchanged) via four new
+prefix rules and per-cluster overrides. Honesty held: `M` advanced `·`→`△` only
+where a genuine Material source or `definition.xml`-grounded composition contract
+landed, while the presence-marker and upstream/D-gate pins (command overflow, the
+upstream Calc TabBar, the Math substrate, render/scale neutrality, the Impress
+pane/slideshow/presenter surfaces, the Base Add-Table tree, reduced motion,
+adaptive layout, and the icon-theme pipeline) explicitly did **not** advance `M` —
+existing upstream, non-Material-guarded source never satisfies it. A calibration
+correction landed on WIN-FND-002 (the theme-resolution chain is compiled and now
+pinned; its remaining gap is build/matrix, not source), and three rows were parked
+with honest reasons in the inventory (WIN-SEL-003 switch design-detail-only,
+WIN-SEL-004 filter chips and WIN-SHL-001 shell chrome as none-feasible build-free).
+The build-free static gate now stands at **147** scripts, all green. As with every
+prior wave, no build ran and no pixel/screenshot/runtime evidence is claimed: every
+`runtime_verified` stays `false`, every carve-out stays `status: specified`, and the
+`B V I A L P C` inventory gates stay untouched.
+
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
 - common file, print, export, properties, options, extension, and template flows;

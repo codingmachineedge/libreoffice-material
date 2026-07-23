@@ -105,6 +105,58 @@ function keys(value) {
   return Object.keys(value).sort();
 }
 
+function declarationExpression(sourceText, name) {
+  const declaration = new RegExp('\\b(?:const|let|var)\\s+' + name + '\\s*=', 'm').exec(sourceText);
+  if (!declaration) throw new Error(name + ' declaration was not found');
+
+  const start = declaration.index + declaration[0].length;
+  let quote = null;
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+  let depth = 0;
+
+  for (let index = start; index < sourceText.length; index += 1) {
+    const character = sourceText[index];
+    const next = sourceText[index + 1];
+
+    if (lineComment) {
+      if (character === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      if (character === '*' && next === '/') {
+        blockComment = false;
+        index += 1;
+      }
+      continue;
+    }
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (character === '\\') escaped = true;
+      else if (character === quote) quote = null;
+      continue;
+    }
+
+    if (character === '/' && next === '/') {
+      lineComment = true;
+      index += 1;
+    } else if (character === '/' && next === '*') {
+      blockComment = true;
+      index += 1;
+    } else if (character === "'" || character === '"' || character === String.fromCharCode(96)) {
+      quote = character;
+    } else if (character === '(' || character === '[' || character === '{') {
+      depth += 1;
+    } else if (character === ')' || character === ']' || character === '}') {
+      depth -= 1;
+    } else if (character === ';' && depth === 0) {
+      return sourceText.slice(start, index);
+    }
+  }
+  throw new Error(name + ' declaration has no terminating semicolon');
+}
+
 const checks = [
   {
     name: 'SELF-CONTAINMENT',
@@ -395,6 +447,63 @@ const checks = [
       insist(JSON.stringify(searchIds) === JSON.stringify(expectedSearchIds),
         'expected shared builder on five prototype searches; got ' + searchIds.join(', '));
       return 'notification forms/manager/history and five documented regex builders are guarded';
+    },
+  },
+  {
+    name: 'VERSION HISTORY FIXTURE',
+    run: function () {
+      const script = mainScript();
+      let history;
+      let docs;
+      try {
+        history = Function('"use strict"; return (' + declarationExpression(script, 'HISTORY') + ');')();
+        docs = Function('"use strict"; return (' + declarationExpression(script, 'DOCS') + ');')();
+      } catch (error) {
+        throw new Error('HISTORY/DOCS fixture could not be parsed: ' + error.message);
+      }
+
+      insist(Array.isArray(history), 'HISTORY is not an array');
+      insist(Array.isArray(docs), 'DOCS is not an array');
+      insist(history.length === 12, 'expected 12 seeded history entries, got ' + history.length);
+      insist(docs.length === 6, 'expected 6 seeded DOCS records, got ' + docs.length);
+
+      const ids = history.map(function (h) { return h.id; }).sort(function (a, b) { return a - b; });
+      insist(JSON.stringify(ids) === JSON.stringify([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
+        'seeded entry ids must be exactly 0..11');
+      const current = history.filter(function (h) { return h.current === true; });
+      insist(current.length === 1, 'exactly one entry must be current, got ' + current.length);
+
+      const problems = [];
+      for (const h of history) {
+        if (h.docIx != null
+            && !(Number.isInteger(h.docIx) && h.docIx >= 0 && h.docIx < docs.length)) {
+          problems.push('entry ' + h.id + ' has out-of-range docIx ' + h.docIx);
+        }
+        if (!Number.isInteger(h.added) || h.added < 0
+            || !Number.isInteger(h.removed) || h.removed < 0) {
+          problems.push('entry ' + h.id + ' has a non-integer word delta');
+        }
+        if (!/^[0-9a-f]{7}$/.test(String(h.hash))) {
+          problems.push('entry ' + h.id + ' has a malformed hash ' + h.hash);
+        }
+      }
+      insist(problems.length === 0, problems.join('; '));
+
+      const gating = [
+        ['restore gated on snapshot', 'var restoreBtn = hdoc ?'],
+        ['current gated on current flag', 'var currentBtn = hs.current ?'],
+        ['snapshot gated on docIx', 'var hdoc=(hs.docIx!=null)?DOCS[hs.docIx]:null;'],
+      ];
+      const missing = gating.filter(function (g) { return !script.includes(g[1]); })
+        .map(function (g) { return g[0]; });
+      insist(missing.length === 0, 'missing render gating: ' + missing.join(', '));
+      const restoreLine = script.split('\n').find(function (line) {
+        return line.includes('var restoreBtn = hdoc ?');
+      }) || '';
+      insist(restoreLine.includes('Restore this version') && !restoreLine.includes('data-act'),
+        'the restore control must stay a non-committing affordance (no data-act)');
+
+      return '12 coherent seeded entries over 6 docs, one current, restore/current gating intact';
     },
   },
 ];

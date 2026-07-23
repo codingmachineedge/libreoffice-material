@@ -43,6 +43,7 @@ namespace dbaui
     {
         std::unique_ptr<weld::Container> m_xPanelParent;
         std::unique_ptr<weld::Container> m_xDetailViewParent;
+        std::unique_ptr<weld::Container> m_xPanelDetailHairline;
         std::unique_ptr<OTitleWindow> m_xPanel;
         std::unique_ptr<OApplicationDetailView> m_xDetailView;
         VclPtr<OApplicationView>            m_xView;

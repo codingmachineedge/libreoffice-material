@@ -45,6 +45,12 @@ public:
 
     bool isPinned () const { return m_bPinned; }
 
+    /// Material Start Center: the backing file was missing at load time, so the
+    /// card renderer draws this item with the dimmed "unavailable-preview"
+    /// treatment (docs/design/09-start-center.md 9.5). Default-false base
+    /// accessor overridden here; computed once at construction.
+    virtual bool isUnavailable() const override { return m_bUnavailable; }
+
 private:
     sfx2::RecentDocsView& mrParentView;
 
@@ -53,6 +59,11 @@ private:
     tools::Rectangle getPinnedIconArea() const;
 
     OUString maURL;
+
+    /// True when maURL's backing file is missing at construction time; drives the
+    /// Material card's dimmed "unavailable-preview" treatment. Computed once (and
+    /// only under the Material file widget) so the default recent-list is unaffected.
+    bool m_bUnavailable = false;
 
     bool m_isReadOnly = false;
 

@@ -38,6 +38,9 @@ namespace com::sun::star {
 
 namespace com::sun::star::xml::crypto { class XXMLSecurityContext; }
 
+namespace sfx2 { class RegexSearchController; }
+namespace utl { class TextSearch; }
+
 class SfxViewShell;
 
 struct CertificateChooserUserData
@@ -61,6 +64,7 @@ private:
     std::vector<std::shared_ptr<CertificateChooserUserData>> mvUserData;
 
     bool                    mbInitialized;
+    bool                    mbConstructed = false;
     CertificateChooserUserAction const meAction;
     SfxViewShell* m_pViewShell;
     OUString                msPreferredKey;
@@ -74,8 +78,11 @@ private:
     std::unique_ptr<weld::Button>   m_xOKBtn;
     std::unique_ptr<weld::Label>    m_xFTDescription;
     std::unique_ptr<weld::Entry>    m_xDescriptionED;
-    std::unique_ptr<weld::Entry>    m_xSearchBox;
+    std::unique_ptr<weld::Entry> m_xSearchBox;
     std::unique_ptr<weld::Button>   m_xReloadBtn;
+    std::unique_ptr<weld::Button> m_xRegexBuilderButton;
+    std::unique_ptr<utl::TextSearch> m_xSearchMatcher;
+    std::unique_ptr<sfx2::RegexSearchController> m_xRegexSearchController;
 
     std::unordered_map<css::uno::Reference< css::xml::crypto::XXMLSecurityContext>,
         css::uno::Sequence< css::uno::Reference< css::security::XCertificate > > > xMemCerts;
@@ -88,6 +95,11 @@ private:
 
     void ImplShowCertificateDetails();
     void ImplInitialize(bool mbSearch = false);
+    // Live per-certificate predicate for the issuer search. The shared regex/literal matcher is
+    // compiled once per rebuild in ImplInitialize(); this only tests one issuer string against it,
+    // reproducing the legacy case-insensitive "issuer contains" match until the user opts into
+    // regex/options through the adjacent builder.
+    bool matchCertificate(const OUString& rIssuer);
     void ImplReloadCertificates();
     static void HandleOneUsageBit(OUString& string, int& bits, int bit, TranslateId name);
 

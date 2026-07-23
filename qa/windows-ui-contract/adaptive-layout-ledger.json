@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "contract": "windows-adaptive-layout-ledger",
+  "inventory_row": "WIN-FND-006",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_ref": "docs/design/01-foundations.md",
+  "design_anchor": "## 7. Adaptive layout",
+  "design_class_markers": [
+    "Sidebars collapse to rails/overlays",
+    "toolbars overflow from the end",
+    "Full chrome: docked sidebars"
+  ],
+  "source_scan_scope": [
+    "sfx2/source",
+    "framework/source/uielement"
+  ],
+  "breakpoint_slot_pattern": "Int_[A-Za-z0-9]*(?:MinWidth|MaxWidth|Breakpoint)",
+  "note": "Enumeration-discipline ledger for the compact/medium/expanded adaptive-layout model (docs/design/01-foundations.md §7). It records the ONE native anchor of that model that exists in the tree today -- WIN-CON-007's Material-guarded below-medium overlay predicate (Int_DeckOverlayMinWidth=600 consumed by ShouldDeckOverlayCanvas) -- by CROSS-REFERENCING the sidebar-panels contract that already locks it, never re-asserting its markers. Every other surface §7 names (toolbar overflow WIN-SHL-002, notebookbar WIN-NAV-004, status-bar pane dropping WIN-NAV-008, dialog near-full-width) carries an explicit target-no-native-anchor placeholder so none is silently unenumerated. A negative-space guard scans sfx2/source and framework/source/uielement for any OTHER width-driven breakpoint slot and fails closed if one appears without a matching ledger entry. This does NOT move WIN-FND-006's own SRC/MATRIX/FLOW/A11Y/LOC/PERF gates: the single populated anchor is owned and locked by WIN-CON-007, not this row. Source/text evidence only; runtime_verified:false; no build, resize, keyboard-order, or pixel evidence is claimed.",
+  "anchors": [
+    {
+      "inventory_row": "WIN-CON-007",
+      "surface": "sidebar below-medium window-class overlay degrade",
+      "status": "native-anchor",
+      "design_ref": "docs/design/01-foundations.md#7",
+      "guard_env": "VCL_DRAW_WIDGETS_FROM_FILE",
+      "guard_helper": "IsMaterialDeck",
+      "consuming_function": "ShouldDeckOverlayCanvas",
+      "threshold_slot": "Int_DeckOverlayMinWidth",
+      "threshold_value": 600,
+      "consumer_marker": "Theme::GetInteger(Theme::Int_DeckOverlayMinWidth)",
+      "source_files": [
+        "sfx2/source/sidebar/SidebarController.cxx",
+        "sfx2/source/sidebar/Theme.cxx",
+        "include/sfx2/sidebar/Theme.hxx"
+      ],
+      "locked_by": "qa/windows-ui-contract/sidebar-panels.json",
+      "cross_reference_only": true,
+      "note": "Cross-referenced from the sidebar-panels contract, not re-asserted here. Only suppresses force-widening the docked sidebar below the threshold; the pixel float-over-canvas presentation remains future work (build-bound)."
+    },
+    {
+      "inventory_row": "WIN-SHL-002",
+      "surface": "toolbar overflow / adaptive command layout (compact & medium classes)",
+      "status": "target-no-native-anchor",
+      "design_ref": "docs/design/01-foundations.md#7",
+      "note": "§7 requires a designed overflow menu with stable keyboard order; no native width-driven overflow breakpoint exists in framework/source/uielement today."
+    },
+    {
+      "inventory_row": "WIN-NAV-004",
+      "surface": "notebookbar / ribbon adaptive collapse",
+      "status": "target-no-native-anchor",
+      "design_ref": "docs/design/01-foundations.md#7",
+      "note": "Upstream notebookbar surface exists but has no Material width-driven adaptive breakpoint."
+    },
+    {
+      "inventory_row": "WIN-NAV-008",
+      "surface": "status bar low-priority pane dropping (medium class)",
+      "status": "target-no-native-anchor",
+      "design_ref": "docs/design/01-foundations.md#7",
+      "note": "§7 medium class drops low-priority status-bar panes; no native width predicate exists yet."
+    },
+    {
+      "inventory_row": "WIN-FND-006",
+      "surface": "dialog near-full-width (compact class)",
+      "status": "target-no-native-anchor",
+      "design_ref": "docs/design/01-foundations.md#7",
+      "note": "§7 compact class takes dialogs near-full-width (prototype caps at min(680px,94%)); no native width-driven dialog behaviour exists outside the prototype, so the cross-cutting foundation row holds this placeholder until a dialog row implements it."
+    }
+  ]
+}

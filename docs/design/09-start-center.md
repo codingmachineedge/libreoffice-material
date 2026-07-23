@@ -154,7 +154,18 @@ The Start Center supplies only the entry point; the dialog owns its own layout.
   matching; toggle `.*` for regex mode; open the builder to insert tokens and
   flags with a live match count.
 - **Housekeeping.** Actions (`more_vert`) exposes destructive list operations
-  behind a menu; they never appear as top-level buttons.
+  behind a menu; they never appear as top-level buttons. **Clear Recent
+  Documents** routes through the shared Material destructive-confirmation helper
+  (`sfx2::ConfirmDestructiveAction`, verb *Clear*; see
+  [08-dialogs.md](08-dialogs.md) §8.1): `BackingWindow::MenuSelectHdl`'s
+  `clear_all` branch now gates `SvtHistoryOptions::Clear` behind the
+  confirmation — source-implemented (unbuilt), registered as
+  `sfx2-backingwindow-clear-recent` in `dialog-anatomy-policy.json`
+  (`runtime_verified` false). **Clear Unavailable Files** keeps its existing
+  `ConfirmationDlg::Query` confirmation with a persisted "don't ask again"
+  preference; folding it onto the shared helper is deferred until that helper
+  gains an equivalent persisted-dismiss parameter, so the preference is not
+  silently lost.
 
 ## 9.5 Empty, loading, and error states
 
@@ -255,7 +266,7 @@ replacing it; the prototype's target anatomy maps onto it as follows.
 | Home header | `welcome_header` with `welcome_title` (bold, 1.75 × scale) and `welcome_subtitle`, added by the Material slice | title colour `GetWindowTextColor()` → `@on-surface`; subtitle uses `labelTextColor` → `@on-surface`, versus prototype `@on-surface-variant` |
 | Filter combo | `cbFilter` (`GtkComboBoxText`) | resolves implemented `combobox` parts in definition.xml (compiled at commit 577059e274); its closed idle state is visible in accepted captures, while the open list and interaction-state matrix remain unverified |
 | Actions menu | `mbActions` menu button + `clearmenu` | native; the Templates view's Manage Templates opens `SfxTemplateManagerDlg`, specified in [08-dialogs.md](08-dialogs.md) §8.8 |
-| Search + regex row | — | no native counterpart; specified here, not yet implemented |
+| Search + regex row | `start_search` + `start_search_regex_builder` in `startcenter.ui` | source-integrated: the search field and its regex-builder toggle are wired through `sfx2::RegexSearchController` in `BackingWindow` (registered as `start-center.document-search` in `regex-search-integrations.json` and `search-field-coverage.json`); the 44 px pill geometry and builder-popover pixels remain prototype-only |
 | Card grid | `all_recent` (`RecentDocsView` in `scrollrecent`) and `local_view` (`TemplateDefaultView` in `scrolllocal`) | the Material slice reroutes both views' fill/text from `officecfg` Start Center colours to `StyleSettings` (`GetWindowColor`/`GetWindowTextColor` → `@surface`/`@on-surface`; highlights → `@primary-container`/`@on-primary-container`); card anatomy (118 px preview, badge, hover elevation) prototype-only |
 | Right box padding | 24 px margins, 12 px spacing added by the slice | prototype uses 26 × 28 px; near-equivalent, to converge |
 

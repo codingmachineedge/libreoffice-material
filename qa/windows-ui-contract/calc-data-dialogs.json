@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "contract": "material-calc-data-dialogs",
+  "platform": "windows",
+  "inventory_row": "WIN-CA-005",
+  "chapter": [
+    "docs/design/08-dialogs.md#8.1",
+    "docs/design/10-writer-calc.md"
+  ],
+  "status": "source-declared",
+  "runtime_verified": false,
+  "generator": "bin/check-windows-calc-data-dialog-contract.py",
+  "pinned_dialogs": [
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/sortdialog.ui",
+      "dialog_id": "SortDialog",
+      "controller_base": "SfxTabDialogController",
+      "controller_source": "sc/source/ui/dbgui/sortdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/sortdialog.ui",
+      "action_widgets": [
+        {
+          "response": "101",
+          "id": "reset"
+        },
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        },
+        {
+          "response": "-11",
+          "id": "help"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11"
+    },
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/subtotaldialog.ui",
+      "dialog_id": "SubTotalDialog",
+      "controller_base": "SfxTabDialogController",
+      "controller_source": "sc/source/ui/dbgui/subtdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/subtotaldialog.ui",
+      "action_widgets": [
+        {
+          "response": "-11",
+          "id": "help"
+        },
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11"
+    },
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/standardfilterdialog.ui",
+      "dialog_id": "StandardFilterDialog",
+      "controller_base": "ScAnyRefDlgController",
+      "controller_source": "sc/source/ui/dbgui/filtdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/standardfilterdialog.ui",
+      "action_widgets": [
+        {
+          "response": "100",
+          "id": "clear"
+        },
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        },
+        {
+          "response": "-11",
+          "id": "help"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11"
+    },
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/advancedfilterdialog.ui",
+      "dialog_id": "AdvancedFilterDialog",
+      "controller_base": "ScAnyRefDlgController",
+      "controller_source": "sc/source/ui/dbgui/sfiltdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/advancedfilterdialog.ui",
+      "action_widgets": [
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        },
+        {
+          "response": "-11",
+          "id": "help"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11"
+    },
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/pivotfilterdialog.ui",
+      "dialog_id": "PivotFilterDialog",
+      "controller_base": "GenericDialogController",
+      "controller_source": "sc/source/ui/dbgui/pfiltdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/pivotfilterdialog.ui",
+      "action_widgets": [
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        },
+        {
+          "response": "-11",
+          "id": "help"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11",
+      "controller_note": "ScPivotFilterDlg genuinely uses plain GenericDialogController, NOT SfxTabDialogController or ScAnyRefDlgController like the other five -- a real, verified per-dialog difference kept as-is."
+    },
+    {
+      "ui_file": "sc/uiconfig/scalc/ui/conditionalformatdialog.ui",
+      "dialog_id": "ConditionalFormatDialog",
+      "controller_base": "ScAnyRefDlgController",
+      "controller_source": "sc/source/ui/condformat/condformatdlg.cxx",
+      "ui_load_path_literal": "modules/scalc/ui/conditionalformatdialog.ui",
+      "action_widgets": [
+        {
+          "response": "-5",
+          "id": "ok"
+        },
+        {
+          "response": "-6",
+          "id": "cancel"
+        },
+        {
+          "response": "-11",
+          "id": "help"
+        }
+      ],
+      "footer_default_response": "-5",
+      "footer_secondary_response": "-11"
+    }
+  ],
+  "pinned_note": "Composition pin of the six Data-menu core dialog shells: root GtkDialog id, exact ordered action-widget footer, OK-is-default / Help-is-secondary footer roles, and the per-dialog weld controller base + .ui load-path/dialog-id literals. Outer shell/footer + controller binding only; the tab-page content is out of scope. Cannot detect runtime code that hides/relabels an action-widget after construction (specified-only limitation). Does NOT duplicate the two sc/source/ui/view/tabvwshf.cxx destructive-sheet migrations tracked by dialog-anatomy-policy.json.",
+  "surface_ledger": {
+    "source_note": "Generated per-surface classification of the Calc data/chart family beyond the six pinned dialogs. Each entry is standard-anatomy (inherits chapter-8.1 modal anatomy once compiled) or custom-paint-guard-required (owning source subclasses weld::CustomWidgetController/EditBrowseBox or holds a weld::CustomWeld preview member). Regenerate with --regenerate. Additive per-surface evidence, not an ownership reassignment and not a full closure; WIN-SYS-016 ui-registry.json remains the owner-level authority. Source composition only -- never dialog pixels, FLOW, A11Y, LOC, PERF or COMPAT.",
+    "counts": {
+      "total": 74,
+      "standard_anatomy": 64,
+      "custom_paint": 10
+    },
+    "entries": [
+      {
+        "ui_file": "chart2/uiconfig/ui/3dviewdialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/attributedialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/chardialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/chartcolorpalettepopup.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/chartdatadialog.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/DataBrowser.hxx",
+          "token": "class DataBrowser : public ::svt::EditBrowseBox"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/charttypedialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/columnfragment.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/combobox.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/datarangedialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/dlg_DataLabel.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/res_DataLabel.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xDC_DialWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/dlg_InsertDataTable.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/dlg_InsertErrorBars.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/dlg_InsertLegend.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/imagefragment.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/insertaxisdlg.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/insertgriddlg.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/inserttitledlg.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/paradialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebaraxis.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebarcolors.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebarelements.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebarerrorbar.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebarseries.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/sidebartype.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/smoothlinesdlg.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/steppedlinesdlg.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/titlerotationtabpage.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/tp_TitleRotation.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xCtrlDialWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_3D_SceneAppearance.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_3D_SceneGeometry.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_3D_SceneIllumination.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/tp_3D_SceneIllumination.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xPreviewWnd;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_AxisPositions.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_ChartColorPalette.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_ChartType.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/tp_ChartType.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xSubTypeListWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_DataLabel.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/res_DataLabel.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xDC_DialWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_DataPointOption.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_DataSource.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_DataTable.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_ErrorBars.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_LegendPosition.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_PolarOptions.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/tp_PolarOptions.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xAngleDialWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_RangeChooser.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_Scale.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_SeriesToAxis.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_Trendline.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/tp_axisLabel.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "chart2/source/controller/dialogs/tp_AxisLabel.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> m_xCtrlDialWin;"
+        }
+      },
+      {
+        "ui_file": "chart2/uiconfig/ui/wizelementspage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/condformatmanager.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/conditionaleasydialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/conditionalentry.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "sc/source/ui/inc/condformatdlgentry.hxx",
+          "token": "std::unique_ptr<weld::CustomWeld> mxWdPreview;"
+        }
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/conditionaliconset.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/consolidatedialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/databaroptions.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/datafielddialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/datafieldoptionsdialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/definedatabaserangedialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/filterdropdown.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/filterlist.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/filtersubdropdown.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/multipleoperationsdialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/pivotcalcfielddialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/pivotfielddialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/pivottablelayoutdialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/selectsource.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/sortcriteriapage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/sortkey.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/sortoptionspage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/sortwarning.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/subtotalgrppage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/subtotaloptionspage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/textimportcsv.ui",
+        "classification": "custom-paint-guard-required",
+        "evidence": {
+          "source": "sc/source/ui/inc/csvcontrol.hxx",
+          "token": "class SAL_DLLPUBLIC_RTTI ScCsvControl : public weld::CustomWidgetController"
+        }
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/textimportoptions.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/validationcriteriapage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/validationdialog.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      },
+      {
+        "ui_file": "sc/uiconfig/scalc/ui/validationhelptabpage.ui",
+        "classification": "standard-anatomy",
+        "evidence": null
+      }
+    ]
+  },
+  "notes": "Two source-only sections: pinned dialog shells (Part A) and a generated custom-paint/standard-anatomy ledger (Part B). runtime_verified false throughout; no dialog pixels, FLOW, A11Y, LOC, PERF or COMPAT. The ledger is additive per-surface evidence, not an ownership reassignment; WIN-SYS-016 ui-registry.json remains the owner-level authority mapping every sc/ .ui to WIN-CA-001 and every chart2/ .ui to WIN-CH-001."
+}

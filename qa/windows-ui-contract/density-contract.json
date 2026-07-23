@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "contract": "material-density-model",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/01-foundations.md",
+  "chapter_section": "6",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-FND-005. Source-only ledger proving the row's 'compact/comfortable metrics compiled; selectable density is target-only' claim is internally consistent and not silently regressing. It pins the 15 single-profile native metric roles (re-parsed independently of check-material-theme.py), the target compact/comfortable table (docs/design/01-foundations.md section 6), MATERIAL_DESIGN.md's density honesty language, the calc-chrome.json per-surface density carve-out consistency, and a Git-tracked selector-absence guard. It implements no selector and advances none of the row's build/pixel/matrix/perf/compat gates: extending the metric schema, a Tools > Options density surface, and rendered evidence are the separate build gates. Source evidence only: runtime_verified is false.",
+  "native_metrics": {
+    "stroke-none": "0",
+    "stroke-thin": "1",
+    "stroke-standard": "2",
+    "stroke-track": "4",
+    "space-list-entry": "12",
+    "space-tab-inline": "12",
+    "height-floating-title": "14",
+    "size-menu-indicator": "18",
+    "height-window-title": "18",
+    "size-list-preview": "18",
+    "size-tree-node": "20",
+    "size-selection-control": "24",
+    "size-compact-control": "28",
+    "size-standard-control": "36",
+    "height-tab": "40"
+  },
+  "target_table": [
+    {"variable": "--ctrl", "compact": "34px", "comfortable": "40px", "status": "specified"},
+    {"variable": "--row", "compact": "26px", "comfortable": "32px", "status": "specified"},
+    {"variable": "--tb", "compact": "38px", "comfortable": "48px", "status": "specified"},
+    {"variable": "--menu", "compact": "30px", "comfortable": "38px", "status": "specified"},
+    {"variable": "--item", "compact": "30px", "comfortable": "40px", "status": "specified"},
+    {"variable": "--fs", "compact": "13px", "comfortable": "14px", "status": "specified"},
+    {"variable": "line height", "compact": "1.35", "comfortable": "1.45", "status": "specified"}
+  ],
+  "design_honesty": {
+    "note": "MATERIAL_DESIGN.md's Desktop density section must keep both named profiles and its 'implemented and verified separately' honesty language.",
+    "markers": [
+      "## Desktop density",
+      "**compact** for keyboard/mouse use",
+      "**comfortable** for touch, high zoom",
+      "must be implemented and verified separately"
+    ]
+  },
+  "carveout": {
+    "source": "qa/windows-ui-contract/calc-chrome.json",
+    "note": "calc-chrome.json's density carve-out (--tb, --menu) must stay byte-consistent with the section-6 master table (px stripped) and keep status 'specified', so a per-surface value cannot silently diverge from the foundation."
+  },
+  "reader_test_fixture": "definitionMetricsSectionAttribute.xml",
+  "selector_absence": {
+    "note": "A density selection would surface as a .ui widget id or an officecfg property carrying 'density'. A Git-tracked walk over *.ui and *.xcs/*.xcu must find zero such controls; any match means density became selectable and this ledger must be revisited.",
+    "ui_pattern": "id=\"[^\"]*[Dd]ensity",
+    "officecfg_pattern": "oor:name=\"[^\"]*[Dd]ensity"
+  }
+}

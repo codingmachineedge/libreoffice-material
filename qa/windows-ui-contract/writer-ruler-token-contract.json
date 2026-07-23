@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "contract": "material-writer-ruler-token-contract",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (10.2 Writer ruler; 10.4 RTL/localization notes)",
+  "note": "Pins the StyleSettings colour-slot chain that paints Writer's ruler under the Material file-widget theme. Writer's ruler is SwCommentRuler (a compiled SvxRuler subclass) whose Paint() delegates to the shared Ruler::ImplDraw in svtools/source/control/ruler.cxx, plus SwCommentRuler's own DrawCommentControl. Every colour those functions read from StyleSettings (GetWindowColor/GetDialogColor/GetFaceColor/GetLightColor/GetShadowColor/GetDarkShadowColor/GetWorkspaceColor for the page-track/margin/border/indent geometry; GetHighlightColor/GetHighlightTextColor/GetButtonTextColor for the Writer Comments toggle) is populated from the definition.xml <style> slots by FileDefinitionWidgetDraw::updateSettings when the Material theme is selected. This is a source-composition pin over unmodified upstream files: runtime_verified is false throughout -- no native build, ruler pixels, or runtime interaction are claimed. svtools/source/control/ruler.cxx is a SHARED control (other applications' rulers use it too); the claim is scoped to the shared Ruler paint path as consumed by Writer's SwCommentRuler, not Writer-exclusive native ruler work that does not exist.",
+  "style_slots": [
+    { "slot": "windowColor", "token": "@surface", "role": "page-track fill (aRulerColor)" },
+    { "slot": "dialogColor", "token": "@surface-container", "role": "margin fill (aMarginRulerColor) + comment-toggle idle fill" },
+    { "slot": "faceColor", "token": "@surface-container", "role": "border-marker face" },
+    { "slot": "lightColor", "token": "@surface", "role": "border-marker highlight edge" },
+    { "slot": "shadowColor", "token": "@outline", "role": "top/border rule + comment-toggle outline" },
+    { "slot": "darkShadowColor", "token": "@on-surface", "role": "border-marker dark edge + drag-indent triangle hit" },
+    { "slot": "workspaceColor", "token": "@surface-container-low", "role": "drag-indent triangle idle + collapsed comment-toggle fill" },
+    { "slot": "highlightColor", "token": "@primary-container", "role": "comment-toggle hover wash" },
+    { "slot": "highlightTextColor", "token": "@on-primary-container", "role": "comment-toggle hover text" },
+    { "slot": "buttonTextColor", "token": "@on-primary-container", "role": "comment-toggle label text/arrow" }
+  ],
+  "palette_colors": [
+    "surface",
+    "surface-container",
+    "surface-container-low",
+    "outline",
+    "on-surface",
+    "primary-container",
+    "on-primary-container"
+  ],
+  "bridge": {
+    "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+    "function_marker": "bool FileDefinitionWidgetDraw::updateSettings(AllSettings& rSettings, bool bUseDarkMode)",
+    "note": "updateSettings copies every definition.xml <style> colour into the live StyleSettings; a dropped or renamed assignment breaks the token chain the ruler reads and fails closed.",
+    "assignments": [
+      "aStyleSet.SetWindowColor(pDefinitionStyle->maWindowColor);",
+      "aStyleSet.SetDialogColor(pDefinitionStyle->maDialogColor);",
+      "aStyleSet.SetFaceColor(pDefinitionStyle->maFaceColor);",
+      "aStyleSet.SetLightColor(pDefinitionStyle->maLightColor);",
+      "aStyleSet.SetShadowColor(pDefinitionStyle->maShadowColor);",
+      "aStyleSet.SetDarkShadowColor(pDefinitionStyle->maDarkShadowColor);",
+      "aStyleSet.SetWorkspaceColor(pDefinitionStyle->maWorkspaceColor);",
+      "aStyleSet.SetHighlightColor(pDefinitionStyle->maHighlightColor);",
+      "aStyleSet.SetHighlightTextColor(pDefinitionStyle->maHighlightTextColor);",
+      "aStyleSet.SetButtonTextColor(pDefinitionStyle->maButtonTextColor);"
+    ]
+  },
+  "paint_paths": [
+    {
+      "id": "writer.ruler.comment-toggle",
+      "source": "sw/source/uibase/misc/swruler.cxx",
+      "note": "SwCommentRuler::Paint delegates to SvxRuler::Paint (the shared base) then paints the Writer Comments toggle via DrawCommentControl.",
+      "delegation_marker": "SvxRuler::Paint(rRenderContext, rRect);",
+      "markers": [
+        "rStyleSettings.GetDialogColor()",
+        "rStyleSettings.GetShadowColor()",
+        "rStyleSettings.GetWorkspaceColor()",
+        "rStyleSettings.GetHighlightColor()",
+        "rStyleSettings.GetHighlightTextColor()",
+        "rStyleSettings.GetButtonTextColor()"
+      ]
+    },
+    {
+      "id": "writer.ruler.shared-band",
+      "source": "svtools/source/control/ruler.cxx",
+      "note": "The shared Ruler::ImplDraw page-track/margin/border/indent painting that SwCommentRuler inherits unchanged. The default (Material) page-track and margin fills are the else branch of the ThemeColors carve-out.",
+      "markers": [
+        "rStyleSettings.GetShadowColor()",
+        "rStyleSettings.GetFaceColor()",
+        "rStyleSettings.GetLightColor()",
+        "rStyleSettings.GetDarkShadowColor()",
+        "aRulerColor = rStyleSettings.GetWindowColor();",
+        "aMarginRulerColor = rStyleSettings.GetDialogColor();",
+        "rStyleSettings.GetWorkspaceColor()"
+      ]
+    }
+  ],
+  "carveout": {
+    "name": "office-theme-colors",
+    "status": "specified",
+    "source": "svtools/source/control/ruler.cxx",
+    "branch_marker": "ThemeColors::IsThemeEnabled()",
+    "officecfg_default": "0 (Disabled) -- Common.xcs ColorScheme/UseThemeColors",
+    "note": "When the user opts into LibreOffice's separate office-theme-colors feature, Ruler::ImplDraw takes ThemeColors::GetThemeColors() for the page-track/margin fill instead of the Material StyleSettings slots. officecfg defaults it Disabled, so the Material pinning holds by default; this branch is recorded spec-only and is NEVER claimed as covered by the Material token chain. The branch_marker must remain present in source so the carve-out reflects real code."
+  }
+}

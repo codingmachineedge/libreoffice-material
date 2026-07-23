@@ -420,6 +420,109 @@ and statically validated only.
   README.md, ROADMAP.md, this file, `qa/windows-ui-contract/README.md`,
   `.github/workflows/windows-ui-contract.yml`) carry no new script.
 
+## Wave-2 Mega wave landed in source (2026-07-23)
+
+- **43 kept rows across 16 clusters + 1 integrator**, delivered as **33 new
+  fail-closed triads** (checker + JSON registry + mutation suite each) plus **five
+  in-place extensions** of already-landed contracts. **562 new mutation tests**,
+  all green here. Source-implemented only: no native build ran, every
+  `runtime_verified` stays `false`, every carve-out stays `status: specified`
+  (mutation-tested against promotion), and no build/pixel/screenshot/runtime
+  evidence is claimed — the `B V I A L P C` inventory gates are untouched.
+- **Cluster-by-cluster (new triads unless noted):**
+  - foundations-a: theme-resolution-routing (WIN-FND-002, 16), elevation-strategy
+    (WIN-FND-003, 13), reduced-motion (WIN-FND-004, 14), density (WIN-FND-005, 15),
+    version-history-seeded-state (WIN-CONCEPT-002, 14) — plus the two prototype
+    writes (`site/prototype.html` two box-shadow drifts reconciled to the doc; a
+    VERSION HISTORY FIXTURE check in `validate-prototype.mjs`).
+  - foundations-b: adaptive-layout-ledger (WIN-FND-006, 17), icon-theme-pipeline
+    (WIN-FND-007, 18), render-scale-matrix (WIN-SYS-014, 16).
+  - widget-dialog-pins: pushbutton (WIN-ACT-001, 19), icon-button (WIN-ACT-003,
+    16), options-dialog (WIN-DLG-002, 21), office-file-picker (WIN-DLG-003, 14),
+    print-dialog (WIN-DLG-004, 20).
+  - search-fields: find-replace-dialog closure (WIN-DLG-005, 16); the INP-005 13th
+    field (certificate-chooser) via a real `certificatechooser.cxx`
+    enumeration/`matchCertificate`-predicate refactor + `selectcertificatedialog.ui`,
+    extending `regex-search-integrations.json` (72 tests) and `search-field-coverage.json`.
+  - notifications (WIN-FBK-007/WIN-SHL-003): five acknowledgement modals converted
+    onto `NotifyInfo` (`mailmodel.cxx`, `srcview.cxx`, `labfmt.cxx`, `wrtsh1.cxx`,
+    `textfld.cxx` + two `strings.hrc`), `notification-producer-policy.json` grew
+    3→8 producers with a `min_producer_modules=3` floor.
+  - destructive-confirm (WIN-DLG-001/WIN-SC-004): `MAX_MIGRATIONS` 8→10 with two
+    conversions — Digital Signatures remove-signature (`digitalsignaturesdialog.cxx`
+    + `xmlsecurity/inc/strings.hrc`) and Clear Recent Documents (`backingwindow.cxx`).
+  - startcenter-cards (WIN-SC-005): `unavailable-preview` dimming role + first-run
+    native fallback pin; a default-false virtual `ThumbnailViewItem::isUnavailable()`
+    in the shared base header, overridden on `RecentDocsViewItem`.
+  - nav-chrome: notebookbar (WIN-NAV-004, 12 — the guarded `@surface` group-area
+    edit in `notebookbar.cxx`), titlebar (WIN-NAV-007, 16), command-overflow
+    (WIN-SHL-002, 15).
+  - writer: chrome (WIN-WR-001, 26), ruler (WIN-WR-002, 21), format-dialogs
+    (WIN-WR-003, 25), sidebar-decks (WIN-WR-004, 17), review (WIN-WR-005, 19).
+  - calc-containers: grid-selection (WIN-CA-003, 16), sheet-tabs-upstream-pin
+    (WIN-CA-004, 12), data-dialogs (WIN-CA-005, 15), data-grid-header-selection
+    (WIN-CON-003, 17).
+  - impress-draw-surfaces: `impress-draw-surfaces.json` extended 6→10 surfaces
+    (WIN-IM-001 pane/status owner pins; WIN-DR-001 `draw.canvas-grid` and WIN-DR-002
+    `draw.selection-overlay-guide-color` guarded colour branches in
+    `viewobjectcontactofsdrpage.cxx`/`sdrpaintwindow.cxx`).
+  - impress-chart: slideshow-settings (WIN-IM-003, 20), presenter-surfaces
+    (WIN-IM-004, 16), chart-editor (WIN-CH-001, 19).
+  - base-math: base-rail-workspace (WIN-BA-001, 17 — guarded Material source across
+    four dbaccess surfaces + `appborderwindow.ui`), base-addtable-tree (WIN-BA-002,
+    16), math-editor-elements (WIN-MA-001, 17), math-editor (WIN-MA-002, 17).
+  - registry-closure (WIN-SYS-016): `ui-registry.json` regenerated, 184 surfaces
+    moved out of `unassigned` (836→1020 assigned, 434→250 unassigned; 1270 total
+    unchanged) via 4 new prefix rules + per-cluster overrides; 39-test suite green.
+  - docs-stable + docs-influx: additive design detail across chapters 01/02/04/05/
+    10/11 and 06/07/08/09/12 (including the new ch10 Review subsection and ch12 §12.6
+    Chart embedded-editor section) — pattern applications, honest status labels.
+- **Guarded-material-source / conversion edits (compile-plausibility only, NOT
+  compiled here)**: `notebookbar.cxx` (NAV-004), `viewobjectcontactofsdrpage.cxx`
+  (DR-001) and `sdrpaintwindow.cxx` (DR-002) — both svx files have cross-application
+  blast radius into Calc/Writer/Base marquees, and both guarded branches are
+  sequenced to LOSE to `GetHighContrastMode()` (a review gate the marker-presence
+  validators cannot enforce); the four dbaccess surfaces (BA-001); the five NotifyInfo
+  conversions; the two destructive-confirmation conversions; and the
+  `certificatechooser.cxx` predicate split. A real compile happens only on the ~3h
+  Windows CI leg.
+- **Calibration finding applied (WIN-FND-002)**: the row's earlier "SRC incomplete"
+  framing overstated the gap — the theme-resolution routing chain is fully compiled
+  and now pinned; the real remaining gates are `BUILD/PX/MATRIX` and platform-signal
+  completeness, not source. The inventory row's status/missing-gates cells were
+  corrected; no glyph was moved.
+- **M held open for the presence/upstream/D-gate pins (honesty legend)**: WIN-SHL-002,
+  WIN-CA-004, WIN-CA-005, WIN-DLG-003, WIN-MA-001, WIN-MA-002, WIN-SYS-014,
+  WIN-IM-001, WIN-IM-003, WIN-IM-004, WIN-BA-002, WIN-FND-004, WIN-FND-006, WIN-FND-007
+  all landed a pin but do **not** advance `M` — existing upstream (non-Material-guarded)
+  source never satisfies it. `M` advanced `·`→`△` only where a genuine Material
+  source or definition.xml-grounded composition contract landed (FND-003, DLG-002/004/005,
+  NAV-004, WR-001/002/003/005, CA-003 reinforced, CON-003 reinforced, DR-002, BA-001,
+  FBK-007, CH-001 also flips `D`→`✓`, CONCEPT-002).
+- **Three rows parked (recorded in the inventory with honest reasons)**: WIN-SEL-003
+  (design-detail-only, switch has zero native footprint — D already ticked),
+  WIN-SEL-004 (none-feasible build-free — filter chips have no native/`.ui`/app source
+  to pin), WIN-SHL-001 (none-feasible build-free — every real shell-chrome surface is
+  already pinned by a sibling row or has no source to guard).
+- **Static gate recomputed to 147, method stated (verify yourself, not inherited)**:
+  the full build-free gate = every Material `bin/check-*.py` except the six stock
+  upstream linters (`check-autocorr`, `check-icon-sizes`, `check-implementer-notes`,
+  `check-missing-export-asserts`, `check-missing-unittests`, `check-sid-slots`) =
+  **72**, plus `bin/check_search_field_coverage.py` = **1**, plus every
+  `bin/test_*.py` = **73**, plus `bin/validate-prototype.mjs` = **1** → **147**
+  scripts, all green here (`py`/`node` from repo root, 0 failures). That is the
+  default-activation tip's **81** plus exactly the 33 new checkers + 33 new suites =
+  66. `.github/workflows/windows-ui-contract.yml` gained the 66 matching steps under
+  a "Mega wave" comment (YAML valid, 143 steps, all referenced scripts verified
+  present, triggers/job/runner unchanged), and `qa/windows-ui-contract/README.md`
+  gained a "Wave-2 Mega wave" section (one subsection per triad + a runner block +
+  the owner-attribution rubric + the `min_producer_modules` note).
+- **CRLF watch (sixth incident)**: the Edit tool flipped the whole
+  `windows-ui-contract.yml` to CRLF; caught with a byte-level Python scan and
+  normalized back to LF before proceeding. All five integrator files verified 0 CR
+  bytes. Git Bash `grep $'\r'` gives false positives on this host — use
+  `open(f,'rb').read().count(b'\r')`.
+
 ## Resume guidance
 
 1. DONE as of `2cd1c5cf3`/`ce7276f8e`: the five required native targets
@@ -440,6 +543,19 @@ and statically validated only.
    before new feature work). After Batch C: the 15 honest-gap search-field
    contract extensions (each gap analysis names its exact blocker), then wave-3
    source-side slices (their `B V I A L P C` gates remain build-host-bound).
+   The **2026-07-23 mega wave** (43 rows, 33 new triads, +66 gate scripts →
+   **147**) is now LANDED IN SOURCE on top of the default-activation tip and all
+   147 build-free validators are green locally, but it is NOT yet committed/pushed
+   and NOT yet CI-confirmed. Next step: one merged push and watch all four CI
+   workflows — the Windows leg is the first real compile of the mega-wave
+   guarded/converted C++ (`notebookbar.cxx`, `viewobjectcontactofsdrpage.cxx`,
+   `sdrpaintwindow.cxx`, the four dbaccess rail surfaces, the five NotifyInfo
+   conversions, the two destructive conversions, and the `certificatechooser.cxx`
+   predicate split); if any fails, iterate the compile before new work. Remaining
+   after that: build-host-bound `B V I A L P C` evidence for every row; the three
+   parked rows (WIN-SEL-003/WIN-SEL-004/WIN-SHL-001, each needing a design decision
+   plus a build host); and per-surface refinement of the 250-entry `ui-registry`
+   unassigned baseline.
 3. Producer migration: extend the notification-producer registry in bounded,
    registered informational-only tranches (never input/destructive/
    credential/security prompts).

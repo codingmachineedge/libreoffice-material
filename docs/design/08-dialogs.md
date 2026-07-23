@@ -101,10 +101,10 @@ native `pushbutton` contract.
 
 *Source-implemented 2026-07-21 (unbuilt): the shared
 `sfx2::ConfirmDestructiveAction` helper realizes this pattern with the safe
-action holding both initial focus and the Enter default; five real
-confirmations are converted and registered in the fail-closed
-`dialog-anatomy-policy.json` contract. No build or runtime evidence exists
-yet.* When a dialog confirms an irreversible
+action holding both initial focus and the Enter default; the real destructive
+confirmations enumerated across this chapter are converted and registered in the
+fail-closed `dialog-anatomy-policy.json` contract. No build or runtime evidence
+exists yet.* When a dialog confirms an irreversible
 act (overwrite on save, "Don't Save", Replace All across a selection larger
 than the document view):
 
@@ -277,6 +277,32 @@ Capture: default page, expanded "LibreOffice Writer" group, selected
 Scripted: full tree traversal by keyboard; `Esc` discards a dirty field;
 `Enter` commits from the tree without activating a row toggle.
 
+### Source binding
+
+The dialog shell is source-pinned by
+[`bin/check-windows-options-dialog-contract.py`](../../bin/check-windows-options-dialog-contract.py)
+against [`options-dialog-composition.json`](../../qa/windows-ui-contract/options-dialog-composition.json):
+the modal `optionsdialog.ui` tree (`GtkTreeView` `pages` over a `GtkTreeStore`,
+tree-lines on, headers off), the twelve ordered top-level option groups from
+`cui/inc/treeopt.hrc` with their `AddGroup` guard conditions, the footer
+action-widget order and response codes, and the shared native `listnode` /
+`listnet` tree parts in `definition.xml` (resolved in both palettes). The
+already-realized `RegexSearchController` on `searchEntry` /
+`searchEntry_regex_builder` is cited read-only as a satisfied dependency
+([04-inputs.md](04-inputs.md), WIN-INP-005), never re-integrated here.
+
+One honest **footer-drift carve-out** is pinned: the master–detail footer above
+names Help \| Reset \| Cancel \| OK (four action-widgets —
+`help` / `revert` / `cancel` / `ok`), but the real `.ui` button box also carries
+a fifth **Apply** button (`ApplyHdl_Impl`) that has no response code and is
+**absent** from `<action-widgets>`. The contract pins Apply as
+present-but-not-an-action-widget so it can never be silently added to or dropped
+from the action set. Row-selection fill (`@primary-container`), the exhaustive
+per-group leaf-page set, the adaptive tree→dropdown collapse, and the
+field-grid / floating-label treatment are held as `status: specified`
+carve-outs — no source pins them yet. `runtime_verified` is false; no dialog
+pixels are claimed.
+
 ---
 
 ## 8.3 Save As dialog
@@ -380,6 +406,34 @@ Status: the delegation boundary and the three call-site boxes are source-pinned
 (unbuilt) by
 [`bin/check-windows-file-flow-contract.py`](../../bin/check-windows-file-flow-contract.py);
 `runtime_verified` is false and no picker pixels are claimed.
+
+### 8.3.2 In-suite Office file picker — source binding
+
+When the OS `IFileDialog` is unavailable the in-suite Material Save As sheet
+(§8.3) is drawn by the fallback `OfficeFilePicker`
+(`fpicker/source/office/iodlg.cxx`, `fpicker/uiconfig/ui/explorerfiledialog.ui`).
+It is an application of the **Modal dialog — shared anatomy** (§8.1) — the same
+`@surface-container` sheet, footer order, scrim, and focus-trap rules — with no
+novel visual design of its own. It is source-pinned by
+[`bin/check-windows-office-filepicker-contract.py`](../../bin/check-windows-office-filepicker-contract.py)
+against
+[`office-file-picker-composition.json`](../../qa/windows-ui-contract/office-file-picker-composition.json),
+which binds the four §8.3 regions to their real widget ids — **breadcrumb row →
+`current_path`**, file name → `file_name`, file type → `file_type`, password →
+`password` — and their `weld_*` bindings.
+
+A load-bearing correction is pinned here: the §8.3 *Breadcrumb row* is the plain
+`current_path` `SvtURLBox` combo, **not** `breadcrumb.ui` — that control belongs
+exclusively to the already-native-excluded remote-files picker
+(`RemoteFilesDialog`), so a guard forbids any `breadcrumb` reference in
+`iodlg.cxx` to keep the pin honest. The picker's own overwrite-confirmation box
+(`STR_SVT_ALREADYEXISTOVERWRITE`, Question / Yes-No) is the source backing for
+§8.3's "Overwriting an existing file raises the destructive-confirmation pattern
+… with the safe default on Cancel": any outcome other than *Yes* aborts the
+write, and the box stays modal. `explorerfiledialog.ui` and `foldernamedialog.ui`
+keep their `native-exclusion` classification, and the upstream `OfficeFilePicker`
+seam is cited read-only. `runtime_verified` is false; no picker pixels are
+claimed.
 
 ---
 
@@ -883,9 +937,18 @@ distinction, not a re-label.
 
 ### Destructive action within a modal
 
-The *Remove signature* action inside `DigitalSignaturesDialog` applies the 8.1
-destructive-confirmation pattern (safe action as default and initial focus) —
-reuse, not novel design.
+The *Remove signature* action inside `DigitalSignaturesDialog`
+(`xmlsecurity/source/dialogs/digitalsignaturesdialog.cxx`, `canRemove`) applies
+the 8.1 destructive-confirmation pattern (verb label *Remove*, safe **Cancel**
+as default and initial focus) — reuse, not novel design. Status:
+**source-implemented (unbuilt)** — the former ad-hoc `VclMessageType::Question`
+/ `VclButtonsType::YesNo` box (`STR_XMLSECDLG_QUERY_REALLYREMOVE`) is converted
+to `sfx2::ConfirmDestructiveAction` and registered as
+`xmlsecurity-digitalsignatures-remove-signature` in the fail-closed
+[`dialog-anatomy-policy.json`](../../qa/windows-ui-contract/dialog-anatomy-policy.json)
+contract, validated against source by
+[`bin/check-material-dialog-anatomy.py`](../../bin/check-material-dialog-anatomy.py).
+No build or runtime evidence exists; `runtime_verified` is false.
 
 ### Verification hooks
 

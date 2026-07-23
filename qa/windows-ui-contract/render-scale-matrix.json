@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "contract": "material-render-scale-neutrality",
+  "inventory_row": "WIN-SYS-014",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_refs": [
+    "docs/design/01-foundations.md#2.4 (px token geometry, no fractional scaling added)",
+    "docs/design/01-foundations.md#6 (density / scale matrix)",
+    "docs/design/01-foundations.md#7 (adaptive layout, multi-monitor, OS insets)",
+    "docs/design/09-start-center.md#9.10-9.11 (accepted software-raster Start Center evidence)"
+  ],
+  "note": "Regression / precondition guard for WIN-SYS-014. It fail-closed pins the render-method and display-scaling NEUTRALITY invariants the Material file-widget path was designed around, plus the upstream preconditions the accepted E-SC (software Start Center) evidence depends on. It pins upstream infrastructure the Material path relies on; it is NOT a Material implementation of the GPU/RDP/fractional-scale/multi-monitor matrix. It moves NO gate: M stays open and the whole rendering/scaling matrix stays build-bound and unverified. Every pin is source/text evidence only -- no build, pixels, or runtime interaction are claimed (runtime_verified:false). Forbidden tokens are scoped to render-method SELECTION identifiers, never the bare word 'raster', so a benign comment cannot trip the absence pin.",
+  "pins": {
+    "render_agnostic": {
+      "file": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "mode": "absence",
+      "forbidden_tokens": [
+        "renderMethodToUse",
+        "isVCLSkiaEnabled",
+        "SAL_SKIA",
+        "RenderVulkan",
+        "RenderMetal",
+        "SkiaHelper::"
+      ],
+      "role": "The Material file-widget draw path contains no render-method-selection fork, so GPU-vs-software is purely a build-verification concern (pixel parity), never a source divergence. Absence-assertion; baseline verified clean."
+    },
+    "dpi_awareness_pinned": {
+      "file": "solenv/gbuild/platform/DeclareDPIAware.manifest",
+      "mode": "literal_and_absence",
+      "required_literal": "<dpiAware>true</dpiAware>",
+      "forbidden_tokens": [
+        "PerMonitor",
+        "PerMonitorV2",
+        "dpiAwareness"
+      ],
+      "role": "The Windows scaling model the px-preserving Material geometry assumes: system-DPI-aware, NOT per-monitor. Under this model Windows bitmap-stretches on fractional/non-primary monitors, which is exactly why the fractional-scale matrix stays build-bound."
+    },
+    "dpi_manifest_wired": {
+      "file": "solenv/gbuild/platform/com_MSC_class.mk",
+      "mode": "line_markers",
+      "line_markers": [
+        "$(filter Executable,$(TARGETTYPE))",
+        "mt.exe",
+        "DeclareDPIAware.manifest",
+        "-updateresource"
+      ],
+      "role": "The DPI-aware manifest is really applied to every Executable target via mt.exe -updateresource, so the pinned manifest is not dead configuration."
+    },
+    "win_skia_default": {
+      "file": "officecfg/registry/data/org/openoffice/Office/Common.xcu",
+      "mode": "xcu_scoped_value",
+      "prop": "UseSkia",
+      "required_value": "<value install:module=\"wnt\">true</value>",
+      "role": "GPU (Skia) is the Windows rendering default; software raster is the fallback, not the default render path."
+    },
+    "skia_settings_surface": {
+      "file": "officecfg/registry/schema/org/openoffice/Office/Common.xcs",
+      "mode": "xcs_prop_defaults",
+      "props": [
+        { "name": "UseSkia", "default": "false" },
+        { "name": "ForceSkia", "default": "false" },
+        { "name": "ForceSkiaRaster", "default": "false" }
+      ],
+      "role": "The Skia settings surface exists with conservative schema defaults; ForceSkiaRaster (the software-raster override) defaults off, so raster is never the schema default."
+    },
+    "raster_fallback_exists": {
+      "file": "vcl/skia/SkiaHelper.cxx",
+      "mode": "function_raster_returns",
+      "function": "initRenderMethodToUse",
+      "raster_conditions": [
+        "Application::IsBitmapRendering()",
+        "Application::IsSafeModeEnabled()",
+        "officecfg::Office::Common::VCL::ForceSkiaRaster::get()"
+      ],
+      "raster_return": "return RenderRaster;",
+      "win_guard_token": "_WIN32",
+      "role": "The software-raster fallback the accepted Start Center evidence runs under really exists (bitmap-rendering, Windows/macOS safe-mode, and ForceSkiaRaster each degrade to RenderRaster) and stays a fallback the caller selects, not the default."
+    }
+  },
+  "matrix": {
+    "status": "specified",
+    "runtime_verified": false,
+    "note": "The substantive WIN-SYS-014 scope is entirely build-bound and unverified; this contract pins neutrality/preconditions, not row-scope behaviour. None of B/V/I/A/L/P/C/MATRIX is moved.",
+    "build_bound": [
+      "GPU-vs-software pixel PARITY of the render-agnostic Material composition under Skia/Vulkan vs Skia/raster (source proves no fork; only a build proves equal pixels)",
+      "remote-desktop (RDP) session behaviour and graceful Skia degradation (runtime observation; no SM_REMOTESESSION detection in-tree)",
+      "fractional/display scaling at 100/125/200% under the system-DPI-aware (bitmap-stretch) manifest (legibility/blur/geometry integrity from captures only)",
+      "mixed-DPI multi-monitor placement and OS insets (runtime-only)",
+      "safe-mode / bitmap-rendering forced-raster paths exercised for real"
+    ]
+  }
+}

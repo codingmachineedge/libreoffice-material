@@ -470,6 +470,30 @@ modal. The audited producer inventory is
 enforced fail-closed against source by
 [`bin/check-notification-producer-contract.py`](../../bin/check-notification-producer-contract.py).
 
+### Additional informational producers
+
+Five further acknowledgment-only modal boxes are now routed through the same
+`sfx2::NotificationRouter::NotifyInfo` seam, each replacing a blocking
+`weld::MessageDialog` with a non-blocking bottom-right notice and each
+registered fail-closed in the same producer contract:
+
+| Producer id | Call site | Former modal box | Severity |
+| --- | --- | --- | --- |
+| `mailmodel-no-email-client` | `SfxMailModel::Send` (`sfx2/source/dialog/mailmodel.cxx`) | ErrorFindEmailDialog | Warning |
+| `srcview-search-not-found` | `SwSrcView::StartSearchAndReplace` (`sw/source/uibase/uiview/srcview.cxx`) | InfoNotFoundDialog | Information |
+| `labfmt-predefined-label-locked` | `SwSaveLabelDlg::OkHdl` (`sw/source/ui/envelp/labfmt.cxx`) | CannotSaveLabelDialog | Warning |
+| `wrtsh1-readonly-content-notice` | `SwWrtShell::InfoReadOnlyDialog` (`sw/source/uibase/wrtsh/wrtsh1.cxx`) | InfoReadonlyDialog | Information |
+| `textfld-readonly-content-notice` | `SwTextShell::ExecField` (`sw/source/uibase/shells/textfld.cxx`) | InfoReadonlyDialog | Information |
+
+Each routes fixed, translated text carrying no document data under the audited
+`libreoffice.core-ui` `SafeDisplayText` source and stays `informational_only`,
+so `NotificationRouter::Classify` never forces it modal. The two
+read-only-content notices are a paired unit on the same `InfoReadonlyDialog`
+`.ui`. The `ErrorNoPrinterDialog` / `ErrorNoContentDialog` boxes in `vcl`
+`print3.cxx` are deliberately **not** converted: `vcl` does not link `sfx2`, so
+a producer there would be a module-layering violation — they stay modal until a
+different seam exists. Source-implemented (unbuilt); `runtime_verified` is false.
+
 ### Accessibility
 
 The stack marks each card `role="status"` with an `aria-live="polite"` region,
@@ -734,6 +758,34 @@ the ten uui roots stay `native-exclusion`/KeepModal, the four credential dialogs
 hit the credential branch, and the informational-error seam is present and
 `seam-only-not-wired`. No producer, no routed message, no runtime claim;
 `runtime_verified` is false.
+
+---
+
+## 7.10 Observable-feedback convention (native)
+
+*Formalization of the §7.7 prototype rule into a checkable native claim — no
+new visual anatomy; §7.5's shipped card contract is unchanged.*
+
+The prototype's blanket per-button label-toast (§7.7) is a mockup affordance
+and **must not ship** — that guardrail is restated here, not relaxed. The
+native principle it stands in for is narrower and enforceable: **every command
+must produce observable feedback — a document change, a dialog, a status-bar
+message, or a §7.5 notification — silent activation is a defect.**
+
+For the notification channel specifically, that convention has a
+machine-checkable proxy. The producer registry
+[`notification-producer-policy.json`](../../qa/windows-ui-contract/notification-producer-policy.json)
+declares `min_producer_modules`, and
+[`bin/check-notification-producer-contract.py`](../../bin/check-notification-producer-contract.py)
+fails closed unless the registered notification producers span at least that
+many distinct owning modules — pinned at the current diversity, `sfx2` / `sw` /
+`svx` = 3, with zero slack. Cross-module diversity is the evidence that
+observable-feedback routing is a suite-wide convention rather than a single-file
+trick: if the registry ever collapses toward one module the rule fails. This is
+a source-level proxy only — it proves the routing convention holds across
+modules, not that every actionable control in the whole suite has been audited
+(that backlog is tracked with the `.ui` classifier in
+`dialog-notification-policy.csv`); `runtime_verified` is false.
 
 ---
 

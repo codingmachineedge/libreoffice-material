@@ -23,10 +23,48 @@
 #include <sfx2/thumbnailviewitem.hxx>
 #include <vcl/event.hxx>
 #include <vcl/mnemonic.hxx>
+#include <vcl/settings.hxx>
 #include <vcl/svapp.hxx>
+#include <vcl/MaterialTokens.hxx>
+#include <tools/color.hxx>
 #include "AppController.hxx"
 
+#include <cstdlib>
+#include <optional>
+#include <string_view>
+
 using namespace ::dbaui;
+
+namespace
+{
+// Guarded Material Base navigation-rail treatment (docs/design/12-base-math-shared.md
+// 12.1). The env + high-contrast guard idiom mirrors sc/source/ui/app/inputwin.cxx's
+// formula-bar resolver and sfx2/source/control/startcentercard.cxx: only while the
+// documented Material file-widget theme is active (and not forced high contrast) does
+// the rail resolve a token; otherwise the generic StyleSettings path is left intact.
+bool lcl_isMaterialBaseActive()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return false;
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return false;
+    return true;
+}
+
+// The Base navigation rail fills @surface-container (12.1 "Database nav rail").
+std::optional<Color> lcl_getMaterialRailFill()
+{
+    if (!lcl_isMaterialBaseActive())
+        return std::nullopt;
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+    return aTokens.findColor("surface-container");
+}
+} // namespace
 
 OApplicationSwapWindow::OApplicationSwapWindow(weld::Container* pParent,
                                                OAppBorderWindow& rBorderWindow)
@@ -38,7 +76,12 @@ OApplicationSwapWindow::OApplicationSwapWindow(weld::Container* pParent,
     , m_rBorderWin(rBorderWindow)
     , m_nChangeEvent(nullptr)
 {
-    m_xContainer->set_stack_background();
+    // Material Base rail: @surface-container fill while the Material theme is active,
+    // else the generic stacked background (non-Material paths untouched).
+    if (const std::optional<Color> oRailFill = lcl_getMaterialRailFill())
+        m_xContainer->set_background(*oRailFill);
+    else
+        m_xContainer->set_stack_background();
 
     m_xIconControl->SetHelpId(HID_APP_SWAP_ICONCONTROL);
     m_xIconControl->Fill();

@@ -55,6 +55,7 @@
 #include <vcl/weld/MessageDialog.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/vclenum.hxx>
+#include <sfx2/destructiveconfirmation.hxx>
 #include <sfx2/viewsh.hxx>
 #include <svl/cryptosign.hxx>
 
@@ -403,23 +404,21 @@ bool DigitalSignaturesDialog::canAdd() { return canAddRemove(); }
 
 void DigitalSignaturesDialog::canRemove(const std::function<void(bool)>& rCallback)
 {
-    auto onFinished = [this, rCallback](bool bRet) {
-        rCallback(bRet && canAddRemove());
-    };
     bool bRet = true;
 
     if ( maSignatureManager.getSignatureMode() == DocumentSignatureMode::Content )
     {
-        std::shared_ptr<weld::MessageDialog> xBox(Application::CreateMessageDialog(m_xDialog.get(),
-                                                  VclMessageType::Question, VclButtonsType::YesNo,
-                                                  XsResId(STR_XMLSECDLG_QUERY_REALLYREMOVE)));
-        xBox->runAsync(xBox, [onFinished=std::move(onFinished)](sal_Int32 nDlgRet) {
-                onFinished(nDlgRet == RET_YES);
-        });
-        return;
+        // Removing a document signature is irreversible: route the confirmation through the
+        // shared Material destructive-confirmation helper (docs/design/08-dialogs.md 8.1), which
+        // binds the safe (Cancel) action as both the initial focus and the Enter default so
+        // keyboard activation can never remove the signature.
+        sfx2::DestructiveConfirmation aConfirm;
+        aConfirm.sPrimaryText = XsResId(STR_XMLSECDLG_QUERY_REALLYREMOVE);
+        aConfirm.sDestructiveLabel = XsResId(STR_XMLSECDLG_REMOVE);
+        bRet = sfx2::ConfirmDestructiveAction(m_xDialog.get(), aConfirm);
     }
 
-    onFinished(bRet);
+    rCallback(bRet && canAddRemove());
 }
 
 void DigitalSignaturesDialog::beforeRun()

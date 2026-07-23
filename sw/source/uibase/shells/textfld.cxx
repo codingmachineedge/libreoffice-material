@@ -34,6 +34,7 @@
 #include <svl/macitem.hxx>
 #include <sfx2/viewfrm.hxx>
 #include <sfx2/request.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <svx/postattr.hxx>
 #include <svx/hlnkitem.hxx>
 #include <svx/svxdlg.hxx>
@@ -861,11 +862,13 @@ FIELD_INSERT:
 
             if (rSh.HasReadonlySel())
             {
-                // Inform the user that the request has been ignored.
-                auto xInfo = std::make_shared<weld::GenericDialogController>(
-                    GetView().GetFrameWeld(), "modules/swriter/ui/inforeadonlydialog.ui",
-                    "InfoReadonlyDialog");
-                weld::DialogController::runAsync(xInfo, [](sal_Int32 /*nResult*/) {});
+                // Inform the user that the request has been ignored -- route the read-only-content
+                // notice to the bottom-right notification stack instead of a modal OK box
+                // (docs/design/07-feedback.md 7.5). Fixed built-in strings with no document data, so
+                // it routes as SafeDisplayText under the audited core-ui source.
+                sfx2::NotificationRouter::NotifyInfo(
+                    "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Information,
+                    SwResId(STR_INFORODLG_PRIMARY), SwResId(STR_INFORODLG_SECONDARY));
                 break;
             }
 

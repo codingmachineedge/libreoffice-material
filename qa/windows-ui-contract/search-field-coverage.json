@@ -6,7 +6,30 @@
   "expected_counts": {
     "shipping_fields": 27,
     "planned_fields": 0,
-    "excluded_candidates": 16
+    "excluded_candidates": 16,
+    "source_integrated_fields": 13,
+    "gap_fields": 14
+  },
+  "gap_taxonomy": {
+    "note": "Every shipping field carries an integration_status. A 'source-integrated' field is bound to the shared controller-driven regex builder and MUST have a matching entry in regex-search-integrations.json (the checker reconciles the two registries and fails closed on drift). A 'gap' field is an honest, still-unintegrated surface; it MUST carry a gap_category from the fixed enum below plus non-empty gap_evidence citing a real file:symbol anchor for the architectural reason it cannot yet reuse the builder. Existing upstream (non-Material-guarded) source never satisfies the integration gate, so gap_evidence documents WHY, it is not a passing integration.",
+    "recovered_from_commit": "2fcd725e2",
+    "recovered_categories": [
+      "URL-based help engines",
+      "bidirectional similarity matchers",
+      "multi-collection branching filters",
+      "remote threaded catalog",
+      "split UNO ownership",
+      "stacked auto-dismiss popovers",
+      "stub surface",
+      "typeahead index"
+    ],
+    "provisional_categories": [
+      {
+        "category": "shared base-class ownership across sibling surfaces",
+        "coined_for": "customize.menu-commands",
+        "status": "needs-design-sign-off"
+      }
+    ]
   },
   "scanner_contract": {
     "widget_classes": [
@@ -36,7 +59,10 @@
       "ui_file": "basctl/uiconfig/basicide/ui/objectbrowser.ui",
       "widget_id": "FilterBox",
       "query_scope": "objects and members",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "stub surface",
+      "gap_evidence": "basctl/source/basicide/objectbrowsersearch.cxx: OnFilterChanged/OnClearSearchClicked/DebounceTimerHandler are literal '// STUB' bodies with no backing model, so there is nothing to filter yet."
     },
     {
       "coverage_id": "options.expert-configuration",
@@ -44,7 +70,10 @@
       "ui_file": "cui/uiconfig/ui/aboutconfigdialog.ui",
       "widget_id": "searchEntry",
       "query_scope": "configuration preferences",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "split UNO ownership",
+      "gap_evidence": "cui/source/options/optaboutconfig.cxx: InputChanged/FillItems/getConfigAccess re-fetch a fresh XNameAccess on empty search versus flat-scanning m_prefBoxEntries on non-empty search; coverage is bounded to whichever UNO config nodes have been lazily materialized, so a single shared matcher cannot own the query."
     },
     {
       "coverage_id": "customize.keyboard-functions",
@@ -52,7 +81,8 @@
       "ui_file": "cui/uiconfig/ui/accelconfigpage.ui",
       "widget_id": "searchEntry",
       "query_scope": "commands and functions",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "extensions.additions",
@@ -60,7 +90,10 @@
       "ui_file": "cui/uiconfig/ui/additionsdialog.ui",
       "widget_id": "entrySearch",
       "query_scope": "additions catalog",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "remote threaded catalog",
+      "gap_evidence": "cui/source/dialogs/AdditionsDialog.cxx: SearchAndParseThread : Thread issues a ucbGet against https://extensions.libreoffice.org/api/v0/ so matching happens off-thread against a remote catalog, not over a local in-memory collection."
     },
     {
       "coverage_id": "forms.record-search",
@@ -68,7 +101,8 @@
       "ui_file": "cui/uiconfig/ui/fmsearchdialog.ui",
       "widget_id": "cmbSearchText",
       "query_scope": "form records",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "customize.menu-commands",
@@ -76,7 +110,10 @@
       "ui_file": "cui/uiconfig/ui/menuassignpage.ui",
       "widget_id": "searchEntry",
       "query_scope": "menu commands",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "shared base-class ownership across sibling surfaces",
+      "gap_evidence": "cui/source/customize/cfg.cxx: SvxConfigPage::m_xSearchEdit/SearchUpdateHdl is shared verbatim by SvxMenuConfigPage, SvxToolbarConfigPage and SvxNotebookbarConfigPage; one handler serves three sibling dialogs while only menuassignpage.ui's field is in this ledger, so ownership of the search cannot be pinned to a single surface."
     },
     {
       "coverage_id": "options.settings",
@@ -84,7 +121,8 @@
       "ui_file": "cui/uiconfig/ui/optionsdialog.ui",
       "widget_id": "searchEntry",
       "query_scope": "settings pages and options",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "insert.special-characters",
@@ -92,7 +130,10 @@
       "ui_file": "cui/uiconfig/ui/specialcharacters.ui",
       "widget_id": "search",
       "query_scope": "characters by name",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "typeahead index",
+      "gap_evidence": "svx/source/dialog/cuicharmap.cxx: SearchUpdateHdl runs u_charName() ICU enumeration over every codepoint in the live font char map per keystroke, plus a second U+hex branch; it is a typeahead index walk, not a contains-filter over a materialized list."
     },
     {
       "coverage_id": "extensions.manager",
@@ -100,7 +141,8 @@
       "ui_file": "desktop/uiconfig/ui/extensionmanager.ui",
       "widget_id": "search",
       "query_scope": "installed extensions",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "formula.function-wizard",
@@ -108,7 +150,10 @@
       "ui_file": "formula/uiconfig/ui/functionpage.ui",
       "widget_id": "search",
       "query_scope": "function names and descriptions",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "multi-collection branching filters",
+      "gap_evidence": "formula/source/ui/dlg/funcpage.cxx: UpdateFunctionList branches across four structurally distinct backing collections (All-Categories/by-category via ScFunctionMgr, LRU, Favourites), each with its own match_subject, so no single loop variable exists to pin."
     },
     {
       "coverage_id": "calc.autofilter-items",
@@ -116,7 +161,10 @@
       "ui_file": "sc/uiconfig/scalc/ui/filterdropdown.ui",
       "widget_id": "search_edit",
       "query_scope": "filter values",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "stacked auto-dismiss popovers",
+      "gap_evidence": "sc/source/ui/cctrl/checklistmenu.cxx: ScCheckListMenuControl/ScListSubMenuControl stack nested submenus (maCloseTimer.mpSubMenu->EndPopupMode()); a builder popover would collide with the host's own auto-dismiss-on-outside-click lifecycle."
     },
     {
       "coverage_id": "calc.function-sidebar",
@@ -124,7 +172,10 @@
       "ui_file": "sc/uiconfig/scalc/ui/functionpanel.ui",
       "widget_id": "search",
       "query_scope": "functions",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "bidirectional similarity matchers",
+      "gap_evidence": "sc/source/ui/formdlg/dwfunctr.cxx: ScFunctionWin::UpdateFunctionList calls SearchFunction(..., xSimilaritySearch->get_active()) producing scored sFuncScores; the similarity axis has no home in RegexSearchMode today."
     },
     {
       "coverage_id": "calc.go-to-sheet",
@@ -132,7 +183,8 @@
       "ui_file": "sc/uiconfig/scalc/ui/gotosheetdialog.ui",
       "widget_id": "entry-mask",
       "query_scope": "sheet names",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "command-search.popup",
@@ -140,7 +192,10 @@
       "ui_file": "sfx2/uiconfig/ui/commandpopup.ui",
       "widget_id": "command_entry",
       "query_scope": "application commands",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "stacked auto-dismiss popovers",
+      "gap_evidence": "sfx2/source/commandpopup/CommandPopup.cxx: mxPopover = weld_popover with popup_at_rect/popdown and connect_closed resetting the listbox is a transient per-invocation lifecycle with no stable controller_parent for the builder popover to anchor to."
     },
     {
       "coverage_id": "help.index",
@@ -148,7 +203,10 @@
       "ui_file": "sfx2/uiconfig/ui/helpindexpage.ui",
       "widget_id": "termentry",
       "query_scope": "help index terms",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "typeahead index",
+      "gap_evidence": "sfx2/source/appl/newhelp.cxx: IndexTabPage_Impl uses aAutoCompleteIdle/aKeywordTimer to jump to the nearest sorted entry rather than filtering in place, so it is a typeahead index, not a contains-filter."
     },
     {
       "coverage_id": "help.search",
@@ -156,7 +214,10 @@
       "ui_file": "sfx2/uiconfig/ui/helpsearchpage.ui",
       "widget_id": "search",
       "query_scope": "help content",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "URL-based help engines",
+      "gap_evidence": "sfx2/source/appl/newhelp.cxx: SearchTabPage_Impl ClickHdl/ActivateHdl dispatch to the out-of-process help content engine; there is no local matcher in this file to route through the controller."
     },
     {
       "coverage_id": "help.find-on-page",
@@ -164,7 +225,10 @@
       "ui_file": "sfx2/uiconfig/ui/searchdialog.ui",
       "widget_id": "searchterm",
       "query_scope": "current help page",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "URL-based help engines",
+      "gap_evidence": "sfx2/source/dialog/srchdlg.cxx: sfx2::SearchDialog (only caller SfxHelpTextWindow_Impl::DoSearch) matches against an XTextRange pulled from vnd.sun.star.help:-loaded content, i.e. the URL-based help engine, not a local collection."
     },
     {
       "coverage_id": "templates.manager",
@@ -172,7 +236,8 @@
       "ui_file": "sfx2/uiconfig/ui/templatedlg.ui",
       "widget_id": "search_filter",
       "query_scope": "templates",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "document.find-bar",
@@ -180,7 +245,10 @@
       "ui_file": "svx/uiconfig/ui/findbox.ui",
       "widget_id": "find",
       "query_scope": "active document",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "split UNO ownership",
+      "gap_evidence": "svx/source/tbxctrls/tbunosearchcontrollers.cxx: FindTextToolbarController is an InterimItemWindow embedded in a layout-manager-owned toolbar that dispatches .uno:ExecuteSearch with SearchAlgorithms2 (hard-coding AlgorithmType=ABSOLUTE); the query is owned by the UNO dispatch, not by a dialog member."
     },
     {
       "coverage_id": "document.find-replace",
@@ -188,7 +256,8 @@
       "ui_file": "svx/uiconfig/ui/findreplacedialog.ui",
       "widget_id": "searchterm",
       "query_scope": "active document",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "changes.comment-filter",
@@ -196,7 +265,8 @@
       "ui_file": "svx/uiconfig/ui/redlinefilterpage.ui",
       "widget_id": "commentedit",
       "query_scope": "change comments",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "gallery.search",
@@ -204,7 +274,8 @@
       "ui_file": "svx/uiconfig/ui/sidebargallery.ui",
       "widget_id": "search",
       "query_scope": "gallery items",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "writer.find-entry",
@@ -212,7 +283,8 @@
       "ui_file": "sw/uiconfig/swriter/ui/findentrydialog.ui",
       "widget_id": "entry",
       "query_scope": "selected Writer data field",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "writer.reference-filter",
@@ -220,7 +292,10 @@
       "ui_file": "sw/uiconfig/swriter/ui/fldrefpage.ui",
       "widget_id": "filter",
       "query_scope": "reference targets",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "gap",
+      "gap_category": "multi-collection branching filters",
+      "gap_evidence": "sw/source/ui/fldui/fldref.cxx: SwFieldRefPage::UpdateSubType branches across Bookmark/Footnote/Endnote/Heading/NumItem/plain-field-type collections via IDocumentMarkAccess and friends, each its own enumeration and match_subject, so no single loop variable exists to pin."
     },
     {
       "coverage_id": "writer.quick-find",
@@ -228,7 +303,8 @@
       "ui_file": "sw/uiconfig/swriter/ui/sidebarquickfind.ui",
       "widget_id": "searchterm",
       "query_scope": "Writer document",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "security.certificate-search",
@@ -236,7 +312,8 @@
       "ui_file": "xmlsecurity/uiconfig/ui/selectcertificatedialog.ui",
       "widget_id": "searchbox",
       "query_scope": "certificate issuer names and email addresses",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     },
     {
       "coverage_id": "start-center.document-search",
@@ -244,7 +321,8 @@
       "ui_file": "sfx2/uiconfig/ui/startcenter.ui",
       "widget_id": "start_search",
       "query_scope": "recent documents and templates",
-      "regex_builder": "adjacent-advanced-builder"
+      "regex_builder": "adjacent-advanced-builder",
+      "integration_status": "source-integrated"
     }
   ],
   "planned_fields": [],

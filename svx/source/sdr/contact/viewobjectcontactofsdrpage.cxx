@@ -32,8 +32,43 @@
 #include <drawinglayer/primitive2d/helplineprimitive2d.hxx>
 #include <basegfx/polygon/b2dpolygon.hxx>
 #include <sdr/primitive2d/sdrprimitivetools.hxx>
+#include <vcl/MaterialTokens.hxx>
+#include <vcl/settings.hxx>
+#include <vcl/svapp.hxx>
+#include <cstdlib>
+#include <optional>
+#include <string_view>
 
 using namespace com::sun::star;
+
+namespace
+{
+// Resolve the Material @outline-variant token for the page-grid dots, but only
+// under the documented Material file-widget theme activation
+// (VCL_FILE_WIDGET_THEME=material, per docs/design/11-impress-draw.md §11.2).
+// Resolved high contrast bypasses Material drawing entirely: when high contrast is
+// on this returns nothing, so the native GetGridColor() path (which honors the
+// high-contrast draw mode) keeps winning. Under the default/native theme it also
+// returns nothing and the grid color is unchanged. The value flows through
+// vcl::MaterialTokens -- the single named-token table over definition.xml -- rather
+// than any raw color literal.
+std::optional<Color> lcl_getMaterialGridColor()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+    return aTokens.findColor("outline-variant");
+}
+}
 
 namespace sdr::contact {
 
@@ -423,7 +458,12 @@ void ViewObjectContactOfPageGrid::createPrimitive2DSequence(const DisplayInfo& /
     {
         const SdrView& rView = pPageView->GetView();
         const SdrPage& rPage = getPage();
-        const Color aGridColor(rView.GetGridColor());
+        // The grid dot color comes from the app color-config DRAWGRID value via
+        // GetGridColor(). When the Material theme is active (and high contrast is
+        // off), source it from the @outline-variant token instead; inert otherwise.
+        Color aGridColor(rView.GetGridColor());
+        if (const std::optional<Color> oMaterialColor = lcl_getMaterialGridColor())
+            aGridColor = *oMaterialColor;
         const basegfx::BColor aRGBGridColor(aGridColor.getBColor());
 
         basegfx::B2DHomMatrix aGridMatrix;

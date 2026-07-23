@@ -1,0 +1,125 @@
+{
+  "_comment": [
+    "WIN-ACT-001/§3 icon buttons -- WIN-ACT-003. Composition-PINNING contract for the standalone",
+    "icon-only close/dismiss/reset affordance across the sfx2 feedback + property-chip surfaces.",
+    "docs/design/02-actions.md 3.1 states a native standalone icon-button part does not exist in",
+    "definition.xml; native drawing reuses the toolbar/Button face where the control is a toolbar",
+    "item, and falls through to the generic pushbutton tonal-pill part otherwise. This contract",
+    "proves in source exactly which shared part each real consumer rides today -- it does NOT add",
+    "the missing native icon-button part.",
+    "",
+    "Two host classes, verified by direct source reading:",
+    "  Class A (toolbar-hosted): a GtkToolButton inside a GtkToolbar carrying the small-button",
+    "    style class, built via weld_toolbar(...) -- rides the already-compiled toolbar/Button part.",
+    "    -> infobar 'close' (sfx2/source/dialog/infobar.cxx) and propertychip 'remove'",
+    "       (sfx2/source/dialog/mgetempl.cxx).",
+    "  Class B (plain-button-hosted): a GtkButton with a GtkImage child and no label, built via",
+    "    weld_button(...) -- falls through to the pushbutton/Entire tonal-pill part because no",
+    "    dedicated icon-button extra state exists (definition.xml declares only extra=action/flat).",
+    "    -> notificationcard 'dismiss_button' (sfx2/source/notification/NotificationCard.cxx) and",
+    "       notificationmanager 'close_button' (sfx2/source/notification/NotificationManagerController.cxx).",
+    "",
+    "Accessible name (design 3.3: an unnamed icon button fails review): all four rely on a non-empty",
+    "translatable tooltip-text as the accessible-name channel; only notificationcard's dismiss_button",
+    "additionally calls set_accessible_name explicitly. The contract pins the tooltip-text channel on",
+    "all four and the explicit call where it exists.",
+    "",
+    "Closed-world scan: an independent git ls-files *.ui walk finds every icon-only GtkButton/",
+    "GtkToolButton whose glyph is 'window-close-symbolic' (the shared close/dismiss/reset glyph); the",
+    "discovered set must equal the four pinned consumers plus the one excluded candidate (deck.ui",
+    "btn_close, a sidebar-deck close owned by the sidebar surface). A new unclassified window-close",
+    "icon button fails closed; a pinned/excluded entry the scanner no longer sees fails closed.",
+    "",
+    "Source evidence only: runtime_verified is false throughout -- no native build, icon-button pixels,",
+    "or runtime interaction are claimed."
+  ],
+  "schema_version": 1,
+  "contract": "material-icon-button-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/02-actions.md (3. Icon buttons: 3.1 anatomy, 3.2 states, 3.3 accessibility)",
+  "close_glyph": "window-close-symbolic",
+  "consumers": [
+    {
+      "id": "infobar-close",
+      "host_class": "A-toolbar",
+      "ui_path": "sfx2/uiconfig/ui/infobar.ui",
+      "object_id": "close",
+      "widget_class": "GtkToolButton",
+      "toolbar_id": "closebar",
+      "style_class": "small-button",
+      "icon": {"kind": "toolbutton-attr", "name": "window-close-symbolic"},
+      "tooltip_context": "infobar|close|tooltip_text",
+      "impl_source": "sfx2/source/dialog/infobar.cxx",
+      "weld_binding": "weld_toolbar(u\"closebar\"_ustr)",
+      "accessible_name_source": "tooltip",
+      "note": "Rides the compiled toolbar/Button part (WIN-ACT-002). Icon also set at runtime via set_item_image; the .ui icon-name is the pinned declared glyph."
+    },
+    {
+      "id": "propertychip-remove",
+      "host_class": "A-toolbar",
+      "ui_path": "sfx2/uiconfig/ui/propertychip.ui",
+      "object_id": "remove",
+      "widget_class": "GtkToolButton",
+      "toolbar_id": "removebar",
+      "style_class": "small-button",
+      "icon": {"kind": "toolbutton-attr", "name": "window-close-symbolic"},
+      "tooltip_context": "propertychip|remove",
+      "impl_source": "sfx2/source/dialog/mgetempl.cxx",
+      "weld_binding": "weld_toolbar(u\"removebar\"_ustr)",
+      "accessible_name_source": "tooltip",
+      "note": "Rides the compiled toolbar/Button part (WIN-ACT-002)."
+    },
+    {
+      "id": "notificationcard-dismiss",
+      "host_class": "B-plain-button",
+      "ui_path": "sfx2/uiconfig/ui/notificationcard.ui",
+      "object_id": "dismiss_button",
+      "widget_class": "GtkButton",
+      "icon": {"kind": "image-child", "id": "dismiss_image", "name": "window-close-symbolic"},
+      "tooltip_context": "notification|dismiss_tip",
+      "impl_source": "sfx2/source/notification/NotificationCard.cxx",
+      "weld_binding": "weld_button(u\"dismiss_button\"_ustr)",
+      "accessible_name_source": "explicit+tooltip",
+      "accessible_name_marker": "m_xDismiss->set_accessible_name(",
+      "note": "Falls through to the pushbutton/Entire tonal-pill part (no icon-only extra state exists). Gets an explicit set_accessible_name in addition to the tooltip."
+    },
+    {
+      "id": "notificationmanager-close",
+      "host_class": "B-plain-button",
+      "ui_path": "sfx2/uiconfig/ui/notificationmanager.ui",
+      "object_id": "close_button",
+      "widget_class": "GtkButton",
+      "icon": {"kind": "image-child", "id": "close_image", "name": "window-close-symbolic"},
+      "tooltip_context": "notification|close_manager",
+      "impl_source": "sfx2/source/notification/NotificationManagerController.cxx",
+      "weld_binding": "weld_button(u\"close_button\"_ustr)",
+      "accessible_name_source": "tooltip",
+      "note": "Falls through to the pushbutton/Entire tonal-pill part (no icon-only extra state exists); tooltip-text is the sole accessible-name channel."
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "ui_path": "sfx2/uiconfig/ui/deck.ui",
+      "object_id": "btn_close",
+      "category": "sidebar-deck",
+      "reason": "The sidebar deck close button belongs to the sidebar deck surface (05-navigation / sidebar rows), not this feedback/property-chip icon-button family; discovered by the shared window-close glyph but out of this row's scope."
+    }
+  ],
+  "shared_parts": {
+    "pushbutton": {
+      "control": "pushbutton",
+      "part": "Entire",
+      "allowed_extras": ["action", "flat"],
+      "note": "Class-B consumers fall through to this part. If any extra value other than action/flat appears (a dedicated icon-only state), the Class-B fallback classification is stale and this fails closed."
+    },
+    "toolbar_button": {
+      "control": "toolbar",
+      "part": "Button",
+      "note": "Class-A consumers ride this part (WIN-ACT-002); it must stay resolvable with an enabled state."
+    }
+  }
+}

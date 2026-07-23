@@ -1513,6 +1513,17 @@
 #define STR_INFORODLG_FOLDED_PRIMARY            NC_("STR_INFORODLG_FOLDED_PRIMARY", "You are trying to delete folded (hidden) content.")
 #define STR_INFORODLG_FOLDED_SECONDARY          NC_("STR_INFORODLG_FOLDED_SECONDARY", "To delete this content, first unfold it so you can see what you intend to delete.")
 
+// Fixed built-in strings reused by the Material notification-producer conversions
+// (bin/check-notification-producer-contract.py) so each routed bottom-right notice carries the exact
+// wording of the acknowledgement-only message box it replaces and existing translation memory is
+// reused rather than re-triggered. STR_INFORODLG_PRIMARY/SECONDARY are the default (non-folded)
+// InfoReadonlyDialog text shared by the wrtsh1 and textfld read-only notices.
+#define STR_SRCVIEW_SEARCH_NOT_FOUND            NC_("STR_SRCVIEW_SEARCH_NOT_FOUND", "Search key not found.")
+#define STR_INFORODLG_PRIMARY                   NC_("STR_INFORODLG_PRIMARY", "Write-protected content cannot be changed.")
+#define STR_INFORODLG_SECONDARY                 NC_("STR_INFORODLG_SECONDARY", "No modifications will be accepted.")
+#define STR_CANNOT_SAVE_LABEL_PRIMARY           NC_("STR_CANNOT_SAVE_LABEL_PRIMARY", "Cannot add label")
+#define STR_CANNOT_SAVE_LABEL_SECONDARY         NC_("STR_CANNOT_SAVE_LABEL_SECONDARY", "Predefined labels cannot be overwritten, use another name.")
+
 #define STR_PARAGRAPH_DIRECT_FORMATTING         NC_("STR_PARAGRAPH_DIRECT_FORMATTING", "Paragraph Direct Formatting")
 #define STR_CHARACTER_DIRECT_FORMATTING         NC_("STR_CHARACTER_DIRECT_FORMATTING", "Character Direct Formatting")
 #define STR_CHARACTER_DIRECT_FORMATTING_TAG     NC_("STR_CHARACTER_DIRECT_FORMATTING_TAG", "df")

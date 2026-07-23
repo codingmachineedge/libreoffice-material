@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "contract": "material-data-grid-header-selection",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": [
+    "docs/design/06-containers.md#6.3",
+    "docs/design/10-writer-calc.md#grid"
+  ],
+  "status": "partial",
+  "runtime_verified": false,
+  "status_note": "partial: the dbaccess/Base grid header (native ListHeader) and its BrowseBox row/cell selection paint genuinely consume the compiled Material StyleSettings pipe; Calc's idle header face/text/rule line also read that pipe (a narrower positive pin); but Calc's SELECTED-header fill and active-cell cursor ring still route through svtools::ColorConfig's CALCCELLFOCUS item (Tools>Options>Application Colors), NOT the definition.xml/StyleSettings highlight pipe. This directly corrects docs/design/06-containers.md 6.3's Platform-notes claim that the Calc selection ring resolves through StyleSettings highlightColor/deactiveColor/alternatingRowColor. 'compiled' here means the source consumes the already-compiled generic infrastructure; it is NOT a runtime/pixel claim (runtime_verified is false).",
+  "listheader_part": {
+    "control": "listheader",
+    "button": {
+      "part": "Button",
+      "states": [
+        {"role": "idle", "attrs": {}, "element": "rect", "tokens": {"stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-small"}},
+        {"role": "rollover", "attrs": {"rollover": "true"}, "element": "rect", "tokens": {"stroke": "@outline-variant", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-small"}},
+        {"role": "pressed", "attrs": {"pressed": "true"}, "element": "rect", "tokens": {"stroke": "@primary", "fill": "@primary-hover", "stroke-width": "@stroke-thin", "radius": "@corner-small"}}
+      ]
+    },
+    "arrow": {
+      "part": "Arrow",
+      "states": [
+        {"role": "up", "attrs": {"extra": "up"}, "element": "line", "tokens": {"stroke": "@on-surface-variant"}},
+        {"role": "down", "attrs": {"extra": "down"}, "element": "line", "tokens": {"stroke": "@on-surface-variant"}}
+      ]
+    }
+  },
+  "style_slots": [
+    {"slot": "highlightColor", "token": "@primary-container"},
+    {"slot": "highlightTextColor", "token": "@on-primary-container"},
+    {"slot": "alternatingRowColor", "token": "@surface-container-low"},
+    {"slot": "deactiveColor", "token": "@disabled-container"},
+    {"slot": "faceColor", "token": "@surface-container"}
+  ],
+  "style_pipe": {
+    "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+    "unconditional_markers": [
+      "aStyleSet.SetFaceColor(pDefinitionStyle->maFaceColor);",
+      "aStyleSet.SetButtonTextColor(pDefinitionStyle->maButtonTextColor);",
+      "aStyleSet.SetShadowColor(pDefinitionStyle->maShadowColor);",
+      "aStyleSet.SetHighlightColor(pDefinitionStyle->maHighlightColor);",
+      "aStyleSet.SetHighlightTextColor(pDefinitionStyle->maHighlightTextColor);"
+    ],
+    "guarded_markers": [
+      "if (pDefinitionStyle->moAlternatingRowColor) aStyleSet.SetAlternatingRowColor(*pDefinitionStyle->moAlternatingRowColor);"
+    ],
+    "note": "The generic file-widget draw path pushes the definition.xml <style> colours into the live StyleSettings unconditionally (Face/ButtonText/Shadow/Highlight/HighlightText) plus a presence-guarded SetAlternatingRowColor. This is cross-platform generic VCL source (not vcl/win-specific), so pinning it proves the same behaviour on every platform, not something Windows-specific."
+  },
+  "surfaces": [
+    {
+      "surface_id": "dbaccess-header",
+      "status": "compiled",
+      "sources": [
+        {
+          "source": "include/svtools/brwhead.hxx",
+          "markers": ["class SVT_DLLPUBLIC BrowserHeader: public HeaderBar"]
+        },
+        {
+          "source": "vcl/source/treelist/headbar.cxx",
+          "markers": [
+            "IsNativeControlSupported(ControlType::ListHeader, ControlPart::Button)",
+            "DrawNativeControl(ControlType::ListHeader, ControlPart::Button,",
+            "IsNativeControlSupported(ControlType::ListHeader, ControlPart::Arrow)",
+            "DrawNativeControl(ControlType::ListHeader, ControlPart::Arrow,"
+          ]
+        },
+        {
+          "source": "include/svx/gridctrl.hxx",
+          "markers": ["class UNLESS_MERGELIBS_MORE(SVXCORE_DLLPUBLIC) DbGridControl : public svt::EditBrowseBox"]
+        }
+      ],
+      "note": "Base's table/query grid header IS a vcl HeaderBar (BrowserHeader:HeaderBar) whose Button/Arrow paint calls the compiled native ListHeader part; DbGridControl extends the EditBrowseBox/BrowseBox stack, so this is the real compiled ListHeader consumer, not a re-draw."
+    },
+    {
+      "surface_id": "dbaccess-selection",
+      "status": "compiled",
+      "sources": [
+        {
+          "source": "svtools/source/brwbox/brwbox2.cxx",
+          "markers": [
+            "void BrowseBox::ImplPaintData(",
+            "const Color &rHighlightTextColor = rSettings.GetHighlightTextColor();",
+            "const Color &rHighlightFillColor = rSettings.GetHighlightColor();"
+          ]
+        }
+      ],
+      "note": "BrowseBox's own row/cell selection paint reads rSettings.GetHighlightColor()/GetHighlightTextColor() directly from the StyleSettings the Material style pipe populates -- a clean positive pin. (Separately, BrowseBox's own gridline/delimiter colour reads svtools::CALCGRID, a third colour pipe distinct from this one, flagged as a follow-up, not claimed here.)"
+    },
+    {
+      "surface_id": "calc-header-idle",
+      "status": "compiled",
+      "sources": [
+        {
+          "source": "sc/source/ui/view/hdrcont.cxx",
+          "markers": [
+            "Color aTextColor = rStyleSettings.GetButtonTextColor();",
+            "Color aSelTextColor = rStyleSettings.GetHighlightTextColor();",
+            "Color aFaceColor(rStyleSettings.GetFaceColor());",
+            "rRenderContext.SetLineColor( rStyleSettings.GetShadowColor() );"
+          ]
+        }
+      ],
+      "note": "ScHeaderControl is a plain vcl::Window (NOT a ListHeader native control), but its idle header face (GetFaceColor), idle/bold label text (GetButtonTextColor/GetHighlightTextColor) and rule line (GetShadowColor) genuinely read the same compiled StyleSettings slots the Material style pipe sets -- the legitimate, narrower positive Calc pin."
+    },
+    {
+      "surface_id": "calc-header-selected-fill",
+      "status": "not_yet_material",
+      "sources": [
+        {
+          "source": "sc/source/ui/view/hdrcont.cxx",
+          "not_material_markers": [
+            "Color aColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;"
+          ],
+          "absent_markers": ["GetHighlightColor("]
+        }
+      ],
+      "note": "The SELECTED-header fill still reads ScModule::GetColorConfig().GetColorValue(CALCCELLFOCUS) -- the Application-Colors config item, a separate pipe the Material file-widget/definition.xml mechanism never touches -- NOT rStyleSettings.GetHighlightColor(). NEGATIVE MARKER: the CALCCELLFOCUS call must stay present and GetHighlightColor( must stay absent while status is 'not_yet_material'."
+    },
+    {
+      "surface_id": "calc-active-cell-ring",
+      "status": "not_yet_material",
+      "sources": [
+        {
+          "source": "sc/source/ui/view/gridwin.cxx",
+          "not_material_markers": [
+            "void ScGridWindow::UpdateCursorOverlay()",
+            "Color aCursorColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;"
+          ],
+          "absent_markers": ["GetAccentColor("]
+        }
+      ],
+      "note": "The active-cell cursor ring (UpdateCursorOverlay) reads GetColorValue(CALCCELLFOCUS), not rStyleSettings.GetHighlightColor()/GetAccentColor(). NEGATIVE MARKER: the CALCCELLFOCUS call must stay present and GetAccentColor( absent while status is 'not_yet_material'."
+    }
+  ],
+  "dual_update_note": "FAIL-CLOSED DUAL-UPDATE DISCIPLINE (documented in the checker docstring too): a surface with status 'not_yet_material' asserts its not_material_markers are PRESENT and its absent_markers are ABSENT. If a future pass closes the gap -- giving Calc's selected-header fill or active-cell cursor a Material-aware colour path (e.g. reading GetHighlightColor()/GetAccentColor() instead of the CALCCELLFOCUS ColorConfig item) -- the CALCCELLFOCUS marker vanishes and/or the absent marker appears, so this checker fails closed until the surface's status is flipped to 'compiled' (and positive markers added) in the SAME change. Code and ledger can never silently disagree in either direction.",
+  "notes": "Composition pin of the real header/selection colour pipe consumed by the two grid targets, and an honest record of exactly where each surface stops short of it. Source evidence only: runtime_verified is false throughout; no native build, grid pixels, or runtime interaction is claimed. Existing upstream StyleSettings consumers here are generic cross-platform VCL infrastructure, not a Material-guarded Windows branch."
+}

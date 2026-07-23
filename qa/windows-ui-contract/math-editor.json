@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "contract": "material-math-editor",
+  "platform": "windows",
+  "inventory_row": "WIN-MA-002",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/12-base-math-shared.md",
+  "chapter_section": "12.2",
+  "runtime_verified": false,
+  "gate": "D",
+  "advances_m": false,
+  "notes": "Composition-pinning source contract (calc-chrome / calc-formula-bar precedent) for Math symbol insertion, placeholder navigation and error recovery (WIN-MA-002). It pins the three upstream StarMath behavioural primitives chapter 12.2 declares normative -- placeholder marks (<?>), error text+position pairing with a non-destructive clear path, and symbol-insertion focus-return -- plus the native multilineeditbox part the editor maps to, plus the F4/Shift+F4 (mark) and F3/Shift+F3 (error) accelerator/command/menu bindings. CRITICAL HONESTY / GATE CONTRACT: this is a D-gate source pin ONLY. Per docs/WINDOWS_UI_INVENTORY.md's gate contract, existing upstream UI source never satisfies the M (Material) gate, so this contract does NOT advance WIN-MA-002's M glyph -- it proves the substrate the Material design builds on is present and unregressed, nothing more (advances_m:false). The three Material differentiators (symbol-cell hover treatment, canvas sub-expression highlight, inline @error-container banner) stay status:'specified'/build-bound and this checker fails closed if any is promoted to an implemented/runtime claim. starmath has ZERO Material token consumption today, so there is deliberately no guarded-material-source component. runtime_verified:false throughout; no build, no pixels, no interaction.",
+  "definition_part": {
+    "control": "multilineeditbox",
+    "part": "Entire",
+    "states": [
+      {
+        "role": "enabled",
+        "attrs": {"enabled": "true"},
+        "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}
+      },
+      {
+        "role": "focused",
+        "attrs": {"enabled": "true", "focused": "true"},
+        "tokens": {"stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container"}
+      },
+      {
+        "role": "disabled",
+        "attrs": {"enabled": "false"},
+        "tokens": {"stroke": "@outline-variant", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}
+      }
+    ]
+  },
+  "expected_behavior_markers": 7,
+  "behavior_markers": [
+    {
+      "id": "M1_placeholder_primitive",
+      "role": "the <?> placeholder mark drives next/prev selection",
+      "source": "starmath/source/edit.cxx",
+      "code_markers": ["aText.indexOf(\"<?>\", nPos)", "static constexpr OUStringLiteral aMark(u\"<?>\")"]
+    },
+    {
+      "id": "M2_placeholder_dispatch",
+      "role": "SID_NEXTMARK/SID_PREVMARK route to SelNextMark/SelPrevMark and return focus",
+      "source": "starmath/source/view.cxx",
+      "code_markers": ["case SID_NEXTMARK:", "pWin->SelNextMark();", "case SID_PREVMARK:", "pWin->SelPrevMark();"]
+    },
+    {
+      "id": "M4_error_text_position_pairing",
+      "role": "ShowError pairs the error text with the token position (MarkError by row/col)",
+      "source": "starmath/source/view.cxx",
+      "code_markers": [
+        "SetStatusText( pErrorDesc->m_aText )",
+        "pEdit->MarkError( Point( pErrorDesc->m_pNode->GetColumn(),"
+      ]
+    },
+    {
+      "id": "M4b_markerror_selection",
+      "role": "MarkError selects the offending token by (row, col)",
+      "source": "starmath/source/edit.cxx",
+      "code_markers": ["pEditView->SetSelection(ESelection(nRow, nCol - 1, nRow, nCol));"]
+    },
+    {
+      "id": "M5_non_destructive_error_path",
+      "role": "ShowError(nullptr) is the clear-on-parse path; error cycling keeps focus and never blanks the canvas",
+      "source": "starmath/source/view.cxx",
+      "code_markers": ["ShowError( nullptr )", "case SID_NEXTERR:", "NextError();", "case SID_PREVERR:", "PrevError();"]
+    },
+    {
+      "id": "M6_insertion_focus_and_landing",
+      "role": "InsertText fills the first placeholder with the selection, lands on the next <?> and returns focus",
+      "source": "starmath/source/edit.cxx",
+      "code_markers": [
+        "string = string.replaceFirst(\"<?>\", selected);",
+        "if (HasMark(string))",
+        "GrabFocus();"
+      ]
+    },
+    {
+      "id": "M7_panel_source_emission",
+      "role": "the Elements panel emits an inserted element's markup via GetElementSource",
+      "source": "starmath/source/ElementsDockingWindow.cxx",
+      "code_markers": ["maSelectHdlLink.Call(GetElementSource(id))"]
+    }
+  ],
+  "command_bindings": {
+    "accelerators": {
+      "file": "officecfg/registry/data/org/openoffice/Office/Accelerators.xcu",
+      "bindings": [
+        {"key": "F4", "command": ".uno:NextMark"},
+        {"key": "F4_SHIFT", "command": ".uno:PrevMark"},
+        {"key": "F3", "command": ".uno:NextError"},
+        {"key": "F3_SHIFT", "command": ".uno:PrevError"}
+      ]
+    },
+    "commands": {
+      "file": "officecfg/registry/data/org/openoffice/Office/UI/MathCommands.xcu",
+      "nodes": [".uno:NextMark", ".uno:PrevMark", ".uno:NextError", ".uno:PrevError"]
+    },
+    "menu": {
+      "file": "starmath/uiconfig/smath/menubar/menubar.xml",
+      "items": [".uno:NextMark", ".uno:PrevMark", ".uno:NextError", ".uno:PrevError"]
+    }
+  },
+  "material_carve_outs": [
+    {
+      "id": "symbol_cell_hover",
+      "status": "specified",
+      "description": "symbol-cell Material hover/focus treatment: @primary-container fill, @primary border, @on-primary-container glyph (12.2 flow 2); prototype-only, build-bound."
+    },
+    {
+      "id": "canvas_subexpression_highlight",
+      "status": "specified",
+      "description": "canvas sub-expression highlight synced to placeholder navigation (12.2 flow 3, 'Specified here, not yet implemented'); build-bound."
+    },
+    {
+      "id": "inline_error_banner",
+      "status": "specified",
+      "description": "@error-container / @on-error-container inline error banner + error-text-slot underline (12.2 markup-error state, 'Specified here, not yet implemented'); build-bound."
+    }
+  ]
+}

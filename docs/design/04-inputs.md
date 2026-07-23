@@ -466,6 +466,40 @@ Anchored `top: calc(100% + 6px)`, full field width, `z-index` 70, max-height
    - valid: "**matched** of *total* match", plus the compiled `/pattern/flags`
      display in regex mode. A pill "Clear" text button ends the row.
 
+#### 5.2.1 Builder inside an already-transient host (specified, not yet implemented)
+
+Most builder hosts are stable, long-lived surfaces — a dialog page, a sidebar
+panel, or a layout-manager toolbar — where the popover opens against a fixed
+`controller_parent` and outside-click handling is uncomplicated. Two search
+fields are different: the field itself lives inside a surface that is *already*
+a transient popover with its own auto-dismiss-on-outside-click lifecycle, so a
+naive builder popover would be read as an "outside click" and pop the host down
+underneath it. These hosts are tracked as honest gaps (`stacked auto-dismiss
+popovers`) in `qa/windows-ui-contract/search-field-coverage.json` and are *not*
+yet wired to the shared controller; when they are, the builder must obey the
+following so it never dismisses its own host:
+
+- **Command Search** (`sfx2/source/commandpopup/CommandPopup.cxx`, a
+  `weld_popover` shown with `popup_at_rect`/`popdown`, listbox reset on
+  `connect_closed`): the builder popover must be parented *within* the command
+  popover's own grab so a pointer press inside the builder counts as inside the
+  host, not an outside click. The host may not `popdown()` while the builder is
+  open; closing the builder returns the grab to the host.
+- **Calc AutoFilter** (`sc/source/ui/cctrl/checklistmenu.cxx`,
+  `ScCheckListMenuControl` with stacked `ScListSubMenuControl` submenus closed
+  by `maCloseTimer`/`EndPopupMode()`): the builder opens as a further level on
+  the same submenu stack rather than as an independent top-level, so the close
+  timer treats it as part of the active chain and does not collapse the parent
+  checklist when the pointer moves into the builder.
+
+In both cases Escape is **layered**: the first Escape closes the builder and
+returns focus/grab to the host field; a second Escape dismisses the host. The
+builder must also tear down cleanly (no dangling popover) if the host is
+dismissed first — for example the AutoFilter menu closing on document focus
+loss — since its `controller_parent` is not stable across host invocations.
+This is a design specification only; there is no native implementation or
+runtime evidence for the nested-popover case yet.
+
 ### 5.3 Behaviour (mode, validity, matching)
 
 - **Literal mode** (default): the query is a case-insensitive substring test.

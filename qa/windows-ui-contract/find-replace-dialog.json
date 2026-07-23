@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "contract": "windows-native-find-replace-dialog-closure",
+  "platform": "windows",
+  "inventory_id": "WIN-DLG-005",
+  "surface": "Find and Replace dialog",
+  "design_chapters": ["docs/design/04-inputs.md", "docs/design/08-dialogs.md"],
+  "ui_file": "svx/uiconfig/ui/findreplacedialog.ui",
+  "dialog_id": "FindReplaceDialog",
+  "header_file": "include/svx/srchdlg.hxx",
+  "source_file": "svx/source/dialog/srchdlg.cxx",
+  "owner_type": "SvxSearchDialog",
+  "modeless_base_class": {
+    "marker": "class SVX_DLLPUBLIC SvxSearchDialog final : public SfxModelessDialogController",
+    "rationale": "docs/design/04-inputs.md sections 5-6 and 08-dialogs.md section 8.5 require Find & Replace to keep the document canvas live for find-as-you-type / Find All selection over the real ICU engine (SvxSearchItem). A genuinely modeless base class (SfxModelessDialogController, not GenericDialogController) is the regression guard: if the dialog ever became application-modal it would block the very live-document interaction the design depends on."
+  },
+  "satellite_contracts": {
+    "fieldset": {
+      "inventory_id": "WIN-INP-006",
+      "registry": "qa/windows-ui-contract/find-replace-fieldset.json",
+      "checker": "bin/check-windows-find-replace-fieldset.py",
+      "reuse": "validate() is re-run in-process so a broken fieldset also fails WIN-DLG-005."
+    },
+    "regex_integration": {
+      "registry": "qa/windows-ui-contract/regex-search-integrations.json",
+      "coverage_id": "document.find-replace",
+      "checker": "bin/check-windows-regex-search-integrations.py",
+      "cross_field_equality": {
+        "ui_file": "ui_file",
+        "header_file": "header_file",
+        "source_file": "source_file",
+        "entry_id": "find_field.widget_id",
+        "entry_member": "find_field.member",
+        "builder_member": "find_field.regex_builder_member",
+        "controller_member": "find_field.controller_member"
+      }
+    },
+    "regex_builder_foundation": {
+      "checker": "bin/check-windows-regex-builder-foundation.py",
+      "reuse": "validate_repository() is re-run in-process so a broken shared ICU/popover engine also fails WIN-DLG-005."
+    },
+    "notification_producer": {
+      "registry": "qa/windows-ui-contract/notification-producer-policy.json",
+      "producer_id": "srchdlg-replace-all-outcome",
+      "producer_file": "svx/source/dialog/srchdlg.cxx",
+      "producer_function": "lcl_NotifyMaterialReplaceOutcome",
+      "producer_router_call": "NotifyConfirmation",
+      "note": "Read-only assertion of the pre-existing srchdlg producer only; the notifications cluster owns and appends to this file, so no total-count or other-producer assertion is made here."
+    },
+    "dialog_notification_policy": {
+      "registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+      "router_module": "bin/check-windows-dialog-notification-contract.py",
+      "expected_policy": "native-exclusion",
+      "note": "classify_route over the real .ui and the checked-in CSV row must agree and must keep the dialog modal (never routed to the notification form)."
+    }
+  },
+  "replace_all_flag": {
+    "flag": "g_bMaterialReplaceAllPending",
+    "context_signature": "IMPL_LINK(SvxSearchDialog, CommandHdl_Impl, weld::Button&, rBtn, void)",
+    "arm_marker": "g_bMaterialReplaceAllPending = (&rBtn == m_xReplaceAllBtn.get());",
+    "clear_marker": "g_bMaterialReplaceAllPending = false;",
+    "invariant": "The one-shot Replace-All confirmation flag is armed exactly once and cleared exactly once inside CommandHdl_Impl's Replace-All branch, so no later unrelated label update can pick it up."
+  },
+  "runtime_verified": false
+}

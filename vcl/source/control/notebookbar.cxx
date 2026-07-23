@@ -9,6 +9,8 @@
 
 #include <sal/config.h>
 
+#include <cstdlib>
+#include <optional>
 #include <string_view>
 #include <utility>
 
@@ -17,9 +19,12 @@
 #include <vcl/layout.hxx>
 #include <vcl/notebookbar/notebookbar.hxx>
 #include <vcl/notebookbar/NotebookBarAddonsItem.hxx>
+#include <vcl/svapp.hxx>
+#include <vcl/settings.hxx>
 #include <vcl/syswin.hxx>
 #include <vcl/taskpanelist.hxx>
 #include <vcl/themecolors.hxx>
+#include <vcl/MaterialTokens.hxx>
 #include <vcl/NotebookbarContextControl.hxx>
 #include <cppuhelper/implbase.hxx>
 #include <comphelper/processfactory.hxx>
@@ -45,6 +50,45 @@ static bool doesFileExist(std::u16string_view sUIDir, std::u16string_view sUIFil
     OUString sUri = OUString::Concat(sUIDir) + sUIFile;
     osl::File file(sUri);
     return( file.open(0) == osl::FileBase::E_None );
+}
+
+namespace
+{
+// Resolve a Material semantic color token for the notebookbar group area, but only
+// when the Material file-widget theme is the active, documented activation
+// (VCL_FILE_WIDGET_THEME=material -- the same gate used in
+// vcl/source/gdi/FileDefinitionWidgetDraw.cxx and vcl/source/window/status.cxx; see
+// docs/design/05-navigation.md section 4.1, "Group area ... @surface fill"). Under the
+// default/native theme this returns nothing, so UpdateBackground() keeps every existing
+// per-module accent Merge() and no Material code path runs -- keyboard, mouse, a11y and
+// RTL behavior are untouched. Values flow exclusively through vcl::MaterialTokens, the
+// single named-token view over definition.xml, so the group-area wash can never drift
+// from the definition it mirrors (no raw hex literal here). Scope is deliberately the
+// group-area background wash only, never the 38px tab-row band (a single Wallpaper color
+// cannot carry both tokens simultaneously). The per-scheme token table is parsed at most
+// once because definition.xml is immutable at runtime, keeping the update cheap; the
+// cheap getenv gate short-circuits before any parse under the native theme.
+std::optional<Color> lcl_materialNotebookbarColor(std::string_view rRole)
+{
+    // System forced colors take precedence over the Material treatment for
+    // accessibility; never override the HC-aware colors.
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return std::nullopt;
+
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    static std::optional<vcl::MaterialTokens> spLightTokens;
+    static std::optional<vcl::MaterialTokens> spDarkTokens;
+    std::optional<vcl::MaterialTokens>& rCache = bDark ? spDarkTokens : spLightTokens;
+    if (!rCache)
+        rCache = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!rCache->isValid())
+        return std::nullopt;
+    return rCache->findColor(rRole);
+}
 }
 
 /**
@@ -329,6 +373,16 @@ void NotebookBar::UpdateBackground()
         aColor.Merge(Color(0xe7, 0x57, 0x29), cTrans); // #e75729
     else if (m_sModule == "com.sun.star.drawing.DrawingDocument")
         aColor.Merge(Color(0xe5, 0xb4, 0x43), cTrans); // #e5b443
+
+    // Material file-widget theme: the notebookbar group area renders from the
+    // @surface role (docs/design/05-navigation.md 4.1, "Group area ... @surface fill")
+    // rather than the legacy per-module accent tint above. Resolve @surface through the
+    // token accessor so the group-area wash stays drift-locked to the definition; the
+    // per-module accent Merge() calls above are retained verbatim and remain the final
+    // color under the native theme. Scope is the group-area wash only, not the 38px
+    // tab-row band (a single Wallpaper color cannot carry both tokens).
+    if (const std::optional<Color> oSurface = lcl_materialNotebookbarColor("surface"))
+        aColor = *oSurface;
 
     SetBackground(Wallpaper(aColor));
     UpdateDefaultSettings();
