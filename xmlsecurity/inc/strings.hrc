@@ -44,6 +44,7 @@
                                                        "Do you really want to continue?")
 #define STR_XMLSECDLG_QUERY_REALLYREMOVE            NC_("STR_XMLSECDLG_QUERY_REALLYREMOVE", "Document signature cannot be restored, once removed.\n" \
                                                        "Do you really want to remove selected signature?")
+#define STR_XMLSECDLG_REMOVE                        NC_("STR_XMLSECDLG_REMOVE", "Remove")
 
 #define STR_XMLSECDLG_SIGNING_FAILED                NC_("STR_XMLSECDLG_SIGNING_FAILED", "An error occurred while adding the signature.")
 #define STR_XMLSECDLG_NO_CERT_MANAGER               NC_("STR_XMLSECDLG_NO_CERT_MANAGER", "Could not find any certificate manager.")

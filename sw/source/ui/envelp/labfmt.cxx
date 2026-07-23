@@ -26,6 +26,7 @@
 #include <vcl/settings.hxx>
 #include <vcl/vclenum.hxx>
 #include <sal/log.hxx>
+#include <sfx2/notificationrouter.hxx>
 
 #include <viewopt.hxx>
 
@@ -550,9 +551,14 @@ IMPL_LINK_NOARG(SwSaveLabelDlg, OkHdl, weld::Button&, void)
         if ( rCfg.IsPredefinedLabel(sMake, sType) )
         {
             SAL_WARN( "sw.envelp", "label is predefined and cannot be overwritten" );
-            std::unique_ptr<weld::Builder> xBuilder(Application::CreateBuilder(m_xDialog.get(), u"modules/swriter/ui/cannotsavelabeldialog.ui"_ustr));
-            std::unique_ptr<weld::MessageDialog> xBox(xBuilder->weld_message_dialog(u"CannotSaveLabelDialog"_ustr));
-            xBox->run();
+            // Route the "predefined label cannot be overwritten" notice to the bottom-right
+            // notification stack instead of a modal OK box (docs/design/07-feedback.md 7.5) while
+            // the Label Format dialog itself stays open. Fixed built-in strings with no document
+            // data, so it routes as SafeDisplayText under the audited core-ui source.
+            sfx2::NotificationRouter::NotifyInfo(
+                "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Warning,
+                SwResId(STR_CANNOT_SAVE_LABEL_PRIMARY),
+                SwResId(STR_CANNOT_SAVE_LABEL_SECONDARY));
             return;
         }
 

@@ -34,6 +34,23 @@
           </packing>
         </child>
         <child>
+          <!-- Material Base rail/workspace divider (docs/design 12.1): the rail's
+               right hairline, tinted @outline-variant at stroke-thin under the
+               guarded Material theme by OAppBorderWindow (AppView.cxx); a plain
+               1px spacer under the default theme. -->
+          <object class="GtkBox" id="panelhairline">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="width_request">1</property>
+            <property name="vexpand">True</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkBox" id="detail">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -45,7 +62,7 @@
             </child>
           </object>
           <packing>
-            <property name="left_attach">1</property>
+            <property name="left_attach">2</property>
             <property name="top_attach">0</property>
           </packing>
         </child>

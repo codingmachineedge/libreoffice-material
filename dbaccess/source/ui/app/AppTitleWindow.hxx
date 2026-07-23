@@ -26,15 +26,30 @@ namespace dbaui
 {
     class OTitleWindow final
     {
+    public:
+        /** Shared-control style variant (docs/design/12-base-math-shared.md 12.1):
+            the same OTitleWindow class heads the rail ("Database") and the task /
+            object-list panes, but the rail instance is a Material "kicker" while the
+            others are section "headings". Defaulting to Heading keeps every existing
+            (non-rail) call site unchanged. */
+        enum class TitleStyle
+        {
+            Heading, // 16 px/600 @on-surface section / task heading (default)
+            Kicker,  // uppercase 11 px/700 @on-surface-variant rail kicker
+        };
+
+    private:
         std::unique_ptr<weld::Builder> m_xBuilder;
         std::unique_ptr<weld::Container> m_xContainer;
         std::unique_ptr<weld::Container> m_xTitleFrame;
         std::unique_ptr<weld::Label> m_xTitle;
         std::unique_ptr<weld::Container> m_xChildContainer;
         std::shared_ptr<OChildWindow> m_xChild;
+        TitleStyle m_eStyle;
 
     public:
-        OTitleWindow(weld::Container* pParent, TranslateId pTitleId);
+        OTitleWindow(weld::Container* pParent, TranslateId pTitleId,
+                     TitleStyle eStyle = TitleStyle::Heading);
         ~OTitleWindow();
 
         void GrabFocus();

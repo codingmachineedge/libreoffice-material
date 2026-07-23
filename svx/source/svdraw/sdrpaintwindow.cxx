@@ -29,7 +29,11 @@
 #include <vcl/window.hxx>
 #include <svtools/optionsdrawinglayer.hxx>
 #include <officecfg/Office/Common.hxx>
+#include <vcl/MaterialTokens.hxx>
+#include <cstdlib>
+#include <optional>
 #include <set>
+#include <string_view>
 #include <vector>
 
 namespace {
@@ -176,6 +180,33 @@ void SdrPreRenderDevice::OutputPreRenderDevice(const vcl::Region& rExpandedRegio
     mpPreRenderDevice->EnableMapMode(bMapModeWasEnabledSource);
 }
 
+namespace {
+
+// Resolve the Material @primary token for the shared canvas overlay stripe colors
+// (snapping/help-line guides and the marquee rubber-band), but only under the
+// documented Material file-widget theme activation (VCL_FILE_WIDGET_THEME=material,
+// per docs/design/11-impress-draw.md §11.3). Resolved high contrast is handled by
+// the caller and always wins (the guarded branch below is sequenced to lose to the
+// GetHighContrastMode() check). Under the default/native theme this returns nothing,
+// so the overlay keeps its SvtOptionsDrawinglayer stripe colors and existing
+// behavior is preserved. The value flows through vcl::MaterialTokens -- the single
+// named-token table over definition.xml -- rather than any raw color literal.
+std::optional<Color> lcl_getMaterialOverlayGuideColor()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    const vcl::MaterialTokens aTokens
+        = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!aTokens.isValid())
+        return std::nullopt;
+    return aTokens.findColor("primary");
+}
+
+}
+
 void SdrPaintView::InitOverlayManager(const rtl::Reference<sdr::overlay::OverlayManager> & xOverlayManager)
 {
     Color aColA(SvtOptionsDrawinglayer::GetStripeColorA());
@@ -185,6 +216,14 @@ void SdrPaintView::InitOverlayManager(const rtl::Reference<sdr::overlay::Overlay
     {
         aColA = aColB = Application::GetSettings().GetStyleSettings().GetHighlightColor();
         aColB.Invert();
+    }
+    else if (const std::optional<Color> oColor = lcl_getMaterialOverlayGuideColor())
+    {
+        // Material theme active and high contrast off: tint the shared overlay
+        // stripe colors with the @primary token so snapping guide lines and the
+        // marquee read as the Material accent. The high-contrast branch above
+        // always wins -- this is deliberately sequenced as its else branch.
+        aColA = aColB = *oColor;
     }
 
     xOverlayManager->setStripeColorA(aColA);

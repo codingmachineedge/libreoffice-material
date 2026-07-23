@@ -96,6 +96,14 @@ public:
 
     void setHighlight (bool state);
 
+    /** True when this item's backing resource is unavailable -- e.g. a recent
+        document whose file no longer exists on disk. Default false; only
+        RecentDocsViewItem overrides it, so the Material Start Center card renderer
+        can dim a missing-file preview (docs/design/09-start-center.md 9.5,
+        "Unavailable file thumbnails"). Every other ThumbnailView consumer
+        (Template Manager, Gallery) inherits the false default and is unaffected. */
+    virtual bool isUnavailable () const { return false; }
+
     /** Updates own highlight status based on the aPoint position.
 
         Returns rectangle that needs to be invalidated.

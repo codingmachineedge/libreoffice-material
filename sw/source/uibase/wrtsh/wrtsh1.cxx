@@ -108,6 +108,7 @@
 
 #include <sfx2/msgpool.hxx>
 #include <sfx2/msg.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <svtools/embedhlp.hxx>
 #include <svtools/strings.hrc>
 #include <svtools/svtresid.hxx>
@@ -2867,42 +2868,25 @@ bool SwWrtShell::HasFoldedOutlineContentSelected() const
     return false;
 }
 
-void SwWrtShell::InfoReadOnlyDialog(bool bAsync) const
+void SwWrtShell::InfoReadOnlyDialog(bool /*bAsync*/) const
 {
-#if defined __GNUC__ && !defined __clang__ && __GNUC__ == 16
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
-    if (bAsync)
+    // Route the read-only-content notice to the bottom-right notification stack instead of a modal
+    // OK box (docs/design/07-feedback.md 7.5). Both the former sync and async callers now share this
+    // single non-blocking notice. The default text (STR_INFORODLG_PRIMARY/SECONDARY) mirrors
+    // inforeadonlydialog.ui; the folded-outline case keeps the existing STR_INFORODLG_FOLDED_* copy.
+    // Fixed built-in strings with no document data, so it routes as SafeDisplayText under the audited
+    // core-ui source.
+    OUString sPrimary(SwResId(STR_INFORODLG_PRIMARY));
+    OUString sSecondary(SwResId(STR_INFORODLG_SECONDARY));
+    if (GetViewOptions()->IsShowOutlineContentVisibilityButton() &&
+            HasFoldedOutlineContentSelected())
     {
-        auto xInfo = std::make_shared<weld::MessageDialogController>(
-                    GetView().GetFrameWeld(), "modules/swriter/ui/inforeadonlydialog.ui", "InfoReadonlyDialog");
-        if (GetViewOptions()->IsShowOutlineContentVisibilityButton() &&
-                HasFoldedOutlineContentSelected())
-        {
-            xInfo->set_primary_text(SwResId(STR_INFORODLG_FOLDED_PRIMARY));
-            xInfo->set_secondary_text(SwResId(STR_INFORODLG_FOLDED_SECONDARY));
-        }
-        weld::DialogController::runAsync(xInfo, [](int) {});
+        sPrimary = SwResId(STR_INFORODLG_FOLDED_PRIMARY);
+        sSecondary = SwResId(STR_INFORODLG_FOLDED_SECONDARY);
     }
-    else
-    {
-        std::unique_ptr<weld::Builder>
-                xBuilder(Application::CreateBuilder(GetView().GetFrameWeld(),
-                                                    u"modules/swriter/ui/inforeadonlydialog.ui"_ustr));
-        std::unique_ptr<weld::MessageDialog>
-                xInfo(xBuilder->weld_message_dialog(u"InfoReadonlyDialog"_ustr));
-        if (GetViewOptions()->IsShowOutlineContentVisibilityButton() &&
-                HasFoldedOutlineContentSelected())
-        {
-            xInfo->set_primary_text(SwResId(STR_INFORODLG_FOLDED_PRIMARY));
-            xInfo->set_secondary_text(SwResId(STR_INFORODLG_FOLDED_SECONDARY));
-        }
-        xInfo->run();
-    }
-#if defined __GNUC__ && !defined __clang__ && __GNUC__ == 16
-#pragma GCC diagnostic pop
-#endif
+    sfx2::NotificationRouter::NotifyInfo(
+        "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Information,
+        sPrimary, sSecondary);
 }
 
 bool SwWrtShell::WarnHiddenSectionDialog() const

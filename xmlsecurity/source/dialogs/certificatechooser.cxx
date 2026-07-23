@@ -28,6 +28,7 @@
 #include <comphelper/xmlsechelper.hxx>
 #include <comphelper/lok.hxx>
 #include <rtl/ustrbuf.hxx>
+#include <sfx2/RegexSearchController.hxx>
 #include <sfx2/viewsh.hxx>
 #include <svl/cryptosign.hxx>
 #include <vcl/vclenum.hxx>
@@ -40,6 +41,7 @@
 
 #include <unotools/datetime.hxx>
 #include <unotools/charclass.hxx>
+#include <unotools/textsearch.hxx>
 #include <unotools/useroptions.hxx>
 
 #include <resourcemanager.hxx>
@@ -65,6 +67,7 @@ CertificateChooser::CertificateChooser(weld::Window* _pParent,
     , m_xDescriptionED(m_xBuilder->weld_entry(u"description"_ustr))
     , m_xSearchBox(m_xBuilder->weld_entry(u"searchbox"_ustr))
     , m_xReloadBtn(m_xBuilder->weld_button(u"reloadcert"_ustr))
+    , m_xRegexBuilderButton(m_xBuilder->weld_button(u"searchbox_regex_builder"_ustr))
 {
     auto nControlWidth = m_xCertLB->get_approximate_digit_width() * 105;
     m_xCertLB->set_size_request(nControlWidth, m_xCertLB->get_height_rows(12));
@@ -80,11 +83,24 @@ CertificateChooser::CertificateChooser(weld::Window* _pParent,
     m_xCertLB->connect_selection_changed(LINK(this, CertificateChooser, CertificateHighlightHdl));
     m_xCertLB->connect_item_activated(LINK(this, CertificateChooser, CertificateSelectHdl));
     m_xViewBtn->connect_clicked( LINK( this, CertificateChooser, ViewButtonHdl ) );
-    m_xSearchBox->connect_changed(LINK(this, CertificateChooser, SearchModifyHdl));
     m_xReloadBtn->connect_clicked( LINK( this, CertificateChooser, ReloadButtonHdl ) );
 
     mxSecurityContexts = std::move(rxSecurityContexts);
     mbInitialized = false;
+
+    // Bind the certificate issuer search entry to the shared advanced regex builder. The controller
+    // owns the entry's changed callback and forwards it to SearchModifyHdl, so the live per-certificate
+    // issuer filter keeps working while the builder button opens the regular-expression popover. The
+    // seeded state reproduces the field's legacy behaviour exactly: a case-insensitive literal
+    // "contains" match over certificate issuer names until the user opts into regex/options through
+    // the builder.
+    m_xRegexSearchController = std::make_unique<sfx2::RegexSearchController>(
+        m_xDialog.get(), *m_xSearchBox, *m_xRegexBuilderButton,
+        LINK(this, CertificateChooser, SearchModifyHdl));
+    sfx2::RegexSearchState aState = m_xRegexSearchController->GetState();
+    aState.Mode = sfx2::RegexSearchMode::Literal;
+    aState.Flags.CaseInsensitive = true;
+    m_xRegexSearchController->SetState(aState);
 
     // disable buttons
     CertificateHighlightHdl(*m_xCertLB);
@@ -96,6 +112,12 @@ CertificateChooser::CertificateChooser(weld::Window* _pParent,
         m_xSearchBox->hide();
         m_xReloadBtn->hide();
     }
+
+    // The seeding SetState() above fires SearchModifyHdl -> ImplInitialize(true) while the dialog is
+    // still under construction, before the certificate list is meant to be built (BeforeRun() runs
+    // the first population right after the dialog is shown, per #i48432#). ImplInitialize() guards on
+    // mbConstructed so that early seeding callback is a no-op.
+    mbConstructed = true;
 }
 
 CertificateChooser::~CertificateChooser()
@@ -164,6 +186,11 @@ OUString CertificateChooser::UsageInClearText(int bits)
 
 void CertificateChooser::ImplInitialize(bool mbSearch)
 {
+    // Seeding the regex controller state in the constructor fires SearchModifyHdl -> here before the
+    // dialog is meant to build its list; ignore that construction-time callback (see the constructor).
+    if (!mbConstructed)
+        return;
+
     if (mbInitialized && !mbSearch)
         return;
 
@@ -172,10 +199,6 @@ void CertificateChooser::ImplInitialize(bool mbSearch)
     m_xCertLB->freeze();
 
     SvtUserOptions aUserOpts;
-
-    SvtSysLocale aSysLocale;
-    const CharClass& rCharClass = aSysLocale.GetCharClass();
-    const OUString aSearchStr(rCharClass.uppercase(m_xSearchBox->get_text()));
 
     switch (meAction)
     {
@@ -201,6 +224,21 @@ void CertificateChooser::ImplInitialize(bool mbSearch)
             break;
 
     }
+
+    // Compile the shared literal/regex matcher exactly once for this rebuild so the per-certificate
+    // predicate in matchCertificate() stays live but never recompiles per item. An empty or
+    // legacy-compatible (case-sensitive literal) query needs no compiled matcher and falls back to
+    // indexOf(). With the seeded default (literal, case-insensitive) the matcher reproduces the old
+    // uppercase-substring-on-issuer contains match; a builder opt-in swaps in the controller's
+    // regex/options matcher without touching the call site.
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    const bool bValid = bEmpty || sfx2::RegexSearchService::Validate(rState).IsValid;
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    m_xSearchMatcher.reset();
+    if (bValid && !bEmpty && !bLegacyCompatibleLiteral)
+        m_xSearchMatcher = std::make_unique<utl::TextSearch>(m_xRegexSearchController->GetSearchOptions());
 
     bool has_x509 = false;
     bool has_openpgp_gpg = false;
@@ -279,9 +317,7 @@ void CertificateChooser::ImplInitialize(bool mbSearch)
             OUString sIssuer = xmlsec::GetContentPart( xCert->getIssuerName(), xCert->getCertificateKind());
 
             // If we are searching and there is no match skip
-            if (mbSearch
-                && rCharClass.uppercase(sIssuer).indexOf(aSearchStr) < 0
-                && !aSearchStr.isEmpty())
+            if (mbSearch && !matchCertificate(sIssuer))
                     continue;
 
             m_xCertLB->append();
@@ -346,6 +382,21 @@ void CertificateChooser::ImplInitialize(bool mbSearch)
 
     CertificateHighlightHdl(*m_xCertLB);
     mbInitialized = true;
+}
+
+bool CertificateChooser::matchCertificate(const OUString& rIssuer)
+{
+    // Live per-certificate predicate. The compiled matcher is prepared once per rebuild in
+    // ImplInitialize() and only tested here, so the filter cannot go stale while the certificate set
+    // changes underneath an active search. With the seeded default (literal, case-insensitive) this
+    // reproduces the old uppercase(issuer).indexOf(...) contains match; a builder opt-in swaps in the
+    // controller's regex/options matcher without touching this call site.
+    const sfx2::RegexSearchState& rState = m_xRegexSearchController->GetState();
+    const bool bEmpty = rState.Pattern.isEmpty();
+    const bool bLegacyCompatibleLiteral
+        = rState.Mode == sfx2::RegexSearchMode::Literal && !rState.Flags.CaseInsensitive;
+    return bEmpty || (bLegacyCompatibleLiteral && rIssuer.indexOf(rState.Pattern) >= 0)
+           || (m_xSearchMatcher && m_xSearchMatcher->searchForward(rIssuer));
 }
 
 uno::Sequence<uno::Reference< css::security::XCertificate > > CertificateChooser::GetSelectedCertificates()

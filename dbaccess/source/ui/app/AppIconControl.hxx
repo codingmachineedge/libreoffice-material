@@ -40,6 +40,12 @@ namespace dbaui
 
         bool IsMnemonicChar(sal_Unicode cChar, ElementType& rType) const;
 
+    protected:
+        // Material Base navigation-rail selection colours (docs/design 12.1): the
+        // selected rail entry resolves @primary-container / @on-primary-container
+        // instead of the generic StyleSettings highlight. Guarded, source-declared.
+        virtual void UpdateColors(const StyleSettings& rSettings) override;
+
     public:
         explicit OApplicationIconControl(std::unique_ptr<weld::ScrolledWindow> xScroll);
         virtual void SetDrawingArea(weld::DrawingArea* pDrawingArea) override;

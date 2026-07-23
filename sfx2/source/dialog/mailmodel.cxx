@@ -46,6 +46,7 @@
 #include <osl/diagnose.h>
 
 #include <sfx2/mailmodelapi.hxx>
+#include <sfx2/notificationrouter.hxx>
 #include <sfx2/sfxresid.hxx>
 #include <sfx2/strings.hrc>
 
@@ -657,7 +658,7 @@ SfxMailModel::SendMailResult SfxMailModel::AttachDocument(
     return eSaveResult == SAVE_SUCCESSFUL ? SEND_MAIL_OK : SEND_MAIL_ERROR;
 }
 
-SfxMailModel::SendMailResult SfxMailModel::Send( const css::uno::Reference< css::frame::XFrame >& xFrame )
+SfxMailModel::SendMailResult SfxMailModel::Send( const css::uno::Reference< css::frame::XFrame >& /*xFrame*/ )
 {
     OSL_ENSURE(!maAttachedDocuments.empty(),"No document added!");
     SendMailResult  eResult = SEND_MAIL_ERROR;
@@ -756,13 +757,16 @@ SfxMailModel::SendMailResult SfxMailModel::Send( const css::uno::Reference< css:
 
                 if ( !bSend )
                 {
-                    css::uno::Reference< css::awt::XWindow > xParentWindow = xFrame->getContainerWindow();
-
+                    // No working mail client: route the notice to the bottom-right notification stack
+                    // instead of a modal OK box (docs/design/07-feedback.md 7.5), then return
+                    // CANCELLED exactly as before. Fixed built-in strings with no document data, so it
+                    // routes as SafeDisplayText under the audited core-ui source.
                     SolarMutexGuard aGuard;
 
-                    std::unique_ptr<weld::Builder> xBuilder(Application::CreateBuilder(Application::GetFrameWeld(xParentWindow), u"sfx/ui/errorfindemaildialog.ui"_ustr));
-                    std::unique_ptr<weld::MessageDialog> xBox(xBuilder->weld_message_dialog(u"ErrorFindEmailDialog"_ustr));
-                    xBox->run();
+                    sfx2::NotificationRouter::NotifyInfo(
+                        "libreoffice.core-ui"_ostr, sfx2::NotificationSeverity::Warning,
+                        SfxResId(STR_ERROR_FIND_EMAIL_PRIMARY),
+                        SfxResId(STR_ERROR_FIND_EMAIL_SECONDARY));
                     eResult = SEND_MAIL_CANCELLED;
                 }
                 else

@@ -82,10 +82,18 @@ void lcl_paintCard(vcl::RenderContext& rDev, const tools::Rectangle& rArea,
     const Color aBadgeIcon = lcl_color(rTokens, "on-primary-container", COL_BLACK);
     const Color aTitleColor = lcl_color(rTokens, "on-surface", COL_BLACK);
     const Color aMetaColor = lcl_color(rTokens, "on-surface-variant", COL_GRAY);
+    const Color aDisabledContainer = lcl_color(rTokens, "disabled-container", COL_LIGHTGRAY);
 
     const tools::Long nCardRadius = lcl_radius(rTokens, "corner-container", 12);
     const tools::Long nBadgeRadius = lcl_radius(rTokens, "corner-small", 8);
     const tools::Long nFocusRadius = lcl_radius(rTokens, "corner-focus", 6);
+
+    // Design 9.5 "Unavailable file thumbnails": a recent card whose backing file
+    // no longer exists dims its page preview with the archived disabled-state pair
+    // -- an @outline-variant hairline over a @disabled-container fill, the same
+    // treatment 06-containers assigns every "Disabled (container)" state. The
+    // caption below is still drawn unconditionally so the file name stays legible.
+    const bool bUnavailable = rItem.isUnavailable();
 
     // Card container: @surface fill, @outline-variant hairline (or @primary on
     // hover), corner-container radius, clipped. Hover currently recolours the
@@ -112,15 +120,19 @@ void lcl_paintCard(vcl::RenderContext& rDev, const tools::Rectangle& rArea,
     const tools::Rectangle aThumb(
         aPreviewCenter.X() - SC_CARD_THUMB_WIDTH / 2, aPreviewCenter.Y() - SC_CARD_THUMB_HEIGHT / 2,
         aPreviewCenter.X() + SC_CARD_THUMB_WIDTH / 2, aPreviewCenter.Y() + SC_CARD_THUMB_HEIGHT / 2);
-    rDev.SetFillColor(aSurface);
+    // Unavailable (missing-file) cards flatten the page to a @disabled-container
+    // fill under the @outline-variant hairline and draw no preview or placeholder
+    // bars; available cards keep the @surface page and draw the real preview when
+    // present, otherwise the placeholder page bars.
+    rDev.SetFillColor(bUnavailable ? aDisabledContainer : aSurface);
     rDev.SetLineColor(aOutlineVariant);
     rDev.DrawRect(aThumb, SC_CARD_THUMB_RADIUS, SC_CARD_THUMB_RADIUS);
-    if (!rItem.maPreview.IsEmpty())
+    if (!bUnavailable && !rItem.maPreview.IsEmpty())
     {
         rDev.DrawBitmap(Point(aThumb.Left() + 1, aThumb.Top() + 1),
                         Size(SC_CARD_THUMB_WIDTH - 2, SC_CARD_THUMB_HEIGHT - 2), rItem.maPreview);
     }
-    else
+    else if (!bUnavailable)
     {
         rDev.SetLineColor();
         rDev.SetFillColor(aOutlineVariant);
