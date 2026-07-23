@@ -155,14 +155,16 @@ LibreOffice.VC.VC.opendb
 .qtc_clangd
 .cache
 
-# Doxygen output. Keep the project's authored Markdown, reviewed evidence, and
-# the written design specification.
+# Doxygen output. Keep the project's authored Markdown, reviewed evidence,
+# the written design specification, and the genuine-capture screenshot gallery.
 /docs/*
 !/docs/*.md
 !/docs/evidence/
 !/docs/evidence/**
 !/docs/design/
 !/docs/design/**
+!/docs/screenshots/
+!/docs/screenshots/**
 
 # make dump-deps output
 /lo.png

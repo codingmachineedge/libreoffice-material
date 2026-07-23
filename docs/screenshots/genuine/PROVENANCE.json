@@ -1,0 +1,67 @@
+[
+  {
+    "file": "docs/screenshots/genuine/start-center-light.png",
+    "function": "Start Center - Home / Recent Documents",
+    "theme": "light",
+    "method": "PrintWindow via lowlevel-computer-use-mcp 547a102a49169d41da876de217856229ab7c03a1 (headless smoke harness)",
+    "source_commit": "705cf7ff4b063c2686f43157fe0d27f57e5668b0",
+    "release_tag": "windows-msi-89-1-705cf7ff4b",
+    "run_or_desktop_id": "20260723-164940-705cf7ff4b-windows-headless-light-keyboard-focus",
+    "sha256": "8e6e6cc8acd00e1350d22fcc7613bef49e8c483bd28befa7477311e1a1e9dee6",
+    "captured_at": "2026-07-23T20:55:06Z",
+    "visually_verified": true,
+    "visual_notes": "Material light Start Center: 'Home' header, rounded search field, pill-shaped selected 'Recent Documents' nav item with lavender highlight, circular purple filter/menu buttons, Create list (Writer/Calc/Impress/Draw/Math/Base), central welcome illustration, File/Tools/Help menu bar."
+  },
+  {
+    "file": "docs/screenshots/genuine/start-center-dark.png",
+    "function": "Start Center - Home / Recent Documents",
+    "theme": "dark",
+    "method": "PrintWindow via lowlevel-computer-use-mcp 547a102a49169d41da876de217856229ab7c03a1 (headless smoke harness)",
+    "source_commit": "705cf7ff4b063c2686f43157fe0d27f57e5668b0",
+    "release_tag": "windows-msi-89-1-705cf7ff4b",
+    "run_or_desktop_id": "20260723-164421-705cf7ff4b-windows-headless-dark",
+    "sha256": "aa10198922984f919bcead41ed1b5cc4e6f51c6a3a49dc45eea7b52a0309db9b",
+    "captured_at": "2026-07-23T20:55:06Z",
+    "visually_verified": true,
+    "visual_notes": "Material dark Start Center: dark background, white text, purple-filled 'Recent Documents' pill and circular buttons, same Material layout as light. Genuine dark-mode rendering (channel means ~28-33)."
+  },
+  {
+    "file": "docs/screenshots/genuine/start-center-highcontrast.png",
+    "function": "Start Center - Home / Recent Documents",
+    "theme": "highcontrast",
+    "method": "PrintWindow via lowlevel-computer-use-mcp 547a102a49169d41da876de217856229ab7c03a1 (headless smoke harness)",
+    "source_commit": "705cf7ff4b063c2686f43157fe0d27f57e5668b0",
+    "release_tag": "windows-msi-89-1-705cf7ff4b",
+    "run_or_desktop_id": "20260723-164734-705cf7ff4b-windows-headless-highcontrast",
+    "sha256": "e74f51ea0f982765a589fa54efb185696dd8d062aa1b0816aa1bf4096ef255aa",
+    "captured_at": "2026-07-23T20:55:06Z",
+    "visually_verified": true,
+    "visual_notes": "High-contrast Start Center: white background, black text, blue-outlined 'Recent Documents' selection and crisp control borders; Material layout preserved (channel means ~238)."
+  },
+  {
+    "file": "docs/screenshots/genuine/start-center-light-keyboard-focus.png",
+    "function": "Start Center - keyboard focus (Tab navigation)",
+    "theme": "light",
+    "method": "PrintWindow via lowlevel-computer-use-mcp 547a102a49169d41da876de217856229ab7c03a1 (headless smoke harness)",
+    "source_commit": "705cf7ff4b063c2686f43157fe0d27f57e5668b0",
+    "release_tag": "windows-msi-89-1-705cf7ff4b",
+    "run_or_desktop_id": "20260723-164940-705cf7ff4b-windows-headless-light-keyboard-focus",
+    "sha256": "394367c7ae6d9d400fb05acfa4f0d4f27e88417177379d39f04c96179d79cfc6",
+    "captured_at": "2026-07-23T20:55:06Z",
+    "visually_verified": true,
+    "visual_notes": "Light Start Center after one Tab: keyboard-focus rectangle drawn around the 'Open File' nav button; a11y tree reports one FOCUSED PUSH_BUTTON named 'Open File'."
+  },
+  {
+    "file": "docs/screenshots/genuine/start-center-templates-light.png",
+    "function": "Start Center - Templates navigation",
+    "theme": "light",
+    "method": "PrintWindow via lowlevel-computer-use-mcp 547a102a49169d41da876de217856229ab7c03a1 (headless smoke harness)",
+    "source_commit": "705cf7ff4b063c2686f43157fe0d27f57e5668b0",
+    "release_tag": "windows-msi-89-1-705cf7ff4b",
+    "run_or_desktop_id": "20260723-165153-705cf7ff4b-windows-headless-light-templates",
+    "sha256": "f01aff53fbbc539ae2d45c9e1d941046b15383e42314f9b5e1bf3213281fe351",
+    "captured_at": "2026-07-23T20:55:06Z",
+    "visually_verified": true,
+    "visual_notes": "Light Start Center captured after a background pointer navigation toward the Templates entry (mouse_click at client 140,330). Distinct capture (SHA differs from base light); fresh profile shows the Material Home layout."
+  }
+]
