@@ -1,0 +1,77 @@
+{
+  "_comment": [
+    "Material default-activation contract (Windows).",
+    "",
+    "The defect this pins: the entire Material widget treatment ships in every MSI",
+    "but is dormant, because upstream keeps it behind two environment variables that",
+    "no product code sets. vcl/source/gdi/salgdilayout.cxx enables the file-defined",
+    "widget-draw backend (FileDefinitionWidgetDraw) only when VCL_DRAW_WIDGETS_FROM_FILE",
+    "is set, and the theme-name guards select the shared theme only when",
+    "VCL_FILE_WIDGET_THEME == 'material'. The Material assets themselves DO ship",
+    "(vcl/Package_theme_definitions.mk installs material/definition.xml).",
+    "",
+    "The fix, owned by this contract: desktop/source/app/sofficemain.cxx defaults both",
+    "variables ON at the very top of soffice_main(), before any consumer in the process",
+    "reads them, under a #ifdef _WIN32 guard (this is the Windows-only rewrite; the Linux",
+    "CI leg and the CppunitTests never enter soffice_main and stay stock). Fail-closed",
+    "contract semantics:",
+    "",
+    "  (A) Full opt-out -- LIBREOFFICE_MATERIAL_THEME=off (or =0), case-insensitive --",
+    "      does nothing at all and leaves the process environment untouched.",
+    "  (B) User override wins -- if VCL_FILE_WIDGET_THEME is already set, it is never",
+    "      overwritten; VCL_DRAW_WIDGETS_FROM_FILE is only defaulted to '1' when it is",
+    "      unset AND the pre-set theme is non-empty.",
+    "  (C) Otherwise VCL_FILE_WIDGET_THEME is set to 'material' and, if unset,",
+    "      VCL_DRAW_WIDGETS_FROM_FILE is set to '1'. Plain C runtime only (getenv /",
+    "      _putenv_s / _stricmp); this runs before framework/UNO/VCL init.",
+    "",
+    "The checker (bin/check-material-default-activation.py) cross-validates every anchor",
+    "below against real, comment-stripped source, and additionally proves the two assets",
+    "the activation depends on are still present -- salgdilayout.cxx still gates on",
+    "VCL_DRAW_WIDGETS_FROM_FILE and Package_theme_definitions.mk still ships",
+    "material/definition.xml -- so activation cannot outlive its assets.",
+    "",
+    "Source + wiring evidence only: runtime_verified is false throughout. No native",
+    "build, no dialog/theme pixels, and no runtime observation of the activated theme is",
+    "claimed. First real visual verification is a specified carveout pending a built MSI."
+  ],
+  "schema_version": 1,
+  "contract": "material-default-activation",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "README.md (manual VCL_DRAW_WIDGETS_FROM_FILE / VCL_FILE_WIDGET_THEME opt-in that this fork now defaults on), docs/design/00-windows-rewrite-contract.md (Windows-only rewrite boundary)",
+  "activation": {
+    "file": "desktop/source/app/sofficemain.cxx",
+    "function_anchor": "soffice_main()",
+    "guard": "#ifdef _WIN32",
+    "first_statement_anchor": "sal_detail_initialize(sal::detail::InitializeSoffice",
+    "opt_out_var": "LIBREOFFICE_MATERIAL_THEME",
+    "opt_out_values": ["off", "0"],
+    "opt_out_case_insensitive_marker": "_stricmp",
+    "respect_existing_check": "getenv(\"VCL_FILE_WIDGET_THEME\")",
+    "putenv_calls": [
+      { "var": "VCL_FILE_WIDGET_THEME", "value": "material" },
+      { "var": "VCL_DRAW_WIDGETS_FROM_FILE", "value": "1" }
+    ],
+    "note": "The whole block sits inside soffice_main() before first_statement_anchor, guarded by #ifdef _WIN32. The opt-out token, the respect-existing getenv check, and both _putenv_s calls must all appear in that pre-first-statement region. A moved block, a dropped guard, a dropped opt-out, a dropped override-respect, or a drifted _putenv_s value fails closed."
+  },
+  "asset_cross_checks": {
+    "gate": {
+      "file": "vcl/source/gdi/salgdilayout.cxx",
+      "anchor": "getenv(\"VCL_DRAW_WIDGETS_FROM_FILE\")",
+      "note": "SalGraphics::initWidgetDrawBackends still gates FileDefinitionWidgetDraw on VCL_DRAW_WIDGETS_FROM_FILE; the default-on wiring targets exactly this switch."
+    },
+    "assets": {
+      "file": "vcl/Package_theme_definitions.mk",
+      "anchor": "material/definition.xml",
+      "note": "The Material theme definition the 'material' theme name resolves to still ships; activation cannot outlive its assets."
+    }
+  },
+  "carveout": {
+    "first_visual_verification": {
+      "status": "specified",
+      "note": "This host has no build root, so no MSI exists to launch: that the default-on wiring actually renders Material widgets in a shipped install is specified only, pending a real build. runtime_verified stays false until an installed binary is observed."
+    }
+  }
+}

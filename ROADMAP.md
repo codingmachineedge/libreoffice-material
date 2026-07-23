@@ -281,6 +281,16 @@ Implemented source milestones:
   `VCL_DRAW_WIDGETS_FROM_FILE` gate, with safe theme names, shared immutable
   definitions, and successful-load caching keyed by theme and scheme; failed
   requests attempt `online`, which is absent from this imported desktop tree;
+- default-on Material activation for the Windows app: `soffice_main()`
+  (`desktop/source/app/sofficemain.cxx`, under `#ifdef _WIN32`, before any
+  consumer reads them) defaults both variables on so the shipped MSI renders
+  Material with no manual step, while `LIBREOFFICE_MATERIAL_THEME=off` opts out
+  entirely and a user-set `VCL_FILE_WIDGET_THEME` always wins; locked by the
+  `material-default-activation` source contract
+  (`bin/check-material-default-activation.py`). This corrects the prior releases
+  that packaged the assets but left them dormant; it is source-implemented
+  wiring only (`runtime_verified: false`) and claims no build or pixel evidence —
+  the first release built after it is the first with Material active by default;
 - source-level profile selection from resolved dark mode, with high contrast
   taking precedence and bypassing Material colors for native or generic
   fallback drawing;
