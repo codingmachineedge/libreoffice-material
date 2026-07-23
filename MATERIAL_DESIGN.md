@@ -175,6 +175,44 @@ initialization path, and unsupported file-theme parts retain existing fallback
 drawing. Windows is the current delivery scope; equivalent platform-specific
 acceptance work remains in the roadmap as deferred future scope.
 
+## Default-on activation (Windows)
+
+Every earlier milestone above assumed the file-widget renderer was reached
+through a **manual opt-in**: `vcl/source/gdi/salgdilayout.cxx` enables
+`FileDefinitionWidgetDraw` only when `VCL_DRAW_WIDGETS_FROM_FILE` is set, and the
+theme-name guards select the shared theme only when `VCL_FILE_WIDGET_THEME`
+equals `material`. Because nothing in the shipped product set either variable,
+the packaged Material assets
+(`vcl/Package_theme_definitions.mk` installs `material/definition.xml`) shipped
+**dormant** in every MSI — the fork looked identical to stock LibreOffice unless
+an operator exported both variables by hand.
+
+This fork now makes Material the **default** on Windows. `soffice_main()`
+(`desktop/source/app/sofficemain.cxx`), under `#ifdef _WIN32` and before any
+consumer in the process reads the variables, defaults `VCL_FILE_WIDGET_THEME` to
+`material` and `VCL_DRAW_WIDGETS_FROM_FILE` to `1`. The activation is
+fail-closed and respectful of operator intent:
+
+- **Opt out entirely** with `LIBREOFFICE_MATERIAL_THEME=off` (or `=0`,
+  case-insensitive): the block does nothing and leaves the environment exactly
+  as the user set it, so the stock native theme is restored.
+- **A user-set `VCL_FILE_WIDGET_THEME` always wins**: a theme the operator
+  already chose is never overwritten, and `VCL_DRAW_WIDGETS_FROM_FILE` is only
+  defaulted to `1` when it is unset and the pre-set theme is non-empty.
+
+The switch is plain C-runtime wiring (`getenv` / `_putenv_s` / `_stricmp`) that
+runs before any framework/UNO/VCL initialization, and it is locked by the
+`material-default-activation` source contract
+(`qa/windows-ui-contract/material-default-activation.json` +
+`bin/check-material-default-activation.py`), which fails closed on a moved,
+dropped, or drifted block and cross-checks that the `salgdilayout` gate and the
+`material/definition.xml` asset still ship. This is **source-implemented wiring
+only**: `runtime_verified` stays `false`, no build ran on this host, and whether
+every visible surface actually renders as designed remains unverified until a
+real installed MSI is inspected. The first release built after this change is
+the first shipped binary in which Material is active by default; no pixel or
+screenshot evidence is claimed for it here.
+
 ## Goals
 
 - create one coherent visual and interaction system across the entire suite;

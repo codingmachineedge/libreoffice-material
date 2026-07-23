@@ -246,3 +246,11 @@ jobs:
 
       - name: Run Features command catalog mutation regressions
         run: python3 bin/test_features_command_catalog.py
+
+      # --- Material default-on activation (Windows) ---
+
+      - name: Validate Material default-on activation contract
+        run: python3 bin/check-material-default-activation.py
+
+      - name: Run Material default-on activation mutation regressions
+        run: python3 bin/test_material_default_activation.py
