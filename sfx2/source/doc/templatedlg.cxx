@@ -18,6 +18,7 @@
 #include <comphelper/storagehelper.hxx>
 #include <sfx2/AdditionsDialogHelper.hxx>
 #include <sfx2/app.hxx>
+#include <sfx2/destructiveconfirmation.hxx>
 #include <sfx2/docfac.hxx>
 #include <sfx2/docfilt.hxx>
 #include <sfx2/fcontnr.hxx>
@@ -1148,10 +1149,11 @@ void SfxTemplateManagerDlg::OnCategoryRename()
 void SfxTemplateManagerDlg::OnCategoryDelete()
 {
     const auto sCategory = mxCBFolder->get_active_text();
-    std::unique_ptr<weld::MessageDialog> popupDlg(Application::CreateMessageDialog(m_xDialog.get(),
-                                                VclMessageType::Question, VclButtonsType::YesNo,
-                                                SfxResId(STR_QMSG_SEL_FOLDER_DELETE).replaceFirst("$1",sCategory)));
-    if (popupDlg->run() != RET_YES)
+    // Deleting a template category is irreversible: route through the shared Material
+    // destructive-confirmation helper so the safe (Cancel) action is the keyboard default.
+    sfx2::DestructiveConfirmation aConfirm;
+    aConfirm.sPrimaryText = SfxResId(STR_QMSG_SEL_FOLDER_DELETE).replaceFirst("$1", sCategory);
+    if (!sfx2::ConfirmDestructiveAction(m_xDialog.get(), aConfirm))
         return;
 
     sal_Int16 nItemId = maLocalView.getRegionId(sCategory);

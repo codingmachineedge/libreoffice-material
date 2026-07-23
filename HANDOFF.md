@@ -173,11 +173,72 @@ and statically validated only.
   notification/formula/menu/sidebar/gallery runtime, pixels, or screenshots were
   produced for any Batch B row; the `B V I A L P C` inventory gates stay
   untouched, and CI-green ≠ UI-verified.
-- **Wave-2 Batch C (staged, not started)**: WIN-SYS-001, -002, -003, -004,
-  -005, -006, -007, -009, -010, -011, -015 (system dialog flows),
-  WIN-CONCEPT-001 (Features catalog), plus the 15 honest-gap search fields
-  if their contract extensions are attempted. Wave 3 (31 rows) is
-  build-host-bound per the audit.
+- **Wave-2 Batch C is LANDED IN SOURCE (2026-07-22)**: all twelve staged rows
+  (WIN-SYS-001, -002, -003, -004, -005, -006, -007, -009, -010, -011, -015
+  system-dialog flows + WIN-CONCEPT-001 Features catalog) are now locked by
+  **twelve new fail-closed build-free triads** (checker + JSON registry +
+  mutation suite each), **290 mutation tests total** (27 file-flow + 29
+  pdf-export + 34 doc-properties + 29 template-manager + 29 extension-manager +
+  21 macro-surface + 21 security-prompt + 24 recovery-safemode + 17
+  migration-compat + 18 uui + 19 help-about + 22 features-catalog), all green
+  here. The contracts: file-flow delegation (`material-windows-file-flow-delegation`,
+  WIN-SYS-001), PDF export tabbed dialog (-002), Document Properties notebook
+  (-003), template manager (-004), extension manager (-005), macro surface
+  (-006), security-prompt modality (-007), recovery/Safe-Mode (-009),
+  migration/compat (-010), uui interaction (-011), Help/About family (-015),
+  and the Features command-catalog coverage ledger (WIN-CONCEPT-001, 2,433 rows
+  bound to real `.uno` nodes across ten officecfg `*Commands.xcu`, 0 unresolved).
+- **Four destructive-confirmation C++ conversions (compile-plausibility only)**:
+  Batch C migrated four real confirmations onto `sfx2::ConfirmDestructiveAction`
+  — **three** registered in `dialog-anatomy-policy.json` (Save-As-Template
+  overwrite `sfx2/source/doc/saveastemplatedlg.cxx`, delete template category
+  `sfx2/source/doc/templatedlg.cxx`, remove extension
+  `desktop/source/deployment/gui/dp_gui_dialog2.cxx`), taking that shared
+  registry from 5 to its 8-migration cap (`MAX_MIGRATIONS` was NOT raised; zero
+  headroom remains — any further row needs coordination), and **one** (the
+  shared basctl `QueryDel` funnel with five callers,
+  `basctl/source/basicide/bastypes.cxx` + three new resources in
+  `basctl/inc/strings.hrc`) registered in `macro-surface.json` because the
+  anatomy registry is full. All four C++ edits are compile-plausibility-checked
+  (link deps, includes, `SFX2_DLLPUBLIC` export) but **not compiled** — the real
+  compile happens only on the Windows CI leg.
+- **WIN-SYS-016 reassignment (ui-registry)**: the WIN-SYS-015 row moved the 15
+  unassigned cui Help/About + legacy surfaces into the
+  `bin/check-windows-ui-registry-closure.py` `OVERRIDES` table and regenerated
+  `qa/windows-ui-contract/ui-registry.json`: `unassigned` 449→434, `assigned`
+  821→836, `total_surfaces` 1270 unchanged (1260 `.ui` + 10 native). Verified by
+  re-running the closure checker (`assigned=836, unassigned=434`).
+- **D-detail design chapters + integrator index landed**: the design chapters
+  gained the Batch-C detail (08-dialogs §8.3.1 + §8.6–§8.16, 07-feedback §7.1
+  recovery addendum + §7.9 uui error-routing, 06-containers extension-list note,
+  09-start-center template destination, 12-base-math §12.3 catalog
+  source-binding); `qa/windows-ui-contract/README.md` gained a "Wave-2 Batch C"
+  section (one contract subsection per triad + a runner block);
+  `.github/workflows/windows-ui-contract.yml` gained 24 Batch-C steps (12 check +
+  12 test, all referenced scripts verified present, YAML valid); and the twelve
+  `docs/WINDOWS_UI_INVENTORY.md` rows were flipped (D `△`→`✓` for -002/-003/-004/
+  -005/-006/-007/-009/-010/-011/-015, M `·`→`△` for all twelve including
+  WIN-SYS-001 and WIN-CONCEPT-001) with honest per-row contract descriptions.
+- **Static gate recomputed to 79, method stated (verify yourself, not
+  inherited)**: the full build-free gate = every Material `bin/check-*.py` except
+  the six stock upstream linters (`check-autocorr`, `check-icon-sizes`,
+  `check-implementer-notes`, `check-missing-export-asserts`,
+  `check-missing-unittests`, `check-sid-slots`) = **38**, plus
+  `bin/check_search_field_coverage.py` = **1**, plus every `bin/test_*.py` = **39**,
+  plus `bin/validate-prototype.mjs` = **1** → **79** scripts, all green here
+  (`py`/`node` from repo root, 0 failures). Batch C added exactly 12 checkers +
+  12 suites = 24 over the prior tip. **Reconciliation**: the earlier handoff
+  reported the pre-Batch-C gate as "54", but that figure omitted
+  `check_search_field_coverage.py` from the checker tally while counting its
+  suite; a consistent enumeration of that same tip is 55, and 55 + 24 = **79**.
+  The staging brief's "78" estimate inherited that earlier off-by-one.
+- **Honesty boundary unchanged for Batch C**: source-implemented only. Every
+  registry with a `runtime_verified` field keeps it `false` (the checkers reject
+  `true`), all carve-outs stay `status: specified` (mutation-tested to fail if
+  promoted), and no build/pixel/screenshot/runtime evidence is claimed for any
+  Batch C row — the `B V I A L P C` inventory gates stay untouched. All 24 new
+  Batch-C files and every edited index/narrative file are LF-only (0 CR bytes,
+  verified). Wave 3 (31 rows) is build-host-bound per the audit.
 - **Recurring defect to watch**: agent editors twice flipped whole files to
   CRLF (`menu.cxx`, `svdata.hxx`, `sw/qa/unit/swmodeltestbase.cxx`); a
   wholesale line-ending flip in a diff is a defect, not a change. A third
@@ -297,11 +358,16 @@ and statically validated only.
    that evidence — before claiming any `B`/`V` gate.
 2. DONE: Wave-2 Batch B is merged to `main` (`c8c8eb7e3`) with all four CI
    workflows confirmed green and release `windows-msi-82-1-c8c8eb7e33`
-   published. Next: Wave-2 Batch C rows (WIN-SYS flows + WIN-CONCEPT-001),
-   each with its own fail-closed checker + JSON registry + mutation suite per
-   the established pattern, shipped as one merged push per wave; then the 15
-   honest-gap search-field contract extensions; then wave-3 source-side
-   slices (their `B V I A L P C` gates remain build-host-bound).
+   published. Wave-2 Batch C is now LANDED IN SOURCE (12 fail-closed triads + 4
+   `ConfirmDestructiveAction` conversions + the WIN-SYS-016 ui-registry
+   reassignment + the D-detail design chapters + the README/workflow/inventory
+   registration), all 79 build-free validators green locally — but it is NOT yet
+   committed/pushed and NOT yet CI-confirmed. The next step is one merged push
+   and watching all four CI workflows (expect the Windows leg to be the first
+   real compile of the four C++ conversions; if any fails, iterate the compile
+   before new feature work). After Batch C: the 15 honest-gap search-field
+   contract extensions (each gap analysis names its exact blocker), then wave-3
+   source-side slices (their `B V I A L P C` gates remain build-host-bound).
 3. Producer migration: extend the notification-producer registry in bounded,
    registered informational-only tranches (never input/destructive/
    credential/security prompts).

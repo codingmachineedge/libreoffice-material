@@ -106,6 +106,20 @@ application-surface capture exists. Screenshot checkpoints: closed/open list
 box in light/dark; entry hover, selected, keyboard-focused; disabled container —
 captured under a run id `YYYYMMDD-HHMMSS-<commit>-win` with manifest hashes.
 
+### Application: Extension manager list & dependency tree
+
+The Extension manager ([08-dialogs.md](08-dialogs.md) §8.9) reuses this family
+with no new anatomy. The installed-extension list is the §6.1 list/list-item
+container pattern — one row per extension carrying an icon, name, publisher,
+version, status, and an inline action — clipped by the same `corner-container`
+outline. The unfulfilled-dependency view is the §6.2 tree pattern with the
+connector net suppressed (the empty `listnet`/`Entire` state), and the *Display
+Extensions* group is an outlined §6.4 `frame`/`Border`. Only the
+container/tree/frame anatomy is design-pinned here: the custom-drawn
+per-extension list-item `Paint`
+(`desktop/source/deployment/gui/dp_gui_extlistbox.cxx`) is deferred (build-only),
+so no list-item pixels are claimed and `runtime_verified` stays false.
+
 ---
 
 ## 6.2 Trees

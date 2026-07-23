@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "contract": "windows-security-prompt-modality",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "_comment": "WIN-SYS-007 certificates / digital signatures / macro security. This is a composition-PINNING contract that proves the HARD CONSTRAINT: each of the five owned cert/signature/macro-security dialog roots stays MODAL (native-exclusion) and is never routed to the bottom-right notification stack. It binds four independent evidence layers per dialog: (1) the shared dialog-notification-policy.csv keeps the root policy=native-exclusion with the matching exclusion reason; (2) the shared sfx2 NotificationRouter classifier -- imported LIVE from bin/check-windows-dialog-notification-contract.py, not reimplemented -- returns the native exclusion for the dialog, the 'security' reason for the four xmlsec roots and the 'input' reason for cui's CertDialog, pinning the router's own security-vs-input precedence; (3) each .ui modal footer action-widget mapping matches the pinned Help|Close/OK/Cancel set; and (4) comment-stripped source reachability that every root is a synchronous modal GenericDialogController bound to its pinned .ui and executed via GenericDialogController::run(). ui_file is the repository path (for CSV/.ui lookup); the source binds the 'xmlsec/ui' / 'cui/ui' aliases, kept in the modal_markers, so the two are distinct fields. SecurityOptionsDialog, signatureline and signsignatureline are also security-classified but belong to the Tools>Options security page and signature-insertion flows (adjacent rows), so they are deliberately excluded here to avoid double ownership. No native build, dialog pixels or Material redraw of any security control is claimed; runtime_verified stays false.",
+  "policy_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "router_module": "bin/check-windows-dialog-notification-contract.py",
+  "expected_dialogs": 5,
+  "deliberately_excluded": [
+    "cui/uiconfig/ui/optsecuritypage.ui#SecurityOptionsDialog (Tools>Options security page -- adjacent row)",
+    "svx/uiconfig/ui/signatureline.ui (signature-insertion flow -- adjacent row)",
+    "svx/uiconfig/ui/signsignatureline.ui (signature-insertion flow -- adjacent row)"
+  ],
+  "dialogs": [
+    {
+      "id": "DigitalSignaturesDialog",
+      "ui_file": "xmlsecurity/uiconfig/ui/digitalsignaturesdialog.ui",
+      "object_id": "DigitalSignaturesDialog",
+      "widget_class": "GtkDialog",
+      "classification": "security",
+      "source_file": "xmlsecurity/source/dialogs/digitalsignaturesdialog.cxx",
+      "footer": [
+        {"response": "-11", "widget": "help"},
+        {"response": "-7", "widget": "close"}
+      ],
+      "modal_markers": [
+        {"file": "xmlsecurity/source/dialogs/digitalsignaturesdialog.cxx", "pattern": "GenericDialogController(pParent, u\"xmlsec/ui/digitalsignaturesdialog.ui\"_ustr, u\"DigitalSignaturesDialog\"_ustr)", "note": "synchronous modal controller bound to the pinned .ui"},
+        {"file": "xmlsecurity/source/dialogs/digitalsignaturesdialog.cxx", "pattern": "return GenericDialogController::run();", "note": "executed via the base synchronous run()"}
+      ],
+      "embedded_pages": []
+    },
+    {
+      "id": "MacroSecurityDialog",
+      "ui_file": "xmlsecurity/uiconfig/ui/macrosecuritydialog.ui",
+      "object_id": "MacroSecurityDialog",
+      "widget_class": "GtkDialog",
+      "classification": "security",
+      "source_file": "xmlsecurity/source/dialogs/macrosecurity.cxx",
+      "footer": [
+        {"response": "101", "widget": "reset"},
+        {"response": "-5", "widget": "ok"},
+        {"response": "-6", "widget": "cancel"},
+        {"response": "-11", "widget": "help"}
+      ],
+      "modal_markers": [
+        {"file": "xmlsecurity/source/dialogs/macrosecurity.cxx", "pattern": "GenericDialogController(pParent, u\"xmlsec/ui/macrosecuritydialog.ui\"_ustr, u\"MacroSecurityDialog\"_ustr)", "note": "synchronous modal controller bound to the pinned .ui"}
+      ],
+      "embedded_pages": [
+        {"ui_file": "xmlsecurity/uiconfig/ui/securitylevelpage.ui", "object_id": "SecurityLevelPage", "source_marker": "u\"xmlsec/ui/securitylevelpage.ui\"_ustr, u\"SecurityLevelPage\"_ustr"},
+        {"ui_file": "xmlsecurity/uiconfig/ui/securitytrustpage.ui", "object_id": "SecurityTrustPage", "source_marker": "u\"xmlsec/ui/securitytrustpage.ui\"_ustr, u\"SecurityTrustPage\"_ustr"}
+      ]
+    },
+    {
+      "id": "SelectCertificateDialog",
+      "ui_file": "xmlsecurity/uiconfig/ui/selectcertificatedialog.ui",
+      "object_id": "SelectCertificateDialog",
+      "widget_class": "GtkDialog",
+      "classification": "security",
+      "classification_note": "the 'security' router reason for this root derives from the 'xmlsecurity' path substring plus the 'certificat' object-id token; a refactor moving it out of an xmlsecurity/ path would drop it to 'input' and fail this contract (correct fail-closed behaviour).",
+      "source_file": "xmlsecurity/source/dialogs/certificatechooser.cxx",
+      "footer": [
+        {"response": "-5", "widget": "ok"},
+        {"response": "-6", "widget": "cancel"},
+        {"response": "-11", "widget": "help"}
+      ],
+      "modal_markers": [
+        {"file": "xmlsecurity/source/dialogs/certificatechooser.cxx", "pattern": "GenericDialogController(_pParent, u\"xmlsec/ui/selectcertificatedialog.ui\"_ustr, u\"SelectCertificateDialog\"_ustr)", "note": "synchronous modal controller bound to the pinned .ui"},
+        {"file": "xmlsecurity/source/dialogs/certificatechooser.cxx", "pattern": "return GenericDialogController::run();", "note": "executed via the base synchronous run()"}
+      ],
+      "embedded_pages": []
+    },
+    {
+      "id": "ViewCertDialog",
+      "ui_file": "xmlsecurity/uiconfig/ui/viewcertdialog.ui",
+      "object_id": "ViewCertDialog",
+      "widget_class": "GtkDialog",
+      "classification": "security",
+      "classification_note": "the 'security' router reason for this root derives from the 'xmlsecurity' path substring (its object id alone carries no security token); a refactor out of an xmlsecurity/ path would drop it to 'input' and fail this contract (correct fail-closed behaviour).",
+      "source_file": "xmlsecurity/source/dialogs/certificateviewer.cxx",
+      "footer": [
+        {"response": "-5", "widget": "ok"},
+        {"response": "-11", "widget": "help"}
+      ],
+      "modal_markers": [
+        {"file": "xmlsecurity/source/dialogs/certificateviewer.cxx", "pattern": "GenericDialogController(_pParent, u\"xmlsec/ui/viewcertdialog.ui\"_ustr, u\"ViewCertDialog\"_ustr)", "note": "synchronous modal controller bound to the pinned .ui"}
+      ],
+      "embedded_pages": [
+        {"ui_file": "xmlsecurity/uiconfig/ui/certgeneral.ui", "object_id": "CertGeneral", "source_marker": "u\"xmlsec/ui/certgeneral.ui\"_ustr, u\"CertGeneral\"_ustr"},
+        {"ui_file": "xmlsecurity/uiconfig/ui/certdetails.ui", "object_id": "CertDetails", "source_marker": "u\"xmlsec/ui/certdetails.ui\"_ustr, u\"CertDetails\"_ustr"},
+        {"ui_file": "xmlsecurity/uiconfig/ui/certpage.ui", "object_id": "CertPage", "source_marker": "u\"xmlsec/ui/certpage.ui\"_ustr, u\"CertPage\"_ustr"}
+      ]
+    },
+    {
+      "id": "CertDialog",
+      "ui_file": "cui/uiconfig/ui/certdialog.ui",
+      "object_id": "CertDialog",
+      "widget_class": "GtkDialog",
+      "classification": "input",
+      "classification_note": "certpath's CertDialog stays modal through the router's 'input' precedence (a certificate-path TreeView), not the security token -- an honest distinction from the four xmlsec roots.",
+      "source_file": "cui/source/options/certpath.cxx",
+      "footer": [
+        {"response": "101", "widget": "add"},
+        {"response": "-6", "widget": "cancel"},
+        {"response": "-5", "widget": "ok"},
+        {"response": "-11", "widget": "help"}
+      ],
+      "modal_markers": [
+        {"file": "cui/source/options/certpath.cxx", "pattern": "GenericDialogController(pParent, u\"cui/ui/certdialog.ui\"_ustr, u\"CertDialog\"_ustr)", "note": "synchronous modal controller bound to the pinned .ui"}
+      ],
+      "embedded_pages": []
+    }
+  ]
+}

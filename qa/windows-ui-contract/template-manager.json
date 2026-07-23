@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "contract": "material-template-manager-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.1 shared modal anatomy); docs/design/09-start-center.md (9.3 Templates view)",
+  "note": "WIN-SYS-004. Pins the composition of the three upstream template-manager dialog roots (TemplateDialog, SaveAsTemplateDialog, TemplatesCategoryDialog): the modal footer action-widget order + response codes, the has-default primary, and the required control set. Their Material treatment is delivered entirely by shared vcl parts (dialog_parts) consumed through the VCL_FILE_WIDGET_THEME builder, so the M-scope is pinning composition + grounding it in the native definition.xml parts, never re-drawing. The two irreversible acts (overwrite an existing template; delete a category) are converted to sfx2::ConfirmDestructiveAction and are owned/validated by the shared dialog-anatomy contract (qa/windows-ui-contract/dialog-anatomy-policy.json), cross-referenced here only. The already-source-integrated regex search field is pinned as implemented-elsewhere (owned by regex-search-integrations.json), never re-added. Composition is source-declared only; pixel geometry, density, RTL, and the thumbnail/list card anatomy are build-dependent and carved out spec-only. runtime_verified is false throughout: no native build, dialog pixels, or runtime interaction are claimed.",
+  "dialog_parts": {
+    "palette_colors": [
+      "surface-container",
+      "surface",
+      "primary",
+      "primary-container",
+      "on-surface-variant",
+      "outline",
+      "outline-variant",
+      "disabled-container"
+    ],
+    "metrics": [
+      { "name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20" },
+      { "name": "corner-checkbox", "container": "shapes", "tag": "radius", "value": "3" },
+      { "name": "corner-container", "container": "shapes", "tag": "radius", "value": "12" },
+      { "name": "stroke-none", "container": "metrics", "tag": "metric", "value": "0" },
+      { "name": "stroke-thin", "container": "metrics", "tag": "metric", "value": "1" },
+      { "name": "stroke-standard", "container": "metrics", "tag": "metric", "value": "2" }
+    ],
+    "parts": {
+      "dialog_surface": {
+        "control": "windowbackground",
+        "part": "BackgroundDialog",
+        "states": [
+          {
+            "role": "default",
+            "attrs": {},
+            "element": "rect",
+            "tokens": { "stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none" }
+          }
+        ]
+      },
+      "primary_button": {
+        "control": "pushbutton",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill" }
+          },
+          {
+            "role": "action",
+            "attrs": { "enabled": "true", "extra": "action" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill" }
+          },
+          {
+            "role": "flat-rollover",
+            "attrs": { "enabled": "true", "rollover": "true", "extra": "flat" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill" }
+          }
+        ]
+      },
+      "button_focus": {
+        "control": "pushbutton",
+        "part": "Focus",
+        "states": [
+          {
+            "role": "focus-ring",
+            "attrs": {},
+            "element": "line",
+            "tokens": { "stroke": "@primary", "stroke-width": "@stroke-standard" }
+          }
+        ]
+      },
+      "checkbox": {
+        "control": "checkbox",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "unchecked",
+            "attrs": { "enabled": "true", "button-value": "false" },
+            "element": "rect",
+            "tokens": { "stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox" }
+          },
+          {
+            "role": "checked",
+            "attrs": { "enabled": "true", "button-value": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox" }
+          }
+        ]
+      },
+      "combobox": {
+        "control": "combobox",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container" }
+          },
+          {
+            "role": "focused",
+            "attrs": { "enabled": "true", "focused": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container" }
+          }
+        ]
+      },
+      "combobox_button": {
+        "control": "combobox",
+        "part": "ButtonDown",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-container" }
+          }
+        ]
+      },
+      "frame": {
+        "control": "frame",
+        "part": "Border",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-container" }
+          }
+        ]
+      },
+      "listbox": {
+        "control": "listbox",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container" }
+          }
+        ]
+      }
+    }
+  },
+  "dialogs": [
+    {
+      "id": "TemplateDialog",
+      "ui_file": "sfx2/uiconfig/ui/templatedlg.ui",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "ok", "response": -5 },
+        { "id": "close", "response": -7 }
+      ],
+      "primary": "ok",
+      "primary_label": {
+        "source": "sfx2/source/doc/templatedlg.cxx",
+        "marker": "mxOKButton->set_label(SfxResId(STR_NEW_FROM_TEMPLATE))"
+      },
+      "required_widgets": [
+        { "id": "search_filter", "class": "GtkEntry" },
+        { "id": "search_filter_regex_builder", "class": "GtkButton" },
+        { "id": "filter_application", "class": "GtkComboBoxText" },
+        { "id": "filter_folder", "class": "GtkComboBoxText" },
+        { "id": "action_menu", "class": "GtkMenuButton" },
+        { "id": "thumbnail_view_btn", "class": "GtkToggleButton" },
+        { "id": "list_view_btn", "class": "GtkToggleButton" },
+        { "id": "hidedialogcb", "class": "GtkCheckButton" }
+      ]
+    },
+    {
+      "id": "SaveAsTemplateDialog",
+      "ui_file": "sfx2/uiconfig/ui/saveastemplatedlg.ui",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "ok", "response": -5 },
+        { "id": "cancel", "response": -6 }
+      ],
+      "primary": "ok",
+      "primary_label": {
+        "source": "sfx2/source/doc/saveastemplatedlg.cxx",
+        "marker": "m_xOKButton->set_label(SfxResId(STR_SAVEDOC))"
+      },
+      "required_widgets": [
+        { "id": "name_entry", "class": "GtkEntry" },
+        { "id": "categorylb", "class": "GtkTreeView" },
+        { "id": "defaultcb", "class": "GtkCheckButton" }
+      ]
+    },
+    {
+      "id": "TemplatesCategoryDialog",
+      "ui_file": "sfx2/uiconfig/ui/templatecategorydlg.ui",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "ok", "response": -5 },
+        { "id": "cancel", "response": -6 }
+      ],
+      "primary": "ok",
+      "required_widgets": [
+        { "id": "categorylb", "class": "GtkTreeView" },
+        { "id": "category_entry", "class": "GtkEntry" }
+      ]
+    }
+  ],
+  "regex_search": {
+    "status": "implemented-elsewhere",
+    "owner_registry": "qa/windows-ui-contract/regex-search-integrations.json",
+    "ui_file": "sfx2/uiconfig/ui/templatedlg.ui",
+    "field": "search_filter",
+    "builder": "search_filter_regex_builder",
+    "note": "The Template Manager search field and its adjacent regex builder are one of the 12 source-integrated regex-search fields, owned and validated by regex-search-integrations.json / check-windows-regex-search-integrations.py. This contract pins the .ui adjacency so a re-composition cannot silently drop it, but does NOT re-register the field."
+  },
+  "destructive_confirmations": {
+    "status": "owned-by-dialog-anatomy",
+    "owner_registry": "qa/windows-ui-contract/dialog-anatomy-policy.json",
+    "migrations": [
+      "sfx2-saveastemplate-overwrite",
+      "sfx2-templatedlg-delete-category"
+    ],
+    "note": "The overwrite-existing-template and delete-category confirmations are converted to sfx2::ConfirmDestructiveAction and are validated (include + dispatch) by check-material-dialog-anatomy.py against dialog-anatomy-policy.json. Cross-referenced here; not re-scanned to avoid double ownership."
+  },
+  "carveouts": {
+    "pixel_geometry": {
+      "status": "specified",
+      "note": "Card/list-item sizes, thumbnail dimensions, rail widths and other pixel geometry are build-dependent; specified in the design chapter only."
+    },
+    "thumbnail_card": {
+      "status": "specified",
+      "note": "The TemplateLocalView custom-drawn thumbnail/list card anatomy is not a .ui widget and cannot be XML-pinned; build-verify only."
+    },
+    "density": {
+      "status": "specified",
+      "note": "Compact/comfortable density selection is build-dependent and not implemented in the native metric layer."
+    },
+    "rtl": {
+      "status": "specified",
+      "note": "RTL mirroring of the dialog composition is build/runtime-verified only."
+    }
+  }
+}

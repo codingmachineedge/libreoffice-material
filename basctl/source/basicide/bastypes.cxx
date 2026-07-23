@@ -35,6 +35,7 @@
 #include <com/sun/star/script/XLibraryContainerPassword.hpp>
 #include <basctl/basctldllpublic.hxx>
 #include <sal/log.hxx>
+#include <sfx2/destructiveconfirmation.hxx>
 #include <sfx2/dispatch.hxx>
 #include <sfx2/infobar.hxx>
 #include <sfx2/passwd.hxx>
@@ -746,42 +747,51 @@ LibInfo::Item::Item (
     m_eCurrentType(eCurrentType)
 { }
 
-static bool QueryDel(std::u16string_view rName, const OUString &rStr, weld::Widget* pParent)
+static bool QueryDel(std::u16string_view rName, const OUString &rStr, const OUString &rVerb, weld::Widget* pParent)
 {
     OUString aName = OUString::Concat("\'") + rName + "\'";
     OUString aQuery = rStr.replaceAll("XX", aName);
-    std::unique_ptr<weld::MessageDialog> xQueryBox(Application::CreateMessageDialog(pParent,
-                                                   VclMessageType::Question, VclButtonsType::YesNo, aQuery));
-    return (xQueryBox->run() == RET_YES);
+    // Route the delete/overwrite confirmation through the shared Material destructive-confirmation
+    // helper (docs/design/08-dialogs.md 8.1). The primary text keeps the original per-act wording
+    // (including the QueryDelLib "reference to" distinction), the shared consequence line becomes the
+    // secondary, and the verb-named destructive button -- passed per caller ("Overwrite" for the
+    // macro overwrite, "Delete" otherwise), never hard-coded here -- is what the user must
+    // deliberately choose. The helper binds the safe (Cancel) action as both the initial focus and
+    // the Enter default, so keyboard activation can never silently delete or overwrite.
+    sfx2::DestructiveConfirmation aConfirm;
+    aConfirm.sPrimaryText = aQuery;
+    aConfirm.sSecondaryText = IDEResId( RID_STR_QUERYDELCONSEQUENCE );
+    aConfirm.sDestructiveLabel = rVerb;
+    return sfx2::ConfirmDestructiveAction(pParent, aConfirm);
 }
 
 bool QueryDelMacro( std::u16string_view rName, weld::Widget* pParent )
 {
     EnsureIde();
-    return QueryDel( rName, IDEResId( RID_STR_QUERYDELMACRO ), pParent );
+    return QueryDel( rName, IDEResId( RID_STR_QUERYDELMACRO ), IDEResId( RID_STR_QUERYDELBTN ), pParent );
 }
 
 bool QueryReplaceMacro( std::u16string_view rName, weld::Widget* pParent )
 {
-    return QueryDel( rName, IDEResId( RID_STR_QUERYREPLACEMACRO ), pParent );
+    return QueryDel( rName, IDEResId( RID_STR_QUERYREPLACEMACRO ), IDEResId( RID_STR_QUERYREPLACEBTN ), pParent );
 }
 
 bool QueryDelDialog( std::u16string_view rName, weld::Widget* pParent )
 {
     EnsureIde();
-    return QueryDel( rName, IDEResId( RID_STR_QUERYDELDIALOG ), pParent );
+    return QueryDel( rName, IDEResId( RID_STR_QUERYDELDIALOG ), IDEResId( RID_STR_QUERYDELBTN ), pParent );
 }
 
 bool QueryDelLib( std::u16string_view rName, bool bRef, weld::Widget* pParent )
 {
     EnsureIde();
-    return QueryDel( rName, IDEResId( bRef ? RID_STR_QUERYDELLIBREF : RID_STR_QUERYDELLIB ), pParent );
+    return QueryDel( rName, IDEResId( bRef ? RID_STR_QUERYDELLIBREF : RID_STR_QUERYDELLIB ), IDEResId( RID_STR_QUERYDELBTN ), pParent );
 }
 
 bool QueryDelModule( std::u16string_view rName, weld::Widget* pParent )
 {
     EnsureIde();
-    return QueryDel( rName, IDEResId( RID_STR_QUERYDELMODULE ), pParent );
+    return QueryDel( rName, IDEResId( RID_STR_QUERYDELMODULE ), IDEResId( RID_STR_QUERYDELBTN ), pParent );
 }
 
 bool QueryPassword(weld::Widget* pDialogParent, const Reference< script::XLibraryContainer >& xLibContainer, const OUString& rLibName, OUString& rPassword, bool bRepeat, bool bNewTitle)

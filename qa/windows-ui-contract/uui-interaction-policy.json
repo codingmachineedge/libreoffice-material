@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "contract": "material-uui-interaction-modality",
+  "inventory_row": "WIN-SYS-011",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "source_note": "Source-level modality lock for the uui authentication / conflict / generic-error interaction surface (WIN-SYS-011). It does not add or restyle any dialog: the ten uui .ui roots already render through the shared vcl parts covered by definition.xml and the dialog-anatomy contract. It pins, fail-closed, that every uui interaction dialog stays modal (native-exclusion) by re-running the shared NotificationRouter classifier on the live .ui and three-way cross-checking the shared dialog-notification-policy.csv row, proves the four credential dialogs hit the credential precedence branch via a visibility=False password GtkEntry, pins the modal conflict/error ->run() call sites, and pins the informational-error routing seam with routing declared seam-only-not-wired. It claims no native build, dialog pixels, keyboard/interaction, or any runtime evidence; runtime_verified stays false and no uui notification producer is wired.",
+  "notification_checker": "bin/check-windows-dialog-notification-contract.py",
+  "notification_policy_csv": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "dialogs": [
+    {
+      "ui_path": "uui/uiconfig/ui/authfallback.ui",
+      "object_id": "AuthFallbackDlg",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "input"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/filterselect.ui",
+      "object_id": "FilterSelectDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "input"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/logindialog.ui",
+      "object_id": "LoginDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "credential"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/macrowarnmedium.ui",
+      "object_id": "MacroWarnMedium",
+      "widget_class": "GtkMessageDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "input"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/masterpassworddlg.ui",
+      "object_id": "MasterPasswordDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "credential"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/password.ui",
+      "object_id": "PasswordDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "credential"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/setmasterpassworddlg.ui",
+      "object_id": "SetMasterPasswordDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "credential"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/simplenameclash.ui",
+      "object_id": "SimpleNameClashDialog",
+      "widget_class": "GtkDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "input"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/sslwarndialog.ui",
+      "object_id": "SSLWarnDialog",
+      "widget_class": "GtkMessageDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "decision"
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/unknownauthdialog.ui",
+      "object_id": "UnknownAuthDialog",
+      "widget_class": "GtkMessageDialog",
+      "expected_policy": "native-exclusion",
+      "expected_reason_key": "input"
+    }
+  ],
+  "credential_dialogs": [
+    "LoginDialog",
+    "MasterPasswordDialog",
+    "PasswordDialog",
+    "SetMasterPasswordDialog"
+  ],
+  "conflict_sites": [
+    {
+      "file": "uui/source/nameclashdlg.cxx",
+      "marker": "xErrorBox->run();",
+      "note": "Name-clash error box (NameClashDialog::SameName) is presented modally via weld::MessageDialog ->run()."
+    },
+    {
+      "file": "uui/source/iahndl-errorhandler.cxx",
+      "marker": "if (xBox->run() == RET_YES)",
+      "note": "handleLoadReadOnlyRequest resolves the read-only/edit conflict with a modal ->run()==RET_YES decision."
+    },
+    {
+      "file": "uui/source/iahndl-locking.cxx",
+      "marker": "int nResult = aDialog.run();",
+      "note": "Lock/reload conflict query boxes resolve modally via ->run()."
+    }
+  ],
+  "error_seam": {
+    "file": "uui/source/iahndl.cxx",
+    "predicate": "UUIInteractionHelper::isInformationalErrorMessageRequest(",
+    "markers": [
+      "rContinuations.getLength() != 1",
+      "task::XInteractionApprove",
+      "task::XInteractionAbort"
+    ],
+    "modal_presentation": {
+      "file": "uui/source/iahndl-errorhandler.cxx",
+      "marker": "return static_cast<DialogMask>(xBox->run());"
+    },
+    "note": "isInformationalErrorMessageRequest is the routing seam: a request is informational-only iff it has exactly one continuation that is Approve or Abort. The generic error handler still presents every error modally via executeErrorDialog->run(); no outcome is routed to the bottom-right stack today."
+  },
+  "routing_carveout": {
+    "status": "seam-only-not-wired",
+    "note": "No uui NotificationRouter producer exists. The informational-error seam (isInformationalErrorMessageRequest) is present but unwired; a future producer would route only informational-only outcomes, keeping every interactive/credential/conflict prompt modal. Promoting this status to 'wired' without a real producer must fail the contract."
+  },
+  "shared_pins": [
+    {
+      "ui_path": "uui/uiconfig/ui/macrowarnmedium.ui",
+      "note": "Macro-security warning overlapping WIN-SYS-006/007; referenced here read-only for its modality only (native-exclusion). Its macro-security assertion is owned by another row and is NOT claimed here."
+    },
+    {
+      "ui_path": "uui/uiconfig/ui/sslwarndialog.ui",
+      "note": "SSL trust-decision prompt overlapping WIN-SYS-007; pinned here only as a modal decision prompt (native-exclusion), not as an owned trust-decision redesign."
+    }
+  ]
+}

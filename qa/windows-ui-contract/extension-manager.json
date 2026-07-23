@@ -1,0 +1,314 @@
+{
+  "schema_version": 1,
+  "contract": "material-extension-manager-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "policy_file": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "design_reference": "docs/design/08-dialogs.md (8.1 shared modal anatomy); docs/design/06-containers.md (list/tree patterns)",
+  "note": "WIN-SYS-005. Pins the composition of the nine upstream extension-manager + dependency dialog roots (desktop/uiconfig/ui/*.ui). They are data-driven GtkDialog/GtkMessageDialog/GtkMenu XML assembled from shared vcl/weld primitives that already carry the Material treatment behind VCL_FILE_WIDGET_THEME, so the M-scope is pinning composition -- modal footer action-widget order + response codes, command button-box identity/order/secondary/default flags, and the informational-vs-decision shape of each root -- grounded in the native definition.xml parts, never re-drawing. modal_policy is a READ-ONLY reconciliation against dialog-notification-policy.csv proving every license/dependency/install/remove decision dialog stays native-exclusion (KeepModal) so no consent dialog is ever demoted to the transient bottom-right notification stack. The one ad-hoc destructive prompt (removeExtensionWarn) is converted to sfx2::ConfirmDestructiveAction and is owned/validated by the shared dialog-anatomy contract, cross-referenced here. The extension search field + regex builder is owned by regex-search-integrations.json and pinned here only for adjacency, never re-registered. Everything runtime/pixel and the custom-drawn per-extension list-item Paint (dp_gui_extlistbox.cxx) is build-dependent and carved out spec-only. runtime_verified is false throughout.",
+  "dialog_parts": {
+    "palette_colors": [
+      "surface-container",
+      "surface",
+      "primary",
+      "primary-container",
+      "on-surface-variant",
+      "outline",
+      "outline-variant",
+      "disabled-container"
+    ],
+    "metrics": [
+      { "name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20" },
+      { "name": "corner-checkbox", "container": "shapes", "tag": "radius", "value": "3" },
+      { "name": "corner-container", "container": "shapes", "tag": "radius", "value": "12" },
+      { "name": "corner-indicator", "container": "shapes", "tag": "radius", "value": "4" },
+      { "name": "stroke-none", "container": "metrics", "tag": "metric", "value": "0" },
+      { "name": "stroke-thin", "container": "metrics", "tag": "metric", "value": "1" },
+      { "name": "stroke-standard", "container": "metrics", "tag": "metric", "value": "2" }
+    ],
+    "parts": {
+      "dialog_surface": {
+        "control": "windowbackground",
+        "part": "BackgroundDialog",
+        "states": [
+          {
+            "role": "default",
+            "attrs": {},
+            "element": "rect",
+            "tokens": { "stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none" }
+          }
+        ]
+      },
+      "primary_button": {
+        "control": "pushbutton",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill" }
+          },
+          {
+            "role": "action",
+            "attrs": { "enabled": "true", "extra": "action" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill" }
+          }
+        ]
+      },
+      "button_focus": {
+        "control": "pushbutton",
+        "part": "Focus",
+        "states": [
+          {
+            "role": "focus-ring",
+            "attrs": {},
+            "element": "line",
+            "tokens": { "stroke": "@primary", "stroke-width": "@stroke-standard" }
+          }
+        ]
+      },
+      "checkbox": {
+        "control": "checkbox",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "unchecked",
+            "attrs": { "enabled": "true", "button-value": "false" },
+            "element": "rect",
+            "tokens": { "stroke": "@on-surface-variant", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox" }
+          },
+          {
+            "role": "checked",
+            "attrs": { "enabled": "true", "button-value": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-standard", "radius": "@corner-checkbox" }
+          }
+        ]
+      },
+      "editbox": {
+        "control": "editbox",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container" }
+          },
+          {
+            "role": "focused",
+            "attrs": { "enabled": "true", "focused": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container" }
+          }
+        ]
+      },
+      "progress_track": {
+        "control": "progress",
+        "part": "TrackHorzArea",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline-variant", "fill": "@outline-variant", "stroke-width": "@stroke-none", "radius": "@corner-indicator" }
+          }
+        ]
+      },
+      "progress_bar": {
+        "control": "progress",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-none", "radius": "@corner-indicator" }
+          }
+        ]
+      },
+      "frame": {
+        "control": "frame",
+        "part": "Border",
+        "states": [
+          {
+            "role": "enabled",
+            "attrs": { "enabled": "true" },
+            "element": "rect",
+            "tokens": { "stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-container" }
+          }
+        ]
+      },
+      "tree_node": {
+        "control": "listnode",
+        "part": "Entire",
+        "states": [
+          {
+            "role": "collapsed",
+            "attrs": { "enabled": "true" },
+            "element": "line",
+            "tokens": { "stroke": "@on-surface-variant", "stroke-width": "@stroke-standard" }
+          }
+        ]
+      }
+    }
+  },
+  "dialogs": [
+    {
+      "id": "ExtensionManagerDialog",
+      "ui_file": "desktop/uiconfig/ui/extensionmanager.ui",
+      "kind": "manager",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "close", "response": -6 }
+      ],
+      "primary": "addbtn",
+      "buttons": [
+        { "id": "optionsbtn", "label": "_Options" },
+        { "id": "updatebtn", "label": "Check for _Updates", "secondary": true },
+        { "id": "addbtn", "label": "_Add", "secondary": true, "has_default": true },
+        { "id": "removebtn", "label": "_Remove", "secondary": true },
+        { "id": "enablebtn", "label": "_Enable", "secondary": true }
+      ]
+    },
+    {
+      "id": "Dependencies",
+      "ui_file": "desktop/uiconfig/ui/dependenciesdialog.ui",
+      "kind": "informational",
+      "action_widgets": [
+        { "id": "ok", "response": -5 }
+      ]
+    },
+    {
+      "id": "UpdateDialog",
+      "ui_file": "desktop/uiconfig/ui/updatedialog.ui",
+      "kind": "decision",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "ok", "response": -5 },
+        { "id": "close", "response": -7 }
+      ],
+      "primary": "ok",
+      "buttons": [
+        { "id": "ok", "label": "_Install", "has_default": true }
+      ]
+    },
+    {
+      "id": "UpdateInstallDialog",
+      "ui_file": "desktop/uiconfig/ui/updateinstalldialog.ui",
+      "kind": "decision",
+      "action_widgets": [
+        { "id": "help", "response": -11 },
+        { "id": "ok", "response": -5 },
+        { "id": "cancel", "response": -6 }
+      ]
+    },
+    {
+      "id": "UpdateRequiredDialog",
+      "ui_file": "desktop/uiconfig/ui/updaterequireddialog.ui",
+      "kind": "decision",
+      "action_widgets": [
+        { "id": "ok", "response": 101 },
+        { "id": "disable", "response": 102 },
+        { "id": "help", "response": -11 }
+      ]
+    },
+    {
+      "id": "InstallForAllDialog",
+      "ui_file": "desktop/uiconfig/ui/installforalldialog.ui",
+      "kind": "decision",
+      "action_widgets": [
+        { "id": "no", "response": -9 },
+        { "id": "yes", "response": -8 },
+        { "id": "cancel", "response": -6 }
+      ],
+      "primary": "yes",
+      "buttons": [
+        { "id": "no", "label": "_For all users" },
+        { "id": "yes", "label": "_Only for me", "has_default": true }
+      ]
+    },
+    {
+      "id": "LicenseDialog",
+      "ui_file": "desktop/uiconfig/ui/licensedialog.ui",
+      "kind": "decision",
+      "action_widgets": [
+        { "id": "ok", "response": -5 },
+        { "id": "cancel", "response": -6 }
+      ],
+      "buttons": [
+        { "id": "ok", "label": "Accept" },
+        { "id": "cancel", "label": "Decline" },
+        { "id": "down", "label": "_Scroll Down" }
+      ]
+    },
+    {
+      "id": "ShowLicenseDialog",
+      "ui_file": "desktop/uiconfig/ui/showlicensedialog.ui",
+      "kind": "informational",
+      "action_widgets": [
+        { "id": "close", "response": -7 }
+      ],
+      "primary": "close"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu",
+      "ui_file": "desktop/uiconfig/ui/extensionmenu.ui",
+      "class": "GtkMenu"
+    }
+  ],
+  "modal_policy": {
+    "required_policy": "native-exclusion",
+    "roots": [
+      { "ui_path": "desktop/uiconfig/ui/extensionmanager.ui", "object_id": "ExtensionManagerDialog" },
+      { "ui_path": "desktop/uiconfig/ui/dependenciesdialog.ui", "object_id": "Dependencies" },
+      { "ui_path": "desktop/uiconfig/ui/updatedialog.ui", "object_id": "UpdateDialog" },
+      { "ui_path": "desktop/uiconfig/ui/updateinstalldialog.ui", "object_id": "UpdateInstallDialog" },
+      { "ui_path": "desktop/uiconfig/ui/updaterequireddialog.ui", "object_id": "UpdateRequiredDialog" },
+      { "ui_path": "desktop/uiconfig/ui/installforalldialog.ui", "object_id": "InstallForAllDialog" },
+      { "ui_path": "desktop/uiconfig/ui/licensedialog.ui", "object_id": "LicenseDialog" },
+      { "ui_path": "desktop/uiconfig/ui/showlicensedialog.ui", "object_id": "ShowLicenseDialog" }
+    ]
+  },
+  "regex_search": {
+    "status": "implemented-elsewhere",
+    "owner_registry": "qa/windows-ui-contract/regex-search-integrations.json",
+    "ui_file": "desktop/uiconfig/ui/extensionmanager.ui",
+    "field": "search",
+    "builder": "search_regex_builder",
+    "note": "The Extension Manager search field and its adjacent regex builder are one of the source-integrated regex-search fields, owned and validated by regex-search-integrations.json / check-windows-regex-search-integrations.py. This contract pins the .ui adjacency so a re-composition cannot silently drop it, but does NOT re-register the field."
+  },
+  "destructive_confirmations": {
+    "status": "owned-by-dialog-anatomy",
+    "owner_registry": "qa/windows-ui-contract/dialog-anatomy-policy.json",
+    "migrations": [
+      "desktop-extmgr-remove-extension"
+    ],
+    "note": "The remove-extension confirmation (dp_gui_dialog2.cxx removeExtensionWarn) is converted to sfx2::ConfirmDestructiveAction and validated (include + dispatch) by check-material-dialog-anatomy.py against dialog-anatomy-policy.json. Cross-referenced here; not re-scanned to avoid double ownership."
+  },
+  "carveouts": {
+    "pixel_geometry": {
+      "status": "specified",
+      "note": "Dialog sizes, spacing and rail geometry are build-dependent; specified in the design chapter only."
+    },
+    "list_item_paint": {
+      "status": "specified",
+      "note": "The per-extension list row is custom Paint in dp_gui_extlistbox.cxx / dp_gui_extensionboxwithbuttons.cxx, not a .ui widget; build-verify only."
+    },
+    "density": {
+      "status": "specified",
+      "note": "Compact/comfortable density selection is build-dependent and not implemented in the native metric layer."
+    },
+    "rtl": {
+      "status": "specified",
+      "note": "RTL mirroring of the dialog composition is build/runtime-verified only."
+    }
+  }
+}

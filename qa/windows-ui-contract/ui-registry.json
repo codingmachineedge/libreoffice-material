@@ -10,14 +10,74 @@
     "ui_surfaces": 1260,
     "native_surfaces": 10,
     "total_surfaces": 1270,
-    "assigned": 821,
-    "unassigned": 449
+    "assigned": 836,
+    "unassigned": 434
   },
   "mapping": {
     "overrides": [
       {
+        "surface": "cui/uiconfig/ui/aboutconfigdialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/aboutdialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hangulhanjaadddialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hangulhanjaconversiondialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hangulhanjaeditdictdialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hangulhanjaoptdialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinkdlg.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinkdocpage.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinkinternetpage.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinkmailpage.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinkmarkdialog.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyperlinknewdocpage.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/hyphenate.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
         "surface": "cui/uiconfig/ui/optionsdialog.ui",
         "inventory_id": "WIN-DLG-002"
+      },
+      {
+        "surface": "cui/uiconfig/ui/thesaurus.ui",
+        "inventory_id": "WIN-SYS-015"
+      },
+      {
+        "surface": "cui/uiconfig/ui/tipofthedaydialog.ui",
+        "inventory_id": "WIN-SYS-015"
       },
       {
         "surface": "desktop/uiconfig/ui/updatedialog.ui",
@@ -698,15 +758,15 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/aboutconfigdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/aboutdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1160,29 +1220,29 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hangulhanjaadddialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hangulhanjaconversiondialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hangulhanjaeditdictdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hangulhanjaoptdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -1195,50 +1255,50 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinkdlg.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinkdocpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinkinternetpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinkmailpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinkmarkdialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyperlinknewdocpage.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/hyphenate.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
@@ -2070,15 +2130,15 @@
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/thesaurus.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",
       "surface": "cui/uiconfig/ui/tipofthedaydialog.ui",
       "owner": "cui",
-      "inventory_id": "unassigned",
-      "mapped_by": "unassigned"
+      "inventory_id": "WIN-SYS-015",
+      "mapped_by": "override"
     },
     {
       "kind": "ui-file",

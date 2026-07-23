@@ -1,0 +1,215 @@
+{
+  "_comment": [
+    "WIN-SYS-002 -- export flows including PDF. Composition-PINNING contract (calc-chrome /",
+    "WIN-CA-001 pattern) over the real PDF export tabbed dialog. The PDF options dialog is a",
+    "data-driven SfxTabDialogController: filter/source/pdf/impdialog.cxx builds it from",
+    "filter/ui/pdfoptionsdialog.ui (a GtkNotebook 'tabcontrol', tab-pos=left) and AddTabPage",
+    "composes the pages in a fixed order (general, initialview, userinterface, links, security,",
+    "digitalsignatures), each bound to its own page .ui root, with the footer action-widgets",
+    "ok(Export,-5) / cancel(-6) / help(-11).",
+    "",
+    "Its Material treatment is delivered entirely by shared vcl parts already in definition.xml",
+    "(tabitem / tabheader / tabpane / tabbody / windowbackground / frame) consumed by the generic",
+    "SfxTabDialogController -- there is NO PDF-specific Material paint to add that a build-free",
+    "check could honestly verify. So the M-scope is *pinning composition*: the notebook + footer",
+    "order in the .ui, the exact ordered AddTabPage tab-id sequence and each tab->page.ui/root-id",
+    "binding in impdialog.cxx, each page's ordered GtkFrame group labels, and the native tab/frame/",
+    "dialog parts + metrics + both-palette color roles those all resolve through -- every element",
+    "fail-closed against drift. The checker also cross-checks that the input-collecting export",
+    "dialogs stay native-exclusion (KeepModal) in dialog-notification-policy.csv (read-only), so",
+    "the sheet can never be reclassified out of the modal-input guard.",
+    "",
+    "Everything requiring a build stays OUT and is carved out spec-only: the tab-pos=left icon-rail",
+    "geometry (definition.xml declares no rail-width metric), the security/signing per-field anatomy",
+    "beyond frame grouping, and all non-PDF export formats (EPUB/XHTML -- deferred to future",
+    "WIN-SYS-002 sub-rows). runtime_verified is false: no native build, tab-rail pixels, or runtime",
+    "interaction are claimed."
+  ],
+  "schema_version": 1,
+  "contract": "material-pdf-export-dialog-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.6 Export options -- tabbed dialog (PDF))",
+  "impl_source": "filter/source/pdf/impdialog.cxx",
+  "dialog_ui": "filter/uiconfig/ui/pdfoptionsdialog.ui",
+  "notebook": {
+    "id": "tabcontrol",
+    "tab_pos": "left"
+  },
+  "footer": {
+    "action_widgets": [
+      {"id": "ok", "response": "-5"},
+      {"id": "cancel", "response": "-6"},
+      {"id": "help", "response": "-11"}
+    ],
+    "primary": {
+      "id": "ok",
+      "label": "E_xport",
+      "has_default": true,
+      "note": "Export is the Enter default because it is non-destructive; no destructive-confirmation pattern applies."
+    }
+  },
+  "tab_sequence": ["general", "initialview", "userinterface", "links", "security", "digitalsignatures"],
+  "cur_page": "general",
+  "tab_pages": [
+    {
+      "id": "general",
+      "create_class": "ImpPDFTabGeneralPage::Create",
+      "ui_ref": "filter/ui/pdfgeneralpage.ui",
+      "root_id": "PdfGeneralPage",
+      "ui_source": "filter/uiconfig/ui/pdfgeneralpage.ui",
+      "group_frames": [
+        "context=\"pdfgeneralpage|label1\">Range</property>",
+        "context=\"pdfgeneralpage|label2\">Images</property>",
+        "context=\"pdfgeneralpage|label3\">Watermark</property>",
+        "context=\"pdfgeneralpage|general_label\">General</property>"
+      ]
+    },
+    {
+      "id": "initialview",
+      "create_class": "ImpPDFTabOpnFtrPage::Create",
+      "ui_ref": "filter/ui/pdfviewpage.ui",
+      "root_id": "PdfViewPage",
+      "ui_source": "filter/uiconfig/ui/pdfviewpage.ui",
+      "group_frames": [
+        "context=\"pdfviewpage|label2\">Panes</property>",
+        "context=\"pdfviewpage|label3\">Magnification</property>",
+        "context=\"pdfviewpage|label1\">Page Layout</property>"
+      ]
+    },
+    {
+      "id": "userinterface",
+      "create_class": "ImpPDFTabViewerPage::Create",
+      "ui_ref": "filter/ui/pdfuserinterfacepage.ui",
+      "root_id": "PdfUserInterfacePage",
+      "ui_source": "filter/uiconfig/ui/pdfuserinterfacepage.ui",
+      "group_frames": [
+        "context=\"pdfuserinterfacepage|label1\">Window Options</property>",
+        "context=\"pdfuserinterfacepage|label2\">User Interface Options</property>",
+        "context=\"pdfuserinterfacepage|label3\">Transitions</property>",
+        "context=\"pdfuserinterfacepage|label4\">Collapse Outlines</property>"
+      ]
+    },
+    {
+      "id": "links",
+      "create_class": "ImpPDFTabLinksPage::Create",
+      "ui_ref": "filter/ui/pdflinkspage.ui",
+      "root_id": "PdfLinksPage",
+      "ui_source": "filter/uiconfig/ui/pdflinkspage.ui",
+      "group_frames": [
+        "context=\"pdflinkspage|label1\">General</property>",
+        "context=\"pdflinkspage|label5\">Cross-document Links</property>"
+      ]
+    },
+    {
+      "id": "security",
+      "create_class": "ImpPDFTabSecurityPage::Create",
+      "ui_ref": "filter/ui/pdfsecuritypage.ui",
+      "root_id": "PdfSecurityPage",
+      "ui_source": "filter/uiconfig/ui/pdfsecuritypage.ui",
+      "group_frames": [
+        "context=\"pdfsecuritypage|label2\">File Encryption and Permission</property>",
+        "context=\"pdfsecuritypage|label1\">Printing</property>",
+        "context=\"pdfsecuritypage|label3\">Changes</property>",
+        "context=\"pdfsecuritypage|label4\">Content</property>"
+      ]
+    },
+    {
+      "id": "digitalsignatures",
+      "create_class": "ImpPDFTabSigningPage::Create",
+      "ui_ref": "filter/ui/pdfsignpage.ui",
+      "root_id": "PdfSignPage",
+      "ui_source": "filter/uiconfig/ui/pdfsignpage.ui",
+      "group_frames": [
+        "context=\"pdfsignpage|label1\">X.509 Certificate</property>"
+      ]
+    }
+  ],
+  "native_parts": {
+    "tabitem": {
+      "control": "tabitem",
+      "part": "Entire",
+      "part_attrs": {
+        "margin-width": "@space-tab-inline",
+        "height": "@height-tab"
+      },
+      "states": [
+        {"role": "enabled", "attrs": {"enabled": "true"}, "element": "rect",
+         "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "selected", "attrs": {"enabled": "true", "selected": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "rollover", "attrs": {"enabled": "true", "rollover": "true"}, "element": "rect",
+         "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "focused", "attrs": {"enabled": "true", "focused": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@surface-container", "stroke-width": "@stroke-standard", "radius": "@corner-pill"}},
+        {"role": "selected-rollover", "attrs": {"enabled": "true", "selected": "true", "rollover": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@primary-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "selected-focused", "attrs": {"enabled": "true", "selected": "true", "focused": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@primary-container", "stroke-width": "@stroke-standard", "radius": "@corner-pill"}},
+        {"role": "disabled", "attrs": {"enabled": "false"}, "element": "rect",
+         "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "disabled-selected", "attrs": {"enabled": "false", "selected": "true"}, "element": "rect",
+         "tokens": {"stroke": "@outline", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}}
+      ]
+    },
+    "simple_parts": [
+      {"name": "tabheader", "control": "tabheader", "part": "Entire", "element": "rect",
+       "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}},
+      {"name": "tabpane", "control": "tabpane", "part": "Entire", "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+      {"name": "tabbody", "control": "tabbody", "part": "Entire", "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}},
+      {"name": "windowbackground-dialog", "control": "windowbackground", "part": "BackgroundDialog", "element": "rect",
+       "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}},
+      {"name": "frame-border", "control": "frame", "part": "Border", "attrs": {"enabled": "true"}, "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+    ],
+    "metrics": [
+      {"name": "height-tab", "container": "metrics", "tag": "metric", "value": "40"},
+      {"name": "space-tab-inline", "container": "metrics", "tag": "metric", "value": "12"},
+      {"name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20"},
+      {"name": "corner-container", "container": "shapes", "tag": "radius", "value": "12"}
+    ],
+    "palette_roles": [
+      "surface-container",
+      "primary-container",
+      "disabled-container",
+      "primary",
+      "surface",
+      "primary-hover",
+      "outline",
+      "outline-variant"
+    ]
+  },
+  "modal_exclusions": [
+    {
+      "ui_path": "filter/uiconfig/ui/pdfoptionsdialog.ui",
+      "object_id": "PdfOptionsDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The PDF export options tabbed dialog collects input; it stays KeepModal and is never routed into the notification stack."
+    },
+    {
+      "ui_path": "filter/uiconfig/ui/warnpdfdialog.ui",
+      "object_id": "WarnPDFDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The PDF/UA accessibility pre-export warning; an informational modal that stays modal."
+    }
+  ],
+  "carveouts": {
+    "tab_rail_geometry": {
+      "status": "specified",
+      "note": "The tab-pos=left icon-rail width and 24px icon geometry are prototype/spec-only: definition.xml declares no rail-width metric, so the rail dimensions cannot be pinned build-free and are not promoted to an implemented claim."
+    },
+    "security_field_anatomy": {
+      "status": "specified",
+      "note": "The per-field anatomy of the Security/Signing pages beyond the outlined GtkFrame grouping (password rows, permission radio groups, X.509 fields) is design-specified only; the native controls carry the state contract at build time, not this ledger."
+    },
+    "non_pdf_export": {
+      "status": "specified",
+      "note": "Non-PDF export dialogs (EPUB, XHTML, graphic export) are out of this row's M-slice and deferred to future WIN-SYS-002 sub-rows; recorded spec-only, not implemented here."
+    }
+  }
+}

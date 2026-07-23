@@ -51,6 +51,24 @@
       "file": "sw/source/ui/misc/glosbib.cxx",
       "act": "delete an AutoText category",
       "verb": "Delete"
+    },
+    {
+      "id": "sfx2-saveastemplate-overwrite",
+      "file": "sfx2/source/doc/saveastemplatedlg.cxx",
+      "act": "overwrite an existing template of the same name in the category",
+      "verb": "Overwrite"
+    },
+    {
+      "id": "sfx2-templatedlg-delete-category",
+      "file": "sfx2/source/doc/templatedlg.cxx",
+      "act": "delete a template category and its templates",
+      "verb": "Delete"
+    },
+    {
+      "id": "desktop-extmgr-remove-extension",
+      "file": "desktop/source/deployment/gui/dp_gui_dialog2.cxx",
+      "act": "remove an installed extension",
+      "verb": "Remove"
     }
   ]
 }

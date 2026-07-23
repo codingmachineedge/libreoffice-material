@@ -129,6 +129,22 @@ Unsupported parts fall back to existing native drawing.
   confirm the zero-value track paints and the fill clip matches the passed
   value; repeat one case in an RTL locale to prove mirror direction.
 
+### Recovery-flow application (document recovery)
+
+The two `progress` bars in the document-recovery flow —
+`docrecoveryprogressdialog`'s bar and `docrecoveryrecoverdialog`'s bar
+(`svx/source/dialog/docrecovery.cxx`) — are the recovery-flow application of the
+§7.1 `progress` contract above: the same `TrackHorzArea` + `Entire`
+(`@outline-variant` track, `@primary` clipped fill, `corner-indicator`) parts,
+hosted inside the recovery dialogs specified in
+[08-dialogs.md](08-dialogs.md) §8.12. They add no new progress anatomy. The
+crash-report acknowledgment itself is **not** progress and stays **modal** — an
+§8.1 dialog, never a §7.5 bottom-right snackbar — reconciled with its
+`native-exclusion` / KeepModal row in `dialog-notification-policy.csv`. Status:
+the bars are the implemented `progress` parts (compiled at commit 577059e274;
+surface state unverified); the recovery dialogs' surface composition is
+source-pinned (unbuilt) and `runtime_verified` is false.
+
 ---
 
 ## 7.2 Value-sensitive level indicators
@@ -674,6 +690,50 @@ surfaces.
 - These feedback scenarios remain prototype-only even though a separate light
   Start Center smoke now exists; see the current registry in
   [`docs/SCREENSHOTS.md`](../SCREENSHOTS.md).
+
+---
+
+## 7.9 Error-interaction routing (uui)
+
+*Application of the §7.5 producer-routing rule and the `Classify` informational
+case to the generic error/interaction surface (`uui/source`). No new visual
+design; this section pins which error outcomes may ever reach the notification
+stack and which stay modal.*
+
+### The informational-only predicate
+
+The only uui error outcomes eligible for the §7.5 bottom-right stack are
+**informational-only** ones: a request with exactly one continuation that is
+*Approve* or *Abort*. This is the exact
+`UUIInteractionHelper::isInformationalErrorMessageRequest` predicate
+(`uui/source/iahndl.cxx`) — a single continuation, no input, no choice. Every
+other error or conflict prompt — multi-continuation, Retry/Yes/No, or anything
+that collects input — is an interactive decision and **stays modal**, matching
+the credential and conflict dialogs pinned in
+[08-dialogs.md](08-dialogs.md) §8.14. Credential prompts sit above this rule at
+the top of `NotificationRouter::Classify` precedence and never route regardless.
+
+### Seam only — nothing wired
+
+No uui `NotificationRouter` producer exists yet. The error handler currently
+presents modally via `executeErrorDialog` → `xBox->run()`
+(`uui/source/iahndl-errorhandler.cxx`), and the routing status is locked to
+`seam-only-not-wired`: the `isInformationalErrorMessageRequest` seam is present
+but unwired, so **nothing is claimed routed**. A future producer would follow
+the §7.5 notification-producer contract
+([`notification-producer-policy.json`](../../qa/windows-ui-contract/notification-producer-policy.json)
++ [`bin/check-notification-producer-contract.py`](../../bin/check-notification-producer-contract.py))
+as its template, routing only informational-only outcomes and keeping every
+interactive/credential/conflict prompt modal.
+
+### Verification hooks
+
+Source-pinned by
+[`bin/check-uui-interaction-contract.py`](../../bin/check-uui-interaction-contract.py):
+the ten uui roots stay `native-exclusion`/KeepModal, the four credential dialogs
+hit the credential branch, and the informational-error seam is present and
+`seam-only-not-wired`. No producer, no routed message, no runtime claim;
+`runtime_verified` is false.
 
 ---
 

@@ -9,7 +9,15 @@
 This chapter specifies the modal dialog family: the shared modal anatomy and its
 scrim, keyboard, and elevation rules, followed by the four reference dialog
 surfaces realized in the prototype — Options, Save As, Print, and Find &
-Replace. Normative inputs are [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md)
+Replace. Sections 8.6–8.16 then apply that shared anatomy — together with the
+destructive-confirmation, notification-routing, link (§5 of
+[02-actions.md](02-actions.md)), and input (04) contracts it references — to the
+real upstream Windows system-dialog families: PDF export, Document Properties,
+Template Manager, the Extension manager, macro manager and security prompts,
+certificate/signature prompts, document recovery and Safe Mode, migration
+decisions, credential dialogs, and Help/About. Each of those is a composition
+applied to an existing dialog, never a new visual design and never a
+prototype-realized surface. Normative inputs are [`MATERIAL_DESIGN.md`](../../MATERIAL_DESIGN.md)
 (component-behavior contract), [`docs/DESIGN_TOKENS.md`](../DESIGN_TOKENS.md)
 (token values),
 [`definition.xml`](../../vcl/uiconfig/theme_definitions/material/definition.xml)
@@ -330,6 +338,49 @@ Capture: fresh dialog with focused name field; open type drop-down; checked
 password option; disabled Save on empty name. Scripted: `Esc` returns focus to
 the document; overwrite path raises confirmation with safe default.
 
+### 8.3.1 File-flow platform delegation & surrounding message boxes
+
+*Application of the 8.1 Platform notes and the 8.1 destructive-confirmation
+carve-out — no novel visual design.* The common Open/Save file flows split into
+a platform-delegated picker and a small set of in-suite message boxes; this
+subsection pins the Material boundary between them.
+
+**Platform delegation (Windows).** On Windows the Open/Save picker is the
+OS-owned native `IFileDialog` (`CLSID_FileOpenDialog` / `CLSID_FileSaveDialog`,
+`fpicker/source/win32`), and its overwrite confirmation is drawn by the OS from
+the `FOS_OVERWRITEPROMPT` flag — both are out of Material scope and are never
+re-skinned or faked as a Material sheet. The in-suite Material Save As sheet
+(8.3) is the fallback variant, selected across the
+`SystemFilePicker → OfficeFilePicker` seam in
+`sfx2/source/dialog/filedlghelper.cxx` when the OS picker is unavailable; that
+in-suite picker and its pixels belong to WIN-DLG-003 and are not respecified
+here. Because the OS owns the overwrite prompt on this path, **no
+`sfx2::ConfirmDestructiveAction` conversion is applied here** (contrast the 8.1
+destructive-confirmation pattern): the platform already guards the overwrite.
+
+**Surrounding call-site message boxes.** The save flow raises three C++
+call-site message boxes in `filedlghelper.cxx` that have no `.ui` file. The
+`.ui`-only notification policy cannot see them, so they are classified here
+under the same NotificationRouter taxonomy ([07-feedback.md](07-feedback.md)
+§7.5) and all stay modal:
+
+| Message box | Shape | Class | Routing |
+| --- | --- | --- | --- |
+| Losing scripting signature | Question / Yes-No | decision | modal; never routed to the bottom-right stack |
+| GPG encryption failure | Warning / OK | security acknowledgment | modal; security prompts stay modal |
+| Password too short | Warning / OK | credential-adjacent acknowledgment | modal; never routed |
+
+None is a pure informational acknowledgment eligible for the §7.5 bottom-right
+stack, so none is converted to a snackbar. The boxes are repositioned by the
+shared Windows dialog-placement seam (`vcl` `dialog.cxx`/`event.cxx`), and the
+related `.ui` roots that *do* exist — `querysavedialog`, the sfx2 `password`
+dialog, and `remotefilesdialog` — keep their `native-exclusion` policy in
+`dialog-notification-policy.csv` (walked read-only, not re-registered here).
+Status: the delegation boundary and the three call-site boxes are source-pinned
+(unbuilt) by
+[`bin/check-windows-file-flow-contract.py`](../../bin/check-windows-file-flow-contract.py);
+`runtime_verified` is false and no picker pixels are claimed.
+
 ---
 
 ## 8.4 Print dialog
@@ -507,12 +558,538 @@ flag toggles change the live count deterministically; `Esc` layering
 
 ---
 
+## 8.6 Export options — tabbed dialog (PDF)
+
+*Application of the 8.1 shared modal anatomy and the 8.2 Options master–detail
+navigation to the real PDF options dialog
+(`filter/uiconfig/ui/pdfoptionsdialog.ui`, built by
+`filter/source/pdf/impdialog.cxx`) — no novel visual design.*
+
+### Anatomy & tokens
+
+The export sheet is the same `@surface-container` modal sheet with the same
+footer contract as 8.1: **Help \| spacer \| secondary Cancel \| primary
+Export** (`.ui` action widgets `ok`/`E_xport` = −5, `cancel` = −6, `help` =
+−11). Unlike the destructive-confirmation pattern, the **primary is the `Enter`
+default** here because Export is non-destructive; the 8.1 destructive pattern is
+explicitly **not** used (no `@error-container` primary, no safe-action default).
+
+### Vertical tab navigation
+
+The dialog is a data-driven `SfxTabDialogController`: a `GtkNotebook`
+(`tab-pos=left`) is the export analogue of the 8.2 Options navigation tree — a
+left tab list selecting a detail page. It reuses the native `tabitem` states
+(selected → `@primary-container` / `@on-primary-container`, focus → `@primary`
+ring) from `definition.xml` rather than a new control. The exact rail width and
+24 px icon geometry are *specified here, not yet implemented* — `definition.xml`
+declares no rail-width metric, so the rail dimensions cannot be pinned build-free.
+
+### Content grouping & tab set
+
+Each page groups its options in outlined `frame`/`Border` regions
+(`@outline-variant` stroke, `@surface-container` fill, `stroke-thin`,
+`corner-container`), per the 8.1 content-region rule. `AddTabPage` composes six
+pages in a fixed order, each bound to its own `.ui`:
+
+| Order | Tab / page root | Grouped regions |
+| --- | --- | --- |
+| 1 | General (`PdfGeneralPage`) | Range, Images, Watermark, General |
+| 2 | Initial View (`PdfViewPage`) | Panes, Magnification, Page Layout |
+| 3 | User Interface (`PdfUserInterfacePage`) | Window Options, User Interface Options, Transitions, Collapse Outlines |
+| 4 | Links (`PdfLinksPage`) | General, Cross-document Links |
+| 5 | Security (`PdfSecurityPage`) | File Encryption and Permission, Printing, Changes, Content |
+| 6 | Digital Signatures (`PdfSignPage`) | X.509 Certificate |
+
+The tab/notebook/frame parts are *implemented in definition.xml (compiled at
+commit 577059e274; surface state unverified)*; the ordered composition is
+source-pinned (unbuilt).
+
+### Interaction & modal policy
+
+`Esc` = Cancel, `Enter` = Export, focus trap and `F1` = Help per 8.1. The
+PDF/UA accessibility pre-export warning (`WarnPDFDialog`, `impdialog.cxx`
+`OkHdl`) is an informational modal that **stays modal** — it is not folded into
+the §7.5 bottom-right stack. The input-collecting export dialog is a
+`native-exclusion` / KeepModal root in `dialog-notification-policy.csv`, so it
+can never be reclassified out of modal.
+
+### Verification hooks
+
+Source-pinned by
+[`bin/check-pdf-export-dialog-contract.py`](../../bin/check-pdf-export-dialog-contract.py)
+(notebook + Export-default footer, each tab's Create class + page `.ui` root +
+group frames, the native `tabitem`/`tabpane`/`tabbody`/`frame` parts, and the
+KeepModal exclusions). Tab-rail geometry, per-field signing anatomy, and
+non-PDF export formats (EPUB/XHTML) are carved out spec-only; `runtime_verified`
+is false and no dialog pixels are claimed.
+
+---
+
+## 8.7 Document Properties — multi-tab (icon-rail) dialog
+
+*Application of the 8.1 shared anatomy and the 8.2 Options navigation treatment
+to the upstream Document Properties dialog
+(`sfx2/uiconfig/ui/documentpropertiesdialog.ui`, driven by
+`sfx2/source/dialog/dinfdlg.cxx`) — no novel visual design.* Its entire Material
+treatment is delivered by shared vcl parts; nothing in `dinfdlg.cxx` draws
+anything Material.
+
+### Layout & regions
+
+Title row + a left **icon-tab rail** + content pane + footer. The rail derives
+from the 8.2 navigation-tree treatment: the selected tab is `@primary-container`
+fill / `@on-primary-container` text; the content pane is `@surface` with an
+`@outline-variant` hairline and `corner-container` radius. The real `.ui` footer
+is **Reset (`reset`, 101, text) \| OK (`ok`, −5, filled) \| Cancel (`cancel`,
+−6, outlined) \| Help (`help`, −11, secondary)**, mapped onto the 8.1 footer
+order.
+
+### Native tab part contract
+
+| Part | Treatment | Status |
+| --- | --- | --- |
+| `tabitem` (8 states) | `corner-pill` radius; selected fill `@primary-container`, text `@on-primary-container`; focus `@primary` ring | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| `tabheader` strip | `@surface-container` band | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+| `tabpane`/`tabbody` | content frame on `@surface-container` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
+
+These are the same native parts documented in [05-navigation.md](05-navigation.md);
+no re-drawing is specified here. The `notebook` is `tab-pos=left` with the
+`icons` group; the rail identity is the `RID_L` (`cmd/32/`) 32 px large-icon set.
+The 32 px icon downscale, pill hover-raise, and rail width are the native
+parts' pixel gate — *specified here, not yet implemented* (deferred to a build
+host).
+
+### Tab page set
+
+Six master–detail pages, each an `SfxTabPage` with its own `.ui` root:
+**General** (`RID_TAB_ORGANIZER`), **Description**, **Custom Properties**,
+**CMIS Properties** (conditional), **Security** (conditional), **Font**. The
+fields, checkboxes, and frames *inside* each page are the shared components of
+chapters [03](03-selection.md)/[04](04-inputs.md)/[06](06-containers.md) and are
+not respecified here.
+
+### Interaction & keyboard
+
+Reuse the 8.1 focus-trap / `Esc` = Cancel / `Enter` = OK-default / arrow-in-rail
+rules and the 8.2 page-switch announcement, restated for the notebook:
+`Ctrl+Tab` and arrow keys move the rail selection; the content pane is labelled
+by the selected tab so page switches are announced. `STR_SFX_QUERY_WRONG_TYPE`
+(the OK/Cancel query raised when a custom-property value does not fit its
+declared type, `dinfdlg.cxx`) is an explicit **non-destructive carve-out**: it
+coerces a typed value and destroys no data, so it is deliberately **not**
+converted to `sfx2::ConfirmDestructiveAction`.
+
+### Accessibility, RTL, density, platform, verification
+
+Accessibility, RTL/localization, density, and platform behaviour inherit 8.1 and
+8.2 by reference. No dialog runtime or pixel evidence is claimed (only the Start
+Center bounded trees are accepted, per the chapter status banner). Source-pinned
+by
+[`bin/check-windows-document-properties-contract.py`](../../bin/check-windows-document-properties-contract.py)
+(the native icon-tab part contract in both palettes plus the `.ui`/`.cxx`
+composition); the inline custom-property row editor (`linefragment.ui`) and
+`EditDurationDialog` treatment are deferred; `runtime_verified` is false.
+
+---
+
+## 8.8 Template Manager & Save As Template
+
+*Application of the 8.1 shared modal anatomy and destructive-confirmation
+pattern to the template flows — no novel visual design.*
+
+### Anatomy & controls
+
+The three roots are `@surface-container` modal sheets with the 8.1 footer order
+**Help \| spacer \| secondary \| primary**:
+
+- **Template Manager** (`SfxTemplateManagerDlg`, `templatedlg.ui`) — Help \|
+  Close \| filled primary *New from Template* (`STR_NEW_FROM_TEMPLATE`), plus a
+  secondary *Show this dialog at startup* checkbox.
+- **Save As Template** (`saveastemplatedlg.ui`) — Help \| Cancel \| filled
+  *Save* (`STR_SAVEDOC`).
+- **Templates Category** (`templatecategorydlg.ui`) — the category picker.
+
+Controls derive from chapter [04](04-inputs.md): the search field with the regex
+builder pill is the **already-realized** `RegexSearchController` on
+`search_filter` + `search_filter_regex_builder` (cross-referenced, never
+restated); the two `GtkComboBoxText` filters and the `_Manage` menu button; the
+thumbnail/list view toggle pair (chapter [03](03-selection.md) toggle state);
+the *Set as default template* and *Enter template name* fields (04); and the
+category tree (chapter [06](06-containers.md) list/tree).
+
+### Destructive confirmations
+
+Two irreversible acts apply the 8.1 destructive-confirmation pattern through the
+shared `sfx2::ConfirmDestructiveAction` helper — safe **Cancel** holds the
+initial focus and the `Enter` default, and the destructive primary uses
+`@error-container`:
+
+| Act | Verb | Safe default | Source | Status |
+| --- | --- | --- | --- | --- |
+| Overwrite an existing template | Overwrite | Cancel | `saveastemplatedlg.cxx` `OkClickHdl` (`STR_QMSG_TEMPLATE_OVERWRITE`) | source-implemented (unbuilt) |
+| Delete a template category | Delete | Cancel | `templatedlg.cxx` `OnCategoryDelete` (`STR_QMSG_SEL_FOLDER_DELETE`) | source-implemented (unbuilt) |
+
+Both are real conversions of the former ad-hoc `weld::MessageDialog`
+confirmations, registered in the shared `dialog-anatomy-policy.json` contract
+and validated against source by
+[`bin/check-material-dialog-anatomy.py`](../../bin/check-material-dialog-anatomy.py)
+alongside the other 8.1 destructive-confirmation migrations. No build or runtime
+evidence exists; pixel, density, RTL, and card-thumbnail treatment are carved
+out spec-only. The Start Center **Templates** entry point that reaches this
+dialog is mapped in [09-start-center.md](09-start-center.md) §9.3/§9.10.
+
+---
+
+## 8.9 Extension manager & dependency dialogs
+
+*Application of the archive-backed patterns to
+`desktop/source/deployment/gui` — no novel visual design.*
+
+### Shared shell
+
+The Extensions dialog (`extensionmanager.ui`/`ExtensionManagerDialog`) and its
+satellites — `dependenciesdialog.ui`, `updatedialog.ui`,
+`updateinstalldialog.ui`, `updaterequireddialog.ui`, `installforalldialog.ui`,
+`licensedialog.ui`, `showlicensedialog.ui`, and the `extensionmenu.ui` menu —
+are modal `@surface-container` sheets applying the 8.1 modal anatomy (title row,
+content region, footer **Help \| spacer \| secondary \| primary**, scrim, focus
+trap, `Esc` = Cancel, `Enter` = default).
+
+### Action set & links
+
+Options / Check for Updates / Add / Remove / Enable and the Close/Help footer map
+to the chapter [02](02-actions.md) button variants (filled default *Add*,
+tonal/text secondaries). *Get more extensions online…* maps to the link contract
+(§5 of [02-actions.md](02-actions.md)). The extension **search field + regex
+builder toggle** is the shared search anatomy of chapter [04](04-inputs.md)
+(WIN-INP-005) — cross-referenced, not respecified.
+
+### Remove-extension destructive confirmation
+
+Removing an extension applies the 8.1 destructive-confirmation pattern:
+`@error-container` primary, verb label **Remove**, and the safe **Cancel** holds
+initial focus and the `Enter` default so `Enter`-mashing cannot uninstall.
+Source-implemented (unbuilt) as `ExtMgrDialog::removeExtensionWarn` in
+`dp_gui_dialog2.cxx` via `sfx2::ConfirmDestructiveAction`, registered in
+`dialog-anatomy-policy.json` and validated by
+[`bin/check-material-dialog-anatomy.py`](../../bin/check-material-dialog-anatomy.py).
+
+### Feedback & modal policy
+
+The add/update/remove progress bar applies the chapter [07](07-feedback.md) §7.1
+determinate progress. The dependency-check, install-for-all, license-accept, and
+update-required prompts **stay modal** and are **not** routed to the §7.5
+bottom-right notification stack — each collects a decision or consent, so it
+holds the `native-exclusion` / KeepModal classification in
+`dialog-notification-policy.csv` (cite [07-feedback.md](07-feedback.md)
+§7.5/§7.8). The per-extension list-item and dependency-tree container anatomy is
+documented in [06-containers.md](06-containers.md); the custom-drawn list-item
+`Paint` (`dp_gui_extlistbox.cxx`) is deferred (build-only). `runtime_verified`
+is false.
+
+---
+
+## 8.10 Macro manager, organizer & security prompts
+
+*Application of existing archive-backed patterns to the Basic macro organizer and
+macro-execution security prompt — no novel visual design.*
+
+### 8.10.1 Delete & replace confirmations
+
+The Basic macro/library/module/dialog delete and replace confirmations funnel
+through the single shared `QueryDel()` helper in
+`basctl/source/basicide/bastypes.cxx` (delete macro, replace macro, delete
+dialog, delete library / library-reference, delete module). Their **target**
+treatment is the 8.1 destructive-confirmation pattern — object plus the shared
+consequence *This action cannot be undone.*, footer **Help \| spacer \| safe
+Cancel \| verb-named destructive primary** at `@error-container`, with the safe
+action holding initial focus and the `Enter` default, routed through
+`sfx2::ConfirmDestructiveAction`. Status: **specified here, not yet
+implemented** — `QueryDel` currently raises an ad-hoc
+`VclMessageType::Question` / `VclButtonsType::YesNo` box in which the
+destructive answer is `Enter`-answerable; the conversion is a documented
+deferral, not a shipped change.
+
+### 8.10.2 Macro-execution security prompt
+
+The Enable/Disable-macros prompt (`uui/uiconfig/ui/macrowarnmedium.ui`,
+`uui/source/secmacrowarnings.cxx`) applies the 8.1 modal rules with a
+**security-decision safe default**: *Disable Macros* is both the GTK default and
+the initially-focused control (`grab_focus`), and *Enable Macros* requires
+deliberate navigation — generalizing the 8.1 destructive safe-default principle
+to a security decision and honouring the
+[00-windows-rewrite-contract.md](00-windows-rewrite-contract.md) rule that
+security/credential/destructive prompts stay modal and never route to the
+bottom-right notification form. This preserves existing safe behaviour so no
+refactor lets an accidental `Enter` run untrusted macros.
+
+### 8.10.3 Manager & organizer dialogs
+
+The macro selector tree, the Basic organizer two-pane, the assign dialog, and the
+library/module managers are consumers of the 8.1 shared modal anatomy plus
+chapter [06](06-containers.md) trees/lists, chapter [02](02-actions.md) buttons,
+and chapter [04](04-inputs.md) fields. Modality is retained; no bespoke geometry
+is claimed.
+
+### 8.10.4 Scope carve-out
+
+The Basic IDE code editor itself (`baside2*`, watch/stack/object-catalog,
+breakpoint gutter — custom-drawn, no `.ui`-composable anatomy) and the
+macro-security-**level** / certificate / signature dialogs (owned by 8.11 /
+WIN-SYS-007) are explicitly deferred to a build host. This is a documented
+deferral, not a gap. Routing rationale (why these stay modal, not snackbars)
+lives in [07-feedback.md](07-feedback.md) §7.5 and the NotificationRouter
+classification.
+
+---
+
+## 8.11 Security-classified prompts — modal application
+
+*Application of the 8.1 shared modal anatomy and the 8.2 master–detail treatment
+to the certificate/signature/macro-security family
+(`xmlsecurity/source/dialogs`, `cui/source/options/certpath.cxx`) — no novel
+visual design.*
+
+### Anatomy & per-dialog footers
+
+Each root is a `@surface-container` modal sheet with the 8.1 footer order and
+keyboard dismissal rules. The real modal footers observed in the `.ui` files:
+
+| Dialog | Footer (response codes) |
+| --- | --- |
+| `DigitalSignaturesDialog` | Help (−11) \| Close (−7) |
+| `MacroSecurityDialog` | Reset (101) \| OK (−5) \| Cancel (−6) \| Help (−11) |
+| `SelectCertificateDialog` | OK (−5) \| Cancel (−6) \| Help (−11) |
+| `ViewCertDialog` | OK (−5) \| Help (−11) |
+| `CertDialog` (certpath) | Add (101) \| Cancel (−6) \| OK (−5) \| Help (−11) |
+
+### Tabbed surfaces
+
+The two tabbed security surfaces apply the 8.2 Options notebook anatomy as
+embedded page composition, not redraw: **Macro Security**
+(`SecurityLevelPage` / `SecurityTrustPage`) and the **Certificate Viewer**
+(`CertGeneral` / `CertDetails` / `CertPage`).
+
+### Classification & routing precedence
+
+Per the *Next checkpoint* in
+[02-notification-service-architecture.md](02-notification-service-architecture.md)
+(prompts that enforce security keep their modal semantics) and
+[07-feedback.md](07-feedback.md) §7.5 (`NotificationRouter::Classify` never
+forces security prompts to the toast stack), the four `xmlsecurity` roots stay
+modal via the **security** exclusion, while certpath's `CertDialog` stays modal
+via the **input** precedence rather than the security token — an honest
+distinction, not a re-label.
+
+### Destructive action within a modal
+
+The *Remove signature* action inside `DigitalSignaturesDialog` applies the 8.1
+destructive-confirmation pattern (safe action as default and initial focus) —
+reuse, not novel design.
+
+### Verification hooks
+
+Source-pinned by
+[`bin/check-windows-security-prompt-modality.py`](../../bin/check-windows-security-prompt-modality.py)
+(CSV `native-exclusion` rows, the live router classifier returning KeepModal,
+the modal footers, and synchronous `GenericDialogController::run()`
+reachability). `SecurityOptionsDialog`, `signatureline`, and `signsignatureline`
+are deliberately excluded (adjacent rows). No native build, no dialog pixels;
+`runtime_verified` is false.
+
+---
+
+## 8.12 Document recovery, crash report & Safe Mode
+
+These surfaces are **preserved safeguards**, not nags: the
+[00-windows-rewrite-contract.md](00-windows-rewrite-contract.md) contract
+explicitly requires the recovery, Safe Mode, and extension-compatibility paths
+and excludes them from the removed-nag set. They are styled and anchored under
+the 8.1 shared modal anatomy but are never removed or rerouted.
+
+### Anatomy mapping
+
+*Application of 8.1 plus chapters [03](03-selection.md)/[06](06-containers.md)/[07](07-feedback.md)
+— no novel design:*
+
+| Surface | Element | Mapped pattern |
+| --- | --- | --- |
+| `DocRecoveryRecoverDialog` / `DocRecoverySaveDialog` / `DocRecoveryBrokenDialog` | recover/save/broken file lists | 06 container tree on a `@surface-container` sheet |
+| `DocRecoveryRecoverDialog` + `DocRecoveryProgressDialog` | the two `progress` bars | §7.1 determinate progress |
+| `SafeModeDialog` | four radio groups + nested checkboxes | 03 selection on the 8.1 sheet |
+| `CrashReportDialog` | Send / Do-Not-Send / Close footer; Privacy-Policy + crash-id links; troubleshoot checkbox | 8.1 footer + the link contract (§5 of [02-actions.md](02-actions.md)) |
+
+Footer order is normalized to **Help \| spacer \| secondary \| primary**.
+
+### Safe-default invariant
+
+Applying the 8.1 destructive-confirmation reasoning:
+`DocRecoveryRecoverDialog` keeps **Recover Selected** (response 101,
+`has-default`) as the `Enter` default while **Discard All** (response −6) stays a
+non-default explicit action; `SafeModeQueryDialog` keeps the safe **Cancel**
+(`has-default`) as the `Enter` default over **Restart**. Native `@error-container`
+emphasis on *Discard All* is *specified here, not yet implemented* — converting
+it to `sfx2::ConfirmDestructiveAction` is a behavioural change needing runtime
+validation and is deferred.
+
+### Chrome, flows, states, keyboard, a11y, platform
+
+Chrome variants, key user flows, empty/loading/error states, density, the
+keyboard map, and accessibility notes inherit 8.1 by reference. Platform notes
+are Windows-first: Safe Mode restart and autorecovery re-entry. The crash-report
+acknowledgment **stays modal** — an 8.1 dialog, never a §7.5 bottom-right
+snackbar — reconciled with the `dialog-notification-policy.csv` KeepModal
+classification. Source-pinned by
+[`bin/check-windows-recovery-safemode-contract.py`](../../bin/check-windows-recovery-safemode-contract.py)
+(seven recovery/crash/Safe-Mode roots, their weld bindings, native-part
+grounding in both palettes, the seven KeepModal rows, and the retained
+safeguards); `runtime_verified` is false.
+
+---
+
+## 8.13 Migration & profile-compatibility decisions
+
+*Application of the 8.1 shared modal anatomy and the
+[00-windows-rewrite-contract.md](00-windows-rewrite-contract.md) no-nag boundary
+— no novel visual design.*
+
+### Anatomy (inherits 8.1)
+
+The compatibility dialogs are `@surface-container` modal sheets with the standard
+**Help \| spacer \| secondary \| primary** footer and the 8.1 scrim, keyboard,
+and focus-trap rules — restated by reference, not respecified.
+
+### Migration flow (silent)
+
+Settings migration surfaces **no acknowledgment prompt**: the startup order runs
+the extension-compatibility check before silent settings migration
+(`desktop/source/app/app.cxx` orders `CheckExtensionDependencies()` **before**
+`Migration::migrateSettingsIfNecessary()`), and the migration path is guarded
+for idempotency by `MigrationCompleted` and the `SAL_DISABLE_USERMIGRATION`
+fake-success escape. This is the chapter-00 rule "migration is silent /
+default-off nags removed".
+
+### Retained compatibility decisions
+
+Each is a *required* compatibility decision that stays modal
+(`native-exclusion`), with the non-committal option as the `Esc`-equivalent safe
+escape — applying the 8.1 "safe action reachable by `Esc`" reasoning **without**
+the destructive `@error-container` styling (these are compatibility choices, not
+data-loss confirmations):
+
+| Dialog | Options | Safe escape |
+| --- | --- | --- |
+| `UpdateRequiredDialog` (desktop) | Check for Updates / Disable all / Cancel | Cancel / Disable all |
+| `Dependencies` (desktop) | Continue / Cancel | Cancel |
+| `MigrationWarnDialog` (dbaccess) | Yes / Later | Later |
+
+### No-nag boundary
+
+Per chapter-00 "Promotional or recurring nags are not part of the rewritten
+product", these required decisions sit explicitly **outside** the removed-nag
+set, alongside recovery, Safe Mode, and extension-compatibility. Accessibility,
+RTL, and localization inherit 8.1 by reference.
+
+### Verification hooks
+
+Source-pinned by
+[`bin/check-material-migration-compat-contract.py`](../../bin/check-material-migration-compat-contract.py)
+(silent-migration positive path + forbidden-nag blocklist, the
+compat-check-gates-migration ordering, the three retained decisions kept
+native-exclusion, and the `Setup.xcs` profile-compat schema), with the
+E-NONAG-LEGACY dependency delegated read-only to
+[`bin/check-windows-nonag-headless-harness.py`](../../bin/check-windows-nonag-headless-harness.py).
+This is source + policy evidence, not runtime proof; `runtime_verified` is false.
+
+---
+
+## 8.14 Credential & authentication dialogs (uui)
+
+*Application of the 8.1 modal anatomy (focus trap, `Esc` = Cancel, the scrim
+never dismisses) to the `uui/source` login / password / master-password /
+auth-fallback / unknown-auth family — no novel visual design; the existing
+dialog part/token table is reused.*
+
+Credential prompts sit at the **top of `NotificationRouter::Classify`
+precedence** and therefore **never** route to the bottom-right stack. The ten
+uui interaction roots are `AuthFallbackDlg`, `FilterSelectDialog`, `LoginDialog`,
+`MacroWarnMedium`, `MasterPasswordDialog`, `PasswordDialog`,
+`SetMasterPasswordDialog`, `SimpleNameClashDialog`, `SSLWarnDialog`, and
+`UnknownAuthDialog`; the four that hit the **credential** branch —
+`LoginDialog`, `MasterPasswordDialog`, `PasswordDialog`, `SetMasterPasswordDialog`
+— are each anchored on a `visibility=False` password `GtkEntry`. Conflict prompts
+(`SimpleNameClashDialog` plus the C++ conflict/lock handlers) stay modal on real
+`weld::MessageDialog … ->run()` call sites. The generic-error routing seam and
+its informational-only carve-out are documented in
+[07-feedback.md](07-feedback.md) §7.9. Source-pinned by
+[`bin/check-uui-interaction-contract.py`](../../bin/check-uui-interaction-contract.py);
+no uui producer is wired, so nothing is claimed routed. `runtime_verified` is
+false.
+
+---
+
+## 8.15 Help/About & informational dialogs
+
+The **informational-modal** variant is an application of the 8.1 shared anatomy —
+title row + content region + footer — but with a **single non-destructive dismiss
+default** (Close/OK) and **no destructive primary**. It cites the 8.1
+destructive-confirmation pattern explicitly as the pattern it does **not** use.
+
+### About %PRODUCTNAME (`cui/aboutdialog.ui`)
+
+A modal `AboutDialog` with a product-identity content region (logo, version and
+build strings, copyright). The Credits / Website / Release-Notes / build-id
+`GtkLinkButton` surfaces consume the link contract (§5 of
+[02-actions.md](02-actions.md)): `@primary` corner-focus ring, tintless-underline
+hover. Single **Close** dismiss (`btnClose`, response −7).
+
+### Tip of the Day (`cui/tipofthedaydialog.ui`)
+
+A navigational informational dialog: Next-tip advance (`btnNext`), Link-out
+(`btnLink`), and a single **OK** dismiss (`btnOk`, response −5). The
+show-on-startup toggle is cross-referenced to the WIN-SYS-008 no-nag onboarding
+contract (tip/welcome solicitation is default-off per chapter-00), not respecified
+here.
+
+### Modal, not routed
+
+Grounded in the §7 notification policy, Help/About informational dialogs stay
+**modal** (`dialog-notification-policy.csv` `native-exclusion` / router
+KeepModal) because they are interactive dialog shells, not acknowledgment-only
+prompts, so they are never folded into the bottom-right notification stack.
+
+*Provenance: the Help/About family is source-pinned and registry-assigned; no
+build, pixel, or runtime evidence is claimed (the chapter status banner's Start
+Center scope is unchanged).*
+
+---
+
+## 8.16 Legacy & optional-feature dialogs (owner-level)
+
+The hyperlink, thesaurus, hyphenate, Hangul/Hanja, and expert-config
+(`aboutconfig`) surfaces inherit the 8.1 base anatomy and the chapter
+[04](04-inputs.md) input-field treatment. Because they collect input they stay
+**KeepModal** per §7. They are claimed by WIN-SYS-015 at **owner-level registry
+granularity**, with per-surface anatomy pinning explicitly deferred — an honest
+carve-out mirroring the closure ledger's owner-level prefix attribution. No
+build, pixel, or runtime evidence is claimed; `runtime_verified` is false.
+
+---
+
 ## Cross-references
 
-- Buttons and disabled affordances: [02-actions.md](02-actions.md)
+- Buttons, disabled affordances, and the link contract (§5): [02-actions.md](02-actions.md)
 - Checkboxes and radios: [03-selection.md](03-selection.md)
 - Fields, search, and regex-builder input anatomy: [04-inputs.md](04-inputs.md)
-- Trees, lists, frames: [06-containers.md](06-containers.md)
-- Progress, snackbars: [07-feedback.md](07-feedback.md)
+- Tabs and native tab parts (§8.6, §8.7, §8.11): [05-navigation.md](05-navigation.md)
+- Trees, lists, frames (§8.9 extension list, §8.12 recovery lists): [06-containers.md](06-containers.md)
+- Progress, snackbars, and why security/credential/recovery prompts stay modal
+  (§8.9–§8.14): [07-feedback.md](07-feedback.md) §7.1/§7.5/§7.9
+- Notification routing precedence for security prompts (§8.11):
+  [02-notification-service-architecture.md](02-notification-service-architecture.md)
+- Retained safeguards and the no-nag boundary (§8.12, §8.13, §8.15):
+  [00-windows-rewrite-contract.md](00-windows-rewrite-contract.md)
+- Template Manager entry point from the Start Center (§8.8):
+  [09-start-center.md](09-start-center.md) §9.3/§9.10
 - Evidence format for every checkpoint above:
   [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md)

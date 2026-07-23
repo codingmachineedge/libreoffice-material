@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "contract": "windows-help-about-family",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "_comment": "WIN-SYS-015 Help/About & legacy/optional-feature dialogs. A composition-PINNING contract (calc-chrome idiom) over existing upstream cui .ui files -- there is no per-dialog Material .cxx to guard; the Material treatment is delivered by the shared vcl parts and the shared link/notification machinery pinned elsewhere. Three layers, all py-static, runtime_verified false throughout: (1) anatomy_pinned pins the informational Help/About family anatomy -- aboutdialog.ui (modal GtkDialog, single btnClose dismiss response -7, the four GtkLinkButton link surfaces) and tipofthedaydialog.ui (navigational btnNext/btnLink, single btnOk dismiss response -5); tipofthedaydialog declares no .ui modal property, so its modal claim is keyed off the CSV KeepModal policy row, NOT a .ui property. (2) notification_policy cross-checks the shared dialog-notification-policy.csv keeps the About/Tip rows native-exclusion (KeepModal), and no_destructive_role asserts the family never appears as a destructive migration in dialog-anatomy-policy.json. (3) family + ui_registry cross-reads ui-registry.json and fails closed if any of the 16 WIN-SYS-015 UI-file surfaces drifts off inventory_id=WIN-SYS-015 / mapped_by=override (the registry-progress the row's REGISTRY gate measures: the 15 cui surfaces were moved out of the 449-entry unassigned baseline, joining the pre-existing vcl/aboutbox.ui override). The legacy/optional cui surfaces (hyperlink/thesaurus/hyphenate/hangul-hanja/expert-config) are owner-level attribution only; per-surface anatomy is deferred.",
+  "policy_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "anatomy_registry": "qa/windows-ui-contract/dialog-anatomy-policy.json",
+  "ui_registry": "qa/windows-ui-contract/ui-registry.json",
+  "inventory_id": "WIN-SYS-015",
+  "expected_family": 16,
+  "family": [
+    {
+      "surface": "cui/uiconfig/ui/aboutdialog.ui",
+      "note": "Help > About %PRODUCTNAME (anatomy-pinned)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/tipofthedaydialog.ui",
+      "note": "Tip of the Day (anatomy-pinned)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/aboutconfigdialog.ui",
+      "note": "Expert Configuration (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinkdlg.ui",
+      "note": "Hyperlink dialog (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinkdocpage.ui",
+      "note": "Hyperlink: Document page (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinkinternetpage.ui",
+      "note": "Hyperlink: Internet page (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinkmailpage.ui",
+      "note": "Hyperlink: Mail page (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinknewdocpage.ui",
+      "note": "Hyperlink: New Document page (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyperlinkmarkdialog.ui",
+      "note": "Hyperlink: target mark picker (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hyphenate.ui",
+      "note": "Hyphenation (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/thesaurus.ui",
+      "note": "Thesaurus (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hangulhanjaconversiondialog.ui",
+      "note": "Hangul/Hanja Conversion (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hangulhanjaadddialog.ui",
+      "note": "Hangul/Hanja Add Dictionary (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hangulhanjaeditdictdialog.ui",
+      "note": "Hangul/Hanja Edit Dictionary (owner-level)"
+    },
+    {
+      "surface": "cui/uiconfig/ui/hangulhanjaoptdialog.ui",
+      "note": "Hangul/Hanja Options (owner-level)"
+    },
+    {
+      "surface": "vcl/uiconfig/ui/aboutbox.ui",
+      "note": "Legacy VCL about box (owner-level; pre-existing WIN-SYS-015 override)"
+    }
+  ],
+  "anatomy_pinned": [
+    {
+      "id": "AboutDialog",
+      "ui_file": "cui/uiconfig/ui/aboutdialog.ui",
+      "object_id": "AboutDialog",
+      "widget_class": "GtkDialog",
+      "modal_source": "ui",
+      "footer": [
+        {
+          "response": "-7",
+          "widget": "btnClose"
+        }
+      ],
+      "widgets": [
+        {
+          "id": "btnClose",
+          "widget_class": "GtkButton",
+          "role": "dismiss"
+        },
+        {
+          "id": "btnCredits",
+          "widget_class": "GtkLinkButton",
+          "role": "link"
+        },
+        {
+          "id": "btnWebsite",
+          "widget_class": "GtkLinkButton",
+          "role": "link"
+        },
+        {
+          "id": "btnReleaseNotes",
+          "widget_class": "GtkLinkButton",
+          "role": "link"
+        },
+        {
+          "id": "lbBuildString",
+          "widget_class": "GtkLinkButton",
+          "role": "link"
+        }
+      ]
+    },
+    {
+      "id": "TipOfTheDayDialog",
+      "ui_file": "cui/uiconfig/ui/tipofthedaydialog.ui",
+      "object_id": "TipOfTheDayDialog",
+      "widget_class": "GtkDialog",
+      "modal_source": "csv",
+      "modal_note": "no .ui modal property; the router keeps it modal, so the modal claim is keyed off the CSV native-exclusion row.",
+      "footer": [
+        {
+          "response": "-5",
+          "widget": "btnOk"
+        }
+      ],
+      "widgets": [
+        {
+          "id": "btnOk",
+          "widget_class": "GtkButton",
+          "role": "dismiss"
+        },
+        {
+          "id": "btnNext",
+          "widget_class": "GtkButton",
+          "role": "nav"
+        },
+        {
+          "id": "btnLink",
+          "widget_class": "GtkLinkButton",
+          "role": "nav"
+        }
+      ]
+    }
+  ],
+  "notification_policy": {
+    "policy": "native-exclusion",
+    "csv_fields": [
+      "ui_path",
+      "object_id",
+      "widget_class",
+      "policy",
+      "notification_profile",
+      "exclusion_reason"
+    ],
+    "rows": [
+      {
+        "ui_path": "cui/uiconfig/ui/aboutdialog.ui",
+        "object_id": "AboutDialog"
+      },
+      {
+        "ui_path": "cui/uiconfig/ui/tipofthedaydialog.ui",
+        "object_id": "TipOfTheDayDialog"
+      }
+    ]
+  },
+  "no_destructive_role": {
+    "anatomy_registry": "qa/windows-ui-contract/dialog-anatomy-policy.json",
+    "note": "The informational Help/About family must never be registered as a destructive migration; these stems must be absent from the anatomy migrations.",
+    "forbidden_tokens": [
+      "aboutdialog",
+      "tipofthedaydialog",
+      "aboutconfigdialog",
+      "hyperlinkdlg",
+      "hyperlinkdocpage",
+      "hyperlinkinternetpage",
+      "hyperlinkmailpage",
+      "hyperlinknewdocpage",
+      "hyperlinkmarkdialog",
+      "hyphenate",
+      "thesaurus",
+      "hangulhanjaconversiondialog",
+      "hangulhanjaadddialog",
+      "hangulhanjaeditdictdialog",
+      "hangulhanjaoptdialog",
+      "AboutDialog",
+      "TipOfTheDayDialog"
+    ]
+  }
+}

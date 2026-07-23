@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "contract": "windows-macro-surface",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "_comment": "WIN-SYS-006 macro manager / organizer / IDE & security prompts. A three-part fail-closed contract, all py-static over comment-stripped source + XML + the shared CSV; no native build, pixels, or runtime is claimed (runtime_verified stays false). PART 1 destructive_conversions: the single shared basctl QueryDel() funnel -- through which every Basic-IDE macro/dialog/library/module delete-or-overwrite confirmation flows -- is converted off its raw VclMessageType::Question / VclButtonsType::YesNo box onto the shared sfx2::ConfirmDestructiveAction helper, with the destructive verb passed PER CALLER ('Overwrite' for QueryReplaceMacro, 'Delete' for the four deletions) and each RID_STR_QUERYDEL* primary wording preserved (including the QueryDelLibRef 'reference to' distinction). The migration is registered HERE, not in dialog-anatomy-policy.json, so it does not consume WIN-DLG-001's migration budget. PART 2 security_prompt: the macro-EXECUTION prompt (uui macrowarnmedium.ui + secmacrowarnings.cxx) is pinned read-only so the SAFE action 'Disable Macros' (cancel, RET_CANCEL) stays both the GTK default (has-default) and the initially-focused control (mxDisableBtn->grab_focus()), while 'Enable Macros' (ok, RET_OK) is never wired as default or focus -- so an accidental Enter can never run untrusted macros. PART 3 modal_surface_ledger: a read-only subset assertion that every row-owned macro/organizer/security dialog root stays policy=native-exclusion in the shared dialog-notification-policy.csv (fails closed on any drop or reclassification to a bottom-right notification form). The ledger adds no .ui and therefore triggers no CSV regeneration. The macro-security-LEVEL / certificate / signature dialogs (WIN-SYS-007) and the custom-drawn Basic IDE code editor are deliberately out of scope.",
+  "policy_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "helper_header": "include/sfx2/destructiveconfirmation.hxx",
+  "shared_helper": {
+    "file": "include/sfx2/destructiveconfirmation.hxx",
+    "markers": [
+      {
+        "pattern": "struct DestructiveConfirmation",
+        "note": "the shared parameter struct exists"
+      },
+      {
+        "pattern": "SFX2_DLLPUBLIC bool ConfirmDestructiveAction(weld::Widget* pParent",
+        "note": "the exported helper entry point basctl links against (SFX2_DLLPUBLIC, weld parent)"
+      },
+      {
+        "pattern": "OUString sDestructiveLabel;",
+        "note": "the per-caller verb-named destructive label field"
+      },
+      {
+        "pattern": "OUString sSecondaryText;",
+        "note": "the consequence (secondary) text field"
+      }
+    ]
+  },
+  "destructive_conversions": {
+    "funnel_file": "basctl/source/basicide/bastypes.cxx",
+    "strings_file": "basctl/inc/strings.hrc",
+    "present_markers": [
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "#include <sfx2/destructiveconfirmation.hxx>",
+        "note": "the shared helper header is included"
+      },
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "sfx2::DestructiveConfirmation aConfirm;",
+        "note": "QueryDel builds the shared destructive-confirmation params"
+      },
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "aConfirm.sSecondaryText = IDEResId( RID_STR_QUERYDELCONSEQUENCE );",
+        "note": "the shared consequence line is wired as the secondary text"
+      },
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "aConfirm.sDestructiveLabel = rVerb;",
+        "note": "the destructive button label is the per-caller verb parameter, not hard-coded"
+      },
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "return sfx2::ConfirmDestructiveAction(pParent, aConfirm);",
+        "note": "QueryDel dispatches through the shared helper"
+      }
+    ],
+    "absent_markers": [
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "VclButtonsType::YesNo",
+        "note": "the raw Yes/No destructive box (Yes=Enter-answerable destructive) is gone"
+      },
+      {
+        "file": "basctl/source/basicide/bastypes.cxx",
+        "pattern": "VclMessageType::Question, VclButtonsType::YesNo",
+        "note": "the raw Question/YesNo QueryDel box is gone"
+      }
+    ],
+    "call_sites": [
+      {
+        "id": "QueryDelMacro",
+        "verb": "Delete",
+        "pattern": "QueryDel( rName, IDEResId( RID_STR_QUERYDELMACRO ), IDEResId( RID_STR_QUERYDELBTN ), pParent )"
+      },
+      {
+        "id": "QueryReplaceMacro",
+        "verb": "Overwrite",
+        "pattern": "QueryDel( rName, IDEResId( RID_STR_QUERYREPLACEMACRO ), IDEResId( RID_STR_QUERYREPLACEBTN ), pParent )"
+      },
+      {
+        "id": "QueryDelDialog",
+        "verb": "Delete",
+        "pattern": "QueryDel( rName, IDEResId( RID_STR_QUERYDELDIALOG ), IDEResId( RID_STR_QUERYDELBTN ), pParent )"
+      },
+      {
+        "id": "QueryDelLib",
+        "verb": "Delete",
+        "pattern": "QueryDel( rName, IDEResId( bRef ? RID_STR_QUERYDELLIBREF : RID_STR_QUERYDELLIB ), IDEResId( RID_STR_QUERYDELBTN ), pParent )"
+      },
+      {
+        "id": "QueryDelModule",
+        "verb": "Delete",
+        "pattern": "QueryDel( rName, IDEResId( RID_STR_QUERYDELMODULE ), IDEResId( RID_STR_QUERYDELBTN ), pParent )"
+      }
+    ],
+    "verb_labels": {
+      "Delete": "RID_STR_QUERYDELBTN",
+      "Overwrite": "RID_STR_QUERYREPLACEBTN"
+    },
+    "preserved_strings": [
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELMACRO\", \"Do you want to delete the macro XX?",
+        "note": "delete-macro primary wording preserved"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYREPLACEMACRO\", \"Do you want to overwrite the XX macro?",
+        "note": "overwrite primary wording preserved"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELDIALOG\", \"Do you want to delete the XX dialog?",
+        "note": "delete-dialog primary wording preserved"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELLIB\", \"Do you want to delete the XX library?",
+        "note": "delete-library primary wording preserved"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELLIBREF\", \"Do you want to delete the reference to the XX library?",
+        "note": "the library-REFERENCE distinction is preserved (must not collapse into plain delete-library)"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELMODULE\", \"Do you want to delete the XX module?",
+        "note": "delete-module primary wording preserved"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELBTN\", \"Delete\"",
+        "note": "the Delete verb label"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYREPLACEBTN\", \"Overwrite\"",
+        "note": "the Overwrite verb label"
+      },
+      {
+        "file": "basctl/inc/strings.hrc",
+        "pattern": "RID_STR_QUERYDELCONSEQUENCE\", \"This action cannot be undone.\"",
+        "note": "the shared consequence line"
+      }
+    ]
+  },
+  "security_prompt": {
+    "ui_file": "uui/uiconfig/ui/macrowarnmedium.ui",
+    "object_id": "MacroWarnMedium",
+    "widget_class": "GtkMessageDialog",
+    "source_file": "uui/source/secmacrowarnings.cxx",
+    "footer": [
+      {
+        "response": "-6",
+        "widget": "cancel"
+      },
+      {
+        "response": "-11",
+        "widget": "help"
+      }
+    ],
+    "safe_button": {
+      "id": "cancel",
+      "response": "RET_CANCEL",
+      "has_default": true,
+      "note": "'Disable Macros' -- the safe action, the GTK default"
+    },
+    "unsafe_button": {
+      "id": "ok",
+      "response": "RET_OK",
+      "has_default": false,
+      "note": "'Enable Macros' -- must never carry has-default"
+    },
+    "source_present_markers": [
+      {
+        "pattern": "mxEnableBtn(m_xBuilder->weld_button(u\"ok\"_ustr))",
+        "note": "'ok' is the Enable (unsafe) button"
+      },
+      {
+        "pattern": "mxDisableBtn(m_xBuilder->weld_button(u\"cancel\"_ustr))",
+        "note": "'cancel' is the Disable (safe) button"
+      },
+      {
+        "pattern": "mxDisableBtn->grab_focus()",
+        "note": "the safe Disable button takes the initial focus"
+      },
+      {
+        "pattern": "m_xDialog->response(RET_CANCEL)",
+        "note": "Disable resolves to RET_CANCEL"
+      },
+      {
+        "pattern": "m_xDialog->response(RET_OK)",
+        "note": "Enable resolves to RET_OK"
+      }
+    ],
+    "source_absent_markers": [
+      {
+        "pattern": "mxEnableBtn->grab_focus()",
+        "note": "the unsafe Enable button must never grab the initial focus"
+      }
+    ]
+  },
+  "modal_surface_ledger": {
+    "policy": "native-exclusion",
+    "note": "Read-only subset assertion over the shared dialog-notification-policy.csv. Every row-owned macro-manager / organizer / IDE / security dialog root must stay native-exclusion (kept modal by the NotificationRouter); a drop or a flip to a bottom-right notification form fails closed. This adds no .ui and does not regenerate the CSV.",
+    "csv_fields": [
+      "ui_path",
+      "object_id",
+      "widget_class",
+      "policy",
+      "notification_profile",
+      "exclusion_reason"
+    ],
+    "roots": [
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/basicmacrodialog.ui",
+        "object_id": "BasicMacroDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/colorscheme.ui",
+        "object_id": "ColorSchemeDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/defaultlanguage.ui",
+        "object_id": "DefaultLanguageDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/deletelangdialog.ui",
+        "object_id": "DeleteLangDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/exportdialog.ui",
+        "object_id": "ExportDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/gotolinedialog.ui",
+        "object_id": "GotoLineDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/importlibdialog.ui",
+        "object_id": "ImportLibDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/managebreakpoints.ui",
+        "object_id": "ManageBreakpointsDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/managelanguages.ui",
+        "object_id": "ManageLanguagesDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/newlibdialog.ui",
+        "object_id": "NewLibDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "basctl/uiconfig/basicide/ui/organizedialog.ui",
+        "object_id": "OrganizeDialog",
+        "group": "basctl-ide"
+      },
+      {
+        "ui_path": "cui/uiconfig/ui/macroassigndialog.ui",
+        "object_id": "MacroAssignDialog",
+        "group": "cui-macro"
+      },
+      {
+        "ui_path": "cui/uiconfig/ui/macromanagerdialog.ui",
+        "object_id": "MacroManagerDialog",
+        "group": "cui-macro"
+      },
+      {
+        "ui_path": "cui/uiconfig/ui/macroselectordialog.ui",
+        "object_id": "MacroSelectorDialog",
+        "group": "cui-macro"
+      },
+      {
+        "ui_path": "cui/uiconfig/ui/scriptorganizer.ui",
+        "object_id": "ScriptOrganizerDialog",
+        "group": "cui-macro"
+      },
+      {
+        "ui_path": "uui/uiconfig/ui/macrowarnmedium.ui",
+        "object_id": "MacroWarnMedium",
+        "group": "uui-security"
+      }
+    ]
+  }
+}

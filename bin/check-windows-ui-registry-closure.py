@@ -93,6 +93,26 @@ OVERRIDES: Mapping[str, str] = {
     "svx/uiconfig/ui/findreplacedialog.ui": "WIN-DLG-005",
     "vcl/uiconfig/ui/printdialog.ui": "WIN-DLG-004",
     "vcl/uiconfig/ui/aboutbox.ui": "WIN-SYS-015",
+    # WIN-SYS-015 Help/About & legacy/optional-feature dialogs (cui). The About and
+    # Tip-of-the-Day surfaces are anatomy-pinned by bin/check-help-about-family.py; the
+    # hyperlink/thesaurus/hyphenate/hangul-hanja/expert-config surfaces are owner-level
+    # attribution only (per-surface anatomy deferred). cui has no module prefix rule, so
+    # these must be enumerated explicitly to move them out of the unassigned bucket.
+    "cui/uiconfig/ui/aboutdialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/tipofthedaydialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/aboutconfigdialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinkdlg.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinkdocpage.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinkinternetpage.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinkmailpage.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinknewdocpage.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyperlinkmarkdialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hyphenate.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/thesaurus.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hangulhanjaconversiondialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hangulhanjaadddialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hangulhanjaeditdictdialog.ui": "WIN-SYS-015",
+    "cui/uiconfig/ui/hangulhanjaoptdialog.ui": "WIN-SYS-015",
     "desktop/uiconfig/ui/updatedialog.ui": "WIN-SYS-012",
     "desktop/uiconfig/ui/updateinstalldialog.ui": "WIN-SYS-012",
     "desktop/uiconfig/ui/updaterequireddialog.ui": "WIN-SYS-012",

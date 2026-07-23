@@ -46,6 +46,7 @@
 
 #include <svtools/restartdialog.hxx>
 
+#include <sfx2/destructiveconfirmation.hxx>
 #include <sfx2/filedlghelper.hxx>
 #include <sfx2/sfxdlg.hxx>
 #include <sfx2/RegexSearchController.hxx>
@@ -367,16 +368,17 @@ bool ExtMgrDialog::removeExtensionWarn(std::u16string_view rExtensionName)
 {
     const SolarMutexGuard guard;
     incBusy();
-    std::unique_ptr<weld::MessageDialog> xInfoBox(Application::CreateMessageDialog(m_xDialog.get(),
-                                                  VclMessageType::Warning, VclButtonsType::OkCancel,
-                                                  DpResId(RID_STR_WARNING_REMOVE_EXTENSION)));
 
-    OUString sText(xInfoBox->get_primary_text());
+    // Removing an installed extension is irreversible: route through the shared Material
+    // destructive-confirmation helper so the safe (Cancel) action is the keyboard default.
+    OUString sText(DpResId(RID_STR_WARNING_REMOVE_EXTENSION));
     sText = sText.replaceAll("%NAME", rExtensionName);
-    xInfoBox->set_primary_text(sText);
+    sfx2::DestructiveConfirmation aConfirm;
+    aConfirm.sPrimaryText = sText;
+    aConfirm.sDestructiveLabel = DpResId(RID_CTX_ITEM_REMOVE);
 
-    bool bRet = RET_OK == xInfoBox->run();
-    xInfoBox.reset();
+    bool bRet = sfx2::ConfirmDestructiveAction(m_xDialog.get(), aConfirm);
+
     decBusy();
 
     return bRet;

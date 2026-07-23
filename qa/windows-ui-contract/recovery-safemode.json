@@ -1,0 +1,243 @@
+{
+  "_comment": [
+    "WIN-SYS-009 -- safe mode, crash recovery and profile recovery.",
+    "Composition-PINNING contract (calc-chrome style) over the seven real upstream",
+    "recovery / Safe-Mode surfaces and their two weld consumers. These are weld",
+    "GtkDialogs whose Material look is produced entirely by shared vcl parts already",
+    "declared in definition.xml (windowbackground/BackgroundDialog, pushbutton",
+    "Entire+Focus, checkbox, radiobutton, progress TrackHorzArea+Entire, frame/Border)",
+    "rendered behind VCL_FILE_WIDGET_THEME -- there is no recovery-specific draw code",
+    "to add. The honest, build-free M-scope is therefore to PIN the .ui composition so",
+    "the row's core constraint (these safeguards must remain INTACT, never removed or",
+    "rerouted) is enforced fail-closed, to PIN the two weld consumers so the source",
+    "keeps binding the preserved widgets, to GROUND the treatment in the named native",
+    "parts (resolvable in both the light and dark palettes), and to RECONCILE (read",
+    "only) the seven KeepModal policy rows plus the shared no-nag retained safeguards.",
+    "",
+    "It is source evidence only: runtime_verified is false throughout -- no native",
+    "build, dialog pixels, or runtime interaction are claimed. The Material dialog",
+    "anatomy (16px sheet, scrim, title row, destructive @error-container emphasis on",
+    "Discard All) and the Discard-All -> sfx2::ConfirmDestructiveAction conversion are",
+    "build-dependent behavioural changes carved out below with status 'specified'; the",
+    "safe-default invariant is already satisfied build-free by the existing has-default",
+    "on the safe action.",
+    "",
+    "Cross-references are read-only: qa/windows-ui-contract/dialog-notification-policy.csv",
+    "is owned/validated by check-windows-dialog-notification-contract.py and the no-nag",
+    "retained-safeguard markers by check-windows-no-nag-contract.py; this contract never",
+    "mutates either, it only asserts the seven recovery rows stay native-exclusion and",
+    "the three recovery safeguards survive."
+  ],
+  "schema_version": 1,
+  "contract": "material-recovery-safemode-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "policy_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.6 recovery/crash/Safe Mode), docs/design/07-feedback.md (7.1 recovery progress)",
+  "dialogs": [
+    {
+      "id": "docrecoveryrecoverdialog",
+      "ui_file": "svx/uiconfig/ui/docrecoveryrecoverdialog.ui",
+      "dialog_id": "DocRecoveryRecoverDialog",
+      "widget_class": "GtkDialog",
+      "action_widgets": [
+        { "response": "-6", "id": "cancel" },
+        { "response": "101", "id": "next" }
+      ],
+      "required_widgets": [
+        { "id": "next", "class": "GtkButton" },
+        { "id": "cancel", "class": "GtkButton" },
+        { "id": "desc", "class": "GtkLabel" },
+        { "id": "filelist", "class": "GtkTreeView" },
+        { "id": "progress", "class": "GtkProgressBar" }
+      ],
+      "safe_default": {
+        "default_action": "next",
+        "forbidden_default_actions": ["cancel"],
+        "reason": "Recover Selected (response 101) must stay the Enter default; Discard All (response -6) must never become the default."
+      }
+    },
+    {
+      "id": "docrecoverysavedialog",
+      "ui_file": "svx/uiconfig/ui/docrecoverysavedialog.ui",
+      "dialog_id": "DocRecoverySaveDialog",
+      "widget_class": "GtkDialog",
+      "action_widgets": [
+        { "response": "-5", "id": "ok" }
+      ],
+      "required_widgets": [
+        { "id": "ok", "class": "GtkButton", "properties": { "has-default": "True" } },
+        { "id": "filelist", "class": "GtkTreeView" }
+      ]
+    },
+    {
+      "id": "docrecoverybrokendialog",
+      "ui_file": "svx/uiconfig/ui/docrecoverybrokendialog.ui",
+      "dialog_id": "DocRecoveryBrokenDialog",
+      "widget_class": "GtkDialog",
+      "action_widgets": [
+        { "response": "-5", "id": "ok" },
+        { "response": "-6", "id": "cancel" }
+      ],
+      "required_widgets": [
+        { "id": "ok", "class": "GtkButton", "properties": { "has-default": "True" } },
+        { "id": "cancel", "class": "GtkButton", "absent_or_false": ["has-default"] },
+        { "id": "filelist", "class": "GtkTreeView" },
+        { "id": "savedir", "class": "GtkEntry" },
+        { "id": "change", "class": "GtkButton" }
+      ]
+    },
+    {
+      "id": "docrecoveryprogressdialog",
+      "ui_file": "svx/uiconfig/ui/docrecoveryprogressdialog.ui",
+      "dialog_id": "DocRecoveryProgressDialog",
+      "widget_class": "GtkDialog",
+      "required_widgets": [
+        { "id": "progress", "class": "GtkProgressBar" }
+      ]
+    },
+    {
+      "id": "crashreportdlg",
+      "ui_file": "svx/uiconfig/ui/crashreportdlg.ui",
+      "dialog_id": "CrashReportDialog",
+      "widget_class": "GtkDialog",
+      "required_widgets": [
+        { "id": "btn_send", "class": "GtkButton", "properties": { "has-default": "True" } },
+        { "id": "btn_cancel", "class": "GtkButton" },
+        { "id": "btn_close", "class": "GtkButton" },
+        { "id": "check_safemode", "class": "GtkCheckButton" },
+        { "id": "linkbutton", "class": "GtkLinkButton" },
+        { "id": "btnPrivacyPolicy", "class": "GtkLinkButton" }
+      ]
+    },
+    {
+      "id": "safemodedialog",
+      "ui_file": "svx/uiconfig/ui/safemodedialog.ui",
+      "dialog_id": "SafeModeDialog",
+      "widget_class": "GtkDialog",
+      "action_widgets": [
+        { "response": "-11", "id": "help" }
+      ],
+      "required_widgets": [
+        { "id": "help", "class": "GtkButton" },
+        { "id": "btn_continue", "class": "GtkButton", "properties": { "has-default": "True" } },
+        { "id": "btn_restart", "class": "GtkButton" },
+        { "id": "btn_apply", "class": "GtkButton" },
+        { "id": "btn_create_zip", "class": "GtkButton" },
+        { "id": "radio_restore", "class": "GtkRadioButton", "properties": { "active": "True" } },
+        { "id": "radio_configure", "class": "GtkRadioButton" },
+        { "id": "radio_extensions", "class": "GtkRadioButton" },
+        { "id": "radio_reset", "class": "GtkRadioButton" },
+        { "id": "check_profilesafe_config", "class": "GtkCheckButton" },
+        { "id": "check_profilesafe_extensions", "class": "GtkCheckButton" },
+        { "id": "check_disable_all_extensions", "class": "GtkCheckButton" },
+        { "id": "check_disable_hw_acceleration", "class": "GtkCheckButton" },
+        { "id": "check_deinstall_user_extensions", "class": "GtkCheckButton" },
+        { "id": "check_reset_shared_extensions", "class": "GtkCheckButton" },
+        { "id": "check_reset_bundled_extensions", "class": "GtkCheckButton" },
+        { "id": "check_reset_customizations", "class": "GtkCheckButton" },
+        { "id": "check_reset_whole_userprofile", "class": "GtkCheckButton" },
+        { "id": "linkbutton_bugs", "class": "GtkLinkButton" },
+        { "id": "linkbutton_profile", "class": "GtkLinkButton" }
+      ]
+    },
+    {
+      "id": "safemodequerydialog",
+      "ui_file": "sfx2/uiconfig/ui/safemodequerydialog.ui",
+      "dialog_id": "SafeModeQueryDialog",
+      "widget_class": "GtkMessageDialog",
+      "action_widgets": [
+        { "response": "-6", "id": "cancel" },
+        { "response": "-5", "id": "ok" }
+      ],
+      "required_widgets": [
+        { "id": "cancel", "class": "GtkButton" },
+        { "id": "ok", "class": "GtkButton" }
+      ],
+      "safe_default": {
+        "default_action": "cancel",
+        "forbidden_default_actions": ["ok"],
+        "reason": "Cancel (response -6) must stay the Enter default; Restart (response -5) must never become the default."
+      }
+    }
+  ],
+  "weld_bindings": [
+    {
+      "file": "svx/source/dialog/docrecovery.cxx",
+      "note": "u\"id\"_ustr wrapper tolerated by the checker's optional-u/_ustr matcher.",
+      "bindings": [
+        { "method": "weld_button", "widget": "next" },
+        { "method": "weld_button", "widget": "cancel" },
+        { "method": "weld_label", "widget": "desc" },
+        { "method": "weld_progress_bar", "widget": "progress" },
+        { "method": "weld_tree_view", "widget": "filelist" },
+        { "method": "weld_button", "widget": "ok" },
+        { "method": "weld_entry", "widget": "savedir" },
+        { "method": "weld_button", "widget": "change" }
+      ]
+    },
+    {
+      "file": "svx/source/dialog/SafeModeDialog.cxx",
+      "bindings": [
+        { "method": "weld_button", "widget": "btn_continue" },
+        { "method": "weld_button", "widget": "btn_restart" },
+        { "method": "weld_button", "widget": "btn_apply" },
+        { "method": "weld_radio_button", "widget": "radio_restore" },
+        { "method": "weld_radio_button", "widget": "radio_configure" },
+        { "method": "weld_radio_button", "widget": "radio_extensions" },
+        { "method": "weld_radio_button", "widget": "radio_reset" },
+        { "method": "weld_check_button", "widget": "check_profilesafe_config" },
+        { "method": "weld_check_button", "widget": "check_disable_all_extensions" },
+        { "method": "weld_check_button", "widget": "check_reset_whole_userprofile" },
+        { "method": "weld_link_button", "widget": "linkbutton_bugs" },
+        { "method": "weld_link_button", "widget": "linkbutton_profile" }
+      ]
+    }
+  ],
+  "grounding_parts": {
+    "control_parts": [
+      { "control": "windowbackground", "part": "BackgroundDialog" },
+      { "control": "pushbutton", "part": "Entire" },
+      { "control": "pushbutton", "part": "Focus" },
+      { "control": "radiobutton", "part": "Entire" },
+      { "control": "checkbox", "part": "Entire" },
+      { "control": "progress", "part": "TrackHorzArea" },
+      { "control": "progress", "part": "Entire" },
+      { "control": "frame", "part": "Border" }
+    ],
+    "palette_roles": [
+      "surface-container",
+      "on-surface",
+      "outline-variant",
+      "primary",
+      "error-container"
+    ]
+  },
+  "policy_crosscheck": [
+    { "ui_file": "svx/uiconfig/ui/docrecoveryrecoverdialog.ui", "dialog_id": "DocRecoveryRecoverDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "svx/uiconfig/ui/docrecoverysavedialog.ui", "dialog_id": "DocRecoverySaveDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "svx/uiconfig/ui/docrecoverybrokendialog.ui", "dialog_id": "DocRecoveryBrokenDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "svx/uiconfig/ui/docrecoveryprogressdialog.ui", "dialog_id": "DocRecoveryProgressDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "svx/uiconfig/ui/crashreportdlg.ui", "dialog_id": "CrashReportDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "svx/uiconfig/ui/safemodedialog.ui", "dialog_id": "SafeModeDialog", "expected_policy": "native-exclusion" },
+    { "ui_file": "sfx2/uiconfig/ui/safemodequerydialog.ui", "dialog_id": "SafeModeQueryDialog", "expected_policy": "native-exclusion" }
+  ],
+  "retained_safeguards": [
+    { "file": "desktop/source/app/app.cxx", "marker": "handleSafeMode();", "note": "explicit Safe Mode must remain actionable" },
+    { "file": "desktop/source/app/app.cxx", "marker": "vnd.sun.star.autorecovery:/doAutoRecovery", "note": "document recovery command must remain intact" },
+    { "file": "desktop/source/app/app.cxx", "marker": "css::frame::theAutoRecovery::get", "note": "the auto-recovery service must remain intact" }
+  ],
+  "carveouts": {
+    "discard_all_confirmation": {
+      "status": "specified",
+      "note": "Converting DocRecoveryRecoverDialog 'Discard All' (response -6) to sfx2::ConfirmDestructiveAction is a behavioural source change (a second modal on a recovery response button) that needs runtime validation. Deferred. The safe-default invariant is already satisfied build-free by the existing has-default on Recover Selected."
+    },
+    "dialog_material_anatomy": {
+      "status": "specified",
+      "note": "The Material dialog anatomy (16px sheet, scrim, title row, destructive @error-container emphasis on Discard All) and any rerouting to the bottom-right notification stack are build-dependent. Deferred; runtime_verified stays false."
+    }
+  }
+}

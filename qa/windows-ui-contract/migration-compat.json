@@ -1,0 +1,94 @@
+{
+  "_comment": [
+    "WIN-SYS-010 -- migration and profile compatibility.",
+    "Composition-pinning + policy cross-check contract over the real upstream",
+    "migration / profile-compatibility flow. Settings migration is a silent headless",
+    "backend (desktop/source/migration/migration.cxx) with no widget to draw, and the",
+    "retained compatibility dialogs are shared dialogs whose Material treatment already",
+    "comes from the definition.xml parts pinned by other contracts -- so there is no",
+    "VCL_FILE_WIDGET_THEME-guarded new source to add. The honest, build-free M-scope is",
+    "to PIN the flow invariants and their policy classification:",
+    "",
+    "  (A) settings migration stays SILENT -- migrateSettingsIfNecessary -> doMigration ->",
+    "      setMigrationCompleted with the MigrationCompleted idempotency guard, the",
+    "      SAL_DISABLE_USERMIGRATION fake-success escape, and the MIGRATED4 stamp, PAIRED",
+    "      with a forbidden-nag blocklist (no weld/MessageDialog/infobar/UpdateRequiredDialog",
+    "      token may appear in the migration path);",
+    "  (B) the retained compatibility DECISIONS stay modal -- CheckExtensionDependencies /",
+    "      UpdateRequiredDialog gated by LastCompatibilityCheckID, ordered in app.cxx so the",
+    "      compat check gates (precedes) migration, and the three compat dialog roots",
+    "      (migrwarndlg, dependenciesdialog, updaterequireddialog) stay native-exclusion in",
+    "      the shared policy CSV (fail closed if any is rerouted to the notification form);",
+    "  (C) the profile-compat config schema (Setup.xcs) stays stable; and",
+    "  (D) the E-NONAG-LEGACY dependency is a single DELEGATED reference to the WIN-SYS-008",
+    "      no-nag harness -- referenced only (file + one anchor), never re-seeded here.",
+    "",
+    "It is source + policy evidence only: runtime_verified is false throughout. No native",
+    "build, dialog pixels, runtime migration observation, or exact-build legacy-profile",
+    "capture is claimed. Cross-references are read-only: dialog-notification-policy.csv is",
+    "owned by check-windows-dialog-notification-contract.py and the promotional-nag",
+    "assertions by check-windows-no-nag-contract.py; this contract scopes strictly to the",
+    "migration / profile-compat semantics and delegates the rest."
+  ],
+  "schema_version": 1,
+  "contract": "material-migration-compat",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "policy_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "design_reference": "docs/design/08-dialogs.md (8.6 migration & profile-compatibility decisions), docs/design/00-windows-rewrite-contract.md (no-nag boundary)",
+  "migration_invariants": {
+    "file": "desktop/source/migration/migration.cxx",
+    "required_markers": [
+      "Migration::migrateSettingsIfNecessary",
+      "doMigration",
+      "setMigrationCompleted",
+      "\"MigrationCompleted\"",
+      "SAL_DISABLE_USERMIGRATION",
+      "/MIGRATED4"
+    ],
+    "forbidden_markers": [
+      "weld::MessageDialog",
+      "AppendInfoBar",
+      "com.sun.star.deployment.ui.UpdateRequiredDialog",
+      "MessageDialogController",
+      "ScopedVclPtrInstance"
+    ]
+  },
+  "compat_decisions": {
+    "check_file": "desktop/source/app/check_ext_deps.cxx",
+    "check_markers": [
+      "bool Desktop::CheckExtensionDependencies()",
+      "com.sun.star.deployment.ui.UpdateRequiredDialog",
+      "impl_needsCompatCheck",
+      "LastCompatibilityCheckID"
+    ],
+    "ordering": {
+      "file": "desktop/source/app/app.cxx",
+      "first": "CheckExtensionDependencies();",
+      "then": "Migration::migrateSettingsIfNecessary();",
+      "note": "the extension-compatibility check must gate (precede) silent settings migration"
+    },
+    "dialogs": [
+      { "ui_file": "dbaccess/uiconfig/ui/migrwarndlg.ui", "dialog_id": "MigrationWarnDialog", "expected_policy": "native-exclusion" },
+      { "ui_file": "desktop/uiconfig/ui/dependenciesdialog.ui", "dialog_id": "Dependencies", "expected_policy": "native-exclusion" },
+      { "ui_file": "desktop/uiconfig/ui/updaterequireddialog.ui", "dialog_id": "UpdateRequiredDialog", "expected_policy": "native-exclusion" }
+    ]
+  },
+  "config_schema": {
+    "file": "officecfg/registry/schema/org/openoffice/Setup.xcs",
+    "markers": [
+      "<prop oor:name=\"MigrationCompleted\"",
+      "<prop oor:name=\"LastCompatibilityCheckID\"",
+      "<group oor:name=\"Migration\">",
+      "<set oor:name=\"SupportedVersions\""
+    ]
+  },
+  "legacy_seed_reference": {
+    "note": "E-NONAG-LEGACY dependency. The upgraded-profile no-nag path is seeded and validated by the WIN-SYS-008 harness; this contract asserts only that the referenced file + one anchor exist and NEVER re-seeds or re-validates the harness.",
+    "references": [
+      { "file": "bin/Run-Windows-Headless-Smoke.ps1", "anchor": "ooSetupLastVersion" },
+      { "file": "bin/check-windows-nonag-headless-harness.py", "anchor": "LEGACY_REGISTRY_EXPECTATIONS" }
+    ]
+  }
+}

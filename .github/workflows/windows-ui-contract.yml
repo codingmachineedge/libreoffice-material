@@ -172,3 +172,77 @@ jobs:
 
       - name: Run component gallery coverage mutation regressions
         run: python3 bin/test_component_gallery_coverage.py
+
+      # --- Batch C: system-dialog, catalog, and modality contract pairs ---
+
+      - name: Validate Windows file-flow delegation contract
+        run: python3 bin/check-windows-file-flow-contract.py
+
+      - name: Run Windows file-flow mutation regressions
+        run: python3 bin/test_windows_file_flow_contract.py
+
+      - name: Validate PDF export dialog contract
+        run: python3 bin/check-pdf-export-dialog-contract.py
+
+      - name: Run PDF export dialog mutation regressions
+        run: python3 bin/test_pdf_export_dialog_contract.py
+
+      - name: Validate Document Properties dialog contract
+        run: python3 bin/check-windows-document-properties-contract.py
+
+      - name: Run Document Properties mutation regressions
+        run: python3 bin/test_windows_document_properties_contract.py
+
+      - name: Validate template manager contract
+        run: python3 bin/check-template-manager-contract.py
+
+      - name: Run template manager mutation regressions
+        run: python3 bin/test_template_manager_contract.py
+
+      - name: Validate extension manager contract
+        run: python3 bin/check-extension-manager-contract.py
+
+      - name: Run extension manager mutation regressions
+        run: python3 bin/test_extension_manager_contract.py
+
+      - name: Validate Windows macro surface contract
+        run: python3 bin/check-windows-macro-surface.py
+
+      - name: Run Windows macro surface mutation regressions
+        run: python3 bin/test_windows_macro_surface.py
+
+      - name: Validate Windows security-prompt modality contract
+        run: python3 bin/check-windows-security-prompt-modality.py
+
+      - name: Run security-prompt modality mutation regressions
+        run: python3 bin/test_windows_security_prompt_modality.py
+
+      - name: Validate Windows recovery and Safe Mode contract
+        run: python3 bin/check-windows-recovery-safemode-contract.py
+
+      - name: Run recovery and Safe Mode mutation regressions
+        run: python3 bin/test_windows_recovery_safemode_contract.py
+
+      - name: Validate Material migration compatibility contract
+        run: python3 bin/check-material-migration-compat-contract.py
+
+      - name: Run migration compatibility mutation regressions
+        run: python3 bin/test_material_migration_compat_contract.py
+
+      - name: Validate uui interaction modality contract
+        run: python3 bin/check-uui-interaction-contract.py
+
+      - name: Run uui interaction mutation regressions
+        run: python3 bin/test_uui_interaction_contract.py
+
+      - name: Validate Help/About family contract
+        run: python3 bin/check-help-about-family.py
+
+      - name: Run Help/About family mutation regressions
+        run: python3 bin/test_help_about_family.py
+
+      - name: Validate Features command catalog coverage
+        run: python3 bin/check-features-command-catalog.py
+
+      - name: Run Features command catalog mutation regressions
+        run: python3 bin/test_features_command_catalog.py

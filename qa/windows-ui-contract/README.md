@@ -706,3 +706,256 @@ overlay presentation: until the floating overlay compositor lands, the docked
 controller only degrades safely by not force-widening a compact canvas, and the
 pixel float-over presentation remains future work. `runtime_verified` is not
 claimed; no native build, deck pixels, or runtime interaction are asserted.
+
+## Wave-2 Batch C system-dialog, catalog, and modality contracts
+
+Wave-2 Batch C (2026-07-22) adds twelve fail-closed source contracts covering
+the whole-application system-dialog flows (WIN-SYS-001…-011, -015) and the
+Features command catalog (WIN-CONCEPT-001). Each is source evidence only:
+markers are checked in comment-stripped code, `.ui`/`definition.xml` structure
+is parsed with ElementTree, every registry that carries a `runtime_verified`
+field keeps it `false` (the checker rejects `true`), every carve-out keeps
+`status: specified` (mutation-tested to fail if promoted), and none claims a
+native build, pixels, or runtime interaction. Three real destructive
+confirmations were migrated onto `sfx2::ConfirmDestructiveAction` and registered
+in `dialog-anatomy-policy.json` (Save-As-Template overwrite, delete template
+category, remove extension) — taking that shared registry to its 8-migration
+cap — and a fourth (the shared basctl `QueryDel` funnel, five callers) was
+converted and registered in `macro-surface.json` because the anatomy registry is
+full. Those C++ conversions are compile-plausibility-checked against link
+dependencies and includes, **not** compiled — a real compile happens only on the
+Windows CI leg. Validate the whole cohort:
+
+```sh
+python bin/check-windows-file-flow-contract.py
+python bin/test_windows_file_flow_contract.py
+python bin/check-pdf-export-dialog-contract.py
+python bin/test_pdf_export_dialog_contract.py
+python bin/check-windows-document-properties-contract.py
+python bin/test_windows_document_properties_contract.py
+python bin/check-template-manager-contract.py
+python bin/test_template_manager_contract.py
+python bin/check-extension-manager-contract.py
+python bin/test_extension_manager_contract.py
+python bin/check-windows-macro-surface.py
+python bin/test_windows_macro_surface.py
+python bin/check-windows-security-prompt-modality.py
+python bin/test_windows_security_prompt_modality.py
+python bin/check-windows-recovery-safemode-contract.py
+python bin/test_windows_recovery_safemode_contract.py
+python bin/check-material-migration-compat-contract.py
+python bin/test_material_migration_compat_contract.py
+python bin/check-uui-interaction-contract.py
+python bin/test_uui_interaction_contract.py
+python bin/check-help-about-family.py
+python bin/test_help_about_family.py
+python bin/check-features-command-catalog.py
+python bin/test_features_command_catalog.py
+```
+
+### File open/save flows (WIN-SYS-001)
+
+`file-flow-policy.json` (contract `material-windows-file-flow-delegation`) is a
+notification-producer + platform-delegation hybrid. `check-windows-file-flow-contract.py`
+pins, fail-closed against comment-stripped source: the Windows `IFileDialog`
+delegation boundary in `fpicker/source/win32/VistaFilePickerImpl.cxx`
+(`FOS_FILEMUSTEXIST | FOS_OVERWRITEPROMPT`, the open/save `TDialogImpl<…>`
+templates, and the `QueryInterface<IFileDialogCustomize>()` seam); the
+`SystemFilePicker` → `"com.sun.star.ui.dialogs.OfficeFilePicker"` selection seam
+in `sfx2/source/dialog/filedlghelper.cxx`; and the three no-`.ui` call-site
+message boxes with their resid and whole-token-bound `VclMessageType`/
+`VclButtonsType` (losing-scripting-signature Question/YesNo = decision, GPG
+encrypt failure Warning/Ok = security, password-length Warning/Ok = credential).
+Every box is asserted `modal: true` and `routes_to_notification: false`. A
+read-only `cross_references` block re-checks that the querysavedialog/sfx2
+password/remotefiles rows stay native-exclusion in `dialog-notification-policy.csv`
+without re-registering them. It shares `filedlghelper.cxx`/`VistaFilePickerImpl.cxx`
+with WIN-DLG-003 but pins only the delegation/seam/message-box literals, never the
+Save-As sheet-drawing lines. 27 mutation tests; `runtime_verified: false`.
+
+### PDF export tabbed dialog (WIN-SYS-002)
+
+`pdf-export-dialog.json` (contract `material-pdf-export-dialog-composition`) is a
+calc-chrome-style XML + source composition pin. `check-pdf-export-dialog-contract.py`
+resolves the native `definition.xml` parts the tabbed dialog composes (the
+8-state `tabitem`/Entire corner-pill, `tabheader`/`tabpane`/`tabbody`,
+`windowbackground`/BackgroundDialog, `frame`/Border, the tab metrics, and 8
+palette roles in both light and dark); the `pdfoptionsdialog.ui` `GtkNotebook`
+`tabcontrol` (`tab-pos=left`) plus footer `ok`/`cancel`/`help` with a
+has-default Export; and the `impdialog.cxx` ordered `AddTabPage` sequence
+(general → initialview → userinterface → links → security → digitalsignatures,
+checked by ascending source position), `SetCurPageId('general')`, each tab's
+`Create` factory bound to its own `AddTabPage` call site, and each `SfxTabPage`
+`.ui`/root-id binding. A `modal_exclusions` block cross-checks that the CSV
+`PdfOptionsDialog` and `WarnPDFDialog` rows stay native-exclusion. Carve-outs
+`tab_rail_geometry`, `security_field_anatomy`, and `non_pdf_export` keep
+`status: specified`. 29 mutation tests; `runtime_verified: false`.
+
+### Document Properties (WIN-SYS-003)
+
+`document-properties.json` (contract `material-document-properties-composition`)
+pins the `SfxDocumentInfoDialog` notebook composition (framed as the
+dialog-notebook variant, distinct from the calc-strip tabitem pin).
+`check-windows-document-properties-contract.py` resolves the `definition.xml`
+native parts (8-state tabitem, tab style block and `noActiveTabTextRaise`/
+`centeredTabs` settings, footer pushbutton, metrics, and 12 palette roles in
+light and dark); the `documentpropertiesdialog.ui` modal notebook
+(`tab-pos=left`, `group-name=icons`) and footer action-widgets (reset/ok/cancel/
+help with help secondary); the ordered `dinfdlg.cxx` `AddTabPage` set with the
+`RID_L` 32px icon-rail identity and each of the six `SfxTabPage` `.ui` roots
+(cmisprops/security optional). The `STR_SFX_QUERY_WRONG_TYPE` wrong-type query is
+recorded as an explicit non-destructive carve-out (`status: specified`, never
+promoted). 34 mutation tests; `runtime_verified: false`.
+
+### Template manager & save-as-template (WIN-SYS-004)
+
+`template-manager.json` (contract `material-template-manager-composition`) pins
+the three template dialog roots (`TemplateDialog`, `SaveAsTemplateDialog`,
+`TemplatesCategoryDialog`): `.ui` action-widget footer order and response codes,
+has-default primary, required-widget set, the OK labels set at runtime from the
+`.cxx` (`STR_NEW_FROM_TEMPLATE`/`STR_SAVEDOC`, not the `.ui`), the
+`definition.xml` windowbackground/pushbutton/checkbox/combobox/frame/listbox
+parts, and the shared `RegexSearchController` search adjacency pinned (not
+re-added). Two of the row's three `ConfirmDestructiveAction` conversions — the
+Save-As-Template overwrite (`sfx2/source/doc/saveastemplatedlg.cxx`) and the
+delete-template-category (`sfx2/source/doc/templatedlg.cxx`) — are validated by
+the shared `check-material-dialog-anatomy.py`; this checker only cross-references
+their migration ids so ownership is not doubled. Pixel-geometry/thumbnail-card/
+list-item-Paint carve-outs stay `status: specified`. 29 mutation tests;
+`runtime_verified: false`.
+
+### Extension manager & dependency dialogs (WIN-SYS-005)
+
+`extension-manager.json` (contract `material-extension-manager-composition`) pins
+the nine desktop deployment roots (eight dialogs plus the `extensionmenu`
+`GtkMenu`): footer/button-box label + secondary + has-default, native
+pushbutton/checkbox/editbox/progress/frame/listnode parts, a read-only
+`KeepModal` reconcile of the eight dialog roots against
+`dialog-notification-policy.csv`, and the shared search adjacency. The
+remove-extension `ConfirmDestructiveAction` conversion
+(`desktop/source/deployment/gui/dp_gui_dialog2.cxx`, verb from
+`RID_CTX_ITEM_REMOVE`) is registered in `dialog-anatomy-policy.json` and
+validated by the shared anatomy checker. Pixel/density/RTL carve-outs stay
+`status: specified`. 29 mutation tests; `runtime_verified: false`.
+
+### Macro manager, organizer, IDE & security prompts (WIN-SYS-006)
+
+`macro-surface.json` (contract `windows-macro-surface`) has three parts. Part 1
+registers the shared basctl `QueryDel()` funnel
+(`basctl/source/basicide/bastypes.cxx`) converted off its raw
+`VclMessageType::Question`/`YesNo` box onto `sfx2::ConfirmDestructiveAction`: the
+helper gained a per-caller verb parameter and all five callers now pass a verb
+resource (`RID_STR_QUERYREPLACEBTN` for replace, `RID_STR_QUERYDELBTN` for the
+four deletions), with three new resources in `basctl/inc/strings.hrc`. Because
+`dialog-anatomy-policy.json` is at its 8-migration cap, this conversion is
+registered here, not there. Part 2 pins `macrowarnmedium.ui` + `secmacrowarnings.cxx`
+read-only (cancel/Disable = has-default/RET_CANCEL with `grab_focus`, ok/Enable
+without). Part 3 asserts the 16 macro/organizer/security roots (11 basctl IDE
+dialogs + 4 cui macro/script dialogs + 1 uui macro-execution prompt) stay
+native-exclusion in the CSV. 21 mutation tests; `runtime_verified: false`.
+
+### Certificates, digital signatures & macro-security prompts (WIN-SYS-007)
+
+`security-prompt-modality.json` (contract `windows-security-prompt-modality`)
+locks the modality of the five cert/signature/macro-security roots
+(`DigitalSignaturesDialog`, `MacroSecurityDialog`, `SelectCertificateDialog`,
+`ViewCertDialog`, `CertDialog`). `check-windows-security-prompt-modality.py`
+imports `classify_route`/`read_registry`/`_scan_dialog_signals`/`EXCLUSION_REASONS`
+from `check-windows-dialog-notification-contract.py` (via the py3.9
+`sys.modules`-before-`exec_module` registration, never touching the git-based
+`discover_dialogs` path). Four evidence layers per dialog: CSV native-exclusion +
+matching reason; the live router `classify_route` over the real `.ui` returns
+`KeepModal` with the declared reason; the modal footer action-widget order; and a
+comment-stripped `GenericDialogController` bind + `::run()` reachability + the
+embedded page roots. The four xmlsec roots classify `security` (partly via the
+`xmlsecurity` path substring, recorded in each `classification_note`), and
+`CertDialog` classifies `input`. 21 mutation tests; `runtime_verified: false`.
+
+### Safe mode, crash recovery & profile recovery (WIN-SYS-009)
+
+`recovery-safemode.json` (contract `material-recovery-safemode-composition`) pins
+the seven real `.ui` roots (svx docrecovery recover/save/broken/progress +
+crashreportdlg + safemodedialog, and sfx2 safemodequerydialog): per-dialog
+widget-class, exact `<action-widget>` response + order, required-widget
+existence, and — enforced fail-closed — the SAFE-default invariant, where
+`DocRecoveryRecoverDialog` keeps has-default on `next` (Recover Selected, 101)
+while `cancel` (Discard All, -6) must never carry it, and `SafeModeQueryDialog`
+keeps has-default on `cancel` (-6) while `ok` (_Restart, -5) must not. It also
+pins the SafeMode `radio_restore` active state, the weld bindings in
+`docrecovery.cxx`/`SafeModeDialog.cxx` (via an optional-`u`/`_ustr` tolerant
+regex), the `definition.xml` grounding with 5 palette roles in `''` and `dark`,
+and read-only reconciles the 7 CSV rows plus the 3 retained no-nag safeguards in
+`desktop/source/app/app.cxx`. The Discard-All → `ConfirmDestructiveAction`
+conversion and the Material dialog anatomy are carve-outs at `status: specified`.
+24 mutation tests; `runtime_verified: false`.
+
+### Migration & profile compatibility (WIN-SYS-010)
+
+`migration-compat.json` (contract `material-migration-compat`) pins the
+SILENT-migration positive path in `desktop/source/migration/migration.cxx`
+(`migrateSettingsIfNecessary`/`doMigration`/`setMigrationCompleted`, the
+`MigrationCompleted` idempotency guard, the `SAL_DISABLE_USERMIGRATION` escape,
+the `/MIGRATED4` stamp) **paired** with a forbidden-nag blocklist
+(`weld::MessageDialog`/`AppendInfoBar`/`UpdateRequiredDialog`/
+`MessageDialogController`/`ScopedVclPtrInstance` must be absent from the
+comment-stripped migration path). It also pins the compat markers in
+`check_ext_deps.cxx` and the compat-gates-migration ordering in `app.cxx`
+(`CheckExtensionDependencies();` must precede `Migration::migrateSettingsIfNecessary();`),
+and the `Setup.xcs` schema props. It read-only crosschecks the 3 compat dialog
+rows (migrwarndlg/dependenciesdialog/updaterequireddialog) stay native-exclusion;
+the legacy no-nag seed is a reference-only delegation (existence + one anchor
+each), never re-seeded. 17 mutation tests; `runtime_verified: false`.
+
+### Authentication, conflicts & generic error interaction (WIN-SYS-011)
+
+`uui-interaction-policy.json` (contract `material-uui-interaction-modality`) is a
+three-way modality lock over the `uui` module. `check-uui-interaction-contract.py`
+imports the shared classifier (same py3.9 `sys.modules` registration, never the
+git path), re-runs it live on each of the 10 uui `.ui` roots, asserts
+native-exclusion, and three-way cross-checks the shared CSV; a completeness lock
+requires the registry to cover exactly the uui roots the exhaustive CSV knows.
+The four credential dialogs (Login/Master/Password/SetMaster) are proven to hit
+the credential branch via a `visibility=False` password `GtkEntry`, and the
+password signal must partition the credential set exactly. Modal conflict
+`->run()` sites are pinned (`nameclashdlg.cxx`, `iahndl-errorhandler.cxx`,
+`iahndl-locking.cxx`), plus the `isInformationalErrorMessageRequest` seam
+(`iahndl.cxx`) and the modal `executeErrorDialog` presentation. The
+`routing_carveout.status` is locked to `seam-only-not-wired`. 18 mutation tests;
+`runtime_verified: false`.
+
+### Help/About and legacy/optional-feature dialogs (WIN-SYS-015)
+
+`help-about-family.json` (contract `windows-help-about-family`) pins
+`aboutdialog.ui` (modal `GtkDialog`, single `btnClose` response -7, four
+`GtkLinkButton`: btnCredits/btnWebsite/btnReleaseNotes/lbBuildString) and
+`tipofthedaydialog.ui` (btnNext, btnLink, single btnOk -5) — the Tip modal claim
+is keyed off its CSV native-exclusion row since its `.ui` declares no modal
+property. It cross-checks that About/Tip stay native-exclusion, that the family
+is absent from `dialog-anatomy-policy.json` destructive migrations
+(a `no_destructive_role` guard that fails closed if any About/Tip/hyperlink
+destructive migration is ever added), and that all 16 WIN-SYS-015 UI surfaces are
+override-mapped in `ui-registry.json`. This row also performed the WIN-SYS-016
+registry move: the 15 unassigned `cui` Help/About + legacy surfaces were added to
+the closure checker's `OVERRIDES` table (`bin/check-windows-ui-registry-closure.py`),
+and `ui-registry.json` was regenerated — `unassigned` 449 → 434, `assigned`
+821 → 836, `total_surfaces` 1270 unchanged. 19 mutation tests;
+`runtime_verified: false`.
+
+### Features command catalog (WIN-CONCEPT-001)
+
+`features-command-catalog.json` (contract `windows-features-command-catalog`) is
+a generated, checked-in coverage ledger — an SRC-level artifact, not rendered
+pixels. `check-features-command-catalog.py` binds all 2,433
+`site/prototype-features.json` catalog rows to real `.uno` command nodes across
+the ten officecfg `Office/UI/*Commands.xcu` files. The officecfg parse walks the
+whole `UserInterface` subtree with ElementTree; a dispatch-first resolver (resolve
+the base handler, fall back to the verbatim parameterized node) yields the
+recorded resolution classes — exact-in-module 2366, base-in-module 53,
+base-cross-file 14, **0 unresolved** — and the compound identity
+`command`+U+241F+`name` is unique across all duplicate display names. The ledger
+regenerates byte-deterministically (`--regenerate`), and the normative binding
+rule and the 400-row render cap are documented in the design chapter's
+§12.3 "Source binding (normative)" subsection, which the checker cross-checks.
+This is a data-coverage ledger whose `source_note` disclaims build/pixels/
+dispatch/localization; it carries no `runtime_verified` field, matching the
+sibling component-gallery ledger. 22 mutation tests.

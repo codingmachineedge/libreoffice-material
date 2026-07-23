@@ -570,6 +570,40 @@ empty/no-results pattern. As with Batch A, no build or runtime evidence exists
 for any of it: the `B V I A L P C` inventory gates stay untouched and every row's
 pixel, interaction, and accessibility proof remains pending a native build.
 
+Wave-2 Batch C then landed the twelve staged system-dialog and design-concept
+rows at source level, each locked build-free by a new fail-closed checker plus
+JSON registry plus mutation suite (290 mutation tests total). Eleven are
+Windows system flows: file open/save delegation (WIN-SYS-001 — the Windows
+`IFileDialog`/`FOS_OVERWRITEPROMPT` platform boundary, the
+`SystemFilePicker`→`OfficeFilePicker` selection seam, and three no-`.ui`
+call-site message boxes classified decision/security/credential, all modal and
+none routed); the PDF export tabbed dialog (WIN-SYS-002); the Document
+Properties icon-rail notebook (WIN-SYS-003); template manager and
+save-as-template (WIN-SYS-004); extension manager (WIN-SYS-005); macro
+manager/organizer/security (WIN-SYS-006); certificate/signature/macro-security
+prompts (WIN-SYS-007); recovery/crash/Safe-Mode with a fail-closed SAFE-default
+invariant (WIN-SYS-009); migration/profile-compat with a silent-migration
+positive path paired to a forbidden-nag blocklist (WIN-SYS-010); uui
+authentication/conflict/error interaction (WIN-SYS-011); and the Help/About
+family (WIN-SYS-015). The twelfth is WIN-CONCEPT-001, a deterministically
+regenerable Features command-catalog coverage ledger that binds all 2,433
+prototype rows to real `.uno` command nodes across the ten officecfg command
+XMLs with zero unresolved. Four real destructive confirmations were migrated
+onto the shared `sfx2::ConfirmDestructiveAction` helper: three registered in
+`dialog-anatomy-policy.json` (Save-As-Template overwrite, delete template
+category, remove extension — taking that registry to its 8-migration cap,
+unraised) and one (the shared basctl `QueryDel` funnel, five callers)
+registered in `macro-surface.json` because the anatomy registry is full; all
+four are compile-plausibility-checked, not compiled. The WIN-SYS-015 row also
+moved 15 unassigned cui Help/About surfaces into the WIN-SYS-016 closure
+override table and regenerated the ui-registry ledger (unassigned 449→434,
+assigned 821→836, total 1270 unchanged). As with Batch A and B, no build or
+runtime evidence exists for any of it: every registry carrying a
+`runtime_verified` field keeps it `false`, every carve-out stays
+`status: specified`, and the `B V I A L P C` inventory gates stay untouched —
+the row credits move only `D` (`△`→`✓` where design detail was the gap) and `M`
+(`·`→`△` for the new source contracts).
+
 - start center, window chrome integration, menubar/command surfaces, status bar,
   sidebar shell, notebookbar variants, infobars, snackbars, and notifications;
 - common file, print, export, properties, options, extension, and template flows;

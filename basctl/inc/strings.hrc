@@ -52,6 +52,13 @@
 #define RID_STR_QUERYDELLIB                 NC_("RID_STR_QUERYDELLIB", "Do you want to delete the XX library?")
 #define RID_STR_QUERYDELLIBREF              NC_("RID_STR_QUERYDELLIBREF", "Do you want to delete the reference to the XX library?")
 #define RID_STR_QUERYDELMODULE              NC_("RID_STR_QUERYDELMODULE", "Do you want to delete the XX module?")
+// Verb-named destructive-confirmation button labels and the shared consequence line, used by the
+// Basic IDE organizer delete/overwrite confirmations funnelled through QueryDel(). The verb is
+// passed per caller (never hard-coded): RID_STR_QUERYREPLACEBTN for the overwrite confirmation,
+// RID_STR_QUERYDELBTN for the deletions. See docs/design/08-dialogs.md 8.1 destructive pattern.
+#define RID_STR_QUERYDELBTN                 NC_("RID_STR_QUERYDELBTN", "Delete")
+#define RID_STR_QUERYREPLACEBTN             NC_("RID_STR_QUERYREPLACEBTN", "Overwrite")
+#define RID_STR_QUERYDELCONSEQUENCE         NC_("RID_STR_QUERYDELCONSEQUENCE", "This action cannot be undone.")
 #define RID_STR_BASIC                       NC_("RID_STR_BASIC", "BASIC")
 // Abbreviation for 'line'
 #define RID_STR_LINE                        NC_("RID_STR_LINE", "Ln")

@@ -10,6 +10,7 @@
 #include <comphelper/processfactory.hxx>
 #include <comphelper/string.hxx>
 #include <comphelper/storagehelper.hxx>
+#include <sfx2/destructiveconfirmation.hxx>
 #include <sfx2/sfxresid.hxx>
 #include <sfx2/app.hxx>
 #include <sfx2/fcontnr.hxx>
@@ -62,15 +63,17 @@ SfxSaveAsTemplateDialog::SfxSaveAsTemplateDialog(weld::Window* pParent, uno::Ref
 
 IMPL_LINK_NOARG(SfxSaveAsTemplateDialog, OkClickHdl, weld::Button&, void)
 {
-    std::unique_ptr<weld::MessageDialog> xQueryDlg(Application::CreateMessageDialog(m_xDialog.get(), VclMessageType::Question,
-                VclButtonsType::YesNo, OUString()));
     if(!IsTemplateNameUnique())
     {
+        // Overwriting an existing template is irreversible: route through the shared Material
+        // destructive-confirmation helper so the safe (Cancel) action is the keyboard default.
         OUString sQueryMsg(SfxResId(STR_QMSG_TEMPLATE_OVERWRITE));
         sQueryMsg = sQueryMsg.replaceFirst("$1",msTemplateName);
-        xQueryDlg->set_primary_text(sQueryMsg.replaceFirst("$2", msSelectedCategory));
+        sfx2::DestructiveConfirmation aConfirm;
+        aConfirm.sPrimaryText = sQueryMsg.replaceFirst("$2", msSelectedCategory);
+        aConfirm.sDestructiveLabel = SfxResId(STR_QUERY_OVERWRITE_BTN);
 
-        if (xQueryDlg->run() == RET_NO)
+        if (!sfx2::ConfirmDestructiveAction(m_xDialog.get(), aConfirm))
             return;
     }
 

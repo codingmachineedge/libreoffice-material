@@ -1,0 +1,127 @@
+{
+  "_comment": [
+    "WIN-SYS-001 -- common Open/Save/file flows. This is a composition-PINNING and",
+    "platform-DELEGATION ledger, not a claim of new Material rendering. On Windows the",
+    "Open/Save picker is the OS-owned native IFileDialog created in fpicker/source/win32,",
+    "the OS itself owns the overwrite confirmation via the FOS_OVERWRITEPROMPT flag, and the",
+    "password/version/filter custom controls are added through the OS IFileDialogCustomize",
+    "interface -- all OS-rendered, out of Material scope. The in-suite Material Save As sheet",
+    "is WIN-DLG-003's scope and is NOT touched here.",
+    "",
+    "What this contract pins fail-closed against real (comment-stripped) source is exactly the",
+    "seam invisible to every other contract: (a) the win32 platform-delegation boundary (the",
+    "OS picker + OS overwrite prompt stay OS-owned and are never faked as Material); (b) the",
+    "native-vs-fallback picker-selection seam in filedlghelper.cxx (SystemFilePicker ->",
+    "OfficeFilePicker fallback); and (c) the three C++ call-site message boxes filedlghelper.cxx",
+    "raises during the save flow. Those boxes have NO .ui file, so the .ui-only",
+    "dialog-notification-policy.csv literally cannot see them -- they are classified here under",
+    "the same NotificationRouter taxonomy (decision / security / credential-adjacent) and all",
+    "stay MODAL: none is a pure informational acknowledgement eligible for the bottom-right",
+    "notification stack.",
+    "",
+    "The 'cross_references' block points at the three ALREADY-registered .ui roots",
+    "(querysavedialog / sfx2 password / remotefilesdialog) in dialog-notification-policy.csv by",
+    "locator only, to confirm they keep their native-exclusion (KeepModal) policy. It does NOT",
+    "re-register them: this JSON never appends to that CSV, so the notification/registry-closure",
+    "contracts cannot double-count.",
+    "",
+    "It is source evidence only: runtime_verified is false -- no native build, file-picker pixels,",
+    "or runtime interaction are claimed. Some boxes (GPG, scripting-signature) are behind",
+    "feature/config availability; the checker reads source text, so conditional reachability does",
+    "not affect the static contract."
+  ],
+  "schema_version": 1,
+  "contract": "material-windows-file-flow-delegation",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.3.1 File-flow platform delegation and surrounding message boxes)",
+  "cross_reference_registry": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "allowed_classifications": ["decision", "security", "credential", "input", "acknowledgment"],
+  "platform_delegation": {
+    "file": "fpicker/source/win32/VistaFilePickerImpl.cxx",
+    "anchors": [
+      {
+        "literal": "FOS_FILEMUSTEXIST | FOS_OVERWRITEPROMPT",
+        "note": "The OS IFileDialog owns the overwrite confirmation via its own flag; present for both the open and the save initialisation, so no Material overwrite prompt is drawn."
+      },
+      {
+        "literal": "TDialogImpl<IFileOpenDialog, CLSID_FileOpenDialog>",
+        "note": "The Open picker is the OS COM IFileOpenDialog (CLSID_FileOpenDialog); platform-delegated, out of Material scope."
+      },
+      {
+        "literal": "TDialogImpl<IFileSaveDialog, CLSID_FileSaveDialog>",
+        "note": "The Save picker is the OS COM IFileSaveDialog (CLSID_FileSaveDialog); platform-delegated, out of Material scope."
+      },
+      {
+        "literal": "QueryInterface<IFileDialogCustomize>()",
+        "note": "The password/version/filter/read-only custom controls are added through the OS IFileDialogCustomize interface and are OS-drawn."
+      }
+    ]
+  },
+  "picker_seam": {
+    "file": "sfx2/source/dialog/filedlghelper.cxx",
+    "anchors": [
+      {
+        "literal": "\"com.sun.star.ui.dialogs.OfficeFilePicker\"",
+        "note": "The SystemFilePicker -> OfficeFilePicker fallback boundary: when the native OS picker is unavailable the in-suite OfficeFilePicker (fpicker/source/office, WIN-DLG-003 scope) is selected instead."
+      }
+    ]
+  },
+  "message_boxes": [
+    {
+      "id": "losing-scripting-signature",
+      "file": "sfx2/source/dialog/filedlghelper.cxx",
+      "resid": "SfxResId(RID_SVXSTR_XMLSEC_QUERY_LOSINGSCRIPTINGSIGNATURE)",
+      "message_type": "Question",
+      "buttons": "YesNo",
+      "classification": "decision",
+      "modal": true,
+      "routes_to_notification": false,
+      "note": "Weld Question/YesNo box warning that saving to the chosen format loses the macro/scripting signature. A decision prompt: it must stay modal, never route to the bottom-right stack."
+    },
+    {
+      "id": "gpg-encrypt-failure",
+      "file": "sfx2/source/dialog/filedlghelper.cxx",
+      "resid": "SfxResId(RID_SVXSTR_GPG_ENCRYPT_FAILURE)",
+      "message_type": "Warning",
+      "buttons": "Ok",
+      "classification": "security",
+      "modal": true,
+      "routes_to_notification": false,
+      "note": "Weld Warning/Ok box raised when OpenPGP encryption-key selection fails during a save. A security acknowledgement: kept modal, never routed."
+    },
+    {
+      "id": "password-length",
+      "file": "sfx2/source/dialog/filedlghelper.cxx",
+      "resid": "SfxResId(STR_PASSWORD_LEN)",
+      "secondary_resid": "SfxResId(STR_PASSWORD_WARNING)",
+      "message_type": "Warning",
+      "buttons": "Ok",
+      "classification": "credential",
+      "modal": true,
+      "routes_to_notification": false,
+      "note": "Weld Warning/Ok box (with a secondary STR_PASSWORD_WARNING text) shown when the entered ODF-encryption password length is outside the safe range. A credential-adjacent acknowledgement: kept modal, never routed."
+    }
+  ],
+  "cross_references": [
+    {
+      "ui_path": "sfx2/uiconfig/ui/querysavedialog.ui",
+      "object_id": "QuerySaveDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The 'Save changes before closing?' destructive-save confirmation. Already registered as native-exclusion (KeepModal); pinned read-only, not re-registered."
+    },
+    {
+      "ui_path": "sfx2/uiconfig/ui/password.ui",
+      "object_id": "PasswordDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The document-encryption password entry. Already registered as native-exclusion (KeepModal); pinned read-only, not re-registered."
+    },
+    {
+      "ui_path": "fpicker/uiconfig/ui/remotefilesdialog.ui",
+      "object_id": "RemoteFilesDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The remote-files (WebDAV/CMIS) open/save picker. Already registered as native-exclusion (KeepModal); pinned read-only, not re-registered."
+    }
+  ]
+}

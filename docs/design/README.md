@@ -37,8 +37,8 @@ without treating shared-component compilation as application-surface proof.
 | 04 | [Inputs](04-inputs.md) | Text fields, edits, combos, spin buttons, search + regex builder, Find & Replace fields |
 | 05 | [Navigation](05-navigation.md) | Menubar, menus, tabs, notebookbar, sidebar rail, sheet tabs, title/status bars |
 | 06 | [Containers](06-containers.md) | Lists, trees, tables/grids, frames, scrollbars, cards, panels |
-| 07 | [Feedback](07-feedback.md) | Progress, level indicators, sliders, tooltips, transient confirmations via the notification stack, banners, empty states |
-| 08 | [Dialogs](08-dialogs.md) | Modal anatomy, Options, Save As, Print, Find & Replace, scrim and keyboard rules |
+| 07 | [Feedback](07-feedback.md) | Progress, level indicators, sliders, tooltips, transient confirmations via the notification stack, banners, empty states, error-interaction routing |
+| 08 | [Dialogs](08-dialogs.md) | Modal anatomy, Options, Save As, Print, Find & Replace, scrim and keyboard rules; system-dialog applications (PDF export, Document Properties, Template Manager, extensions, macros & security prompts, certificates, recovery & Safe Mode, migration & profile-compatibility decisions, credentials, Help/About) |
 | 09 | [Start Center](09-start-center.md) | Navigation column, Home, search, document card grid |
 | 10 | [Writer & Calc](10-writer-calc.md) | Page canvas, properties sidebar, formula bar, grid, sheet tabs |
 | 11 | [Impress & Draw](11-impress-draw.md) | Slide panel, canvas, layouts, tool rail, object properties |

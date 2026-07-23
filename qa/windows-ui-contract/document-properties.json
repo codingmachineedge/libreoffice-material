@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "contract": "material-document-properties-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "_comment": "WIN-SYS-003 Document Properties. This is the DIALOG-notebook composition pin for the sfx2 SfxDocumentInfoDialog (documentpropertiesdialog.ui + dinfdlg.cxx), NOT a duplicate of calc-sheet-tabs' calc-strip tabitem pin. dinfdlg.cxx carries no Material paint override (contrast ScTabControl::Paint), so the entire Material look is delivered by the shared vcl parts below and the weld/SfxTabDialogController framework. The maximal honest build-free slice pins (1) the native left-icon-tab part contract in definition.xml (full 8-state tabitem plus tabheader/tabpane/tabbody/windowbackground/pushbutton/frame, the tab style+settings block, metrics and both-palette colour roles) and (2) the dialog composition in the real .ui/.cxx (modal shell, tabcontrol notebook tab-pos=left, footer action-widget order, the ordered AddTabPage page set with RID_L 32px icon-rail identity and each SfxTabPage .ui root). Everything runtime/pixel stays OUT: runtime_verified is false; the 32px icon downscale, pill hover-raise and rail width are the native parts' pixel gate (build host). STR_SFX_QUERY_WRONG_TYPE is recorded as an explicit NON-destructive carve-out (a type-coercion OK/Cancel query, not a destroy) that is deliberately NOT converted to sfx2::ConfirmDestructiveAction and whose status must stay 'specified'.",
+  "surface": {
+    "surface_id": "sfx2.document-properties",
+    "title": "Document Properties multi-tab (left icon-rail) dialog (SfxDocumentInfoDialog)",
+    "chapter": "docs/design/08-dialogs.md",
+    "chapter_section": "8.6",
+    "owner_sources": [
+      "sfx2/uiconfig/ui/documentpropertiesdialog.ui",
+      "sfx2/source/dialog/dinfdlg.cxx",
+      "sfx2/source/dialog/securitypage.cxx",
+      "sfx2/source/dialog/documentfontsdialog.cxx",
+      "vcl/uiconfig/theme_definitions/material/definition.xml"
+    ],
+    "notes": "The dialog is a stock SfxTabDialogController + GtkNotebook. This contract pins the shared-part treatment plus the .ui/.cxx composition; no native build, tab-rail pixels or runtime interaction are claimed."
+  },
+  "definition_parts": [
+    {
+      "control": "tabitem",
+      "part": "Entire",
+      "part_attrs": {"margin-width": "@space-tab-inline", "height": "@height-tab"},
+      "states": [
+        {"role": "inactive", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "active", "attrs": {"enabled": "true", "selected": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "focus", "attrs": {"enabled": "true", "focused": "true"}, "tokens": {"stroke": "@primary", "fill": "@surface-container", "stroke-width": "@stroke-standard", "radius": "@corner-pill"}},
+        {"role": "active-hover", "attrs": {"enabled": "true", "selected": "true", "rollover": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "active-focus", "attrs": {"enabled": "true", "selected": "true", "focused": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary-container", "stroke-width": "@stroke-standard", "radius": "@corner-pill"}},
+        {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-none", "radius": "@corner-pill"}},
+        {"role": "disabled-active", "attrs": {"enabled": "false", "selected": "true"}, "tokens": {"stroke": "@outline", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}}
+      ]
+    },
+    {
+      "control": "tabheader",
+      "part": "Entire",
+      "states": [
+        {"role": "strip-face", "attrs": {}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}}
+      ]
+    },
+    {
+      "control": "tabpane",
+      "part": "Entire",
+      "states": [
+        {"role": "content-frame", "attrs": {}, "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+      ]
+    },
+    {
+      "control": "tabbody",
+      "part": "Entire",
+      "states": [
+        {"role": "content-body", "attrs": {}, "tokens": {"stroke": "@outline-variant", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+      ]
+    },
+    {
+      "control": "windowbackground",
+      "part": "BackgroundDialog",
+      "states": [
+        {"role": "dialog-sheet", "attrs": {}, "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}}
+      ]
+    },
+    {
+      "control": "pushbutton",
+      "part": "Entire",
+      "states": [
+        {"role": "enabled", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@primary-container", "fill": "@primary-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "hover", "attrs": {"enabled": "true", "rollover": "true"}, "tokens": {"stroke": "@primary-hover", "fill": "@primary-hover", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "pressed", "attrs": {"enabled": "true", "pressed": "true"}, "tokens": {"stroke": "@primary-pressed", "fill": "@primary-pressed", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "default", "attrs": {"enabled": "true", "selected": "true"}, "tokens": {"stroke": "@primary", "fill": "@primary", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}},
+        {"role": "disabled", "attrs": {"enabled": "false"}, "tokens": {"stroke": "@disabled-container", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-pill"}}
+      ]
+    },
+    {
+      "control": "frame",
+      "part": "Border",
+      "states": [
+        {"role": "group-region", "attrs": {"enabled": "true"}, "tokens": {"stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+      ]
+    }
+  ],
+  "tab_style": {
+    "activeTabColor": "@primary-container",
+    "inactiveTabColor": "@surface-container",
+    "tabTextColor": "@on-surface-variant",
+    "tabRolloverTextColor": "@on-surface",
+    "tabHighlightTextColor": "@on-primary-container"
+  },
+  "tab_settings": {
+    "noActiveTabTextRaise": "true",
+    "centeredTabs": "true"
+  },
+  "metrics": [
+    {"name": "corner-pill", "container": "shapes", "tag": "radius", "value": "20"},
+    {"name": "corner-container", "container": "shapes", "tag": "radius", "value": "12"},
+    {"name": "height-tab", "container": "metrics", "tag": "metric", "value": "40"},
+    {"name": "space-tab-inline", "container": "metrics", "tag": "metric", "value": "12"}
+  ],
+  "palette_colors": [
+    "surface-container",
+    "primary-container",
+    "disabled-container",
+    "primary",
+    "primary-hover",
+    "primary-pressed",
+    "outline",
+    "outline-variant",
+    "surface",
+    "on-surface-variant",
+    "on-surface",
+    "on-primary-container"
+  ],
+  "dialog_composition": {
+    "ui_file": "sfx2/uiconfig/ui/documentpropertiesdialog.ui",
+    "dialog_object": "DocumentPropertiesDialog",
+    "modal": true,
+    "notebook": {"id": "tabcontrol", "tab_pos": "left", "group_name": "icons"},
+    "footer": [
+      {"response": "101", "widget": "reset", "secondary": false},
+      {"response": "-5", "widget": "ok", "secondary": false},
+      {"response": "-6", "widget": "cancel", "secondary": false},
+      {"response": "-11", "widget": "help", "secondary": true}
+    ]
+  },
+  "tab_page_source": {
+    "file": "sfx2/source/dialog/dinfdlg.cxx",
+    "controller_bind": "u\"sfx/ui/documentpropertiesdialog.ui\"_ustr"
+  },
+  "icon_rail_source": {
+    "file": "include/vcl/tabs.hrc",
+    "prefix_name": "RID_L",
+    "marker": "RID_L = u\"cmd/32/\"_ustr"
+  },
+  "tab_pages": [
+    {
+      "id": "general",
+      "label_resid": "RID_TAB_ORGANIZER",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"general\"_ustr, TabResId(RID_TAB_ORGANIZER.aLabel), SfxDocumentPage::Create,",
+      "icon_marker": "RID_L + RID_TAB_ORGANIZER.sIconName",
+      "bind_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "bind_marker": "u\"sfx/ui/documentinfopage.ui\"_ustr, u\"DocumentInfoPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/documentinfopage.ui",
+      "page_root_id": "DocumentInfoPage",
+      "optional": false
+    },
+    {
+      "id": "description",
+      "label_resid": "RID_TAB_DESCRIPTION",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"description\"_ustr, TabResId(RID_TAB_DESCRIPTION.aLabel), SfxDocumentDescPage::Create,",
+      "icon_marker": "RID_L + RID_TAB_DESCRIPTION.sIconName",
+      "bind_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "bind_marker": "u\"sfx/ui/descriptioninfopage.ui\"_ustr, u\"DescriptionInfoPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/descriptioninfopage.ui",
+      "page_root_id": "DescriptionInfoPage",
+      "optional": false
+    },
+    {
+      "id": "customprops",
+      "label_resid": "RID_TAB_CUSTOM",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"customprops\"_ustr, TabResId(RID_TAB_CUSTOM.aLabel),",
+      "icon_marker": "RID_L + RID_TAB_CUSTOM.sIconName",
+      "bind_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "bind_marker": "u\"sfx/ui/custominfopage.ui\"_ustr, u\"CustomInfoPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/custominfopage.ui",
+      "page_root_id": "CustomInfoPage",
+      "optional": false
+    },
+    {
+      "id": "cmisprops",
+      "label_resid": "RID_TAB_CMIS",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"cmisprops\"_ustr, TabResId(RID_TAB_CMIS.aLabel),",
+      "icon_marker": "RID_L + RID_TAB_CMIS.sIconName",
+      "bind_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "bind_marker": "u\"sfx/ui/cmisinfopage.ui\"_ustr, u\"CmisInfoPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/cmisinfopage.ui",
+      "page_root_id": "CmisInfoPage",
+      "optional": true,
+      "optional_reason": "added only for a CMIS document (dinfdlg.cxx: rInfoItem.isCmisDocument())"
+    },
+    {
+      "id": "security",
+      "label_resid": "RID_TAB_SECURITY",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"security\"_ustr, TabResId(RID_TAB_SECURITY.aLabel), SfxSecurityPage::Create,",
+      "icon_marker": "RID_L + RID_TAB_SECURITY.sIconName",
+      "bind_source": "sfx2/source/dialog/securitypage.cxx",
+      "bind_marker": "u\"sfx/ui/securityinfopage.ui\"_ustr, u\"SecurityInfoPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/securityinfopage.ui",
+      "page_root_id": "SecurityInfoPage",
+      "optional": true,
+      "optional_reason": "disabled under LibreOfficeKit (dinfdlg.cxx: !comphelper::LibreOfficeKit::isActive())"
+    },
+    {
+      "id": "font",
+      "label_resid": "RID_TAB_FONT",
+      "icon_prefix": "RID_L",
+      "add_source": "sfx2/source/dialog/dinfdlg.cxx",
+      "add_marker": "AddTabPage(u\"font\"_ustr, TabResId(RID_TAB_FONT.aLabel),",
+      "icon_marker": "RID_L + RID_TAB_FONT.sIconName",
+      "bind_source": "sfx2/source/dialog/documentfontsdialog.cxx",
+      "bind_marker": "u\"sfx/ui/documentfontspage.ui\"_ustr, u\"DocumentFontsPage\"_ustr",
+      "page_ui": "sfx2/uiconfig/ui/documentfontspage.ui",
+      "page_root_id": "DocumentFontsPage",
+      "optional": false
+    }
+  ],
+  "carveouts": {
+    "wrong_type_query": {
+      "status": "specified",
+      "kind": "non-destructive",
+      "source": "sfx2/source/dialog/dinfdlg.cxx",
+      "marker": "STR_SFX_QUERY_WRONG_TYPE",
+      "note": "OK/Cancel type-coercion query raised when a custom property value does not fit its declared type. It coerces a typed value, it does not irreversibly destroy data, so it is deliberately NOT converted to sfx2::ConfirmDestructiveAction and is not promoted to a destructive-confirmation gate. No build exists to verify runtime behaviour."
+    },
+    "row_editor": {
+      "status": "specified",
+      "note": "The custom-property inline row editor (sfx/ui/linefragment.ui) Material treatment is deferred to a build host; not pinned here."
+    },
+    "edit_duration_dialog": {
+      "status": "specified",
+      "note": "EditDurationDialog (sfx/ui/editdurationdialog.ui) Material treatment is deferred; not pinned here."
+    },
+    "rail_pixel_geometry": {
+      "status": "specified",
+      "note": "The 32px (RID_L cmd/32/) icon downscale, the pill hover-raise, and the left rail width are the native parts' pixel gate; runtime/pixel evidence is deferred to a build host."
+    }
+  },
+  "deliberately_not_edited": [
+    "qa/windows-ui-contract/dialog-notification-policy.csv (row DocumentPropertiesDialog already native-exclusion; walked read-only, not re-registered here)",
+    "qa/windows-ui-contract/ui-registry.json (documentpropertiesdialog.ui already mapped to WIN-SYS-003; owned by WIN-SYS-016)"
+  ]
+}
