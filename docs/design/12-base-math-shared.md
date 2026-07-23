@@ -311,6 +311,57 @@ notice: "Showing the first 400 matches — refine your search to narrow
 further." The "N of M commands" summary always reports the true match count,
 so the cap never silently hides results.
 
+### Source binding (normative)
+
+Every one of the 2,433 catalog rows in
+[`site/prototype-features.json`](../../site/prototype-features.json) binds at
+source to a real `.uno:` command registration in the ten officecfg
+`Office/UI/*Commands.xcu` files — walking the whole `UserInterface` subtree,
+both the `Commands` and `Popups` sub-nodes, so the parameter-bearing and
+`install:module` (LibreLogo) nodes are counted, not silently dropped. This is
+the application of rule 6 (**Selection identity**) of
+[12.5](#125-suite-wide-consistency-rules-for-new-surfaces) at the source
+layer, and follows the WIN-CONCEPT-003 precedent that a verification surface's
+M-gate is a generated source ledger, not pixels. The compound identity
+**UNO command + U+241F + display name** is unique across all rows, which is
+what resolves the repeated display names; this uniqueness is enforced, not
+assumed.
+
+Each row resolves dispatch-first (`base` is the command with any `?…`
+parameter suffix stripped) into one recorded resolution class:
+
+| Class | Meaning | Count |
+| --- | --- | --- |
+| `exact-in-module` | non-parameterized command registered verbatim in its own module file (or a parameterized node with no separate base registration) | 2366 |
+| `base-in-module` | parameterized command whose base dispatch target is registered in its own module file | 53 |
+| `base-cross-file` | parameterized command whose base is registered only in another module's file (`.uno:StyleApply`, `.uno:AutoCorrectDlg` in `GenericCommands.xcu`) | 14 |
+| `unresolved` | binds to no registered node anywhere | 0 |
+
+The eleven scopes bind to their module and officecfg file as follows:
+
+| Scope | Module | officecfg file |
+| --- | --- | --- |
+| All features | — | union of every scope |
+| Common | shared | `GenericCommands.xcu` |
+| Writer | writer | `WriterCommands.xcu` |
+| Calc | calc | `CalcCommands.xcu` |
+| Draw & Impress | sd | `DrawImpressCommands.xcu` |
+| Charts | chart | `ChartCommands.xcu` |
+| Math | math | `MathCommands.xcu` |
+| Base | dbu | `DbuCommands.xcu` |
+| Reports | report | `ReportCommands.xcu` |
+| Basic IDE | basic | `BasicIDECommands.xcu` |
+| Bibliography | biblio | `BibliographyCommands.xcu` |
+
+The source ledger pins the render cap at **400** rows, matching the
+[Capped list](#capped-list-normative) constant above, so the two never drift.
+This binding is a source-level M-gate only (rule 10, **Honest status**): it
+proves the catalog is a faithful subset of the officecfg registrations. It
+does not prove officecfg is complete versus the running product, that labels
+are localized, or that the cap performs; and it claims no native Features
+surface, no build, no Run-command dispatch, and no rendered pixels — those
+remain the separate B/V gate.
+
 ### Key user flows
 
 Scope filtering (rail), text/regex search (shared search field with match
@@ -351,11 +402,16 @@ selected state through the API, not only the `@primary-container` wash.
 
 ### Verification checkpoints
 
-Once native: verify the compound-key selection survives re-filtering and
-scope switches (keyboard-only script); verify the 400-row cap plus true
-counts against a seeded inventory; capture rail/list/detail in light, dark,
-and HC; verify regex-error and zero-match states; confirm Run command
-dispatches the recorded UNO command in a scripted document.
+Source level (M-gate): `bin/check-features-command-catalog.py` regenerates and
+pins the [source-binding](#source-binding-normative) ledger, failing closed on
+a dropped/phantom catalog row, an identity collision, a per-scope/per-category
+or resolution-class count drift, a lost officecfg dispatch, or a render-cap
+drift from this chapter. Once native (B/V gate): verify the compound-key
+selection survives re-filtering and scope switches (keyboard-only script);
+verify the 400-row cap plus true counts against a seeded inventory; capture
+rail/list/detail in light, dark, and HC; verify regex-error and zero-match
+states; confirm Run command dispatches the recorded UNO command in a scripted
+document.
 
 ---
 

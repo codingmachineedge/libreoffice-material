@@ -127,11 +127,17 @@ the navigation column marks the active view item with `@primary-container`.
 | Filter label | All Documents | All Templates |
 | Search placeholder | "Search recent" | "Search templates" |
 | Meta line | Module · relative time | Module template |
-| Actions menu | Clear Recent Documents, Clear Unavailable Files (native `clearmenu`) | Manage Templates (native template menus) |
+| Actions menu | Clear Recent Documents, Clear Unavailable Files (native `clearmenu`) | Manage Templates → the Template Manager dialog (`SfxTemplateManagerDlg`), via native template menus |
 
 Switching views resets neither the search pattern nor the filter — each view
 keeps its own working set but the single Start Center search state applies to
 whichever view is visible (prototype behavior; specified here as target).
+
+The Templates view's **Manage Templates** action opens the Template Manager
+dialog (`SfxTemplateManagerDlg`), whose Material treatment — the shared modal
+anatomy, the reused search/regex field, and the Overwrite / Delete-category
+destructive confirmations — is specified in [08-dialogs.md](08-dialogs.md) §8.8.
+The Start Center supplies only the entry point; the dialog owns its own layout.
 
 ## 9.4 Key user flows
 
@@ -248,7 +254,7 @@ replacing it; the prototype's target anatomy maps onto it as follows.
 | Create list + 28 px chips | `writer_all` … `database_all` buttons with 32 px document icons | chip anatomy prototype-only; per-module `set_sensitive` already native |
 | Home header | `welcome_header` with `welcome_title` (bold, 1.75 × scale) and `welcome_subtitle`, added by the Material slice | title colour `GetWindowTextColor()` → `@on-surface`; subtitle uses `labelTextColor` → `@on-surface`, versus prototype `@on-surface-variant` |
 | Filter combo | `cbFilter` (`GtkComboBoxText`) | resolves implemented `combobox` parts in definition.xml (compiled at commit 577059e274); its closed idle state is visible in accepted captures, while the open list and interaction-state matrix remain unverified |
-| Actions menu | `mbActions` menu button + `clearmenu` | native |
+| Actions menu | `mbActions` menu button + `clearmenu` | native; the Templates view's Manage Templates opens `SfxTemplateManagerDlg`, specified in [08-dialogs.md](08-dialogs.md) §8.8 |
 | Search + regex row | — | no native counterpart; specified here, not yet implemented |
 | Card grid | `all_recent` (`RecentDocsView` in `scrollrecent`) and `local_view` (`TemplateDefaultView` in `scrolllocal`) | the Material slice reroutes both views' fill/text from `officecfg` Start Center colours to `StyleSettings` (`GetWindowColor`/`GetWindowTextColor` → `@surface`/`@on-surface`; highlights → `@primary-container`/`@on-primary-container`); card anatomy (118 px preview, badge, hover elevation) prototype-only |
 | Right box padding | 24 px margins, 12 px spacing added by the slice | prototype uses 26 × 28 px; near-equivalent, to converge |
