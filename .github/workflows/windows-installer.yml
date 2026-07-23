@@ -10,6 +10,25 @@ on:
   push:
     branches:
       - main
+    # Skip the ~3h native MSI build for pushes that change only files which
+    # cannot affect the installer or its regression tests. bin/check-*.py is
+    # deliberately NOT ignored: bin/check-autocorr.py runs inside the extras
+    # autocorr build recipe (extras/CustomTarget_autocorr.mk), so it can change
+    # MSI payload. workflow_dispatch below stays available as the manual
+    # override for any push that lands entirely in these ignored paths.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'site/**'
+      - 'memory/**'
+      - '.claude/**'
+      - 'qa/windows-ui-contract/**'
+      - 'bin/test_*.py'
+      - 'bin/validate-prototype.mjs'
+      - '.github/workflows/windows-ui-contract.yml'
+      - '.github/workflows/build-installer.yml'
+      - '.github/workflows/material-source.yml'
+      - '.github/workflows/prototype-check.yml'
   workflow_dispatch:
     inputs:
       jobs:
@@ -234,6 +253,11 @@ jobs:
         with:
           path: C:\lo\tarballs
           key: windows-external-tarballs-${{ hashFiles('download.lst') }}
+          # Fall back to the most recent tarball cache when download.lst changed:
+          # unchanged externals are reused and only new/updated tarballs refetch,
+          # then the save step below writes a fresh cache under the exact key.
+          restore-keys: |
+            windows-external-tarballs-
 
       - name: Install Cygwin build prerequisites
         shell: pwsh
@@ -491,6 +515,26 @@ jobs:
           Get-ChildItem -LiteralPath $dist | Format-Table Name, Length
           "found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
+      # Safety net: a finished installer must never be lost to a later step
+      # failure (run 29953622707 built and validated an MSI for 2h48m, then
+      # failed only at release publish). Runs even when staging or publish
+      # fails: uploads the staged dist-windows/ set (canonical MSI + sha256 +
+      # manifest + admin-extract log) when staging got that far, and falls
+      # back to any raw MSI left in the build workdir when it did not. On
+      # runs that failed before packaging both paths are empty and this is a
+      # quick no-op (if-no-files-found: ignore).
+      - name: Upload staged MSI as workflow artifact (survives failures)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-msi-staged-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            dist-windows/
+            C:\lo\build\workdir\installation\LibreOfficeDev\msi\install\**\*.msi
+          if-no-files-found: ignore
+          retention-days: 7
+          compression-level: 0
+
       - name: Publish Windows MSI release
         if: >-
           steps.stage.outputs.found == 'true' &&
@@ -725,10 +769,29 @@ jobs:
               throw "Creating exact release tag $tag failed with exit code $LASTEXITCODE."
             }
             $createdTag = ($createdTagJson -join [Environment]::NewLine) | ConvertFrom-Json
-            if ($createdTag.ref -ne "refs/tags/$tag" `
-                -or [string]$createdTag.object.type -ne 'commit' `
-                -or [string]$createdTag.object.sha -ne '${{ github.sha }}' `
-                -or (Resolve-ExactTagCommit) -ne '${{ github.sha }}') {
+            # The POST response is authoritative for the ref it just created, so
+            # validate it directly. GitHub's matching-refs read, however, is
+            # eventually consistent right after a ref POST, so the exact-tag
+            # resolution is bounded-retried instead of failing on a single
+            # not-yet-visible read. Same checks, just retried; succeed on the
+            # first match, keep the original throw on exhaustion.
+            $createdTagResponseIsExact = $createdTag.ref -eq "refs/tags/$tag" `
+              -and [string]$createdTag.object.type -eq 'commit' `
+              -and [string]$createdTag.object.sha -eq '${{ github.sha }}'
+            $createdTagResolvesToCommit = $false
+            if ($createdTagResponseIsExact) {
+              for ($tagAttempt = 1; $tagAttempt -le 12; $tagAttempt++) {
+                if ((Resolve-ExactTagCommit) -eq '${{ github.sha }}') {
+                  $createdTagResolvesToCommit = $true
+                  break
+                }
+                Write-Host "Waiting for the exact tag reference to become consistent ($tagAttempt/12)."
+                if ($tagAttempt -lt 12) {
+                  Start-Sleep -Seconds 10
+                }
+              }
+            }
+            if (-not $createdTagResponseIsExact -or -not $createdTagResolvesToCommit) {
               throw "GitHub did not create exact tag $tag at this workflow commit."
             }
             [ordered]@{
