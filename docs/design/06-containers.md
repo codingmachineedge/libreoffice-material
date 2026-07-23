@@ -298,11 +298,31 @@ separators come from the document locale, not the UI locale.
 ### Platform notes
 
 The Calc document canvas is application drawing, not a `definition.xml`
-control: gridlines, stripes, and the selection ring resolve through
-`StyleSettings` slots (`alternatingRowColor`, `highlightColor`,
-`deactiveColor`) that the Material profile populates. Only `listheader` and the
-scrollbars around the grid are file-definition controls. Printer output is
-excluded from the file-widget path by design.
+control. Its colour sources split two ways, and the earlier claim that the
+whole grid — selection ring included — resolves through `StyleSettings` was an
+overstatement, corrected here against real source (pinned by
+[`data-grid-header-selection.json`](../../qa/windows-ui-contract/data-grid-header-selection.json)):
+
+- **`StyleSettings`-driven (on the Material pipe).** The `listheader`
+  column-header control; Calc's *idle* header face, label text, and rule line
+  (`GetFaceColor` / `GetButtonTextColor` / `GetHighlightTextColor` /
+  `GetShadowColor` in `sc/source/ui/view/hdrcont.cxx`); the striped-row
+  `alternatingRowColor` slot; and — in Base's grid — the native `ListHeader`
+  header plus the `BrowseBox` row/cell selection fill (`GetHighlightColor` /
+  `GetHighlightTextColor` in `svtools/source/brwbox/brwbox2.cxx`) all read the
+  compiled Material `StyleSettings` slots the profile populates.
+- **`ColorConfig`-driven (not yet Material-aware).** Calc's *selected*-header
+  fill (`hdrcont.cxx`) and the active-cell cursor ring
+  (`ScGridWindow::UpdateCursorOverlay`, `sc/source/ui/view/gridwin.cxx`) do
+  **not** read those slots: they resolve `svtools::CALCCELLFOCUS` from
+  `ScModule::GetColorConfig()` — the *Tools ▸ Options ▸ Application Colors*
+  item, a separate pipe the file-widget / `definition.xml` mechanism never
+  touches. Giving them a Material-aware colour path is unwritten source work,
+  so the active-cell ring and the selected-header fill are *specified here, not
+  yet implemented* on the Material pipe.
+
+Only `listheader` and the scrollbars around the grid are file-definition
+controls. Printer output is excluded from the file-widget path by design.
 
 ### Verification hooks
 

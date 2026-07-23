@@ -76,9 +76,33 @@ plain state, and text to `extra="flat"`.
 | **Text** | `extra="flat"` | idle state empty (no drawing) | `flatButtonTextColor` = `@primary` | implemented in definition.xml (compiled at commit 577059e274; surface state unverified) |
 | **Outlined** | — | transparent fill, `@outline` border at `stroke-thin`, `@primary` label, `corner-pill` | — | prototype-only (component gallery: `border: var(--bw) solid var(--outline)`, 40 px height, `0 24px` padding) |
 
-The outlined variant has no native `pushbutton` state yet; adding one requires
-either a new `extra` value or a `.ui`-level style class and is tracked as
-future work.
+The outlined variant has no native `pushbutton` state yet; the signal that
+would select it does not exist in source today, which is why this half of
+WIN-ACT-001 stays specification-only rather than implemented. Making it
+reachable is a shared-infrastructure change across three files, not row-local
+drawing code:
+
+1. a new boolean on `PushButtonValue` (e.g. `m_bOutlineButton`) alongside the
+   existing `mbIsAction` / `m_bFlatButton` fields;
+2. a new recognized style-class string threaded through
+   `BuilderBase::handleStyle()` (`vcl/source/window/builder.cxx`) — today its
+   allow-list recognizes `suggested-action` / `destructive-action` and friends
+   but has no `outlined` entry — so a `.ui` consumer can raise that bool (or,
+   equivalently, a new `WB_*` style bit);
+3. a new `sExtra = "outlined"` branch in `WidgetDefinitionPart::getStates()`'s
+   `ControlType::Pushbutton` case (`vcl/source/gdi/WidgetDefinition.cxx`), which
+   today can only resolve `sExtra` to `"action"` or `"flat"`.
+
+Only once that signal path lands can `definition.xml` legitimately carry an
+`extra="outlined"` `<pushbutton>` family: enabled / hover / pressed / disabled
+states drawing a transparent fill with an `@outline` border at `stroke-thin` and
+an `@primary` label, reusing the shared `pushbutton`/`Focus` ring unchanged.
+Until then the outlined variant is prototype-only, and any `extra="outlined"`
+markup added to `definition.xml` before the C++ signal exists would be
+unreachable dead markup — the push-button contract
+(`qa/windows-ui-contract/pushbutton-contract.json`) holds a temporary negative
+guard against exactly that, to be inverted the day the real signal lands.
+Status: specified, not implemented.
 
 Prototype geometry (reference values): filled/tonal/outlined buttons are 40 px
 high with `0 24px` horizontal padding; text buttons use `0 16px`; dialog
@@ -121,6 +145,12 @@ currently looks identical to its action siblings; the affordance is the
 platform focus/default border plus Enter activation. Revisiting this requires
 a real build and captures. Status: deferred by design decision, recorded in
 D-020.
+
+For the Windows-rewrite inventory this is the default-emphasis half of
+WIN-ACT-001: a recorded, closed design decision (D-020), **not** an open
+build-free task. Reopening it needs a real build, a captured comparison, and a
+decision-log update — so the inventory's "default-emphasis incomplete" note must
+not be read as remaining source work for this row.
 
 ### 1.4 Interaction
 

@@ -599,6 +599,18 @@ container itself has no dedicated part; it renders from the `faceColor →
 | Zoom thumb focus | `@on-surface` × `stroke-standard` ring |
 | Disabled slider | `@outline` stroke, `@outline-variant` fill; tracks `@outline-variant` / `@disabled-container` |
 
+Calc's status bar carries one owner-drawn state control the shared band does not:
+`ScAutoCalculateControl` (`sc/source/ui/app/acctrl.cxx`, registered
+`FID_AUTO_CALC` in `sc/source/ui/app/scdll.cxx`), whose `Paint(const
+UserDrawEvent&)` swaps in a stock `RID_BMP_CALCULATOR_RED` bitmap to signal the
+AutoCalc-off (manual-recalculation) state. Its Material target reuses the
+disabled-affordance pairing already established for the disabled slider above —
+`@outline` stroke over `@outline-variant` fill — so AutoCalc-off reads as a
+suppressed/inactive field rather than an alarm colour, and never carries the
+state by hue alone. This is an application of the existing disabled-state token
+pairing, not a new visual treatment; it is specified here, not yet implemented,
+and no source guard exists for the glyph today.
+
 ### 8.3 Interaction
 
 Pointer: click a field to cycle or open its popup (page count → Go to Page;

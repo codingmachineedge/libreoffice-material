@@ -337,6 +337,19 @@ identical: when the platform reports reduced motion, all Material motion roles
 resolve to zero duration; no motion is merely slowed or replaced with a
 different effect.
 
+That native mapping must route through LibreOffice's already-shipped
+accessibility-motion infrastructure rather than inventing a parallel signal:
+`vcl::MiscSettings::GetUseReducedAnimation()` (backed on Windows by
+`SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, …)`), read through the
+`IsAnimated{Others,Graphic,Text}Allowed()` accessors that, on their default
+`officecfg` `Accessibility::AllowAnimated*` "System" case, negate
+`GetUseReducedAnimation()`. This is pre-existing, general-purpose LibreOffice
+infrastructure (the tdf#115688 / tdf#161765 lineage visible in
+`vcl/source/app/settings.cxx`), reused here as the mandatory reduced-motion hook
+— not new Material work. The prerequisite signal chain is pinned source-only by
+`bin/check-windows-reduced-motion-contract.py`, which proves the routing path is
+intact but never that any native Material motion role yet exists.
+
 ## 6. Density model
 
 Two intentional profiles per the contract: **compact** (keyboard/mouse, data
@@ -389,6 +402,48 @@ narrow-window checks; multi-monitor placement, fractional scaling, and OS
 insets are part of the desktop layout contract. The evidence scenario matrix
 in [`docs/HEADLESS_UI_EVIDENCE.md`](../HEADLESS_UI_EVIDENCE.md) already
 requires compact, medium, and expanded window cases per surface.
+
+One class of this model already has a real native anchor rather than pure
+specification: the below-medium behaviour has a single guarded predicate today
+— `ShouldDeckOverlayCanvas`, gated on the `Int_DeckOverlayMinWidth` = 600 slot
+— owned and locked by WIN-CON-007's sidebar-panels contract and enumerated in
+`qa/windows-ui-contract/adaptive-layout-ledger.json`. That 600 px literal is a
+deliberately narrower canvas-width threshold for suppressing the sidebar's
+force-widening, **not** a redefinition of the ~720 px medium window-class
+boundary above it; every other surface this section names (toolbar overflow,
+notebookbar, status-bar pane-dropping, near-full-width dialogs) still has no
+native anchor and is tracked as target-only in that ledger.
+
+### 7.1 Rendering and display-scaling neutrality
+
+The Material redesign is deliberately neutral to the graphics backend and to
+display scaling: it adds no GPU/software render fork of its own and assumes the
+platform's existing scaling model rather than layering a new one. Three
+source-level invariants make that neutrality concrete; all three are pinned
+source-only (`runtime_verified: false`) by
+`bin/check-windows-render-scale-matrix.py`:
+
+- **Render-method-agnostic draw path.** The Material file-widget draw path
+  (`vcl/source/gdi/FileDefinitionWidgetDraw.cxx`) contains no render-method
+  selection — no Skia/Vulkan/raster branch — so "accelerated vs software" is a
+  build-verification concern, not a source divergence the Material path
+  introduces.
+- **System-DPI-aware scaling model.** The px token geometry of §2.4 assumes the
+  shipped `solenv/gbuild/platform/DeclareDPIAware.manifest`
+  (`<dpiAware>true</dpiAware>`, system-DPI-aware, **not** per-monitor), applied
+  to every executable; the tokens add no fractional-scaling logic of their own
+  (see §2.4 and §6).
+- **Software-raster as documented fallback.** GPU rendering is the Windows
+  default (`Common.xcu` `UseSkia` = `true`); software raster (`ForceSkiaRaster`,
+  safe-mode, bitmap-rendering) is a fallback the accepted Start Center evidence
+  exercised, never the default.
+
+The substantive display-matrix scope — GPU-vs-software pixel parity,
+remote-desktop sessions, 100/125/200 % fractional scale, and mixed-DPI
+multi-monitor placement (§6, §7, and the §10 scale matrix; Start Center
+§9.10–§9.11) — stays build-bound and unverified here. These invariants only
+guard the preconditions those runs depend on; they close no rendering or
+scaling gate.
 
 ## 8. Iconography
 

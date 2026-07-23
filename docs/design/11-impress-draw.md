@@ -114,6 +114,24 @@ prototype-only; the native notebookbar mapping is specified in
    *Slide ▸ Animation* — catalogued commands; their dedicated panels are
    specified here, not yet implemented (§11.4).
 
+### Slide Show Settings dialog
+
+The one native, `.ui`-backed surface inside the show-configuration scope is the
+**Slide Show Settings** dialog (`SdStartPresentationDlg` over
+`presentationdialog.ui`) that flow #4 opens before *Start Slide Show*. It is an
+application of the generic dialog-chrome pattern (bold-label `GtkFrame` groups
+plus the standard footer, the same anatomy documented in
+[08-dialogs](08-dialogs.md)) — no novel visual design. Directly from the `.ui`:
+five stacked groups in order — *Range*, *Presentation Mode*, *Presentation
+Options*, *Display*, *Remote control* — over an ok / cancel / help footer. Its
+composition and the enable/disable chains between controls (range radios ↔
+custom-show combo, windowed vs full-screen ↔ always-on-top, loop ↔ pause/logo,
+multi-monitor gating ↔ display combo, presenter-console mode) are pinned
+source-only by `qa/windows-ui-contract/impress-slideshow-settings.json`; the
+dialog keeps its existing native-exclusion / keep-modal classification. There is
+no Material token differentiation yet: composition-pinned, specified here, not
+yet implemented (`runtime_verified: false`).
+
 ### Empty, loading and error states
 
 - **New deck:** one title slide; the slide panel shows a single selected
@@ -395,11 +413,26 @@ surfaces are therefore **specified here, not yet implemented**:
   presenter view reads as distinct chrome; current-slide, next-slide and notes
   panes; timer as `label`-role typography; all controls reachable by keyboard
   and exposed with names/states. No motion beyond slide change itself.
+  Architecturally, the console (`sd/source/console/*`) renders through its own
+  `PresenterTheme` bitmap/sprite pipeline, **outside** the
+  `VCL_FILE_WIDGET_THEME`/definition.xml widget-draw path (grep-confirmed: zero
+  such references in `sd/source/console`). So the inverse-themed target above
+  names a token *family* — `inverse-surface`/`on-inverse-surface`, `corner-small`,
+  `stroke-none`, all real and already implemented for the `tooltip` part — but
+  not yet any implemented presenter control; theming it would require bridging
+  that bitmap/sprite pipeline to the token layer, new engineering rather than a
+  guard flip. Pinned source-only by
+  `qa/windows-ui-contract/impress-presenter-surfaces.json`.
 - **Animation deck:** a sidebar list of effects using standard list rows
   (`space-list-entry` = 12 margin) with per-row reorder controls; preview is
   user-invoked, never autoplaying, and honours reduced motion.
-- **Transition deck:** a grid of transition cells reusing the Layouts-panel
-  cell pattern (§11.1); “None” is always the first, fully supported option.
+- **Transition deck:** the real content surface is `transitions_icons`, a
+  `GtkIconView` (item-width 55, populated at runtime from `TransitionPreset`
+  data) — **not** a card grid today. The "grid of transition cells reusing the
+  Layouts-panel cell pattern (§11.1)" language is therefore an **open
+  icon-view-to-card-grid restyle target**, not a restatement of existing
+  behaviour; “None” is always the first, fully supported option. Pinned
+  source-only by `qa/windows-ui-contract/impress-presenter-surfaces.json`.
 
 Until a native slice and prototype coverage exist, no token, geometry, or
 capture claims are made for these surfaces beyond the mappings above.
