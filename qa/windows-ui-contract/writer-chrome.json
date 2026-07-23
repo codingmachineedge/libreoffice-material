@@ -1,0 +1,841 @@
+{
+  "schema_version": 1,
+  "contract": "material-writer-chrome-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (10.1 shared chrome, 10.2 Writer)",
+  "note": "Pins the Writer classic-chrome composition (command identity+order, separator placement, per-button visibility) of the data-driven uiconfig XML, and grounds the Material treatment in the same shared native toolbar part contract in definition.xml that WIN-CA-001 pins (the toolbar band/separator/nine-state Button at @corner-toolbar is app-agnostic VCL, not Calc-specific). Scope is classic chrome only: the ribbon/notebookbar restyle is prototype-only (not yet in native source) per design 10.1, so it has no source to pin and is out of this contract. Composition is source-declared only; overflow/adaptive collapse and density selection remain build-dependent and are carved out as spec-only below. runtime_verified is false throughout: no native build, toolbar pixels, or runtime interaction are claimed.",
+  "chrome_parts": {
+    "control": "toolbar",
+    "band": {
+      "part": "DrawBackgroundHorz",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "entire": {
+      "part": "Entire",
+      "element": "rect",
+      "tokens": {
+        "stroke": "@surface-container",
+        "fill": "@surface-container",
+        "stroke-width": "@stroke-none"
+      }
+    },
+    "separator": {
+      "part": "SeparatorVert",
+      "element": "line",
+      "tokens": {
+        "stroke": "@outline-variant",
+        "stroke-width": "@stroke-thin"
+      }
+    },
+    "button": {
+      "part": "Button",
+      "states": [
+        {
+          "role": "enabled",
+          "attrs": {
+            "enabled": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-container",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary-hover",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "checked",
+          "attrs": {
+            "enabled": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "rollover-checked",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "pressed-checked",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-pressed",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "focused",
+          "attrs": {
+            "enabled": "true",
+            "focused": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-standard",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled",
+          "attrs": {
+            "enabled": "false"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-toolbar"
+          }
+        },
+        {
+          "role": "disabled-checked",
+          "attrs": {
+            "enabled": "false",
+            "button-value": "true"
+          },
+          "element": "rect",
+          "tokens": {
+            "stroke": "@outline",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-toolbar"
+          }
+        }
+      ]
+    },
+    "metrics": [
+      {
+        "name": "corner-toolbar",
+        "container": "shapes",
+        "tag": "radius",
+        "value": "18"
+      },
+      {
+        "name": "stroke-none",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "0"
+      },
+      {
+        "name": "stroke-thin",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "1"
+      },
+      {
+        "name": "stroke-standard",
+        "container": "metrics",
+        "tag": "metric",
+        "value": "2"
+      }
+    ],
+    "palette_colors": [
+      "primary",
+      "primary-container",
+      "primary-hover",
+      "primary-pressed",
+      "surface-container",
+      "disabled-container",
+      "outline",
+      "outline-variant"
+    ]
+  },
+  "toolbars": [
+    {
+      "id": "FMT.writer",
+      "file": "sw/uiconfig/swriter/toolbar/textobjectbar.xml",
+      "design_reference": "docs/design/10-writer-calc.md 10.2 (Formatting toolbar composition (classic))",
+      "design_core": [
+        ".uno:StyleApply",
+        ".uno:CharFontName",
+        ".uno:FontHeight",
+        ".uno:Bold",
+        ".uno:Italic",
+        ".uno:Underline",
+        ".uno:Strikeout",
+        ".uno:Color",
+        ".uno:CharBackColor",
+        ".uno:StartPara",
+        ".uno:CenterPara",
+        ".uno:EndPara",
+        ".uno:JustifyPara",
+        ".uno:DefaultBullet",
+        ".uno:DefaultNumbering",
+        ".uno:IncrementIndent",
+        ".uno:DecrementIndent"
+      ],
+      "preserved_commands": [
+        ".uno:StyleUpdateByExample",
+        ".uno:StyleNewByExample",
+        ".uno:UnderlineDouble",
+        ".uno:Overline",
+        ".uno:SuperScript",
+        ".uno:SubScript",
+        ".uno:SetOutline",
+        ".uno:LineSpacing",
+        ".uno:ParaspaceIncrease",
+        ".uno:ParaspaceDecrease",
+        ".uno:ParaLeftToRight",
+        ".uno:ParaRightToLeft"
+      ],
+      "sequence": [
+        {
+          "command": ".uno:DesignerDialog",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:StyleApply",
+          "visible": true
+        },
+        {
+          "command": ".uno:StyleUpdateByExample",
+          "visible": true
+        },
+        {
+          "command": ".uno:StyleNewByExample",
+          "visible": true
+        },
+        {
+          "command": ".uno:EditStyle",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:CharFontName",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:FontHeight",
+          "visible": true
+        },
+        {
+          "command": ".uno:Grow",
+          "visible": false
+        },
+        {
+          "command": ".uno:Shrink",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Bold",
+          "visible": true
+        },
+        {
+          "command": ".uno:Italic",
+          "visible": true
+        },
+        {
+          "command": ".uno:Underline",
+          "visible": true
+        },
+        {
+          "command": ".uno:UnderlineDouble",
+          "visible": false
+        },
+        {
+          "command": ".uno:Strikeout",
+          "visible": true
+        },
+        {
+          "command": ".uno:Overline",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:SuperScript",
+          "visible": true
+        },
+        {
+          "command": ".uno:SubScript",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Shadowed",
+          "visible": false
+        },
+        {
+          "command": ".uno:OutlineFont",
+          "visible": false
+        },
+        {
+          "command": ".uno:ResetAttributes",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ChangeCaseToLower",
+          "visible": false
+        },
+        {
+          "command": ".uno:ChangeCaseToUpper",
+          "visible": false
+        },
+        {
+          "command": ".uno:SmallCaps",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Color",
+          "visible": true
+        },
+        {
+          "command": ".uno:CharBackColor",
+          "visible": true
+        },
+        {
+          "command": ".uno:BackgroundColor",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:StartPara",
+          "visible": true
+        },
+        {
+          "command": ".uno:CenterPara",
+          "visible": true
+        },
+        {
+          "command": ".uno:EndPara",
+          "visible": true
+        },
+        {
+          "command": ".uno:JustifyPara",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:CellVertTop",
+          "visible": false
+        },
+        {
+          "command": ".uno:CellVertCenter",
+          "visible": false
+        },
+        {
+          "command": ".uno:CellVertBottom",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:DefaultBullet",
+          "visible": true
+        },
+        {
+          "command": ".uno:DefaultNumbering",
+          "visible": true
+        },
+        {
+          "command": ".uno:SetOutline",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:IncrementIndent",
+          "visible": true
+        },
+        {
+          "command": ".uno:DecrementIndent",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:LineSpacing",
+          "visible": true
+        },
+        {
+          "command": ".uno:Spacing",
+          "visible": false
+        },
+        {
+          "command": ".uno:ParaspaceIncrease",
+          "visible": true
+        },
+        {
+          "command": ".uno:ParaspaceDecrease",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ParaLeftToRight",
+          "visible": true
+        },
+        {
+          "command": ".uno:ParaRightToLeft",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:SelectAll",
+          "visible": false
+        },
+        {
+          "command": ".uno:FontDialog",
+          "visible": false
+        },
+        {
+          "command": ".uno:ParagraphDialog",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "standard",
+      "file": "sw/uiconfig/swriter/toolbar/standardbar.xml",
+      "design_reference": "docs/design/10-writer-calc.md 10.1 (standard toolbar)",
+      "design_core_note": "The standard-toolbar design_core is an implementer inference cross-referencing 10.1's shared-chrome intent (Writer has no verbatim design-chapter enumeration of its standard toolbar, same gap as Calc's standard toolbar in calc-chrome.json); it is not a spec quotation.",
+      "design_core": [
+        ".uno:AddDirect",
+        ".uno:OpenFromWriter",
+        ".uno:Save",
+        ".uno:ExportDirectToPDF",
+        ".uno:Print",
+        ".uno:PrintPreview",
+        ".uno:Cut",
+        ".uno:Copy",
+        ".uno:Paste",
+        ".uno:FormatPaintbrush",
+        ".uno:Undo",
+        ".uno:Redo",
+        ".uno:SearchDialog",
+        ".uno:SpellingAndGrammarDialog",
+        ".uno:InsertTable",
+        ".uno:InsertGraphic",
+        ".uno:InsertAnnotation"
+      ],
+      "preserved_commands": [
+        ".uno:SaveAs",
+        ".uno:PrintDefault",
+        ".uno:Navigator",
+        ".uno:InsertObjectStarMath",
+        ".uno:ShowTrackedChanges",
+        ".uno:TrackChanges",
+        ".uno:ViewDataSourceBrowser",
+        ".uno:ControlCodes",
+        ".uno:InsertFieldCtrl",
+        ".uno:HyperlinkDialog",
+        ".uno:InsertFootnote",
+        ".uno:InsertEndnote",
+        ".uno:InsertBookmark",
+        ".uno:TrackChangesBar"
+      ],
+      "sequence": [
+        {
+          "command": ".uno:OpenUrl",
+          "visible": false
+        },
+        {
+          "command": ".uno:AddDirect",
+          "visible": true
+        },
+        {
+          "command": ".uno:NewDoc",
+          "visible": false
+        },
+        {
+          "command": ".uno:OpenFromWriter",
+          "visible": true
+        },
+        {
+          "command": ".uno:OpenRemote",
+          "visible": false
+        },
+        {
+          "command": ".uno:Save",
+          "visible": true
+        },
+        {
+          "command": ".uno:SaveAs",
+          "visible": false
+        },
+        {
+          "command": ".uno:SendMail",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:EditDoc",
+          "visible": false
+        },
+        {
+          "command": ".uno:ReadOnlyDoc",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ExportDirectToPDF",
+          "visible": true
+        },
+        {
+          "command": ".uno:ExportDirectToEPUB",
+          "visible": false
+        },
+        {
+          "command": ".uno:Print",
+          "visible": true
+        },
+        {
+          "command": ".uno:PrintDefault",
+          "visible": false
+        },
+        {
+          "command": ".uno:PrintPreview",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Cut",
+          "visible": true
+        },
+        {
+          "command": ".uno:Copy",
+          "visible": true
+        },
+        {
+          "command": ".uno:Paste",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:FormatPaintbrush",
+          "visible": true
+        },
+        {
+          "command": ".uno:ResetAttributes",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Undo",
+          "visible": true
+        },
+        {
+          "command": ".uno:Redo",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:SearchDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:Navigator",
+          "visible": false
+        },
+        {
+          "command": ".uno:SpellingAndGrammarDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:SpellOnline",
+          "visible": false
+        },
+        {
+          "command": ".uno:ControlCodes",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:InsertTable",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertGraphic",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertObjectChart",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertObjectStarMath",
+          "visible": false
+        },
+        {
+          "command": ".uno:DrawText",
+          "visible": true
+        },
+        {
+          "command": ".uno:VerticalText",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:InsertPagebreak",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertFieldCtrl",
+          "visible": true
+        },
+        {
+          "command": ".uno:CharmapControl",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:HyperlinkDialog",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertFootnote",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertEndnote",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertBookmark",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertReferenceField",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertIndexesEntry",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:InsertAnnotation",
+          "visible": true
+        },
+        {
+          "command": ".uno:ShowTrackedChanges",
+          "visible": false
+        },
+        {
+          "command": ".uno:TrackChanges",
+          "visible": false
+        },
+        {
+          "command": ".uno:TrackChangesBar",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:Line",
+          "visible": true
+        },
+        {
+          "command": ".uno:BasicShapes",
+          "visible": true
+        },
+        {
+          "command": ".uno:InsertDraw",
+          "visible": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:ViewDataSourceBrowser",
+          "visible": false
+        },
+        {
+          "command": ".uno:Zoom",
+          "visible": false
+        },
+        {
+          "separator": true
+        },
+        {
+          "command": ".uno:HelpIndex",
+          "visible": false
+        },
+        {
+          "command": ".uno:ExtendedHelp",
+          "visible": false
+        }
+      ]
+    }
+  ],
+  "menu": {
+    "file": "sw/uiconfig/swriter/menubar/menubar.xml",
+    "design_reference": "docs/design/10-writer-calc.md 10.1 (menu bar via menuBarColor roles)",
+    "note": "Writer's menu-bar top level swaps Calc's SheetMenu/DataMenu for TableMenu/FormatFormMenu -- a real, citable Writer-vs-Calc divergence encoded here rather than copied from Calc.",
+    "top_level": [
+      ".uno:PickList",
+      ".uno:EditMenu",
+      ".uno:ViewMenu",
+      ".uno:InsertMenu",
+      ".uno:FormatMenu",
+      ".uno:FormatStylesMenu",
+      ".uno:TableMenu",
+      ".uno:FormatFormMenu",
+      ".uno:ToolsMenu",
+      ".uno:WindowList",
+      ".uno:HelpMenu"
+    ],
+    "design_core": [
+      ".uno:PickList",
+      ".uno:EditMenu",
+      ".uno:ViewMenu",
+      ".uno:InsertMenu",
+      ".uno:FormatMenu",
+      ".uno:TableMenu",
+      ".uno:ToolsMenu",
+      ".uno:HelpMenu"
+    ]
+  },
+  "density": {
+    "status": "specified",
+    "note": "Density selection (compact/comfortable toolbar row height) and toolbar/ribbon overflow collapse are specified in docs/design/10-writer-calc.md but not implemented in the native metric layer; recorded here spec-only and carved out of the M source claim.",
+    "metrics": [
+      {
+        "name": "--tb",
+        "compact": "38",
+        "comfortable": "48"
+      },
+      {
+        "name": "--menu",
+        "compact": "30",
+        "comfortable": "38"
+      }
+    ]
+  },
+  "combo_annotations": {
+    "status": "specified",
+    "note": "Prototype combo geometry (paragraph-style ~180px, font-name ~150px, size ~54px) is spec-only chrome composition; the native combobox/spinbox parts carry the state contract, not these widths.",
+    "fields": [
+      {
+        "toolbar": "FMT.writer",
+        "command": ".uno:StyleApply",
+        "prototype_width_px": 180
+      },
+      {
+        "toolbar": "FMT.writer",
+        "command": ".uno:CharFontName",
+        "prototype_width_px": 150
+      },
+      {
+        "toolbar": "FMT.writer",
+        "command": ".uno:FontHeight",
+        "prototype_width_px": 54
+      }
+    ]
+  }
+}

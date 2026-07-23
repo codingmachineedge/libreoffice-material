@@ -46,6 +46,35 @@ IGNORED_DIRECTORY_NAMES = frozenset(
 ENTRY_GROUPS = ("shipping_fields", "planned_fields", "excluded_candidates")
 SEARCH_TERM_RE = re.compile("|".join(re.escape(term) for term in IDENTIFIER_TERMS), re.I)
 
+# Every shipping field is either bound to the shared controller-driven regex builder
+# ("source-integrated", cross-checked against regex-search-integrations.json) or an honest,
+# still-unintegrated surface ("gap") that must carry a gap_category from the fixed taxonomy plus
+# non-empty gap_evidence.  An unknown integration_status fails closed.
+INTEGRATION_STATUSES = ("source-integrated", "gap")
+
+# The 8 architectural reasons recovered verbatim from commit 2fcd725e2's message.  These are the
+# canonical gap categories; the checker fails closed on any value outside the union below.
+GAP_CATEGORIES_RECOVERED = (
+    "URL-based help engines",
+    "bidirectional similarity matchers",
+    "multi-collection branching filters",
+    "remote threaded catalog",
+    "split UNO ownership",
+    "stacked auto-dismiss popovers",
+    "stub surface",
+    "typeahead index",
+)
+# Coined for a surface (customize.menu-commands) that fits none of the 8 recovered terms cleanly.
+# Still provisional: it needs a design-chapter sign-off before it is treated as canonical, so the
+# registry must flag it as such (see _validate_gap_taxonomy).
+GAP_CATEGORIES_PROVISIONAL = ("shared base-class ownership across sibling surfaces",)
+GAP_CATEGORIES = frozenset(GAP_CATEGORIES_RECOVERED) | frozenset(GAP_CATEGORIES_PROVISIONAL)
+
+# The sibling integration registry the coverage ledger must reconcile against so the two registries
+# can never silently drift (every source-integrated coverage id must be a registered integration and
+# vice versa, and the counts must agree).
+INTEGRATIONS_REGISTRY = "qa/windows-ui-contract/regex-search-integrations.json"
+
 
 @dataclass(frozen=True, order=True)
 class ControlKey:
@@ -63,6 +92,8 @@ class CoverageStats:
     excluded_candidates: int = 0
     discovered_candidates: int = 0
     scanner_discovered_shipping: int = 0
+    source_integrated_fields: int = 0
+    gap_fields: int = 0
 
 
 def _entry_key(entry: dict[str, Any]) -> ControlKey:
@@ -95,6 +126,123 @@ def _required_text(entry: dict[str, Any], key: str, context: str, errors: list[s
     value = entry.get(key)
     if not isinstance(value, str) or not value.strip():
         errors.append(f"{context}: {key} must be a non-empty string")
+
+
+def _validate_gap_taxonomy(registry: dict[str, Any], errors: list[str]) -> None:
+    """The registry must document the gap taxonomy and flag the provisional coined term.
+
+    ``recovered_categories`` must be exactly the 8 terms recovered from commit 2fcd725e2, and every
+    provisional category must be declared with a ``coined_for`` surface and a
+    ``needs-design-sign-off`` status so the coined term cannot silently become canonical.
+    """
+    taxonomy = registry.get("gap_taxonomy")
+    if not isinstance(taxonomy, dict):
+        errors.append("gap_taxonomy must be an object")
+        return
+
+    recovered = taxonomy.get("recovered_categories")
+    if not isinstance(recovered, list) or sorted(
+        str(term) for term in recovered
+    ) != sorted(GAP_CATEGORIES_RECOVERED):
+        errors.append(
+            "gap_taxonomy.recovered_categories must be exactly "
+            f"{sorted(GAP_CATEGORIES_RECOVERED)!r}"
+        )
+
+    provisional = taxonomy.get("provisional_categories")
+    if not isinstance(provisional, list):
+        errors.append("gap_taxonomy.provisional_categories must be an array")
+        return
+    declared: list[str] = []
+    for index, item in enumerate(provisional):
+        context = f"gap_taxonomy.provisional_categories[{index}]"
+        if not isinstance(item, dict):
+            errors.append(f"{context} must be an object")
+            continue
+        category = item.get("category")
+        if not isinstance(category, str) or category not in GAP_CATEGORIES_PROVISIONAL:
+            errors.append(
+                f"{context}: category must be one of {sorted(GAP_CATEGORIES_PROVISIONAL)!r}"
+            )
+        else:
+            declared.append(category)
+        coined_for = item.get("coined_for")
+        if not isinstance(coined_for, str) or not coined_for.strip():
+            errors.append(f"{context}: coined_for must be a non-empty string")
+        if item.get("status") != "needs-design-sign-off":
+            errors.append(
+                f"{context}: status must be 'needs-design-sign-off' until a design chapter "
+                "signs the coined term off"
+            )
+    if sorted(declared) != sorted(GAP_CATEGORIES_PROVISIONAL):
+        errors.append(
+            "gap_taxonomy.provisional_categories must declare exactly "
+            f"{sorted(GAP_CATEGORIES_PROVISIONAL)!r}"
+        )
+
+
+def load_integration_ids(repo_root: Path) -> tuple[set[str] | None, list[str]]:
+    """Return the coverage_ids registered in regex-search-integrations.json (or None on failure)."""
+    path = repo_root / PurePosixPath(INTEGRATIONS_REGISTRY)
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        return None, [f"cannot read integrations registry {INTEGRATIONS_REGISTRY}: {exc}"]
+    except json.JSONDecodeError as exc:
+        return None, [f"cannot parse integrations registry {INTEGRATIONS_REGISTRY}: {exc}"]
+    if not isinstance(raw, dict) or not isinstance(raw.get("integrations"), list):
+        return None, [f"{INTEGRATIONS_REGISTRY}: integrations array required"]
+    ids: set[str] = set()
+    for item in raw["integrations"]:
+        if isinstance(item, dict) and isinstance(item.get("coverage_id"), str):
+            ids.add(item["coverage_id"])
+    return ids, []
+
+
+def _validate_integration_status(
+    entry: dict[str, Any],
+    context: str,
+    coverage_id: Any,
+    integrated_ids: set[str],
+    gap_ids: set[str],
+    errors: list[str],
+) -> None:
+    """Every shipping field declares a fail-closed integration_status.
+
+    A ``gap`` field must carry a gap_category from the fixed taxonomy plus non-empty gap_evidence; a
+    ``source-integrated`` field must NOT carry gap metadata (it is reconciled against the integration
+    registry instead).  An unknown or missing status fails closed.
+    """
+    status = entry.get("integration_status")
+    if status not in INTEGRATION_STATUSES:
+        errors.append(
+            f"{context}: integration_status must be one of {list(INTEGRATION_STATUSES)}"
+        )
+        return
+
+    if status == "gap":
+        gap_category = entry.get("gap_category")
+        if not isinstance(gap_category, str) or not gap_category.strip():
+            errors.append(f"{context}: gap field requires a non-empty gap_category")
+        elif gap_category not in GAP_CATEGORIES:
+            errors.append(
+                f"{context}: gap_category {gap_category!r} is not in the recovered gap taxonomy"
+            )
+        gap_evidence = entry.get("gap_evidence")
+        if not isinstance(gap_evidence, str) or not gap_evidence.strip():
+            errors.append(
+                f"{context}: gap field requires non-empty gap_evidence citing a real file:symbol anchor"
+            )
+        if isinstance(coverage_id, str) and coverage_id:
+            gap_ids.add(coverage_id)
+    else:  # source-integrated
+        for forbidden in ("gap_category", "gap_evidence"):
+            if forbidden in entry:
+                errors.append(
+                    f"{context}: source-integrated field must not carry {forbidden}"
+                )
+        if isinstance(coverage_id, str) and coverage_id:
+            integrated_ids.add(coverage_id)
 
 
 def _validate_scanner_contract(registry: dict[str, Any], errors: list[str]) -> None:
@@ -244,7 +392,9 @@ def discover_candidate_controls(repo_root: Path) -> tuple[dict[ControlKey, set[s
 
 
 def validate_registry_data(
-    repo_root: Path, registry: dict[str, Any]
+    repo_root: Path,
+    registry: dict[str, Any],
+    integration_ids: set[str] | None = None,
 ) -> tuple[list[str], CoverageStats]:
     errors: list[str] = []
 
@@ -288,6 +438,8 @@ def validate_registry_data(
     seen_coverage_ids: dict[str, str] = {}
     ui_cache: dict[str, tuple[ET.Element | None, str | None]] = {}
     keys_by_group: dict[str, set[ControlKey]] = {name: set() for name in ENTRY_GROUPS}
+    integrated_ids: set[str] = set()
+    gap_ids: set[str] = set()
 
     for group_name in ENTRY_GROUPS:
         for index, entry in enumerate(groups[group_name]):
@@ -329,6 +481,11 @@ def validate_registry_data(
                 else:
                     seen_coverage_ids[coverage_id] = context
 
+            if group_name == "shipping_fields":
+                _validate_integration_status(
+                    entry, context, coverage_id, integrated_ids, gap_ids, errors
+                )
+
             if group_name == "planned_fields":
                 _validate_planned_control(
                     repo_root, entry, key, context, ui_cache, errors
@@ -353,12 +510,48 @@ def validate_registry_data(
             f"excluded candidate no longer matches the scanner; remove or reclassify it: {key.display()}"
         )
 
+    # Integration split (source-integrated vs honest gap) and the fixed gap taxonomy.
+    for count_key, actual in (
+        ("source_integrated_fields", len(integrated_ids)),
+        ("gap_fields", len(gap_ids)),
+    ):
+        expected = counts.get(count_key)
+        if not isinstance(expected, int) or expected < 0:
+            errors.append(f"expected_counts.{count_key} must be a non-negative integer")
+        elif expected != actual:
+            errors.append(
+                f"expected_counts.{count_key} is {expected}, but registry contains {actual}"
+            )
+
+    _validate_gap_taxonomy(registry, errors)
+
+    # Cross-file reconciliation: the source-integrated set must exactly match the sibling
+    # regex-search-integrations registry so the two ledgers can never silently drift.
+    if integration_ids is not None:
+        for cid in sorted(integration_ids - integrated_ids):
+            errors.append(
+                f"regex-search-integrations registers {cid!r} but coverage does not mark it "
+                "integration_status source-integrated"
+            )
+        for cid in sorted(integrated_ids - integration_ids):
+            errors.append(
+                f"coverage marks {cid!r} source-integrated but regex-search-integrations has no "
+                "matching integration"
+            )
+        if len(integration_ids) != len(integrated_ids):
+            errors.append(
+                "integration count drift: regex-search-integrations registers "
+                f"{len(integration_ids)}, coverage marks {len(integrated_ids)} source-integrated"
+            )
+
     stats = CoverageStats(
         shipping_fields=len(groups["shipping_fields"]),
         planned_fields=len(groups["planned_fields"]),
         excluded_candidates=len(groups["excluded_candidates"]),
         discovered_candidates=len(candidates),
         scanner_discovered_shipping=len(keys_by_group["shipping_fields"] & set(candidates)),
+        source_integrated_fields=len(integrated_ids),
+        gap_fields=len(gap_ids),
     )
     return errors, stats
 
@@ -374,7 +567,10 @@ def validate_registry(
         return [f"cannot parse registry {registry_path}: {exc}"], CoverageStats()
     if not isinstance(raw_registry, dict):
         return ["registry root must be an object"], CoverageStats()
-    return validate_registry_data(repo_root.resolve(), raw_registry)
+    resolved_root = repo_root.resolve()
+    integration_ids, integration_errors = load_integration_ids(resolved_root)
+    errors, stats = validate_registry_data(resolved_root, raw_registry, integration_ids)
+    return integration_errors + errors, stats
 
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:
@@ -415,7 +611,9 @@ def main(argv: list[str] | None = None) -> int:
     manually_audited = stats.shipping_fields - stats.scanner_discovered_shipping
     print(
         "Search-field coverage validated: "
-        f"{stats.shipping_fields} shipping, "
+        f"{stats.shipping_fields} shipping "
+        f"({stats.source_integrated_fields} source-integrated + "
+        f"{stats.gap_fields} documented gaps), "
         f"{stats.planned_fields} planned, "
         f"{stats.excluded_candidates} explicit exclusions, "
         f"{stats.discovered_candidates} scanner candidates "

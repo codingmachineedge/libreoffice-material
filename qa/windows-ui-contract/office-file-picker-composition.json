@@ -1,0 +1,103 @@
+{
+  "_comment": [
+    "WIN-DLG-003 -- in-suite Office file picker (Save As / Open fallback sheet). Composition-PINNING",
+    "contract (check-windows-file-flow-contract.py shape: comment-stripped literal anchors + a",
+    "message-box ledger + read-only cross-references) over the real OfficeFilePicker fallback",
+    "(fpicker/source/office/iodlg.cxx + fpicker/uiconfig/ui/explorerfiledialog.ui + foldernamedialog.ui).",
+    "Design 08-dialogs.md 8.3.1 explicitly assigns this in-suite picker and its pixels to WIN-DLG-003.",
+    "",
+    "WIN-SYS-001 (file-flow-policy.json) already closes the OS-owned win32 IFileDialog delegation, the",
+    "SystemFilePicker->OfficeFilePicker seam, and the filedlghelper.cxx call-site boxes -- NONE of that",
+    "is redone here. This row pins only the fallback picker's own composition.",
+    "",
+    "The .ui controls are plain stock GtkComboBoxText/GtkCheckButton/GtkButton with NO Material-specific",
+    "styling hook in source (unlike VCL_FILE_WIDGET_THEME-guarded surfaces), so there is no definition.xml",
+    "part to pin: the M-scope is binding the design 8.3 Layout & regions to the real widget ids + their",
+    "weld_* bindings, plus the save-mode label swap and the picker's OWN overwrite-confirmation box.",
+    "",
+    "NON-OBVIOUS FINDING pinned as a guard: design 8.3's 'Breadcrumb row' region is backed by the plain",
+    "current_path SvtURLBox combo, NOT by breadcrumb.ui. breadcrumb.ui/Breadcrumb is used exclusively by",
+    "RemoteFilesDialog (the already native-excluded remote/WebDAV picker; 5 references there, ZERO in",
+    "iodlg.cxx/iodlgimp.cxx). Anchoring 'Breadcrumb row' to breadcrumb.ui would be a false pin -- the",
+    "breadcrumb_guard below forbids any breadcrumb reference in iodlg.cxx to keep that honest.",
+    "",
+    "The undocumented extra checkboxes (readonly/extension/gpgencrypt/gpgsign/options/selection/link/",
+    "cb_preview) and the new_folder->foldernamedialog.ui flow are left UNCLAIMED (neither pinned nor",
+    "contradicted), pending the 8.3 chapter settling.",
+    "",
+    "Source evidence only: runtime_verified is false throughout -- no native build, Save-As sheet pixels,",
+    "or runtime interaction are claimed. Resource identifiers (STR_*) are anchored as C++ identifiers,",
+    "never hardcoded display strings, so a localization edit does not spuriously fail the contract."
+  ],
+  "schema_version": 1,
+  "contract": "material-office-file-picker-composition",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.3 Save As / Open; 8.3.1 file-flow platform delegation)",
+  "picker_ui": "fpicker/uiconfig/ui/explorerfiledialog.ui",
+  "impl_source": "fpicker/source/office/iodlg.cxx",
+  "allowed_classifications": ["decision", "security", "credential", "input", "acknowledgment"],
+  "regions": [
+    {"region": "breadcrumb-row", "object_id": "current_path", "class": "GtkComboBoxText",
+     "binding": "weld_combo_box(u\"current_path\"_ustr)",
+     "note": "The design 8.3 'Breadcrumb row' is the plain current_path SvtURLBox combo, NOT breadcrumb.ui (that belongs to the remote picker)."},
+    {"region": "file-name-field", "object_id": "file_name", "class": "GtkComboBoxText",
+     "binding": "weld_combo_box(u\"file_name\"_ustr)"},
+    {"region": "file-type-dropdown", "object_id": "file_type", "class": "GtkComboBoxText",
+     "binding": "weld_combo_box(u\"file_type\"_ustr)"},
+    {"region": "password-checkbox", "object_id": "password", "class": "GtkCheckButton",
+     "binding": "weld_check_button(u\"password\"_ustr)"},
+    {"region": "footer-open", "object_id": "open", "class": "GtkButton",
+     "binding": "weld_button(u\"open\"_ustr)"},
+    {"region": "footer-cancel", "object_id": "cancel", "class": "GtkButton",
+     "binding": "weld_button(u\"cancel\"_ustr)"}
+  ],
+  "save_mode_label_swap": {
+    "file": "fpicker/source/office/iodlg.cxx",
+    "anchors": [
+      {"literal": "PickerFlags::SaveAs", "note": "Save-mode branch that swaps title + confirm-button labels."},
+      {"literal": "STR_EXPLORERFILE_SAVE", "note": "Save-mode dialog title resource."},
+      {"literal": "STR_EXPLORERFILE_BUTTONSAVE", "note": "Save-mode confirm-button label resource."},
+      {"literal": "m_xBtnFileOpen->set_label", "note": "The confirm button relabels to Save in save mode."}
+    ]
+  },
+  "message_boxes": [
+    {
+      "id": "overwrite-confirm",
+      "file": "fpicker/source/office/iodlg.cxx",
+      "resid": "STR_SVT_ALREADYEXISTOVERWRITE",
+      "message_type": "Question",
+      "buttons": "YesNo",
+      "classification": "decision",
+      "modal": true,
+      "routes_to_notification": false,
+      "safe_default": {"guard_literal": "run() != RET_YES", "abort_literal": "return"},
+      "note": "The fallback picker's OWN overwrite-confirmation box (design 8.3 'Overwriting an existing file raises the destructive-confirmation pattern... with the safe default on Cancel'). Any outcome other than Yes aborts the write. dialog-notification-policy.csv is .ui-only and file-flow-policy.json's message_boxes are scoped to filedlghelper.cxx, so no existing registry pins this box."
+    }
+  ],
+  "breadcrumb_guard": {
+    "file": "fpicker/source/office/iodlg.cxx",
+    "forbidden_literal": "breadcrumb",
+    "note": "breadcrumb.ui/Breadcrumb belongs to RemoteFilesDialog, not this fallback picker. If iodlg.cxx ever references breadcrumb, the 'Breadcrumb row = current_path' pin is stale and this fails closed."
+  },
+  "picker_seam": {
+    "file": "sfx2/source/dialog/filedlghelper.cxx",
+    "literal": "com.sun.star.ui.dialogs.OfficeFilePicker",
+    "note": "The upstream SystemFilePicker->OfficeFilePicker routing boundary (WIN-SYS-001) that hands control into this fallback picker; read-only confirmation it hasn't drifted, never re-registered."
+  },
+  "cross_references": [
+    {
+      "ui_path": "fpicker/uiconfig/ui/explorerfiledialog.ui",
+      "object_id": "ExplorerFileDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The in-suite picker collects input; already registered as native-exclusion (KeepModal); pinned read-only, not re-registered."
+    },
+    {
+      "ui_path": "fpicker/uiconfig/ui/foldernamedialog.ui",
+      "object_id": "FolderNameDialog",
+      "expected_policy": "native-exclusion",
+      "note": "The new-folder name-entry sub-dialog; already registered as native-exclusion (KeepModal); pinned read-only, not re-registered."
+    }
+  ]
+}

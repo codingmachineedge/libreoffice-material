@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "contract": "material-notebookbar-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/05-navigation.md",
+  "chapter_section": "4",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-NAV-004. Behind the Material file-widget theme, NotebookBar::UpdateBackground() (vcl/source/control/notebookbar.cxx) resolves the ribbon group-area background wash to the @surface role (docs/design/05-navigation.md 4.1, 'Group area ... @surface fill') through vcl::MaterialTokens instead of the four legacy per-module accent tints (Writer #1a85d1, Calc #3cbc45, Impress #e75729, Draw #e5b443). Under the native/default theme every per-module accent Merge() call is retained byte-for-byte and no Material code path runs, so keyboard, mouse, a11y and RTL behaviour are untouched. SCOPE (deliberate honest narrowing): this pins the group-area background wash ONLY. It is NOT the 38px tab-row @surface-container band, NOT the tab-row @outline-variant bottom rule, and NOT the 96px group height / 8px padding / command-chip .ui geometry -- a single NotebookBar Wallpaper colour cannot carry the tab-row band and group area as two distinct tokens simultaneously, so those remain .ui/build-bound work outside this contract and this contract must never be cited as tab-row-band or .ui-geometry coverage. Replacing the recognisable per-module blue/green/orange/yellow tint under the Material theme is an intentional, design-directed change (05-navigation.md 4.1), not a regression. Source evidence only: no native build, notebookbar pixels, or runtime interaction are claimed (runtime_verified false).",
+  "group_area": {
+    "role": "surface",
+    "note": "docs/design/05-navigation.md 4.1: 'Group area | 96px tall, 8px padding | @surface fill'. Only the @surface fill token is pinned here; the 96px height, 8px padding, @outline-variant inter-group dividers and big/small/chip command sizing remain .ui/build-bound work outside this contract.",
+    "palette_colors": [
+      "surface"
+    ],
+    "owner": {
+      "source": "vcl/source/control/notebookbar.cxx",
+      "include": "<vcl/MaterialTokens.hxx>",
+      "guard_marker": "lcl_materialNotebookbarColor",
+      "markers": [
+        "VCL_FILE_WIDGET_THEME",
+        "MaterialTokens::fromThemeDefinition",
+        "lcl_materialNotebookbarColor(\"surface\")"
+      ],
+      "guarded_call": {
+        "statement": "if (const std::optional<Color> oSurface = lcl_materialNotebookbarColor(\"surface\")) aColor = *oSurface;",
+        "within_branch_after": "Color aColor = GetSettings().GetStyleSettings().GetDialogColor();"
+      },
+      "must_retain": [
+        "aColor.Merge(Color(0x1a, 0x85, 0xd1), cTrans)",
+        "aColor.Merge(Color(0x3c, 0xbc, 0x45), cTrans)",
+        "aColor.Merge(Color(0xe7, 0x57, 0x29), cTrans)",
+        "aColor.Merge(Color(0xe5, 0xb4, 0x43), cTrans)"
+      ]
+    }
+  }
+}

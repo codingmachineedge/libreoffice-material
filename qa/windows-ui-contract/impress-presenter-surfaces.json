@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "contract": "material-impress-presenter-surfaces",
+  "platform": "windows",
+  "inventory_row": "WIN-IM-004",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/11-impress-draw.md (11.4 presenter console / animation / transition surfaces)",
+  "note": "Composition-pinning over the real, already-shipping upstream surfaces WIN-IM-004 owns, as pure static source/XML checks. It pins (1) the presenter console's genuine CppComponent registration; (2) the animation deck's GtkTreeView and the transition deck's GtkIconView content surfaces, each bound to its PanelLayout host; and it records an explicit, source-grounded absence marker that sd/source/console/* carries ZERO VCL widget-theme hooks today, because the presenter console renders through its own PresenterTheme bitmap/sprite pipeline entirely outside the VCL widget-draw/definition.xml path -- so no guarded-material-source triad is honestly available for presenter-console chrome. It also flags, without silently reconciling, the transition-gallery IconView-vs-design-grid mismatch and the presenter-console token-family-without-implemented-control gap. runtime_verified is false throughout: no native build, presenter pixels, animation/transition interaction, or UNO-tree evidence is claimed.",
+  "component": {
+    "file": "sd/source/console/presenter.component",
+    "implementation": "org.libreoffice.comp.PresenterScreenProtocolHandler",
+    "constructor": "sd_PresenterProtocolHandler_get_implementation",
+    "service": "com.sun.star.frame.ProtocolHandler",
+    "note": "The inventory row's stale 'sdext; Material owner not assigned' note is corrected: the presenter console lives at sd/source/console/*, not sdext/ (which now holds only the PDF-import and PPT-minimizer modules)."
+  },
+  "console_absence": {
+    "dir": "sd/source/console",
+    "min_cxx_files": 30,
+    "forbidden_markers": [
+      "VCL_FILE_WIDGET_THEME",
+      "VCL_DRAW_WIDGETS_FROM_FILE",
+      "MaterialTokens"
+    ],
+    "note": "Point-in-time fact, asserted fail-closed: the presenter console has no VCL widget-theme hooks. If a future change adds such a guard without updating this row's documented architecture-divergence note, the checker surfaces the drift rather than silently passing or breaking. Comment/raw-string-stripped so a commented-out guard can neither satisfy nor break the marker."
+  },
+  "panels": [
+    {
+      "id": "custom-animation",
+      "impl_source": "sd/source/ui/animations/CustomAnimationPane.cxx",
+      "panel_layout_call": "PanelLayout(pParent, u\"CustomAnimationsPanel\"_ustr, u\"modules/simpress/ui/customanimationspanel.ui\"_ustr)",
+      "ui_source": "sd/uiconfig/simpress/ui/customanimationspanel.ui",
+      "root_object_id": "CustomAnimationsPanel",
+      "content_widget": {
+        "class": "GtkTreeView",
+        "id": "effect_list"
+      }
+    },
+    {
+      "id": "slide-transition",
+      "impl_source": "sd/source/ui/animations/SlideTransitionPane.cxx",
+      "panel_layout_call": "PanelLayout( pParent, u\"SlideTransitionsPanel\"_ustr, u\"modules/simpress/ui/slidetransitionspanel.ui\"_ustr )",
+      "ui_source": "sd/uiconfig/simpress/ui/slidetransitionspanel.ui",
+      "root_object_id": "SlideTransitionsPanel",
+      "content_widget": {
+        "class": "GtkIconView",
+        "id": "transitions_icons",
+        "item_width": "55"
+      }
+    }
+  ],
+  "divergences": {
+    "transition_gallery": {
+      "status": "specified",
+      "note": "slidetransitionspanel.ui's transitions_icons is a GtkIconView (item-width 55, runtime-populated from TransitionPreset data), which does NOT match design 11.4's prose 'a grid of transition cells reusing the Layouts-panel cell pattern'. Flagged honestly as an open future icon-view-to-card-grid restyle, not a restatement of existing behaviour; the restyle is build-bound and not implemented."
+    },
+    "presenter_console_chrome": {
+      "status": "specified",
+      "note": "Design 11.4's 'inverse-themed chrome matching the tooltip/snackbar family' names a real target token family (inverse-surface / on-inverse-surface, corner-small, stroke-none -- already implemented for the tooltip control in definition.xml) but NO implemented presenter-console control: the PresenterTheme bitmap/sprite pipeline (PresenterCanvas/PresenterSprite, not VCL DrawNativeControl) is architecturally outside VCL_FILE_WIDGET_THEME today. Theming it needs new archive-backed design authored first; this row does not invent it."
+    },
+    "catalog_gap": {
+      "status": "specified",
+      "note": "Documents (does not close) a pre-existing gap in a different row's contract: 'Presenter Console' and 'Start Slide Show' are absent from the canonical site/prototype-features.json 2,433-row catalog (only 'Slide Transition' -> .uno:SlideChangeWindow resolves verbatim; 'Custom Animation' exists as 'Animation' -> .uno:CustomAnimation and 'Open the Custom Animation Deck' -> .uno:SidebarDeck.SdCustomAnimationDeck). Presenter Console dispatches via a com.sun.star.frame.ProtocolHandler rather than a plain .uno: command, so WIN-CONCEPT-001's '0 unresolved' catalog-contract claim never had to cover it. Flagged, not fixed by this row."
+    }
+  }
+}

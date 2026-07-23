@@ -1,0 +1,151 @@
+{
+  "_comment": [
+    "WIN-DLG-002 -- Options dialog (cui two-pane Material target). Composition-PINNING contract",
+    "(WIN-SYS-003 Document Properties precedent, adapted for a TREE master-detail shell instead of a",
+    "NOTEBOOK icon-rail shell) over the real upstream cui/uiconfig/ui/optionsdialog.ui +",
+    "cui/source/options/treeopt.cxx + cui/inc/treeopt.hrc. All three layers are 100% static /",
+    "compile-time facts (never officecfg/.xcu runtime data).",
+    "",
+    "Pinned fail-closed: (1) the dialog shell -- modal GtkDialog OptionsDialog, the GtkTreeView",
+    "'pages' bound to GtkTreeStore 'liststore1' (2 columns) with headers-visible=False and",
+    "enable-tree-lines=True, plus the searchEntry/searchEntry_regex_builder pair (already wired to",
+    "sfx2::RegexSearchController per regex-search-integrations.json 'options.settings' -- cited as a",
+    "satisfied dependency, NOT re-integrated here); (2) the real footer action-widget sequence",
+    "help(-11)/revert(101)/ok(-5)/cancel(-6) with ok has-default; (3) the ordered 12 top-level option",
+    "groups, each an AddGroup(...) call site in treeopt.cxx keyed to its SID_*_RES[0] resource array in",
+    "treeopt.hrc, verified in ascending source position with its module guard (nullptr = unconditional,",
+    "pSwMod/pScMod/pSdMod/pSmMod = module-gated); (4) the shared tree native parts (listnode/listnet/",
+    "windowbackground/frame) already implemented app-wide in definition.xml, cited read-only.",
+    "",
+    "Documented drift recorded as an explicit carve-out (NOT silently omitted): the footer button box",
+    "has FIVE buttons -- help, revert, apply, ok, cancel -- but the <action-widgets> block lists only",
+    "FOUR (help/revert/ok/cancel). The 'apply' GtkButton (wired to ApplyHdl_Impl, same handler family",
+    "as OK) has no response code and is absent from <action-widgets>. The checker pins this exact",
+    "reality: apply must exist as a button AND must NOT appear in the action-widget id set.",
+    "",
+    "Carved out spec-only (build-dependent, never promoted): the per-group leaf pages (~80 entries",
+    "across the 12 groups) deferred to a follow-up widening; the tree row-selection fill (@primary-",
+    "container per 8.2) which has no definition.xml part (GtkTreeView row selection is native-drawn",
+    "outside the file-widget part vocabulary); the density / adaptive tree->dropdown collapse below",
+    "560px; and the field-grid / floating-label content-pane treatment (design-only, no source yet).",
+    "",
+    "Source evidence only: runtime_verified is false throughout -- no native build, options-dialog",
+    "pixels, or runtime interaction are claimed. Group visibility at runtime additionally depends on",
+    "lcl_isOptionHidden()/module-active pointers; this contract pins the SOURCE guard, never the",
+    "runtime outcome."
+  ],
+  "schema_version": 1,
+  "contract": "material-options-dialog-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/08-dialogs.md (8.2 Options dialog)",
+  "dialog_ui": "cui/uiconfig/ui/optionsdialog.ui",
+  "hrc_source": "cui/inc/treeopt.hrc",
+  "impl_source": "cui/source/options/treeopt.cxx",
+  "dialog_composition": {
+    "dialog": {"id": "OptionsDialog", "modal": true},
+    "tree": {
+      "id": "pages",
+      "class": "GtkTreeView",
+      "model": "liststore1",
+      "headers_visible": false,
+      "enable_tree_lines": true
+    },
+    "liststore": {"id": "liststore1", "class": "GtkTreeStore", "columns": 2},
+    "search_field": {
+      "entry": "searchEntry",
+      "regex_builder": "searchEntry_regex_builder",
+      "dependency": "regex-search-integrations.json ('options.settings') -- already wired to sfx2::RegexSearchController, cited read-only, not re-integrated by this row."
+    }
+  },
+  "footer": {
+    "action_widgets": [
+      {"id": "help", "response": "-11"},
+      {"id": "revert", "response": "101"},
+      {"id": "ok", "response": "-5"},
+      {"id": "cancel", "response": "-6"}
+    ],
+    "primary": {"id": "ok", "has_default": true},
+    "apply_drift": {
+      "button_id": "apply",
+      "must_not_be_action_widget": true,
+      "note": "Recorded carve-out: the Apply button exists in the button box but is not in <action-widgets> (no response code). Design 8.2 states a 4-button footer; the real .ui has this 5th button. Pinned so it can never be silently added to or removed from the action set."
+    }
+  },
+  "node_groups": [
+    {"name": "General", "res_array": "SID_GENERAL_OPTIONS_RES", "group_sid": "SID_GENERAL_OPTIONS", "guard": "unconditional",
+     "marker": "SID_GENERAL_OPTIONS_RES[0].first), nullptr, nullptr, SID_GENERAL_OPTIONS"},
+    {"name": "LoadSave", "res_array": "SID_FILTER_DLG_RES", "group_sid": "SID_FILTER_DLG", "guard": "unconditional",
+     "marker": "SID_FILTER_DLG_RES[0].first), nullptr, nullptr, SID_FILTER_DLG"},
+    {"name": "LanguageSettings", "res_array": "SID_LANGUAGE_OPTIONS_RES", "group_sid": "SID_LANGUAGE_OPTIONS", "guard": "unconditional",
+     "marker": "SID_LANGUAGE_OPTIONS_RES[0].first), nullptr, nullptr, SID_LANGUAGE_OPTIONS"},
+    {"name": "Writer", "res_array": "SID_SW_EDITOPTIONS_RES", "group_sid": "SID_SW_EDITOPTIONS", "guard": "pSwMod",
+     "marker": "SID_SW_EDITOPTIONS_RES[0].first), pSwMod, pSwMod, SID_SW_EDITOPTIONS"},
+    {"name": "WriterWeb", "res_array": "SID_SW_ONLINEOPTIONS_RES", "group_sid": "SID_SW_ONLINEOPTIONS", "guard": "pSwMod",
+     "marker": "SID_SW_ONLINEOPTIONS_RES[0].first), pSwMod, pSwMod, SID_SW_ONLINEOPTIONS"},
+    {"name": "Calc", "res_array": "SID_SC_EDITOPTIONS_RES", "group_sid": "SID_SC_EDITOPTIONS", "guard": "pScMod",
+     "marker": "SID_SC_EDITOPTIONS_RES[0].first), pScMod, pScMod, SID_SC_EDITOPTIONS"},
+    {"name": "Impress", "res_array": "SID_SD_EDITOPTIONS_RES", "group_sid": "SID_SD_EDITOPTIONS", "guard": "pSdMod",
+     "marker": "SID_SD_EDITOPTIONS_RES[0].first), pSdMod, pSdMod, SID_SD_EDITOPTIONS"},
+    {"name": "Draw", "res_array": "SID_SD_GRAPHIC_OPTIONS_RES", "group_sid": "SID_SD_GRAPHIC_OPTIONS", "guard": "pSdMod",
+     "marker": "SID_SD_GRAPHIC_OPTIONS_RES[0].first), pSdMod, pSdMod, SID_SD_GRAPHIC_OPTIONS"},
+    {"name": "Math", "res_array": "SID_SM_EDITOPTIONS_RES", "group_sid": "SID_SM_EDITOPTIONS", "guard": "pSmMod",
+     "marker": "SID_SM_EDITOPTIONS_RES[0].first), pSmMod, pSmMod, SID_SM_EDITOPTIONS"},
+    {"name": "Base", "res_array": "SID_SB_STARBASEOPTIONS_RES", "group_sid": "SID_SB_STARBASEOPTIONS", "guard": "unconditional",
+     "marker": "SID_SB_STARBASEOPTIONS_RES[0].first), nullptr, nullptr, SID_SB_STARBASEOPTIONS"},
+    {"name": "Charts", "res_array": "SID_SCH_EDITOPTIONS_RES", "group_sid": "SID_SCH_EDITOPTIONS", "guard": "unconditional",
+     "marker": "SID_SCH_EDITOPTIONS_RES[0].first), nullptr, nullptr, SID_SCH_EDITOPTIONS"},
+    {"name": "Internet", "res_array": "SID_INET_DLG_RES", "group_sid": "SID_INET_DLG", "guard": "unconditional",
+     "marker": "SID_INET_DLG_RES[0].first), nullptr, nullptr, SID_INET_DLG"}
+  ],
+  "tree_parts": {
+    "state_parts": [
+      {"name": "listnode", "control": "listnode", "part": "Entire", "states": [
+        {"role": "enabled", "attrs": {"enabled": "true"}, "element": "line", "tokens": {"stroke": "@on-surface-variant", "stroke-width": "@stroke-standard"}},
+        {"role": "focused", "attrs": {"enabled": "true", "focused": "true"}, "element": "rect",
+         "tokens": {"stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-focus"}}
+      ]}
+    ],
+    "simple_parts": [
+      {"name": "windowbackground-dialog", "control": "windowbackground", "part": "BackgroundDialog", "element": "rect",
+       "tokens": {"stroke": "@surface-container", "fill": "@surface-container", "stroke-width": "@stroke-none"}},
+      {"name": "frame-border", "control": "frame", "part": "Border", "attrs": {"enabled": "true"}, "element": "rect",
+       "tokens": {"stroke": "@outline-variant", "fill": "@surface-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}}
+    ],
+    "present_parts": [
+      {"name": "listnet", "control": "listnet", "part": "Entire"}
+    ],
+    "metrics": [
+      {"name": "size-tree-node", "container": "metrics", "tag": "metric", "value": "20"},
+      {"name": "corner-focus", "container": "shapes", "tag": "radius", "value": "6"}
+    ],
+    "palette_roles": ["on-surface-variant", "primary", "surface", "surface-container", "outline-variant"]
+  },
+  "modal_exclusion": {
+    "ui_path": "cui/uiconfig/ui/optionsdialog.ui",
+    "object_id": "OptionsDialog",
+    "expected_policy": "native-exclusion",
+    "note": "The Options dialog collects input; it stays KeepModal and is never routed into the notification stack. Read-only cross-check, not re-registered."
+  },
+  "carveouts": {
+    "leaf_page_enumeration_deferred": {
+      "status": "specified",
+      "note": "The ~80 per-group leaf pages (RID_SW_TP_..., SID_SC_TP_..., etc.) are real static source that could be pinned with more effort but are deferred to a follow-up widening of this registry; not enumerated here."
+    },
+    "tree_row_selection_fill": {
+      "status": "specified",
+      "note": "The selected-row fill (@primary-container per 8.2) has no equivalent part in definition.xml; GtkTreeView row selection is native-drawn outside the file-widget part vocabulary, so whether Material's selected-row treatment is achievable without new native paint is a build-host question, not this checker's."
+    },
+    "density_adaptive_width": {
+      "status": "specified",
+      "note": "The adaptive width collapse (tree -> page dropdown below 560px) and density selection are design-only; no source exists to pin build-free."
+    },
+    "field_grid_floating_label": {
+      "status": "specified",
+      "note": "The field grid / floating-label / validation-message content-pane treatment described in 8.2 is 'specified here, not yet implemented' in the design chapter itself; no source exists to pin yet."
+    }
+  }
+}

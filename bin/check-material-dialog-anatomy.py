@@ -53,7 +53,7 @@ HELP_RESPONSE = "RET_HELP"
 NON_VERB_LABELS = frozenset({"ok", "yes", "no", "cancel", "close", "apply", "help", "retry"})
 
 MIN_MIGRATIONS = 3
-MAX_MIGRATIONS = 8
+MAX_MIGRATIONS = 10
 
 
 class ValidationError(RuntimeError):

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "contract": "material-math-editor-elements",
+  "platform": "windows",
+  "inventory_row": "WIN-MA-001",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/12-base-math-shared.md",
+  "chapter_section": "12.2",
+  "runtime_verified": false,
+  "notes": "Composition-pinning contract for the Math command-editor strip and the Elements panel (canvas/render-card excluded). It pins the real tree behind the inventory's 'shared multiline primitive compiled' claim and design 12.2: (1) editwindow.ui's scrolledwindow/editview ids and scroll-policy geometry that SmEditWindow binds by name; (2) the compiled multilineeditbox/Entire 3-state token set; (3) sidebarelements_math.ui's categorylist/elements/deletemenu ids and the IconView pixbuf/tooltip/single-click properties SmElementsPanel binds by name; (4) the closed, ordered 11-entry RID_CATEGORY_* list SmElementsControl::categories() returns, pinned by symbol identity + order (locale-safe, not translated text); (5) the single shared SmElementsControl class. IMPORTANT HONESTY CAVEAT: this does NOT assert Math's editor paints from the multilineeditbox tokens -- svx/source/dialog/weldeditview.cxx sources its background from rStyleSettings.GetFieldColor() and references no vcl::MaterialTokens/VCL_FILE_WIDGET_THEME guard, so marker (2) pins only that the compiled shared primitive is unchanged (matching the inventory's literal 'shared multiline primitive compiled' phrasing), not that Math's control consumes it. Source-composition evidence only; no build, no rendered editor/panel, no runtime interaction (runtime_verified:false throughout).",
+  "definition_part": {
+    "control": "multilineeditbox",
+    "part": "Entire",
+    "states": [
+      {
+        "role": "enabled",
+        "attrs": {"enabled": "true"},
+        "tokens": {"stroke": "@outline", "fill": "@surface", "stroke-width": "@stroke-thin", "radius": "@corner-container"}
+      },
+      {
+        "role": "focused",
+        "attrs": {"enabled": "true", "focused": "true"},
+        "tokens": {"stroke": "@primary", "fill": "@surface", "stroke-width": "@stroke-standard", "radius": "@corner-container"}
+      },
+      {
+        "role": "disabled",
+        "attrs": {"enabled": "false"},
+        "tokens": {"stroke": "@outline-variant", "fill": "@disabled-container", "stroke-width": "@stroke-thin", "radius": "@corner-container"}
+      }
+    ]
+  },
+  "ui_objects": [
+    {
+      "id": "editwindow_scroll",
+      "ui": "starmath/uiconfig/smath/ui/editwindow.ui",
+      "object_id": "scrolledwindow",
+      "object_class": "GtkScrolledWindow",
+      "props": {"hscrollbar-policy": "never", "vscrollbar-policy": "always", "shadow-type": "etched-out"}
+    },
+    {
+      "id": "editwindow_view",
+      "ui": "starmath/uiconfig/smath/ui/editwindow.ui",
+      "object_id": "editview",
+      "object_class": "GtkDrawingArea"
+    },
+    {
+      "id": "elements_iconview",
+      "ui": "starmath/uiconfig/smath/ui/sidebarelements_math.ui",
+      "object_id": "elements",
+      "object_class": "GtkIconView",
+      "props": {"pixbuf-column": "0", "tooltip-column": "2", "activate-on-single-click": "True", "model": "liststore2"}
+    },
+    {
+      "id": "elements_categorylist",
+      "ui": "starmath/uiconfig/smath/ui/sidebarelements_math.ui",
+      "object_id": "categorylist",
+      "object_class": "GtkComboBoxText"
+    },
+    {
+      "id": "elements_deletemenu",
+      "ui": "starmath/uiconfig/smath/ui/sidebarelements_math.ui",
+      "object_id": "deletemenu",
+      "object_class": "GtkMenu"
+    }
+  ],
+  "expected_markers": 4,
+  "markers": [
+    {
+      "id": "editor_scroll_binding",
+      "role": "SmEditWindow ctor binds the editwindow.ui scrolled window by name",
+      "source": "starmath/source/edit.cxx",
+      "code_markers": ["weld_scrolled_window(u\"scrolledwindow\"_ustr, true)"]
+    },
+    {
+      "id": "editor_view_binding",
+      "role": "SmEditWindow::CreateEditView welds the editview drawing area by name",
+      "source": "starmath/source/edit.cxx",
+      "code_markers": ["weld::CustomWeld(rBuilder, u\"editview\"_ustr"]
+    },
+    {
+      "id": "elements_panel_builder_ids",
+      "role": "SmElementsPanel binds categorylist/elements/deletemenu and constructs the shared control",
+      "source": "starmath/source/SmElementsPanel.cxx",
+      "code_markers": [
+        "weld_combo_box(u\"categorylist\"_ustr)",
+        "weld_icon_view(u\"elements\"_ustr)",
+        "weld_menu(\"deletemenu\")",
+        "std::make_unique<SmElementsControl>(",
+        "SmElementsControl::categories()"
+      ]
+    },
+    {
+      "id": "shared_control_definition",
+      "role": "the single SmElementsControl class defines categories() + its IconView/Menu ctor",
+      "source": "starmath/source/ElementsDockingWindow.cxx",
+      "code_markers": [
+        "const std::vector<TranslateId>& SmElementsControl::categories()",
+        "SmElementsControl::SmElementsControl(std::unique_ptr<weld::IconView> pIconView,"
+      ]
+    }
+  ],
+  "shared_control_header": {
+    "header": "starmath/inc/ElementsDockingWindow.hxx",
+    "markers": [
+      "class SmElementsControl",
+      "static const std::vector<TranslateId>& categories();",
+      "explicit SmElementsControl(std::unique_ptr<weld::IconView> pIconView,"
+    ],
+    "note": "SmElementsControl is a single class (declared here, defined in ElementsDockingWindow.cxx) constructed only by SmElementsPanel; there is no forked second implementation."
+  },
+  "category_list": {
+    "role": "the category combo is driven by the closed, ordered 11-entry RID_CATEGORY_* list, pinned by symbol identity + order so it stays locale-safe",
+    "source": "starmath/source/ElementsDockingWindow.cxx",
+    "vector_open": "const std::vector<TranslateId> s_a5Categories{",
+    "vector_close": "};",
+    "strings_file": "starmath/inc/strings.hrc",
+    "ordered_ids": [
+      "RID_CATEGORY_UNARY_BINARY_OPERATORS",
+      "RID_CATEGORY_RELATIONS",
+      "RID_CATEGORY_SET_OPERATIONS",
+      "RID_CATEGORY_FUNCTIONS",
+      "RID_CATEGORY_OPERATORS",
+      "RID_CATEGORY_ATTRIBUTES",
+      "RID_CATEGORY_BRACKETS",
+      "RID_CATEGORY_FORMATS",
+      "RID_CATEGORY_OTHERS",
+      "RID_CATEGORY_EXAMPLES",
+      "RID_CATEGORY_USERDEFINED"
+    ]
+  }
+}

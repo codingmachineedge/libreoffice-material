@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "contract": "material-calc-grid-selection-consumption",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/10-writer-calc.md#10.3",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "conditional_note": "CALCCELLFOCUS / CALCDBFOCUS resolve to StyleSettings::GetAccentColor() (-> the accentColor=@primary slot) only as the DEFAULT colour. ColorConfig_Impl::GetColorValue returns the user's stored Tools>Options>Application Colors value first and falls back to this default only when that stored value is COL_AUTO ('Automatic'). A non-default profile bypasses the Material accent entirely. Source-confirmed; the routing is NOT unconditional and this contract pins only that the default-colour source chain is unbroken.",
+  "token_pairing_note": "The wired header-selection fill is @primary (from CALCCELLFOCUS -> GetAccentColor -> accentColor slot), while the selected label text is @on-primary-container (GetHighlightTextColor -> highlightTextColor slot). This @primary fill + @on-primary-container text pairing differs from docs/design/10-writer-calc.md 10.3's implication that the fill resolves through highlightColor/@primary-container; the contract pins what the code does, and the pairing's contrast is a build-bound V-gate follow-up (not claimed here).",
+  "style_slots": [
+    {
+      "slot": "accentColor",
+      "token": "@primary",
+      "role": "The default colour CALCCELLFOCUS/CALCDBFOCUS resolve to; paints the active-cell cursor ring, the DB/AutoFilter range highlight and the selected-header fill."
+    },
+    {
+      "slot": "highlightColor",
+      "token": "@primary-container",
+      "role": "The generic StyleSettings selection wash (consumed by other surfaces; pinned here for token fidelity)."
+    },
+    {
+      "slot": "highlightTextColor",
+      "token": "@on-primary-container",
+      "role": "The bold/selected header label text colour (hdrcont.cxx GetHighlightTextColor())."
+    },
+    {
+      "slot": "faceColor",
+      "token": "@surface-container",
+      "role": "The idle header face fill (hdrcont.cxx GetFaceColor())."
+    }
+  ],
+  "colorcfg_bridge": {
+    "source": "svtools/source/config/colorcfg.cxx",
+    "markers": [
+      "case CALCCELLFOCUS: aRet = Application::GetSettings().GetStyleSettings().GetAccentColor(); break;",
+      "case CALCDBFOCUS: aRet = Application::GetSettings().GetStyleSettings().GetAccentColor(); break;"
+    ],
+    "note": "ColorConfig::GetDefaultColor special-cases CALCCELLFOCUS and CALCDBFOCUS to the accent slot; both contiguous case->GetAccentColor statements are pinned so a rewire away from the Material accent fails closed."
+  },
+  "header_highlight": {
+    "source": "sc/source/ui/view/hdrcont.cxx",
+    "markers": [
+      "Color aTextColor = rStyleSettings.GetButtonTextColor();",
+      "Color aSelTextColor = rStyleSettings.GetHighlightTextColor();",
+      "Color aSelLineColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;",
+      "Color aFaceColor(rStyleSettings.GetFaceColor());",
+      "Color aColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;",
+      "rRenderContext.SetLineColor( rStyleSettings.GetShadowColor() );"
+    ],
+    "note": "ScHeaderControl::DoPaint reads the idle face (GetFaceColor), the idle label text (GetButtonTextColor), the bold/selected label text (GetHighlightTextColor), the rule line (GetShadowColor) and the selected-header fill (GetColorValue(CALCCELLFOCUS))."
+  },
+  "cell_cursor": {
+    "sources": [
+      {
+        "source": "sc/source/ui/view/gridwin.cxx",
+        "markers": [
+          "void ScGridWindow::UpdateCursorOverlay()",
+          "Color aCursorColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;",
+          "void ScGridWindow::UpdateSelectionOverlay()",
+          "Color aDBColor = mod->GetColorConfig().GetColorValue(svtools::CALCDBFOCUS).nColor;",
+          "Color aHandleColor = mod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;"
+        ]
+      },
+      {
+        "source": "sc/source/ui/view/gridwin4.cxx",
+        "markers": [
+          "Color aHighlightColor = pScMod->GetColorConfig().GetColorValue(svtools::CALCCELLFOCUS).nColor;"
+        ]
+      }
+    ],
+    "note": "The active-cell cursor ring (UpdateCursorOverlay), the DB/AutoFilter range highlight (UpdateSelectionOverlay), the autofill handle and the content highlight all read CALCCELLFOCUS/CALCDBFOCUS through ScModule::GetColorConfig()."
+  },
+  "carveouts": {
+    "density": {
+      "status": "specified",
+      "note": "Compact/comfortable column-width and row-height defaults have zero native selection code anywhere in sc/ or vcl/ (grep-confirmed empty). Specified in the design chapter, not implemented; must never be promoted to an implemented claim without a real density code path plus a build."
+    },
+    "alignment": {
+      "status": "specified",
+      "note": "Numeric-right / text-left alignment is pre-existing stock ScPatternAttr/output.cxx behaviour that predates and is orthogonal to the Material redesign; nothing theme-related is wired, so there is no Material consumption to pin."
+    },
+    "gridlines": {
+      "status": "divergent",
+      "colorcfg_source": "svtools/source/config/colorcfg.cxx",
+      "consumer_source": "sc/source/ui/view/gridwin4.cxx",
+      "present_marker": "Color aGridColor( rColorCfg.GetColorValue( svtools::CALCGRID ).nColor );",
+      "absent_marker": "case CALCGRID:",
+      "note": "CALCGRID is consumed for gridlines in gridwin4.cxx but is NOT special-cased in ColorConfig::GetDefaultColor (no 'case CALCGRID:'), so it falls through to the fixed cAutoColors default (COL_GRAY3 light / COL_GRAY7 dark), NOT any definition.xml token. This contradicts the design chapter's 'stroke-thin @outline-variant gridlines' claim, so the status is 'divergent'. FAIL-CLOSED DUAL-UPDATE: if a future commit adds a 'case CALCGRID:' Material routing (a real, build-verifiable fix), the absent_marker assertion fails closed and this status MUST be flipped in the SAME change, or the checker blocks its own intended improvement."
+    }
+  },
+  "notes": "Pins the source chain from the definition.xml accent/highlight/face slots through ColorConfig::GetDefaultColor's CALCCELLFOCUS/CALCDBFOCUS accent routing to the real sc header/grid paint call sites. Source evidence only: runtime_verified is false; no native build, grid pixels, contrast, or interaction is claimed. Three carve-outs (density, alignment, gridlines) keep an honest non-implemented status so none can be silently promoted; gridlines is a real, currently-true divergence from the design chapter, not a passing claim."
+}

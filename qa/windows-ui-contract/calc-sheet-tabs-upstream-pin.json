@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "contract": "material-calc-sheet-tabs-upstream-pin",
+  "platform": "windows",
+  "inventory_row": "WIN-CA-004",
+  "chapter": [
+    "docs/design/05-navigation.md#6",
+    "docs/design/10-writer-calc.md#10.3"
+  ],
+  "status": "source-declared",
+  "runtime_verified": false,
+  "advances_m_gate": false,
+  "gate_note": "READ-ONLY UPSTREAM PIN. This triad pins the stock, non-Material-guarded svtools TabBar/TabDrawer base symbols that ScTabControl (and three other application subclasses) delegate their sheet-tab-strip geometry to. Per the inventory legend, existing upstream source that is not behind a Material guard NEVER satisfies the M gate, so advances_m_gate is false: this row proves Batch A's calc-sheet-tabs.json base_call premise (ScTabControl additively overlays, never forks, the shared TabBar geometry) and must NOT be reported as advancing WIN-CA-004's M gate. The Material accent-strip overlay that DOES advance M lives in the separate, guarded qa/windows-ui-contract/calc-sheet-tabs.json.",
+  "upstream_files": [
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "read_only": true,
+      "never_mutated": true,
+      "note": "Shared svtools TabBar/TabBarPageBits declaration; four application subclasses consume it, so this row pins it read-only and never edits it."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "read_only": true,
+      "never_mutated": true,
+      "note": "Shared svtools TabBar/TabDrawer paint + geometry implementation; the sheet-tab strip band, docked-tab fills, Add-Sheet button and scroll buttons are all drawn here, not in sc/."
+    }
+  ],
+  "symbols": [
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "class SVT_DLLPUBLIC TabBar : public vcl::Window",
+      "role": "The shared base class ScTabControl extends; all sheet-tab geometry originates here."
+    },
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "virtual void Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect ) override;",
+      "role": "The virtual Paint the ScTabControl override calls up into (Batch A's calc-sheet-tabs.json base_call marker delegates to TabBar::Paint)."
+    },
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "void ImplPrePaint();",
+      "role": "Pre-paint geometry pass that lays out the docked tabs before the strip is drawn."
+    },
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "virtual void AddTabClick();",
+      "role": "The Add-Sheet button hook; the '+' affordance is a base-class control, not a Calc-owned surface."
+    },
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "tools::Rectangle GetPageRect( sal_uInt16 nPageId ) const;",
+      "role": "Per-tab rectangle geometry the strip layout depends on."
+    },
+    {
+      "file": "include/svtools/tabbar.hxx",
+      "symbol": "tools::Rectangle GetPageArea() const;",
+      "role": "The overall tab-strip area geometry."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "class TabDrawer",
+      "role": "The base-class helper that paints an individual docked tab (outer frame, text, color line, separator)."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "void drawTab()",
+      "role": "TabDrawer's per-tab draw entry point invoked from TabBar::Paint."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "void TabBar::Paint(vcl::RenderContext& rRenderContext, const tools::Rectangle& rect)",
+      "role": "The concrete base paint the ScTabControl override delegates to; renders the full strip band and every docked tab."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "void TabBar::ImplPrePaint()",
+      "role": "The concrete pre-paint geometry pass."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "void TabBar::AddTabClick()",
+      "role": "The concrete Add-Sheet button handler."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "tools::Rectangle TabBar::GetPageRect(sal_uInt16 nPageId) const",
+      "role": "The concrete per-tab rectangle geometry."
+    },
+    {
+      "file": "svtools/source/control/tabbar.cxx",
+      "symbol": "tools::Rectangle TabBar::GetPageArea() const",
+      "role": "The concrete tab-strip area geometry."
+    }
+  ],
+  "subclasses": [
+    {
+      "application": "calc",
+      "file": "sc/source/ui/inc/tabcont.hxx",
+      "symbol": "class ScTabControl : public TabBar",
+      "note": "Calc's own sheet-tab strip; carries the guarded Material accent overlay pinned by calc-sheet-tabs.json."
+    },
+    {
+      "application": "basic-ide",
+      "file": "basctl/source/inc/bastypes.hxx",
+      "symbol": "class TabBar : public ::TabBar",
+      "note": "Basic IDE module tab bar; shares the identical svtools base, so an edit to the base would ripple here (Batch C is actively touching bastypes)."
+    },
+    {
+      "application": "impress",
+      "file": "sd/source/ui/inc/TabControl.hxx",
+      "symbol": "class TabControl final : public TabBar,",
+      "note": "Impress slide/view tab control; shares the identical svtools base."
+    },
+    {
+      "application": "draw",
+      "file": "sd/source/ui/inc/LayerTabBar.hxx",
+      "symbol": "class SAL_DLLPUBLIC_RTTI LayerTabBar final : public TabBar,",
+      "note": "Draw layer tab bar; shares the identical svtools base."
+    }
+  ],
+  "notes": "Read-only verification only. It proves the base_call premise of Batch A's calc-sheet-tabs.json (ScTabControl delegates its full sheet-tab geometry to the shared svtools TabBar/TabDrawer, additively overlaying the Material accent strip rather than forking geometry) and records the four-subclass shared-ownership fact so a future edit to svtools/tabbar cannot be made in the belief that it only affects Calc. It grants Calc no edit rights over svtools. Source evidence only: runtime_verified is false and advances_m_gate is false throughout; no native build, tab pixels, or runtime interaction are claimed. Deferred, not in this slice: ScAutoCalculateControl (sc/source/ui/app/acctrl.cxx, FID_AUTO_CALC) is the one genuinely Calc-owned, owner-drawn, currently-unguarded status control, but it has zero design-chapter coverage so a source guard cannot honestly be written for it until a 05-navigation.md status-bar note lands; folding the plain-text status fields (SID_STATUS_DOCPOS/SID_STATUS_SUM/SID_ROWCOL_SELCOUNT) and ScProgress into the generic WIN-NAV-008 band is a documentation closure fact, not a new surface."
+}

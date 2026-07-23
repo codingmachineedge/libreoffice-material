@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "contract": "material-base-addtable-tree",
+  "platform": "windows",
+  "inventory_row": "WIN-BA-002",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/12-base-math-shared.md",
+  "chapter_section": "12.1",
+  "runtime_verified": false,
+  "notes": "Composition-pinning contract that grounds the ONE concrete WIN-BA-002 claim chapter 12.1 makes -- 'Tree views elsewhere in Base (relation and query designers) use the net-less Material tree: listnode disclosure at size-tree-node and the empty listnet/Entire state that suppresses connector nets -- implemented in definition.xml' -- against the real native wiring. The Add Table/Query dialog's `tablelist` GtkTreeView (hierarchical liststore2 GtkTreeStore, no show-expanders override) is welded in adtabdlg.cxx into OTableTreeListBox (a plain TreeListBox wrapping a stock weld::TreeView, no custom cell renderer), constructed from the single shared OJoinController::runDialogAsync path that both OQueryController and ORelationController derive -- so the pin genuinely covers 'relation and query designers' (plural). The generic listnode/listnet parts it resolves through already exist in definition.xml (read-only ground truth). Source-declared/static only: regex + XML assertions over comment-stripped C++/XML; no dbu build, no rendered tree, no live expanders, no runtime interaction is claimed (runtime_verified:false throughout).",
+  "definition_parts": {
+    "listnode": {
+      "control": "listnode",
+      "part": "Entire",
+      "part_attrs": {
+        "width": "@size-tree-node",
+        "height": "@size-tree-node"
+      },
+      "require_enabled_state": true,
+      "note": "12.1: listnode disclosure sized at @size-tree-node (20px)."
+    },
+    "listnet": {
+      "control": "listnet",
+      "part": "Entire",
+      "require_empty_enabled_state": true,
+      "note": "12.1: the empty listnet/Entire enabled state suppresses connector nets."
+    }
+  },
+  "metric_tokens": ["size-tree-node"],
+  "tree_view": {
+    "ui": "dbaccess/uiconfig/ui/tablesjoindialog.ui",
+    "id": "tablelist",
+    "model": "liststore2",
+    "model_store_class": "GtkTreeStore",
+    "forbidden_props": ["show-expanders"],
+    "note": "The hierarchical tree binds the GtkTreeStore model and does NOT disable expanders at the .ui level, so disclosure stays governed by the native listnode part (contrast: the flat querylist binds liststore1/GtkListStore with show-expanders=False)."
+  },
+  "contrast_view": {
+    "id": "querylist",
+    "model": "liststore1",
+    "model_store_class": "GtkListStore",
+    "require_show_expanders_false": true,
+    "note": "The flat query list is deliberately NOT the hierarchical net-less tree; pinned so the two are never conflated."
+  },
+  "expected_markers": 6,
+  "markers": [
+    {
+      "id": "ui_dialog_binding",
+      "role": "OAddTableDlg binds tablesjoindialog.ui/TablesJoinDialog and wraps weld_tree_view(tablelist) into OTableTreeListBox with toggles disabled",
+      "source": "dbaccess/source/ui/dlg/adtabdlg.cxx",
+      "code_markers": [
+        "u\"dbaccess/ui/tablesjoindialog.ui\"_ustr, u\"TablesJoinDialog\"_ustr",
+        "new OTableTreeListBox(m_xBuilder->weld_tree_view(u\"tablelist\"_ustr), false)"
+      ]
+    },
+    {
+      "id": "tabletree_subclass",
+      "role": "OTableTreeListBox is a plain TreeListBox subclass (no custom tree)",
+      "source": "dbaccess/source/ui/inc/tabletree.hxx",
+      "code_markers": ["class OTableTreeListBox : public TreeListBox"]
+    },
+    {
+      "id": "treelistbox_stock_wrapper",
+      "role": "TreeListBox wraps a stock weld::TreeView; no custom cell-renderer/paint override",
+      "source": "dbaccess/source/ui/inc/dbtreelistbox.hxx",
+      "code_markers": ["TreeListBox(std::unique_ptr<weld::TreeView> xTreeView, bool bSQLType);"],
+      "forbidden_markers": ["connect_custom_render", "set_custom_get_size", "custom_render"],
+      "forbidden_note": "no owner-draw/custom-render override may fight the native listnode part"
+    },
+    {
+      "id": "shared_controller_path",
+      "role": "the Add Table/Query dialog is constructed from the single shared OJoinController path",
+      "source": "dbaccess/source/ui/querydesign/JoinController.cxx",
+      "code_markers": ["std::make_shared<OAddTableDlg>(getFrameWeld(), impl_getDialogContext())"]
+    },
+    {
+      "id": "query_designer_derives_join",
+      "role": "OQueryController derives OJoinController (query designer routes through the shared tree)",
+      "source": "dbaccess/source/ui/inc/querycontroller.hxx",
+      "code_markers": ["class OQueryController  :public OJoinController"]
+    },
+    {
+      "id": "relation_designer_derives_join",
+      "role": "ORelationController derives OJoinController (relation designer routes through the shared tree)",
+      "source": "dbaccess/source/ui/inc/RelationController.hxx",
+      "code_markers": ["class ORelationController : public OJoinController"]
+    }
+  ],
+  "carve_out": {
+    "status": "out-of-scope",
+    "note": "This contract proves ONLY that the Add Table/Query hierarchical tree wires through the already-implemented generic net-less tree part. It makes NO claim about the surfaces below; each stays build-bound and/or design-bound (no chapter-12 wireframe spec exists for them yet), and none is advanced by this pin.",
+    "surfaces": [
+      "Table Design field grid / field-properties pane",
+      "Query Design join-graph canvas (custom-painted connector lines via ConnectionLine.cxx, a different mechanism from the net-less tree)",
+      "SQL View text editor chrome",
+      "Form Design toolbar / control-palette / property-browser workflow",
+      "Report Design band-canvas editor"
+    ]
+  }
+}

@@ -1,0 +1,769 @@
+{
+  "schema_version": 1,
+  "contract": "material-writer-format-dialogs-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/10-writer-calc.md (Writer format dialogs) as an application of the shared modal tab-dialog anatomy in docs/design/08-dialogs.md and the tab-bar native part contract in docs/design/05-navigation.md -- cited by title/purpose, not section number (chapter-08 section numbers are renumbering under concurrent edits).",
+  "note": "WIN-WR-003. Pins the DIALOG-notebook composition of Writer's four highest-traffic SfxTabDialogController left-icon-rail format dialogs -- Character (chardlg.cxx / characterproperties.ui), Paragraph (pardlg.cxx / paradialog.ui), Table Properties (tabledlg.cxx / tableproperties.ui) and Picture/Frame (frmdlg.cxx, one .cxx driving FrameDialog/PictureDialog/ObjectDialog via a runtime m_sDlgType string). None carry a Material paint override, so the whole Material look comes from the SHARED native left-icon-tab parts below (validated ONCE, cross-referenced by every dialog, never redefined per dialog -- identical to the parts document-properties.json/calc pin) plus the weld/SfxTabDialogController framework. Per dialog this contract pins: the modal GtkDialog + tabcontrol GtkNotebook (tab-pos=left) + reset/ok/cancel/help footer, and each AddTabPage page as source-marker presence (NO order assertion -- pardlg/frmdlg page sets are heavily runtime-conditional). Conditional pages carry `optional` and, for frmdlg's 3-way branch, `applies_when` (the m_sDlgType guard). The reused svx/cui Border, Area and Transparency pages are validated ONCE in shared_pages and cross-referenced, not duplicated four times. The real RID_M (chardlg/pardlg/frmdlg) vs RID_L (tabledlg) icon-prefix divergence is preserved exactly, never normalized. runtime_verified is false throughout: no native build, tab-rail pixels, or runtime interaction are claimed. Mail Merge (a RoadmapWizardMachine wizard, different composition class), References (Insert>Fields / Index-ToC, unverified this pass) and a dedicated Page Style dialog (factory plumbing not traced) are explicit carve-outs, OUT of this slice.",
+  "definition_parts": [
+    {
+      "control": "tabitem",
+      "part": "Entire",
+      "part_attrs": {
+        "margin-width": "@space-tab-inline",
+        "height": "@height-tab"
+      },
+      "states": [
+        {
+          "role": "inactive",
+          "attrs": {
+            "enabled": "true"
+          },
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "active",
+          "attrs": {
+            "enabled": "true",
+            "selected": "true"
+          },
+          "tokens": {
+            "stroke": "@primary-container",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "hover",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true"
+          },
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "focus",
+          "attrs": {
+            "enabled": "true",
+            "focused": "true"
+          },
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-standard",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "active-hover",
+          "attrs": {
+            "enabled": "true",
+            "selected": "true",
+            "rollover": "true"
+          },
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "active-focus",
+          "attrs": {
+            "enabled": "true",
+            "selected": "true",
+            "focused": "true"
+          },
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-standard",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "disabled",
+          "attrs": {
+            "enabled": "false"
+          },
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-none",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "disabled-active",
+          "attrs": {
+            "enabled": "false",
+            "selected": "true"
+          },
+          "tokens": {
+            "stroke": "@outline",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        }
+      ]
+    },
+    {
+      "control": "tabheader",
+      "part": "Entire",
+      "states": [
+        {
+          "role": "strip-face",
+          "attrs": {},
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none"
+          }
+        }
+      ]
+    },
+    {
+      "control": "tabpane",
+      "part": "Entire",
+      "states": [
+        {
+          "role": "content-frame",
+          "attrs": {},
+          "tokens": {
+            "stroke": "@outline-variant",
+            "fill": "@surface",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-container"
+          }
+        }
+      ]
+    },
+    {
+      "control": "tabbody",
+      "part": "Entire",
+      "states": [
+        {
+          "role": "content-body",
+          "attrs": {},
+          "tokens": {
+            "stroke": "@outline-variant",
+            "fill": "@surface",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-container"
+          }
+        }
+      ]
+    },
+    {
+      "control": "windowbackground",
+      "part": "BackgroundDialog",
+      "states": [
+        {
+          "role": "dialog-sheet",
+          "attrs": {},
+          "tokens": {
+            "stroke": "@surface-container",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-none"
+          }
+        }
+      ]
+    },
+    {
+      "control": "pushbutton",
+      "part": "Entire",
+      "states": [
+        {
+          "role": "enabled",
+          "attrs": {
+            "enabled": "true"
+          },
+          "tokens": {
+            "stroke": "@primary-container",
+            "fill": "@primary-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "hover",
+          "attrs": {
+            "enabled": "true",
+            "rollover": "true"
+          },
+          "tokens": {
+            "stroke": "@primary-hover",
+            "fill": "@primary-hover",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "pressed",
+          "attrs": {
+            "enabled": "true",
+            "pressed": "true"
+          },
+          "tokens": {
+            "stroke": "@primary-pressed",
+            "fill": "@primary-pressed",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "default",
+          "attrs": {
+            "enabled": "true",
+            "selected": "true"
+          },
+          "tokens": {
+            "stroke": "@primary",
+            "fill": "@primary",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        },
+        {
+          "role": "disabled",
+          "attrs": {
+            "enabled": "false"
+          },
+          "tokens": {
+            "stroke": "@disabled-container",
+            "fill": "@disabled-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-pill"
+          }
+        }
+      ]
+    },
+    {
+      "control": "frame",
+      "part": "Border",
+      "states": [
+        {
+          "role": "group-region",
+          "attrs": {
+            "enabled": "true"
+          },
+          "tokens": {
+            "stroke": "@outline-variant",
+            "fill": "@surface-container",
+            "stroke-width": "@stroke-thin",
+            "radius": "@corner-container"
+          }
+        }
+      ]
+    }
+  ],
+  "tab_style": {
+    "activeTabColor": "@primary-container",
+    "inactiveTabColor": "@surface-container",
+    "tabTextColor": "@on-surface-variant",
+    "tabRolloverTextColor": "@on-surface",
+    "tabHighlightTextColor": "@on-primary-container"
+  },
+  "tab_settings": {
+    "noActiveTabTextRaise": "true",
+    "centeredTabs": "true"
+  },
+  "metrics": [
+    {
+      "name": "corner-pill",
+      "container": "shapes",
+      "tag": "radius",
+      "value": "20"
+    },
+    {
+      "name": "corner-container",
+      "container": "shapes",
+      "tag": "radius",
+      "value": "12"
+    },
+    {
+      "name": "height-tab",
+      "container": "metrics",
+      "tag": "metric",
+      "value": "40"
+    },
+    {
+      "name": "space-tab-inline",
+      "container": "metrics",
+      "tag": "metric",
+      "value": "12"
+    }
+  ],
+  "palette_colors": [
+    "surface-container",
+    "primary-container",
+    "disabled-container",
+    "primary",
+    "primary-hover",
+    "primary-pressed",
+    "outline",
+    "outline-variant",
+    "surface",
+    "on-surface-variant",
+    "on-surface",
+    "on-primary-container"
+  ],
+  "dialogs": [
+    {
+      "id": "character",
+      "title": "Character formatting dialog (SwCharDlg)",
+      "source": "sw/source/ui/chrdlg/chardlg.cxx",
+      "controller_bind": "u\"modules/swriter/ui/characterproperties.ui\"_ustr",
+      "icon_prefix": "RID_M",
+      "icon_prefix_marker": "RID_M + RID_TAB_BORDER.sIconName",
+      "ui_variants": [
+        {
+          "ui_file": "sw/uiconfig/swriter/ui/characterproperties.ui",
+          "dialog_object": "CharacterPropertiesDialog",
+          "modal": true,
+          "notebook": {
+            "id": "tabcontrol",
+            "tab_pos": "left",
+            "group_name": null
+          },
+          "footer": [
+            {
+              "response": "101",
+              "widget": "reset",
+              "secondary": false
+            },
+            {
+              "response": "-5",
+              "widget": "ok",
+              "secondary": false
+            },
+            {
+              "response": "-6",
+              "widget": "cancel",
+              "secondary": false
+            },
+            {
+              "response": "-11",
+              "widget": "help",
+              "secondary": true
+            }
+          ]
+        }
+      ],
+      "tab_pages": [
+        {
+          "id": "font",
+          "add_marker": "AddTabPage(u\"font\"_ustr, TabResId(RID_TAB_FONT.aLabel), RID_SVXPAGE_CHAR_NAME,",
+          "optional": false
+        },
+        {
+          "id": "fonteffects",
+          "add_marker": "AddTabPage(u\"fonteffects\"_ustr, TabResId(RID_TAB_FONTEFFECTS.aLabel), RID_SVXPAGE_CHAR_EFFECTS,",
+          "optional": false
+        },
+        {
+          "id": "position",
+          "add_marker": "AddTabPage(u\"position\"_ustr, TabResId(RID_TAB_POSITION.aLabel), RID_SVXPAGE_CHAR_POSITION,",
+          "optional": false
+        },
+        {
+          "id": "asianlayout",
+          "add_marker": "AddTabPage(u\"asianlayout\"_ustr, TabResId(RID_TAB_ASIANLAYOUT.aLabel), RID_SVXPAGE_CHAR_TWOLINES,",
+          "optional": false
+        },
+        {
+          "id": "background",
+          "add_marker": "AddTabPage(u\"background\"_ustr, TabResId(RID_TAB_BACKGROUND.aLabel), RID_SVXPAGE_BKG,",
+          "optional": false
+        },
+        {
+          "id": "borders",
+          "add_marker": "AddTabPage(u\"borders\"_ustr, TabResId(RID_TAB_BORDER.aLabel), RID_SVXPAGE_BORDER,",
+          "optional": false,
+          "shared_page": "border"
+        }
+      ]
+    },
+    {
+      "id": "paragraph",
+      "title": "Paragraph formatting dialog (SwParaDlg)",
+      "source": "sw/source/ui/chrdlg/pardlg.cxx",
+      "controller_bind": "u\"modules/swriter/ui/paradialog.ui\"_ustr",
+      "icon_prefix": "RID_M",
+      "icon_prefix_marker": "RID_M + RID_TAB_BORDER.sIconName",
+      "ui_variants": [
+        {
+          "ui_file": "sw/uiconfig/swriter/ui/paradialog.ui",
+          "dialog_object": "ParagraphPropertiesDialog",
+          "modal": true,
+          "notebook": {
+            "id": "tabcontrol",
+            "tab_pos": "left",
+            "group_name": null
+          },
+          "footer": [
+            {
+              "response": "101",
+              "widget": "reset",
+              "secondary": false
+            },
+            {
+              "response": "-5",
+              "widget": "ok",
+              "secondary": false
+            },
+            {
+              "response": "-6",
+              "widget": "cancel",
+              "secondary": false
+            },
+            {
+              "response": "-11",
+              "widget": "help",
+              "secondary": true
+            }
+          ]
+        }
+      ],
+      "tab_pages": [
+        {
+          "id": "indents",
+          "add_marker": "AddTabPage(u\"indents\"_ustr, TabResId(RID_TAB_INDENTS.aLabel),",
+          "optional": false
+        },
+        {
+          "id": "alignment",
+          "add_marker": "AddTabPage(u\"alignment\"_ustr, TabResId(RID_TAB_ALIGNMENT.aLabel),",
+          "optional": false
+        },
+        {
+          "id": "textflow",
+          "add_marker": "AddTabPage(u\"textflow\"_ustr, TabResId(RID_TAB_TEXTFLOW.aLabel),",
+          "optional": true
+        },
+        {
+          "id": "asiantypo",
+          "add_marker": "AddTabPage(u\"asiantypo\"_ustr, TabResId(RID_TAB_ASIANTYPO.aLabel),",
+          "optional": true
+        },
+        {
+          "id": "outline",
+          "add_marker": "AddTabPage(u\"outline\"_ustr, TabResId(RID_TAB_OUTLINELIST.aLabel),",
+          "optional": true
+        },
+        {
+          "id": "tabs",
+          "add_marker": "AddTabPage(u\"tabs\"_ustr, TabResId(RID_TAB_TABS.aLabel),",
+          "optional": true
+        },
+        {
+          "id": "dropcaps",
+          "add_marker": "AddTabPage(u\"dropcaps\"_ustr, TabResId(RID_TAB_DROPCAPS.aLabel), SwDropCapsPage::Create,",
+          "optional": true
+        },
+        {
+          "id": "borders",
+          "add_marker": "AddTabPage(u\"borders\"_ustr, TabResId(RID_TAB_BORDER.aLabel),",
+          "optional": true,
+          "shared_page": "border"
+        },
+        {
+          "id": "area",
+          "add_marker": "AddTabPage(u\"area\"_ustr, TabResId(RID_TAB_AREA.aLabel),",
+          "optional": true,
+          "shared_page": "area"
+        },
+        {
+          "id": "transparence",
+          "add_marker": "AddTabPage(u\"transparence\"_ustr, TabResId(RID_TAB_TRANSPARENCE.aLabel),",
+          "optional": true,
+          "shared_page": "transparency"
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Table Properties dialog (SwTableTabDlg)",
+      "source": "sw/source/ui/table/tabledlg.cxx",
+      "controller_bind": "u\"modules/swriter/ui/tableproperties.ui\"_ustr",
+      "icon_prefix": "RID_L",
+      "icon_prefix_marker": "RID_L + RID_TAB_BORDER.sIconName",
+      "ui_variants": [
+        {
+          "ui_file": "sw/uiconfig/swriter/ui/tableproperties.ui",
+          "dialog_object": "TablePropertiesDialog",
+          "modal": true,
+          "notebook": {
+            "id": "tabcontrol",
+            "tab_pos": "left",
+            "group_name": "icons"
+          },
+          "footer": [
+            {
+              "response": "101",
+              "widget": "reset",
+              "secondary": false
+            },
+            {
+              "response": "-5",
+              "widget": "ok",
+              "secondary": false
+            },
+            {
+              "response": "-6",
+              "widget": "cancel",
+              "secondary": false
+            },
+            {
+              "response": "-11",
+              "widget": "help",
+              "secondary": true
+            }
+          ]
+        }
+      ],
+      "tab_pages": [
+        {
+          "id": "table",
+          "add_marker": "AddTabPage(u\"table\"_ustr, TabResId(RID_TAB_TABLE.aLabel), &SwFormatTablePage::Create,",
+          "optional": false
+        },
+        {
+          "id": "textflow",
+          "add_marker": "AddTabPage(u\"textflow\"_ustr, TabResId(RID_TAB_TEXTFLOW.aLabel), &SwTextFlowPage::Create,",
+          "optional": false
+        },
+        {
+          "id": "columns",
+          "add_marker": "AddTabPage(u\"columns\"_ustr, TabResId(RID_TAB_COLUMNS.aLabel), &SwTableColumnPage::Create,",
+          "optional": false
+        },
+        {
+          "id": "borders",
+          "add_marker": "AddTabPage(u\"borders\"_ustr, TabResId(RID_TAB_BORDER.aLabel),",
+          "optional": false,
+          "shared_page": "border"
+        },
+        {
+          "id": "background",
+          "add_marker": "AddTabPage(u\"background\"_ustr, TabResId(RID_TAB_BACKGROUND.aLabel),",
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "picture-frame",
+      "title": "Picture/Frame dialog (SwFrameDlg -- one .cxx, 3 m_sDlgType identities)",
+      "source": "sw/source/ui/frmdlg/frmdlg.cxx",
+      "controller_bind": "\"modules/swriter/ui/\" + sResType.toAsciiLowerCase() + \".ui\"",
+      "dlg_type_field": "m_sDlgType",
+      "icon_prefix": "RID_M",
+      "icon_prefix_marker": "RID_M + RID_TAB_BORDER.sIconName",
+      "ui_variants": [
+        {
+          "ui_file": "sw/uiconfig/swriter/ui/framedialog.ui",
+          "dialog_object": "FrameDialog",
+          "modal": true,
+          "notebook": {
+            "id": "tabcontrol",
+            "tab_pos": "left",
+            "group_name": null
+          },
+          "footer": [
+            {
+              "response": "101",
+              "widget": "reset",
+              "secondary": false
+            },
+            {
+              "response": "-5",
+              "widget": "ok",
+              "secondary": false
+            },
+            {
+              "response": "-6",
+              "widget": "cancel",
+              "secondary": false
+            },
+            {
+              "response": "-11",
+              "widget": "help",
+              "secondary": true
+            }
+          ],
+          "applies_when": "FrameDialog"
+        },
+        {
+          "ui_file": "sw/uiconfig/swriter/ui/picturedialog.ui",
+          "dialog_object": "PictureDialog",
+          "modal": true,
+          "notebook": {
+            "id": "tabcontrol",
+            "tab_pos": "left",
+            "group_name": null
+          },
+          "footer": [
+            {
+              "response": "101",
+              "widget": "reset",
+              "secondary": false
+            },
+            {
+              "response": "-5",
+              "widget": "ok",
+              "secondary": false
+            },
+            {
+              "response": "-6",
+              "widget": "cancel",
+              "secondary": false
+            },
+            {
+              "response": "-11",
+              "widget": "help",
+              "secondary": true
+            }
+          ],
+          "applies_when": "PictureDialog"
+        }
+      ],
+      "tab_pages": [
+        {
+          "id": "type",
+          "add_marker": "AddTabPage(u\"type\"_ustr, TabResId(RID_TAB_POSSIZE.aLabel), SwFramePage::Create,",
+          "optional": false
+        },
+        {
+          "id": "options",
+          "add_marker": "AddTabPage(u\"options\"_ustr, TabResId(RID_TAB_FRAME_OPTIONS.aLabel), SwFrameAddPage::Create,",
+          "optional": false
+        },
+        {
+          "id": "wrap",
+          "add_marker": "AddTabPage(u\"wrap\"_ustr, TabResId(RID_TAB_FRAME_WRAP.aLabel), SwWrapTabPage::Create,",
+          "optional": false
+        },
+        {
+          "id": "hyperlink",
+          "add_marker": "AddTabPage(u\"hyperlink\"_ustr, TabResId(RID_TAB_HYPERLINK.aLabel), SwFrameURLPage::Create,",
+          "optional": false
+        },
+        {
+          "id": "picture",
+          "add_marker": "AddTabPage(u\"picture\"_ustr, TabResId(RID_TAB_ROTATION.aLabel), SwGrfExtPage::Create,",
+          "optional": true,
+          "applies_when": "PictureDialog"
+        },
+        {
+          "id": "crop",
+          "add_marker": "AddTabPage(u\"crop\"_ustr, TabResId(RID_TAB_CROP.aLabel), RID_SVXPAGE_GRFCROP,",
+          "optional": true,
+          "applies_when": "PictureDialog"
+        },
+        {
+          "id": "borders",
+          "add_marker": "AddTabPage(u\"borders\"_ustr, TabResId(RID_TAB_BORDER.aLabel), RID_SVXPAGE_BORDER,",
+          "optional": false,
+          "shared_page": "border"
+        },
+        {
+          "id": "area",
+          "add_marker": "AddTabPage(u\"area\"_ustr, TabResId(RID_TAB_AREA.aLabel),",
+          "optional": false,
+          "shared_page": "area"
+        },
+        {
+          "id": "transparence",
+          "add_marker": "AddTabPage(u\"transparence\"_ustr, TabResId(RID_TAB_TRANSPARENCE.aLabel),",
+          "optional": false,
+          "shared_page": "transparency"
+        },
+        {
+          "id": "columns",
+          "add_marker": "AddTabPage(u\"columns\"_ustr, TabResId(RID_TAB_COLUMNS.aLabel), SwColumnPage::Create,",
+          "optional": true,
+          "applies_when": "FrameDialog"
+        },
+        {
+          "id": "macro",
+          "add_marker": "AddTabPage(u\"macro\"_ustr, TabResId(RID_TAB_MACRO.aLabel), RID_SVXPAGE_MACROASSIGN,",
+          "optional": false
+        }
+      ]
+    }
+  ],
+  "shared_pages": [
+    {
+      "id": "border",
+      "factory_rid": "RID_SVXPAGE_BORDER",
+      "bind_source": "cui/source/tabpages/border.cxx",
+      "bind_marker": "u\"cui/ui/borderpage.ui\"_ustr, u\"BorderPage\"_ustr",
+      "page_ui": "cui/uiconfig/ui/borderpage.ui",
+      "page_root_id": "BorderPage",
+      "reused_by": [
+        "character",
+        "paragraph",
+        "table",
+        "picture-frame"
+      ]
+    },
+    {
+      "id": "area",
+      "factory_rid": "RID_SVXPAGE_AREA",
+      "bind_source": "cui/source/tabpages/tparea.cxx",
+      "bind_marker": "u\"cui/ui/areatabpage.ui\"_ustr, u\"AreaTabPage\"_ustr",
+      "page_ui": "cui/uiconfig/ui/areatabpage.ui",
+      "page_root_id": "AreaTabPage",
+      "reused_by": [
+        "paragraph",
+        "picture-frame"
+      ]
+    },
+    {
+      "id": "transparency",
+      "factory_rid": "RID_SVXPAGE_TRANSPARENCE",
+      "bind_source": "cui/source/tabpages/tptrans.cxx",
+      "bind_marker": "u\"cui/ui/transparencytabpage.ui\"_ustr, u\"TransparencyTabPage\"_ustr",
+      "page_ui": "cui/uiconfig/ui/transparencytabpage.ui",
+      "page_root_id": "TransparencyTabPage",
+      "reused_by": [
+        "paragraph",
+        "picture-frame"
+      ]
+    }
+  ],
+  "carveouts": {
+    "mail_merge": {
+      "status": "specified",
+      "note": "Insert>Mail Merge Wizard is a RoadmapWizardMachine/OWizardPage roadmap wizard (sw/source/ui/dbui/mailmergewizard.cxx), a structurally different composition class with no precedent contract to adapt; OUT of this slice."
+    },
+    "references": {
+      "status": "specified",
+      "note": "Insert>Fields notebook (sw/source/ui/fldui/fldtdlg.cxx) and Index/ToC dialogs (cnttab.cxx) look like plausible same-pattern extensions but were not verified this pass; not claimed."
+    },
+    "page_layout": {
+      "status": "specified",
+      "note": "A dedicated Writer Page Style tab-dialog was not traced end-to-end through swdlgfact.cxx factory plumbing this pass; OUT of this slice."
+    },
+    "rail_pixel_geometry": {
+      "status": "specified",
+      "note": "The RID_M/RID_L icon downscale, pill hover-raise and left-rail width pixel geometry are the native parts' pixel gate (build host); runtime/pixel evidence is deferred."
+    }
+  }
+}

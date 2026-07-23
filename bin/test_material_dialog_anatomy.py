@@ -199,7 +199,7 @@ class MaterialDialogAnatomyTest(unittest.TestCase):
     def test_rejects_too_few_migrations(self) -> None:
         registry = self.registry_copy()
         registry["migrations"] = registry["migrations"][:2]
-        self.assert_fails("between 3 and 8 migrations", registry=registry)
+        self.assert_fails("between 3 and 10 migrations", registry=registry)
 
     def test_rejects_equal_safe_and_destructive_responses(self) -> None:
         registry = self.registry_copy()

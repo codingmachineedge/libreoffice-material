@@ -293,6 +293,112 @@ class NotificationProducerContractTest(unittest.TestCase):
         self.producer_in(registry, "srchdlg-replace-all-outcome")["wiring_markers"] = []
         self.assert_fails("must be a non-empty array when present", registry=registry)
 
+    # -- cross-module diversity -------------------------------------------------------------------
+    # The second producer tranche adds a min_producer_modules rule: the producers must span at least
+    # that many distinct owning modules (first path segment of each producer file). It is the
+    # checkable proxy that observable-feedback routing is a suite-wide convention, not a single-file
+    # trick. The value is pinned with ZERO slack at the current diversity (sfx2/sw/svx = 3).
+    SECOND_TRANCHE = {
+        "mailmodel-no-email-client": "SfxResId(STR_ERROR_FIND_EMAIL_PRIMARY)",
+        "srcview-search-not-found": "SwResId(STR_SRCVIEW_SEARCH_NOT_FOUND)",
+        "labfmt-predefined-label-locked": "SwResId(STR_CANNOT_SAVE_LABEL_PRIMARY)",
+        "wrtsh1-readonly-content-notice": "SwResId(STR_INFORODLG_PRIMARY)",
+        "textfld-readonly-content-notice": "SwResId(STR_INFORODLG_PRIMARY)",
+    }
+
+    def test_production_pins_module_diversity_with_zero_slack(self) -> None:
+        # The threshold equals the actual diversity exactly -- no margin. If this drifts, either a
+        # producer was removed or the pin was loosened, both of which must be a deliberate edit.
+        modules = {p["file"].split("/", 1)[0] for p in self.registry["producers"]}
+        self.assertEqual(modules, {"sfx2", "sw", "svx"})
+        self.assertEqual(self.registry["min_producer_modules"], 3)
+        self.assertEqual(len(modules), self.registry["min_producer_modules"])
+
+    def test_rejects_producers_collapsed_below_min_modules(self) -> None:
+        # Simulate a revert that removes every producer outside sfx2 (and its now-unreferenced
+        # required entries), collapsing module diversity to one. Each surviving producer's own
+        # existence checks still pass; only the diversity rule catches the collapse.
+        registry = self.registry_copy()
+        registry["producers"] = [
+            p for p in registry["producers"] if p["file"].split("/", 1)[0] == "sfx2"
+        ]
+        kept = {p["id"] for p in registry["producers"]}
+        registry["required_producers"] = [
+            pid for pid in registry["required_producers"] if pid in kept
+        ]
+        self.assert_fails("below min_producer_modules", registry=registry)
+
+    def test_rejects_min_producer_modules_above_actual(self) -> None:
+        # Raising the bar past the real diversity is the same fail-closed comparison as a collapse.
+        registry = self.registry_copy()
+        modules = {p["file"].split("/", 1)[0] for p in registry["producers"]}
+        registry["min_producer_modules"] = len(modules) + 1
+        self.assert_fails("below min_producer_modules", registry=registry)
+
+    def test_rejects_missing_min_producer_modules_key(self) -> None:
+        registry = self.registry_copy()
+        del registry["min_producer_modules"]
+        self.assert_fails("missing required key 'min_producer_modules'", registry=registry)
+
+    def test_rejects_non_integer_min_producer_modules(self) -> None:
+        registry = self.registry_copy()
+        registry["min_producer_modules"] = "3"
+        self.assert_fails("min_producer_modules must be a positive integer", registry=registry)
+
+    def test_rejects_boolean_min_producer_modules(self) -> None:
+        # bool is a subclass of int; true/false must not be accepted as a module count.
+        registry = self.registry_copy()
+        registry["min_producer_modules"] = True
+        self.assert_fails("min_producer_modules must be a positive integer", registry=registry)
+
+    # -- second-tranche producer reachability -----------------------------------------------------
+    def test_second_tranche_producers_declare_wiring_markers(self) -> None:
+        # Every converted producer must carry a wiring marker anchoring the audited resource-string
+        # it routes, so a revert to the modal message box is caught even though the producer function
+        # would survive.
+        for pid, pattern in self.SECOND_TRANCHE.items():
+            with self.subTest(producer=pid):
+                producer = self.producer(pid)
+                patterns = {m["pattern"] for m in producer.get("wiring_markers", [])}
+                self.assertIn(pattern, patterns)
+
+    def test_second_tranche_producers_are_informational_notifyinfo(self) -> None:
+        # Each is an ack-only informational notice routed via NotifyInfo, never a modal prompt.
+        for pid in self.SECOND_TRANCHE:
+            with self.subTest(producer=pid):
+                producer = self.producer(pid)
+                self.assertEqual(producer["router_call"], "NotifyInfo")
+                self.assertIs(producer["informational_only"], True)
+
+    def test_rejects_second_tranche_wiring_marker_reverted(self) -> None:
+        # Removing a converted producer's audited resource-string reference (a revert to the modal
+        # message box) leaves the producer function defined but the notification dead -- caught by
+        # the wiring marker, not the function/router-call/source existence checks.
+        for pid, pattern in self.SECOND_TRANCHE.items():
+            with self.subTest(producer=pid):
+                producer = self.producer(pid)
+                files = self.mutated(producer["file"], pattern, "/* routed notice reverted */")
+                self.assert_fails(pattern, files=files)
+
+    def test_labfmt_producer_uses_macro_invocation_anchor(self) -> None:
+        # Deliberate deviation flagged for review: the labfmt producer's enclosing-function anchor is
+        # a bare IMPL_LINK_NOARG macro invocation, not a Class::Method definition. Guard that the
+        # anchor stays the macro form and remains real code.
+        producer = self.producer("labfmt-predefined-label-locked")
+        self.assertEqual(
+            producer["function"], "IMPL_LINK_NOARG(SwSaveLabelDlg, OkHdl, weld::Button&, void)"
+        )
+
+    def test_inforeadonly_pair_shares_one_dialog(self) -> None:
+        # The InfoReadonlyDialog pair must be registered as a unit: two producers, distinct files and
+        # functions, both routing the same default read-only strings.
+        wrtsh1 = self.producer("wrtsh1-readonly-content-notice")
+        textfld = self.producer("textfld-readonly-content-notice")
+        self.assertNotEqual(wrtsh1["file"], textfld["file"])
+        self.assertNotEqual(wrtsh1["function"], textfld["function"])
+        self.assertEqual(wrtsh1["severity"], ["Information"])
+        self.assertEqual(textfld["severity"], ["Information"])
+
     # helper ------------------------------------------------------------------------------------
     @staticmethod
     def producer_in(registry: dict, pid: str) -> dict:

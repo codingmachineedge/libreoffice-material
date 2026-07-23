@@ -168,6 +168,79 @@ class StartCenterCardContractTest(unittest.TestCase):
         errors = self.failures(contents=self.with_content(STRINGS, strings))
         self.assertTrue(any("lacks 'No recent documents match'" in e for e in errors), errors)
 
+    # -- unavailable-preview anatomy (design 9.5) --------------------------
+    def test_unavailable_accessor_call_removed_fails(self) -> None:
+        # Drop the isUnavailable() read that drives the dimmed preview; the
+        # anatomy marker must vanish so the missing-file dimming can't be silently
+        # deleted while the role stays registered.
+        source = self.contents[RENDERER].replace("rItem.isUnavailable()", "false", 1)
+        errors = self.failures(contents=self.with_content(RENDERER, source))
+        self.assertTrue(
+            any("anatomy:unavailable-preview:marker missing" in e and "isUnavailable" in e
+                for e in errors),
+            errors,
+        )
+
+    def test_unavailable_disabled_container_token_removed_fails(self) -> None:
+        # Re-point the dimming fill off @disabled-container: the token is both a
+        # palette role and the unavailable-preview anatomy marker, so either check
+        # must trip.
+        source = self.contents[RENDERER].replace('"disabled-container"', '"surface"', 1)
+        errors = self.failures(contents=self.with_content(RENDERER, source))
+        self.assertTrue(any("disabled-container" in e for e in errors), errors)
+
+    def test_disabled_container_scheme_drift_fails(self) -> None:
+        # Rename the disabled-container role out of the light palette only; the
+        # unavailable-preview dimming would resolve to nothing in that scheme.
+        definition = self.contents[DEFINITION].replace(
+            'name="disabled-container"', 'name="disabled-container-x"', 1
+        )
+        errors = self.failures(contents=self.with_content(DEFINITION, definition))
+        self.assertTrue(
+            any("token drift" in e and "disabled-container" in e for e in errors), errors
+        )
+
+    # -- pinned first-run fallback (design 9.5) ----------------------------
+    def test_recent_first_run_gate_removed_fails(self) -> None:
+        # Drop the non-empty guard so a blank first-run recent list would take the
+        # Material path and show the filter-implying "no match" copy instead of the
+        # Welcome screen; the pinned marker must trip.
+        source = self.contents[RECENT].replace(
+            "IsMaterialStartCenterActive() && !mItemList.empty()",
+            "IsMaterialStartCenterActive()",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(RECENT, source))
+        self.assertTrue(
+            any("view[recentdocs.card-grid]:pinned first-run fallback marker missing" in e
+                for e in errors),
+            errors,
+        )
+
+    def test_recent_welcome_line_removed_fails(self) -> None:
+        # Remove the Welcome-screen string the first-run fallback draws; the pin
+        # must catch the fallback being hollowed out.
+        source = self.contents[RECENT].replace("STR_WELCOME_LINE1", "STR_WELCOME_RENAMED")
+        errors = self.failures(contents=self.with_content(RECENT, source))
+        self.assertTrue(
+            any("pinned first-run fallback marker missing" in e and "STR_WELCOME_LINE1" in e
+                for e in errors),
+            errors,
+        )
+
+    def test_template_first_run_gate_removed_fails(self) -> None:
+        source = self.contents[TEMPLATE].replace(
+            "IsMaterialStartCenterActive() && !mItemList.empty()",
+            "IsMaterialStartCenterActive()",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(TEMPLATE, source))
+        self.assertTrue(
+            any("view[templatedefault.card-grid]:pinned first-run fallback marker missing" in e
+                for e in errors),
+            errors,
+        )
+
     # -- registry integrity ------------------------------------------------
     def test_runtime_verified_true_fails(self) -> None:
         registry = copy.deepcopy(self.registry)

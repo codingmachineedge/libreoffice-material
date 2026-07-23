@@ -169,13 +169,35 @@ surface, not that every dialog in that subtree is that row's exact anatomy.
 Per-surface refinement of the `unassigned` bucket is the remaining WIN-SYS-016
 work.
 
+**Owner-attribution rubric.** An entry in this ledger records *ownership only* —
+which `WIN-` inventory row is responsible for a surface's Windows Material
+redesign — and is deliberately **not** a claim that the surface has Material
+anatomy, an exact Windows build, or any runtime/pixel evidence. Those gates live
+on the owning inventory row and stay independently tracked in
+`docs/WINDOWS_UI_INVENTORY.md`; moving a surface out of `unassigned` never moves
+any of that row's `M/B/V/I/A/L/P/C` cells. Attribution is chosen by a surface's
+primary function, not by the module directory it happens to live in: an exact
+`overrides` entry pins a single `.ui` to the row that owns its redesign (used when
+a shared subtree contains surfaces owned by different rows), while a `prefix_rules`
+entry assigns a whole subtree to the one row that owns it. Shared `cui`/`svx`/
+`svtools` tab-page fragments that no single inventory row owns stay `unassigned`
+by design, and a residual floor of non-product test/demo/example `.ui` files stays
+`unassigned` deliberately — zero-unassigned is not the honest target.
+
 The `unassigned` count is an honest ledger figure, not a silent gap: the current
-baseline is 449 of 1270 surfaces (chiefly the shared `cui`, `svx`, `svtools`,
-`extensions`, and `vcl` dialog sets that no single inventory row owns). The
-validator reports the count and does not fail merely because it is non-zero. It
-fails closed on any drift from a fresh enumeration: an added, removed, or
-renamed `.ui`; a newly `unassigned` surface not already in the checked-in
-baseline; an unknown inventory ID; a duplicated surface; or any hand edit.
+baseline is **250 of 1270** surfaces (1260 `.ui` plus 10 native), down from 434
+after the mega-wave assignment campaign moved 184 surfaces into owning rows via 4
+new `prefix_rules` (the `extensions` property-control/wizard/bibliography subtrees
+and `formula`) plus per-cluster `overrides` (Options → `WIN-DLG-002`, destructive
+queries → `WIN-DLG-001`, recovery → `WIN-SYS-009`, sidebar panels →
+`WIN-CON-007`, print → `WIN-DLG-004`, the delegated `presentationdialog.ui` →
+`WIN-IM-003`, and the Writer format-dialog and notebookbar remaps). The remaining
+250 are chiefly the shared `cui`, `svx`, `svtools`, `extensions`, and `vcl`
+dialog sets that no single inventory row owns. The validator reports the count and
+does not fail merely because it is non-zero. It fails closed on any drift from a
+fresh enumeration: an added, removed, or renamed `.ui`; a newly `unassigned`
+surface not already in the checked-in baseline; an unknown inventory ID; a
+duplicated surface; or any hand edit.
 
 ```sh
 python bin/check-windows-ui-registry-closure.py
@@ -667,6 +689,23 @@ revert that leaves the producer function defined but unreachable (dead code) fai
 closed here instead of passing on the surviving definition. 27 mutation tests; no
 native build, notification pixels, or runtime interaction are claimed.
 
+The mega wave (below) extends this ledger to **eight** producers (WIN-FBK-007,
+WIN-SHL-003): five acknowledgement-only modal message boxes were converted onto
+`sfx2::NotificationRouter::NotifyInfo` and registered — the no-email-client
+warning (`mailmodel.cxx`, Warning), the HTML/Basic source-view "search key not
+found" notice (`srcview.cxx`, Information), the predefined-label-locked warning
+(`labfmt.cxx`, Warning), and the read-only-content notice pair (`wrtsh1.cxx` +
+`textfld.cxx`, Information). To keep the convention from silently collapsing back
+to one or two modules on a future revert, the registry now carries a
+`min_producer_modules` field (value **3**: the distinct module set over
+`producers` — `sfx2`, `sw`, `svx` — must have cardinality ≥ 3), asserted
+fail-closed alongside the existing per-producer existence checks. Every new
+producer is `informational_only`, uses the already-approved `libreoffice.core-ui`
+display source, and is added to `required_producers`. `runtime_verified` stays
+`false`; replacing a blocking `run()` with a fire-and-forget notice is a genuine
+behaviour change that only a Windows build plus a manual walkthrough can confirm
+is safe.
+
 ### Sidebar deck & side panes (WIN-CON-007)
 
 `sidebar-panels.json` records that the deck, its title bar, the panels, the 12px
@@ -1007,3 +1046,503 @@ carve-out). This is source + wiring evidence only: `runtime_verified` stays
 no native build, theme pixels, or runtime observation of the activated theme is
 claimed — the first release built after this change is the first shipped binary
 with Material active by default.
+
+## Wave-2 Mega wave foundations, surface, and system pins
+
+The mega wave (2026-07-23) adds **33 new fail-closed source contracts** — one
+triad (checker + registry + mutation suite) per surface — covering foundations,
+widgets, dialogs, navigation chrome, and the Writer / Calc / Impress / Base / Math
+application surfaces, plus **562 new mutation tests**. It also extends five
+already-landed contracts in place: the Impress/Draw surface set grew from 6 to 10
+surfaces (Impress pane/status-bar owner pins, Draw canvas-grid and
+selection-overlay guarded colour branches), `startcenter-cards.json` gained the
+`unavailable-preview` dimming role, `dialog-anatomy-policy.json`'s
+`MAX_MIGRATIONS` rose 8 → 10 with two new destructive-confirmation migrations
+(Digital Signatures remove-signature, Start Center clear-recent),
+`notification-producer-policy.json` grew from 3 to 8 producers, and the search
+registries registered a 13th source-integrated field. Every contract is source /
+composition / ledger evidence only: markers are checked in comment-stripped code,
+`.ui`/`definition.xml` structure is parsed with ElementTree, every
+`runtime_verified` field stays `false` (the checker rejects `true`), and every
+carve-out keeps `status: specified`, mutation-tested to fail if promoted. No
+native build, pixels, or runtime interaction is claimed by any of them. Because
+the honesty contract holds `B/V/I/A/L/P/C` open for every row (no build host
+exists), at most `SRC`/`M`-adjacent source evidence advances; the presence-marker
+and upstream/D-gate pins (WIN-SHL-002, WIN-CA-004, WIN-MA-001/002, WIN-SYS-014,
+WIN-IM-001/003/004, WIN-BA-002, WIN-FND-004/006/007) explicitly do **not** advance
+`M`, because existing upstream (non-Material-guarded) source never satisfies it.
+Validate the whole cohort:
+
+```sh
+python bin/check-windows-theme-resolution-routing.py
+python bin/test_windows_theme_resolution_routing.py
+python bin/check-windows-elevation-contract.py
+python bin/test_windows_elevation_contract.py
+python bin/check-windows-reduced-motion-contract.py
+python bin/test_windows_reduced_motion_contract.py
+python bin/check-windows-density-contract.py
+python bin/test_windows_density_contract.py
+python bin/check-version-history-seeded-state.py
+python bin/test_version_history_seeded_state.py
+python bin/check-windows-adaptive-layout-ledger.py
+python bin/test_windows_adaptive_layout_ledger.py
+python bin/check-windows-icon-theme-pipeline.py
+python bin/test_windows_icon_theme_pipeline.py
+python bin/check-windows-render-scale-matrix.py
+python bin/test_windows_render_scale_matrix.py
+python bin/check-windows-pushbutton-contract.py
+python bin/test_windows_pushbutton_contract.py
+python bin/check-windows-icon-button-contract.py
+python bin/test_windows_icon_button_contract.py
+python bin/check-windows-options-dialog-contract.py
+python bin/test_windows_options_dialog_contract.py
+python bin/check-windows-office-filepicker-contract.py
+python bin/test_windows_office_filepicker_contract.py
+python bin/check-windows-print-dialog-contract.py
+python bin/test_windows_print_dialog_contract.py
+python bin/check-windows-find-replace-dialog-contract.py
+python bin/test_windows_find_replace_dialog_contract.py
+python bin/check-windows-notebookbar-composition.py
+python bin/test_windows_notebookbar_composition.py
+python bin/check-windows-titlebar-composition.py
+python bin/test_windows_titlebar_composition.py
+python bin/check-windows-command-overflow.py
+python bin/test_windows_command_overflow.py
+python bin/check-writer-chrome-contract.py
+python bin/test_writer_chrome_contract.py
+python bin/check-windows-writer-ruler-contract.py
+python bin/test_windows_writer_ruler_contract.py
+python bin/check-writer-format-dialogs-contract.py
+python bin/test_writer_format_dialogs_contract.py
+python bin/check-writer-sidebar-deck-contract.py
+python bin/test_writer_sidebar_deck_contract.py
+python bin/check-windows-writer-review-composition.py
+python bin/test_windows_writer_review_composition.py
+python bin/check-calc-grid-selection-contract.py
+python bin/test_calc_grid_selection_contract.py
+python bin/check-windows-calc-sheet-tabs-upstream-pin.py
+python bin/test_windows_calc_sheet_tabs_upstream_pin.py
+python bin/check-windows-calc-data-dialog-contract.py
+python bin/test_windows_calc_data_dialog_contract.py
+python bin/check-windows-data-grid-header-selection.py
+python bin/test_windows_data_grid_header_selection.py
+python bin/check-impress-slideshow-settings-contract.py
+python bin/test_impress_slideshow_settings_contract.py
+python bin/check-windows-impress-presenter-surfaces.py
+python bin/test_windows_impress_presenter_surfaces.py
+python bin/check-chart-editor-contract.py
+python bin/test_chart_editor_contract.py
+python bin/check-windows-base-rail-workspace.py
+python bin/test_windows_base_rail_workspace.py
+python bin/check-windows-base-addtable-tree-contract.py
+python bin/test_windows_base_addtable_tree_contract.py
+python bin/check-math-editor-elements-contract.py
+python bin/test_math_editor_elements_contract.py
+python bin/check-math-editor-contract.py
+python bin/test_math_editor_contract.py
+```
+
+### Theme resolution routing (WIN-FND-002)
+
+`theme-resolution-routing.json` (contract `material-theme-resolution-routing`)
+pins the already-compiled HC-over-dark-over-light precedence chain against drift
+with 8 markers anchored to real lines across `FileDefinitionWidgetDraw.cxx`
+(HC short-circuit + native-fallback gate), `salnativewidgets-luna.cxx`
+(uxtheme.dll ordinal-132 `ShouldAppsUseDarkMode` + AUTO/LIGHT/DARK officecfg
+layering), `settings.cxx` (`SAL_FORCE_HC` + officecfg `HighContrast` override,
+captured before update), `salgdilayout.cxx` (the `VCL_DRAW_WIDGETS_FROM_FILE`
+opt-in), `salframe.cxx` (`SPI_GETHIGHCONTRAST` + the `WM_SETTINGCHANGE` /
+`UpdateDarkMode` live-refresh), and `winproc.cxx` (the app-wide
+merge→override→set cascade). **Calibration finding:** this row's earlier "SRC
+incomplete" framing overstated the gap — the routing chain is fully compiled and
+now pinned; the real remaining gates are `BUILD/PX/MATRIX` and platform-signal
+completeness, not source. 16 mutation tests; `runtime_verified: false`.
+
+### Elevation strategy (WIN-FND-003)
+
+`elevation-strategy.json` (contract `material-elevation-strategy`) pins the one
+implemented elevation channel — the native Frame/Border token quadruple
+(`@outline-variant`/`@surface-container`/`@stroke-thin`/`@corner-container`) with
+its 2px inset and the three tonal surface roles resolving in both palettes — and
+holds the rest honest: each of the 7 §4 shadow-table rows is tagged prototype-only
+with no matching native drawable, the three `--scrim` rgba literals byte-match the
+foundations chapter (two real drifts in `site/prototype.html` were reconciled to
+the doc, never the reverse), and `opacity` is asserted unparseable anywhere in the
+widget schema. `M` advances to the border-channel subset; shadow/scrim/opacity
+stay `SRC`-open. 13 mutation tests; `runtime_verified: false`.
+
+### Reduced-motion signal (WIN-FND-004)
+
+`reduced-motion-contract.json` (contract `material-reduced-motion`) pins the
+pre-existing, non-Material accessibility-motion primitive a future Material motion
+layer must route through: the four `MiscSettings` reduced-motion/allow-animation
+declarations, `GetUseReducedAnimation()` delegating to the frame, each `Allow*`
+officecfg key negating it on the `System` case, the Windows
+`SPI_GETCLIENTAREAANIMATION` read, and the `xs:short`/default-0 schema props.
+Marker 7 asserts `definition.xml` still carries **zero** motion/duration/easing
+tokens — a deliberate `SRC`-gate trip-wire that keeps `M` visibly open: this
+contract must never be read as satisfying the row's motion scope. 14 mutation
+tests; `runtime_verified: false`.
+
+### Density (WIN-FND-005)
+
+`density-contract.json` (contract `material-density-model`) is a fail-closed
+ledger proving the "single compiled profile, selectable density is target-only"
+claim stays internally consistent: the 15 native metric roles keep their exact
+values, the `<metrics>` element carries zero attributes (corroborated by the
+`WidgetDefinitionReaderTest` invalid-fixture that proves the reader rejects a
+density attribute), the foundations §6 compact/comfortable target table is present
+verbatim (each row `status: specified`), the `calc-chrome.json` density carve-out
+stays byte-consistent, and a repo-wide `.ui`/officecfg walk finds zero
+density-selector control. It advances no gate beyond the already-`△` compiled
+metrics. 15 mutation tests; `runtime_verified: false`.
+
+### Version history seeded state (WIN-CONCEPT-002)
+
+`version-history-seeded-state.json` (contract
+`windows-version-history-seeded-state`) is a generated data-coverage ledger over
+the inline seeded HISTORY/DOCS fixture in `site/prototype.html` plus a provenance
+map to real upstream `versdlg.cxx` SIDs — prototype-internal coverage and
+concept-vs-reality provenance, **not** proof of a native auto-commit engine.
+Default mode fails closed on a missing/extra/drifted entry; `--regenerate`
+rewrites deterministically. This moves the `D/M` cells toward the `✓△` state its
+two sibling concept rows already hold. 14 mutation tests; `runtime_verified:
+false`.
+
+### Adaptive-layout ledger (WIN-FND-006)
+
+`adaptive-layout-ledger.json` (contract `windows-adaptive-layout-ledger`)
+enumerates every below-medium breakpoint the foundations §7 prose describes. It
+carries exactly one real anchor — WIN-CON-007's `ShouldDeckOverlayCanvas` /
+`Int_DeckOverlayMinWidth = 600` predicate, cross-referenced (not re-asserted) from
+`sidebar-panels.json` — plus explicit `target-no-native-anchor` placeholders for
+every other surface (WIN-SHL-002/NAV-004/NAV-008/dialog rows). A grep of
+`framework/uielement` + `sfx2` fails closed if any other width-driven breakpoint
+literal appears without a ledger entry. It does **not** advance WIN-FND-006's own
+`SRC/M`: the cross-surface model still has zero other native code. 17 mutation
+tests; `runtime_verified: false`.
+
+### Icon-theme pipeline (WIN-FND-007)
+
+`icon-theme-pipeline.json` (contract `windows-icon-theme-pipeline`) pins the
+*existing* upstream icon pipeline (the `IconThemeSelector` fallback ids, the
+`images_<id>.zip` naming, the literal icon-themes directory set) with a negative
+guard that no `material*` icon theme directory exists and
+`material_theme_installed: false`. It is an upstream-presence pin plus an absence
+guard: `M` stays `·`, because the Material line-icon theme this row's title
+promises is unwritten. 18 mutation tests; `runtime_verified: false`.
+
+### Render/scale neutrality (WIN-SYS-014)
+
+`render-scale-matrix.json` (contract `material-render-scale-neutrality`) pins six
+render/scale *preconditions* — `FileDefinitionWidgetDraw.cxx` contains none of the
+render-method selection identifiers (`renderMethodToUse`/`isVCLSkiaEnabled`/
+`SAL_SKIA`/`RenderVulkan`/`RenderMetal`/`SkiaHelper::`), the system-DPI-aware
+manifest is exactly `<dpiAware>true</dpiAware>` with no PerMonitor token and is
+wired to the executable via `mt.exe -updateresource`, Skia is the Windows default
+with a real software-raster fallback path — plus a `specified` matrix carve-out.
+It is framed strictly as a regression guard and moves **no** gate; `M` stays `·`.
+16 mutation tests; `runtime_verified: false`.
+
+### Push buttons (WIN-ACT-001)
+
+`pushbutton-contract.json` (contract `material-pushbutton-composition`) pins the
+13 compiled Entire-state signatures (plain ×5, action ×4, flat ×4) plus the shared
+Focus part and the D-020 default-slot text pairing, cross-checks the pushbutton
+cell count against `component-gallery-coverage.json`, and carries a **temporary
+negative guard**: `extra="outlined"` must not appear in `definition.xml` and the
+`ControlType::Pushbutton` branch must still test only `mbIsAction`/`m_bFlatButton`
+— so the contract fails closed the instant outlined XML is added without the native
+signal, and must be inverted the day that signal lands. `outlined`/`default_emphasis`
+stay `status: specified` with non-empty `blocked_on`. 19 mutation tests;
+`runtime_verified: false`.
+
+### Icon buttons (WIN-ACT-003)
+
+`icon-button-contract.json` (contract `material-icon-button-composition`) pins the
+four real icon-only consumers (infobar close, propertychip remove, notification
+dismiss/close) at their exact `.ui` path + object id, each keeping a non-empty
+icon-name and translatable tooltip (the only accessible-name channel today), with
+Class-A consumers staying `weld_toolbar`-built toolbar children and Class-B
+consumers staying `weld_button`-built with their pushbutton fallback. A closed-world
+`.ui` walk (its own Git enumeration, not the concurrently-edited registry) fails
+closed if a fifth icon-only candidate appears. It proves which shared part each
+consumer falls back to, not a standalone icon-button native part. 16 mutation
+tests; `runtime_verified: false`.
+
+### Options dialog (WIN-DLG-002)
+
+`options-dialog-composition.json` (contract `material-options-dialog-composition`)
+composition-pins `optionsdialog.ui`'s two-pane tree/content shell grounded in the
+`definition.xml` `listnode`/`listnet` `@size-tree-node` parts, the footer
+action-widget order/response-codes/secondary flags, and the 12 ordered node groups
+with their guard conditions. The Apply-button-not-in-action-widgets footer drift,
+the not-themeable tree-row selection fill, and the density/adaptive-width and
+field-grid/floating-label treatments are honest carve-outs at `status: specified`.
+`M` advances to the composition subset. 21 mutation tests; `runtime_verified:
+false`.
+
+### Office file picker (WIN-DLG-003)
+
+`office-file-picker-composition.json` (contract
+`material-office-file-picker-composition`) pins the fallback Save-As/Office file
+picker composition and its surrounding message box, cross-references the win32
+delegation seam (`OfficeFilePicker` literal in `filedlghelper.cxx`) and the
+`explorerfiledialog.ui`/`foldernamedialog.ui` native-exclusion CSV rows, and
+anchors the "breadcrumb row" to the real `current_path` `SvtURLBox` (not the remote
+picker's `breadcrumb.ui`). The `.ui` controls are stock GTK widgets with no
+Material styling hook, so `M` stays `·` — this is an upstream composition +
+delegation pin, honest about the field-styling gap. 14 mutation tests;
+`runtime_verified: false`.
+
+### Print dialog (WIN-DLG-004)
+
+`print-dialog.json` (contract `material-print-dialog-composition`) is a
+single-`.ui` `GenericDialogController` pin modeled on the PDF-export precedent: the
+`definition.xml` native parts the dialog composes, the `printdialog.ui` structure
+and footer, and the real four-button preview pager (correcting the design prose's
+two-button simplification). It has no compile-time tab sequence — Print's General
+page is static and the app-specific pages are runtime-injected — so that is carved
+out honestly rather than faked. `M` advances to the composition subset. 20
+mutation tests; `runtime_verified: false`.
+
+### Find & Replace dialog closure (WIN-DLG-005)
+
+`find-replace-dialog.json` (contract `windows-native-find-replace-dialog-closure`)
+pins that `SvxSearchDialog` stays a `SfxModelessDialogController` (so live
+find-as-you-type can never silently become application-modal) and re-runs, in
+process, the four satellite contracts the row depends on: `find-replace-fieldset.json`
+(WIN-INP-006), `regex-search-integrations.json`'s `document.find-replace` entry,
+the shared regex-builder foundation, and the `srchdlg-replace-all-outcome`
+notification producer — importing each via the py3.9 `sys.modules`-before-exec
+order. Because the Material field set and builder are genuinely source-composed
+(INP-006 is already `△`), the dialog row inherits an `M` subset. 16 mutation
+tests; `runtime_verified: false`.
+
+### Notebookbar composition (WIN-NAV-004)
+
+`notebookbar-composition.json` (contract `material-notebookbar-composition`) locks
+the one guarded-material-source edit in this cluster: behind
+`VCL_FILE_WIDGET_THEME`, `NotebookBar::UpdateBackground()` resolves the group-area
+wash to `@surface` via a helper mirroring `status.cxx`'s
+`lcl_materialStatusColor`, while all four hardcoded per-module accent hexes
+(`0x1a85d1`/`0x3cbc45`/`0xe75729`/`0xe5b443`) and their `Merge()` calls stay verbatim
+on the native path. Scope is the group-area wash **only**, not the 38px tab-row
+band — stated in the registry so it is never over-credited. `M` advances to that
+subset. 12 mutation tests; `runtime_verified: false`.
+
+### Window/floating title bars (WIN-NAV-007)
+
+`titlebar-composition.json` (contract `material-titlebar-composition`) pins the
+compiled title-bar metrics (window 18 / floating 14) and the active/deactive
+style-slot token wiring in `definition.xml` and the generic `StyleSettings` push
+in `FileDefinitionWidgetDraw.cxx`, **plus a fail-closed absence guard**: no
+`GetActiveColor()`/`GetDeactiveColor()` consumption and no `DWMWA_CAPTION_COLOR`/
+`DWMWA_BORDER_COLOR` call may appear in `brdwin.cxx`/`salframe.cxx` —
+`consumption.status` must stay `not-wired`, the mirror of the statusbar contract's
+"specified" pattern for a fact that is currently false. 16 mutation tests;
+`runtime_verified: false`.
+
+### Command overflow (WIN-SHL-002)
+
+`command-overflow.json` (contract `windows-command-overflow`) pins the pre-existing
+VCL toolbar-overflow reachability code as presence markers: `ImplToolItem::IsClipped`
+(clipped items stay `mbVisible=true`, distinguishing overflow from removal),
+`IsItemClipped`/`ImplHasClippedItems`, `UpdateCustomMenu`'s ordered rebuild,
+`ImplChangeHighlightUpDn` folding the menu-button into arrow-key cycling,
+`ImplDrawMenuButton`'s gated paint, and the `toolbarmanager.cxx` vcl→framework
+wiring + `FillOverflowToolbar` order. This code predates and is independent of
+Material (no guard, no token), so it must **not** be read as satisfying `M`; `M`
+stays `·`. 15 mutation tests; `runtime_verified: false`.
+
+### Writer classic chrome (WIN-WR-001)
+
+`writer-chrome.json` (contract `material-writer-chrome-composition`) is the Writer
+clone of the calc-chrome pin: `FMT.writer` = `textobjectbar.xml` and `standard` =
+`standardbar.xml` exact ordered composition, the classic menu-bar top-level
+sequence (encoding the real Writer-vs-Calc divergence — TableMenu/FormatFormMenu
+replacing SheetMenu/DataMenu), and the shared nine-state toolbar Button part at
+`@corner-toolbar` reused byte-for-byte from `calc-chrome.json`. `standard`-toolbar
+`design_core` is marked inferred; density/combo carve-outs stay `specified`. `M`
+advances to the composition subset. 26 mutation tests; `runtime_verified: false`.
+
+### Writer ruler tokens (WIN-WR-002)
+
+`writer-ruler-token-contract.json` (contract `material-writer-ruler-token-contract`)
+pins the `definition.xml` `<style>` colour slots, the matching
+`SetWindowColor`/`SetFaceColor`/`SetHighlightColor`/… assignments from
+`pDefinitionStyle` in `FileDefinitionWidgetDraw.cxx`, and the
+`rStyleSettings.Get*Color()` consumer call-sites in `ruler.cxx`/`swruler.cxx` (read
+only), with an explicit carve-out for the `ThemeColors::IsThemeEnabled()`
+office-theme-colors opt-in path (`status: specified`, officecfg default 0). Canvas
+colour and page framing remain build-bound and are not pinned. `M` advances to the
+ruler subset. 21 mutation tests; `runtime_verified: false`.
+
+### Writer format dialogs (WIN-WR-003)
+
+`writer-format-dialogs.json` (contract
+`material-writer-format-dialogs-composition`) pins the Character / Paragraph /
+Table Properties / Picture-Frame `SfxTabDialogController` dialogs — one entry each
+(`characterproperties.ui`/`chardlg.cxx`, `paradialog.ui`/`pardlg.cxx`,
+`tableproperties.ui`/`tabledlg.cxx`, `picturedialog.ui`+`framedialog.ui`/`frmdlg.cxx`
+with an `applies_when` key for the 3-way `m_sDlgType` branch) plus a `shared_pages`
+block for the reused svx Border/Area/Transparency pages. The real RID_M vs RID_L
+icon-prefix divergence is preserved, never normalized. Mail merge / references /
+page layout are out-of-slice carve-outs. `M` advances to the composition subset.
+25 mutation tests; `runtime_verified: false`.
+
+### Writer sidebar decks (WIN-WR-004)
+
+`writer-sidebar-decks.json` (contract `material-writer-sidebar-decks`) pins the
+Page-Styles and Navigator decks: their owner sources, `.ui` widget bindings
+(`{id, gtk_class, weld_accessor}` triples validated against the real GtkBuilder
+XML), the `SwPanelFactory` `resource_suffix`→`create_call` routes, and the
+content↔global visibility switch (every pinned `show()`/`hide()` per branch plus
+`TriggerDeckLayouting`/`SetGlobalMode` side-effects). No new `definition.xml` part
+is pinned — the controls are stock weld widgets under generic theming. This is the
+dedicated Writer sidebar deck checker the row previously lacked; `M` stays `△`
+(subset), now on a real deck-composition basis. 17 mutation tests;
+`runtime_verified: false`.
+
+### Writer review composition (WIN-WR-005)
+
+`writer-review-composition.json` (contract `material-writer-review-composition`)
+pins the Track Changes toolbar (`changes.xml` 19-line ordered sequence +
+`WriterWindowState.xcu` registration), the Comments deck (`Sidebar.xcu` →
+`SwPanelFactory` `/CommentsPanel` branch → `CommentsPanel.cxx` loading
+`commentspanel.ui`'s 9 weld ids and the nested `commentwidget.ui`'s 6), and the
+Manage Changes deck proving Writer **mounts** the shared svx `SvxAcceptChgCtr`
+(via `redlndlg.cxx` → `SwRedlineAcceptDlg`), not a stub. Its design ground-truth is
+the new ch10 Review subsection. `M` advances to the composition subset. 19 mutation
+tests; `runtime_verified: false`.
+
+### Calc grid selection (WIN-CA-003)
+
+`calc-grid-selection.json` (contract `material-calc-grid-selection-consumption`)
+pins the real Material-routed selection chain: `definition.xml` accent/highlight
+slots → `colorcfg.cxx`'s `GetDefaultColor` routing `CALCCELLFOCUS`/`CALCDBFOCUS`
+to `GetAccentColor()` → the `hdrcont.cxx`/`gridwin.cxx`/`gridwin4.cxx` paint sites.
+It documents two real caveats honestly: the chain only resolves to `@primary` when
+the stored Application-Colors value is `COL_AUTO`, and **gridlines are `divergent`**
+— `CALCGRID` has no `case` in `colorcfg.cxx` and falls to a fixed grey, so its
+marker fails closed if a silent fix lands without updating the registry status.
+`M` stays `△` on the now-properly-pinned subset. 16 mutation tests;
+`runtime_verified: false`.
+
+### Calc sheet tabs upstream pin (WIN-CA-004)
+
+`calc-sheet-tabs-upstream-pin.json` (contract
+`material-calc-sheet-tabs-upstream-pin`) is read-only verification that the shared
+`svtools` `TabBar`/`TabDrawer` symbols the Material WIN-NAV-006 additive paint
+delegates to (`TabBar::Paint`, `class TabDrawer`, `drawTab`, `GetPageRect`, …) stay
+present and unforked, recording the four confirmed subclasses (Calc, Basic IDE,
+Impress, Draw) as a shared-ownership fact. It pins **upstream** infrastructure, not
+Material source, so `M` stays `·`. 12 mutation tests; `runtime_verified: false`.
+
+### Calc data dialogs (WIN-CA-005)
+
+`calc-data-dialogs.json` (contract `material-calc-data-dialogs`) pins the outer
+shell/footer of the six core Data-menu dialogs (`.ui` root id, controller base +
+`_ustr` load-path literals, ordered action-widgets, default/secondary responses)
+and a generated `surface_ledger` classifying every remaining Data / chart2 `.ui` as
+`standard-anatomy` or `custom-paint-guard-required`. It grounds in no
+`definition.xml` part and claims only source composition of the dialog shells —
+not that any Material anatomy is applied — so `M` stays `·`. 15 mutation tests;
+`runtime_verified: false`.
+
+### Data-grid header/selection (WIN-CON-003)
+
+`data-grid-header-selection.json` (contract `material-data-grid-header-selection`,
+`status: partial`) pins what IS wired — the `definition.xml` `<listheader>` Button
+states and `<style>` highlight slots, the `FileDefinitionWidgetDraw.cxx` header
+setters, and the Base BrowseBox `GetHighlightColor()`/`GetHighlightTextColor()`
+consumption — alongside a **negative marker** that Calc's selected-header fill and
+active-cell ring still route through `svtools::CALCCELLFOCUS`, not
+`GetHighlightColor()`/`GetAccentColor()`. That marker and the registry's
+`not_yet_material` status must move in lockstep with any future rewire. `M` stays
+`△` on the compiled header subset. 17 mutation tests; `runtime_verified: false`.
+
+### Impress slideshow settings (WIN-IM-003)
+
+`impress-slideshow-settings.json` (contract
+`material-impress-slideshow-settings-composition`) pins `presentationdialog.ui`'s 5
+`GtkFrame` groups in grid order (Range / Presentation Mode / Presentation Options /
+Display / Remote control) and the ok(-5)/cancel(-6)/help(-11) footer, plus 8
+method-anchored wiring chains in `present.cxx` (range radios, windowed-forces-
+always-on-top-off, pause/monitor/navbar sensitivity, display-name), cross-checking
+the CSV native-exclusion row. It grounds in no `definition.xml` part — an upstream
+dialog composition + wiring pin — so `M` stays `·`. The `presentationdialog.ui`
+override was delegated to the closure ledger. 20 mutation tests; `runtime_verified:
+false`.
+
+### Impress presenter surfaces (WIN-IM-004)
+
+`impress-presenter-surfaces.json` (contract `material-impress-presenter-surfaces`)
+pins the `presenter.component` service registration and the animation `GtkTreeView`
+/ transition `GtkIconView` widget-class facts, and asserts a fail-closed
+**absence** marker that `sd/source/console/*` carries zero
+`VCL_FILE_WIDGET_THEME`/`MaterialTokens` hooks — its PresenterTheme bitmap pipeline
+is architecturally outside the widget-draw path, so no guarded slice is possible
+and `M` stays `·`. It also flags the `transitions_icons` IconView vs design "grid"
+mismatch. 16 mutation tests; `runtime_verified: false`.
+
+### Chart editor (WIN-CH-001)
+
+`chart-editor.json` (contract `material-chart-editor-composition`) grounds the
+embedded chart2 editor treatment in already-compiled native parts, like
+calc-chrome: the `toolbar.xml` exact ordered composition (including the two
+`visible="false"` items), the 8 top-level `menubar.xml` menus, the 8
+`Chart2PanelFactory` `endsWith` routes, the six `sidebar*.ui` panel ids, and the
+`definition.xml` toolbar Entire/Button parts resolving in both palettes. The
+custom-drawn chart canvas / live-preview / data-table grid / 3D scene stay a
+`specified` carve-out (no `.ui`, no themeable part). Registry assignment was already
+complete (`chart2/` → WIN-CH-001). 19 mutation tests; `runtime_verified: false`.
+
+### Base navigation rail/workspace (WIN-BA-001)
+
+`base-rail-workspace.json` (contract `material-base-rail-workspace`) locks the
+cluster's guarded-material-source edits: reusing the `inputwin.cxx`
+env+high-contrast guard idiom, `AppSwapWindow` fills the rail `@surface-container`,
+a new named `panelhairline` box in `appborderwindow.ui` is tinted `@outline-variant`,
+`OApplicationIconControl` re-points its highlight to `@primary-container`/
+`@on-primary-container` via a `ThumbnailView::UpdateColors` override, and
+`OTitleWindow` gains a guarded kicker variant. All paint logic stays in dbaccess
+files; the shared `thumbnailviewitem.hxx` base is read-only here. `M` advances to
+that subset. 17 mutation tests; `runtime_verified: false`.
+
+### Base Add-Table tree (WIN-BA-002)
+
+`base-addtable-tree.json` (contract `material-base-addtable-tree`) pins that the
+Add Table/Query dialog's `tablelist` `GtkTreeView` binds the hierarchical
+`GtkTreeStore` and wires through the already-compiled generic net-less
+`listnode`/`listnet` `definition.xml` part (no custom subclass, no cell-renderer
+override), covering both the Query and Relation designers via the shared
+`OJoinController`. Because it proves an existing upstream tree routing through a
+shared compiled primitive — not a Material application surface — `M` stays `·`.
+Table/Query/Form/Report designers (unspecified in ch12) are carved out. 16 mutation
+tests; `runtime_verified: false`.
+
+### Math editor & elements (WIN-MA-001)
+
+`math-editor-elements.json` (contract `material-math-editor-elements`) pins the
+StarMath editor scroll/view bindings, the `editwindow.ui` scroll policy, the
+elements-panel builder ids, the `GtkIconView` activation, and the closed 11-entry
+`RID_CATEGORY_*` category list (pinning symbol identity + order, locale-safe).
+**Honesty caveat:** marker 4 pins only that the shared `multilineeditbox`
+`definition.xml` primitive is unchanged, **not** that Math consumes it — StarMath
+has zero MaterialTokens consumption today (`WeldEditView` sources its own
+`GetFieldColor()`), so this is a substrate/shared-primitive pin and `M` stays `·`.
+17 mutation tests; `runtime_verified: false`.
+
+### Math symbol/placeholder navigation (WIN-MA-002)
+
+`math-editor.json` (contract `material-math-editor`) pins the placeholder-navigation
+and error-recovery primitives over stable upstream anchors: `edit.cxx`
+`SelNextMark`/`SelPrevMark` on the `<?>` literal, `InsertText` focus-return,
+`MarkError`; `view.cxx` SID_NEXTMARK/PREVMARK/NEXTERR/PREVERR dispatch and
+`ShowError` text+position pairing; the F4/F3 accelerators; and the
+`multilineeditbox` states. **This is a D-gate source pin only** — per the inventory
+legend "existing upstream UI source does not satisfy `M`", it proves the substrate
+is present and unregressed and must **not** flip `M`, which stays `·`. The three
+Material differentiators stay `status: specified`. 17 mutation tests;
+`runtime_verified: false`.

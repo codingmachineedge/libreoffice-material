@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "contract": "windows-icon-theme-pipeline",
+  "inventory_row": "WIN-FND-007",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "material_theme_installed": false,
+  "design_refs": [
+    "docs/design/01-foundations.md#8 Iconography (Native icons target)",
+    "MATERIAL_DESIGN.md Iconography and assets"
+  ],
+  "selector_header": "vcl/inc/IconThemeSelector.hxx",
+  "selector_source": "vcl/source/app/IconThemeSelector.cxx",
+  "info_source": "vcl/source/app/IconThemeInfo.cxx",
+  "icon_themes_dir": "icon-themes",
+  "note": "Composition-pinning ledger for WIN-FND-007. It pins the CURRENT, real Windows icon-theme selection / package-naming / fallback contract and enumerates icon-themes/ to record an honest material_theme_installed:false. No Material icon source or assets exist yet, so there is nothing to guard -- this only fail-closed pins what is real today (the hardcoded Windows colibre fallback, the generic mPreferredIconTheme override that lets any correctly-named installed theme win, the images_<id>[_dark][_svg].zip naming any future material package must satisfy, the literal 20-directory icon-themes/ set with no material* directory, and the four qualitative iconography prose rules) so future drift is caught. Source/text evidence only; runtime_verified:false; no build, icon pixels, RTL-mirroring, or scaling evidence is claimed and no gate is moved.",
+  "fallback": {
+    "light_id": "colibre",
+    "dark_id": "colibre_dark",
+    "header_markers": [
+      "FALLBACK_LIGHT_ICON_THEME_ID = u\"colibre\"_ustr",
+      "FALLBACK_DARK_ICON_THEME_ID = u\"colibre_dark\"_ustr"
+    ]
+  },
+  "windows_route": {
+    "guard": "#ifdef _WIN32",
+    "markers": [
+      "return \"colibre\";",
+      "return \"colibre_dark\";"
+    ],
+    "note": "On _WIN32, GetIconThemeForDesktopEnvironment routes to the colibre / colibre_dark ids with no per-desktop routing (the elementary/breeze/sukapura desktop branches are #else only)."
+  },
+  "preferred_override_markers": [
+    "mPreferredIconTheme.isEmpty()",
+    "icon_theme_is_in_installed_themes(mPreferredIconTheme, installedThemes)",
+    "return mPreferredIconTheme;"
+  ],
+  "no_material_in_selector": true,
+  "package_naming": {
+    "markers": [
+      "ICON_THEME_PACKAGE_PREFIX[] = u\"images_\"",
+      "EXTENSION_FOR_ICON_PACKAGES[] = u\".zip\"",
+      "endsWith(\"_svg\", &aDisplayName)",
+      "endsWith(\"_dark\", &aDisplayName)"
+    ],
+    "note": "Any future material theme must ship as images_material[_dark][_svg].zip to be discovered at all; the _svg/_dark suffixes are stripped for the display name."
+  },
+  "forbidden_theme_prefix": "material",
+  "installed_theme_dirs": [
+    "breeze",
+    "breeze_dark",
+    "breeze_dark_svg",
+    "breeze_svg",
+    "colibre",
+    "colibre_dark",
+    "colibre_dark_svg",
+    "colibre_svg",
+    "elementary",
+    "elementary_svg",
+    "karasa_jaga",
+    "karasa_jaga_svg",
+    "sifr",
+    "sifr_dark",
+    "sifr_dark_svg",
+    "sifr_svg",
+    "sukapura",
+    "sukapura_dark",
+    "sukapura_dark_svg",
+    "sukapura_svg"
+  ],
+  "iconography_prose": {
+    "rules": [
+      {
+        "file": "docs/design/01-foundations.md",
+        "substring": "RTL mirroring is applied per glyph",
+        "rule": "semantic (not blanket) mirroring"
+      },
+      {
+        "file": "docs/design/01-foundations.md",
+        "substring": "externally hotlinked asset",
+        "rule": "no externally hotlinked assets"
+      },
+      {
+        "file": "docs/design/01-foundations.md",
+        "substring": "generated art is not accepted as runtime or evidence",
+        "rule": "no unreviewed generated art as evidence"
+      },
+      {
+        "file": "docs/design/01-foundations.md",
+        "substring": "theme for the native pipeline is specified here, not yet implemented",
+        "rule": "not-yet-implemented honesty flag"
+      },
+      {
+        "file": "MATERIAL_DESIGN.md",
+        "substring": "mirroring is semantic, not automatic for every glyph",
+        "rule": "semantic mirroring (root contract)"
+      },
+      {
+        "file": "MATERIAL_DESIGN.md",
+        "substring": "externally hotlinked",
+        "rule": "no externally hotlinked assets (root contract)"
+      },
+      {
+        "file": "MATERIAL_DESIGN.md",
+        "substring": "Generated art is not accepted as",
+        "rule": "no unreviewed generated art (root contract)"
+      }
+    ]
+  },
+  "icon_size_linter": {
+    "path": "bin/check-icon-sizes.py",
+    "ci_workflow": ".github/workflows/windows-ui-contract.yml",
+    "ci_enforced": false,
+    "note": "A size linter for lc_/sc_ PNGs exists and walks the whole icon-themes tree (so it would cover any future material PNGs at 24/16px), but it is one of the stock upstream linters excluded from the Material validator gate: the script exists, CI does not currently enforce it in the Windows UI contract workflow."
+  }
+}

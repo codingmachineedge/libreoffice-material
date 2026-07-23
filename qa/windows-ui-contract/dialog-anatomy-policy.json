@@ -69,6 +69,18 @@
       "file": "desktop/source/deployment/gui/dp_gui_dialog2.cxx",
       "act": "remove an installed extension",
       "verb": "Remove"
+    },
+    {
+      "id": "xmlsecurity-digitalsignatures-remove-signature",
+      "file": "xmlsecurity/source/dialogs/digitalsignaturesdialog.cxx",
+      "act": "remove a signature from the document's digital signature list",
+      "verb": "Remove"
+    },
+    {
+      "id": "sfx2-backingwindow-clear-recent",
+      "file": "sfx2/source/dialog/backingwindow.cxx",
+      "act": "clear the entire recent-documents list",
+      "verb": "Clear"
     }
   ]
 }

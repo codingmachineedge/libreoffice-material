@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "contract": "material-titlebar-composition",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/05-navigation.md",
+  "chapter_section": "7",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-NAV-007. Pins exactly what the row's compiled-but-unverified gates already claim and no more: (a) definition.xml carries the two title-bar metrics height-window-title=18 / height-floating-title=14 and the <settings> mapping titleHeight -> @height-window-title / floatTitleHeight -> @height-floating-title; (b) the six frame-activation style slots (activeColor/activeBorderColor -> @primary, activeTextColor -> @on-primary, deactiveColor -> @disabled-container, deactiveTextColor -> @outline, deactiveBorderColor -> @outline-variant) per docs/design/05-navigation.md 7.1; (c) FileDefinitionWidgetDraw.cxx pushes these into StyleSettings generically (SetTitleHeight/SetFloatTitleHeight and the Set{Active,Deactive}{,Text,Border}Color setters) -- this is SHARED cross-control, cross-platform plumbing, NOT title-bar-specific Material source, so it proves the same generic behaviour on every platform, not something Windows-specific. The consumption half is deliberately pinned as an ABSENCE fact: nothing consumes these slots for an active/inactive visual distinction. brdwin.cxx (the only native drawer of a VCL-rendered floating/tearoff title bar) never calls GetActiveColor/GetDeactiveColor/GetActiveTextColor/GetDeactiveTextColor, and vcl/win/window/salframe.cxx never sets a DWM caption/border/text colour (only DWMWA_USE_IMMERSIVE_DARK_MODE), so Material never reaches the real OS-drawn top-level chrome either. consumption.status is 'not-wired' and those markers MUST stay absent: the day someone genuinely wires active/inactive rendering (a real, build-verifiable improvement) this checker fails closed and forces a coordinated registry+row update rather than a silent drift to a claimed pass. Source evidence only: no native build, title-bar pixels, or runtime active/inactive capture are claimed (runtime_verified false).",
+  "metrics": [
+    {"name": "height-window-title", "value": "18"},
+    {"name": "height-floating-title", "value": "14"}
+  ],
+  "settings": [
+    {"name": "titleHeight", "value": "@height-window-title"},
+    {"name": "floatTitleHeight", "value": "@height-floating-title"}
+  ],
+  "style_slots": [
+    {"slot": "activeColor", "token": "@primary"},
+    {"slot": "activeTextColor", "token": "@on-primary"},
+    {"slot": "activeBorderColor", "token": "@primary"},
+    {"slot": "deactiveColor", "token": "@disabled-container"},
+    {"slot": "deactiveTextColor", "token": "@outline"},
+    {"slot": "deactiveBorderColor", "token": "@outline-variant"}
+  ],
+  "palette_colors": [
+    "primary",
+    "on-primary",
+    "disabled-container",
+    "outline",
+    "outline-variant"
+  ],
+  "owner": {
+    "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+    "note": "Shared cross-control, cross-platform StyleSettings plumbing (not title-bar-specific and not Windows-specific). Pinning it proves the generic metric/colour push exists; it is not evidence of a title-bar-specific Material render.",
+    "markers": [
+      "SetTitleHeight(",
+      "SetFloatTitleHeight(",
+      "SetActiveColor(pDefinitionStyle->maActiveColor)",
+      "SetActiveTextColor(pDefinitionStyle->maActiveTextColor)",
+      "SetActiveBorderColor(pDefinitionStyle->maActiveBorderColor)",
+      "SetDeactiveColor(pDefinitionStyle->maDeactiveColor)",
+      "SetDeactiveTextColor(pDefinitionStyle->maDeactiveTextColor)",
+      "SetDeactiveBorderColor(pDefinitionStyle->maDeactiveBorderColor)"
+    ]
+  },
+  "consumption": {
+    "status": "not-wired",
+    "note": "docs/design/05-navigation.md 7.1/7.2/7.7. brdwin.cxx's ImplStdBorderWindowView::DrawWindow draws VCL floating/tearoff title bars from GetFaceColor()/GetButtonTextColor() only; mbDisplayActive triggers a repaint but is never read to select between active/deactive slot colours. The real top-level window chrome is DWM-owned and salframe.cxx sets no caption/border/text colour. So the frame-activation slots exist and are pushed into StyleSettings but nothing consumes them for an active/inactive visual distinction -- the absence markers below MUST stay absent from comment-stripped code so the row cannot silently drift to a claimed pass without a deliberate registry+row update the day it is actually wired.",
+    "absent_markers": [
+      {
+        "source": "vcl/source/window/brdwin.cxx",
+        "markers": [
+          "GetActiveColor(",
+          "GetDeactiveColor(",
+          "GetActiveTextColor(",
+          "GetDeactiveTextColor("
+        ]
+      },
+      {
+        "source": "vcl/win/window/salframe.cxx",
+        "markers": [
+          "DWMWA_CAPTION_COLOR",
+          "DWMWA_BORDER_COLOR",
+          "DWMWA_TEXT_COLOR"
+        ]
+      }
+    ]
+  }
+}

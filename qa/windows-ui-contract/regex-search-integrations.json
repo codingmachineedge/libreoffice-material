@@ -2,7 +2,7 @@
   "schema_version": 1,
   "contract": "windows-native-regex-search-integrations",
   "platform": "windows",
-  "expected_integrations": 12,
+  "expected_integrations": 13,
   "integrations": [
     {
       "coverage_id": "calc.go-to-sheet",
@@ -311,6 +311,37 @@
       "matcher_strategy": "legacy-literal-or-compiled-once-utl-textsearch",
       "default_mode": "literal-case-insensitive-contains-compatible",
       "match_subject": "rTitle",
+      "runtime_verified": false
+    },
+    {
+      "coverage_id": "security.certificate-search",
+      "surface": "Select Certificate issuer search",
+      "status": "source-integrated",
+      "ui_file": "xmlsecurity/uiconfig/ui/selectcertificatedialog.ui",
+      "entry_id": "searchbox",
+      "builder_button_id": "searchbox_regex_builder",
+      "header_file": "xmlsecurity/inc/certificatechooser.hxx",
+      "source_file": "xmlsecurity/source/dialogs/certificatechooser.cxx",
+      "owner_type": "CertificateChooser",
+      "owner_changed_handler": "SearchModifyHdl",
+      "entry_member": "m_xSearchBox",
+      "builder_member": "m_xRegexBuilderButton",
+      "controller_member": "m_xRegexSearchController",
+      "controller_parent": "m_xDialog.get()",
+      "widget_kind": "entry",
+      "matcher_strategy": "controller-driven-search-sites",
+      "default_mode": "literal-case-insensitive-contains-compatible",
+      "changed_handler_role": "forward-to-site",
+      "changed_handler_trigger": "ImplInitialize(true)",
+      "search_sites": [
+        {
+          "signature": "bool CertificateChooser::matchCertificate(",
+          "site_route": "live-predicate",
+          "enumeration_signature": "void CertificateChooser::ImplInitialize(",
+          "matcher_member": "m_xSearchMatcher",
+          "match_subject": "rIssuer"
+        }
+      ],
       "runtime_verified": false
     }
   ]

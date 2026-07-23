@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "contract": "material-elevation-strategy",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/01-foundations.md",
+  "chapter_section": "4",
+  "theme_flag": "VCL_FILE_WIDGET_THEME",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-FND-003. Ledgers the elevation triad from docs/design/01-foundations.md sections 2.1 and 4. The Border/Frame channel is the only elevation dimension the native definition implements today; tonal surfaces are real palette roles; shadows and the scrim are prototype-only. The shadow rows are pinned to the doc verbatim and cross-checked against the prototype's box-shadow literals so the doc stays the single source of truth. Native opacity is not even parseable in the widget-definition schema. Source evidence only: runtime_verified is false. Native shadow/scrim/opacity rendering, pixel/MATRIX capture, and the unassigned window-shell elevation owner remain the separate build/runtime gates.",
+  "border": {
+    "control": "frame",
+    "part": "Border",
+    "note": "The outlined Material frame (ControlType::Frame / ControlPart::Border) is the only compiled elevation channel: a stroke-thin @outline-variant outline over an @surface-container fill at @corner-container radius, inset 2px so grouped children sit inside the border.",
+    "tokens": {
+      "stroke": "@outline-variant",
+      "fill": "@surface-container",
+      "stroke-width": "@stroke-thin",
+      "radius": "@corner-container"
+    },
+    "surface_roles": ["surface", "surface-container", "surface-container-low"],
+    "inset": {
+      "source": "vcl/source/gdi/FileDefinitionWidgetDraw.cxx",
+      "markers": [
+        "case ControlType::Frame:",
+        "ControlPart::Border",
+        "rNativeContentRegion.AdjustLeft(2);",
+        "rNativeContentRegion.AdjustTop(2);",
+        "rNativeContentRegion.AdjustRight(-2);",
+        "rNativeContentRegion.AdjustBottom(-2);"
+      ]
+    }
+  },
+  "scrim": {
+    "note": "The modal scrim is a prototype presentation value with no native role (01-foundations.md 2.1). The three rgba literals must be byte-identical across the doc and the prototype palette.",
+    "literals": {
+      "light": "rgba(20,18,24,.38)",
+      "dark": "rgba(0,0,0,.6)",
+      "high_contrast": "rgba(0,0,0,.65)"
+    }
+  },
+  "shadows": {
+    "note": "Every section-4 shadow-table row is prototype-only; the native definition adds no shadow drawable. The doc is authoritative and the prototype's box-shadow literals are reconciled to match it. doc_row_count guards against a native shadow row being slipped into the table un-ledgered.",
+    "doc_row_count": 7,
+    "rows": [
+      {"surface": "Application window shell", "shadow": "0 30px 70px rgba(0,0,0,.30), 0 6px 16px rgba(0,0,0,.16)", "status": "prototype-only", "prototype": true},
+      {"surface": "Modal dialogs", "shadow": "0 24px 64px rgba(0,0,0,.4)", "status": "prototype-only", "prototype": true},
+      {"surface": "Menus and dropdowns", "shadow": "0 12px 32px rgba(0,0,0,.24)", "status": "prototype-only", "prototype": true},
+      {"surface": "Search/regex popovers", "shadow": "0 16px 40px rgba(0,0,0,.28)", "status": "prototype-only", "prototype": true},
+      {"surface": "Snackbar/toast", "shadow": "0 10px 30px rgba(0,0,0,.4)", "status": "prototype-only", "prototype": true},
+      {"surface": "Writer page on workspace", "shadow": "0 4px 20px rgba(0,0,0,.10)", "status": "prototype-only", "prototype": true},
+      {"surface": "Impress/Draw canvas", "shadow": "0 8px 30px rgba(0,0,0,.16) / 0 8px 30px rgba(0,0,0,.14)", "status": "prototype-only", "prototype": true}
+    ]
+  },
+  "opacity": {
+    "note": "Opacity is not implemented and not even latent: no drawable element in definition.xml carries an opacity/shadow/blur/elevation attribute, and the widget-definition reader never parses one. The reader's shadowColor binds the legacy StyleSettings 3D-bevel slot (a distinct concept covered by check-material-theme.py), not this row's MD3 elevation shadow.",
+    "legacy_shadow_slot_marker": "{ \"shadowColor\", &rWidgetDefinition.mpStyle->maShadowColor }"
+  }
+}

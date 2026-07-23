@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "contract": "material-impress-slideshow-settings-composition",
+  "platform": "windows",
+  "inventory_row": "WIN-IM-003",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "design_reference": "docs/design/11-impress-draw.md (11.1 Slide Show flow)",
+  "note": "Pins the honest, already-native composition of the Slide Show Settings dialog (SdStartPresentationDlg, built from presentationdialog.ui): the five GtkFrame group anatomy in grid order, the ok/cancel/help footer, and the eight enable/disable + role-binding wiring chains in present.cxx, plus a read-only cross-check that the dialog stays native-exclusion/KeepModal in dialog-notification-policy.csv. The Material look of this dialog is delivered by the shared generic weld dialog parts already in definition.xml, so this contract pins composition only and claims no new Material source. The registry-closure agent must add the OVERRIDES entry recorded in registry_closure_override below so the dialog maps to WIN-IM-003 rather than the blanket sd/uiconfig/simpress/ -> WIN-IM-001 prefix rule; that mapping is NOT applied here (bin/check-windows-ui-registry-closure.py is not in this slice's owned files). runtime_verified is false throughout: no native build, dialog pixels, monitor placement, or runtime interaction are claimed.",
+  "dialog_ui": "sd/uiconfig/simpress/ui/presentationdialog.ui",
+  "dialog_object_id": "PresentationDialog",
+  "impl_source": "sd/source/ui/dlg/present.cxx",
+  "header_source": "sd/source/ui/inc/present.hxx",
+  "csv_policy": "qa/windows-ui-contract/dialog-notification-policy.csv",
+  "frame_groups": [
+    { "id": "frame1", "label": "Range" },
+    { "id": "frame2", "label": "Presentation Mode" },
+    { "id": "frame4", "label": "Presentation Options" },
+    { "id": "frame3", "label": "Display" },
+    { "id": "frameremote", "label": "Remote control" }
+  ],
+  "footer": {
+    "action_widgets": [
+      { "id": "ok", "response": "-5" },
+      { "id": "cancel", "response": "-6" },
+      { "id": "help", "response": "-11" }
+    ],
+    "primary": {
+      "id": "ok",
+      "has_default": true,
+      "label": "_OK"
+    }
+  },
+  "header_markers": [
+    "class SdStartPresentationDlg final : public weld::GenericDialogController",
+    "enum DisplayType {",
+    "DECL_LINK(ChangeRangeHdl, weld::Toggleable&, void);",
+    "DECL_LINK(ClickWindowPresentationHdl, weld::Toggleable&, void);",
+    "void ChangePause();"
+  ],
+  "wiring_markers": [
+    {
+      "id": "range-radio-enable",
+      "method_signature": "IMPL_LINK_NOARG(SdStartPresentationDlg, ChangeRangeHdl, weld::Toggleable&, void)",
+      "note": "Range radios enable/disable the from_cb and customslideshow_cb combos.",
+      "patterns": [
+        "m_xLbDias->set_sensitive( m_xRbtAtDia->get_active() );",
+        "m_xLbCustomshow->set_sensitive( m_xRbtCustomshow->get_active() );"
+      ]
+    },
+    {
+      "id": "windowed-alwaysontop-forced-off",
+      "method_signature": "IMPL_LINK_NOARG(SdStartPresentationDlg, ClickWindowPresentationHdl, weld::Toggleable&, void)",
+      "note": "In a window forces Keep-on-top off and disabled; full screen re-enables it.",
+      "patterns": [
+        "const bool bWindow = m_xRbtWindow->get_active();",
+        "if( bWindow )",
+        "m_xCbxAlwaysOnTop->set_sensitive(false);",
+        "m_xCbxAlwaysOnTop->set_active(false);",
+        "m_xCbxAlwaysOnTop->set_sensitive(true);"
+      ]
+    },
+    {
+      "id": "window-sensitivity-gating",
+      "method_signature": "IMPL_LINK_NOARG(SdStartPresentationDlg, ClickWindowPresentationHdl, weld::Toggleable&, void)",
+      "note": "Loop gates the pause spin; windowed-vs-fullscreen plus monitor count gate the presentation-display combo; the navigation-bar checkbox gates the size combo.",
+      "patterns": [
+        "const bool bAuto = m_xCbxAuto->get_active();",
+        "m_xTmfPause->set_sensitive( bAuto );",
+        "const bool bDisplay = !bWindow && ( mnMonitors > 1 );",
+        "m_xFtMonitor->set_sensitive( bDisplay );",
+        "m_xLBMonitor->set_sensitive( bDisplay );",
+        "const bool bShowNavbar = m_xCbxShowNavigationButton->get_active();",
+        "m_xLbNavigationButtonsSize->set_sensitive( bShowNavbar );",
+        "m_xFtNavigationButtonsSize->set_sensitive( bShowNavbar );"
+      ]
+    },
+    {
+      "id": "pause-logo-binding",
+      "method_signature": "void SdStartPresentationDlg::ChangePause()",
+      "note": "The logo-during-pause checkbox is enabled only when Loop is active and the pause duration is non-zero.",
+      "patterns": [
+        "m_xCbxAutoLogo->set_sensitive(m_xCbxAuto->get_active() && ( m_xFormatter->GetTime().GetMSFromTime() > 0 ));"
+      ]
+    },
+    {
+      "id": "monitor-init-disable",
+      "method_signature": "void SdStartPresentationDlg::InitMonitorSettings()",
+      "note": "The display combo is populated from the real screen count and force-disabled when a single monitor is present.",
+      "patterns": [
+        "mnMonitors = Application::GetScreenCount();",
+        "if( mnMonitors <= 1 )",
+        "m_xFtMonitor->set_sensitive( false );",
+        "m_xLBMonitor->set_sensitive( false );",
+        "Application::GetDisplayExternalScreen();"
+      ]
+    },
+    {
+      "id": "display-name-roles",
+      "method_signature": "OUString SdStartPresentationDlg::GetDisplayName(",
+      "note": "The three per-display label roles feed GetDisplayName, whose %1 placeholder is substituted with the display number.",
+      "patterns": [
+        "aName = m_xExternal->get_label();",
+        "aName = m_xMonitorExternal->get_label();",
+        "aName = m_xMonitor->get_label();",
+        "aName = aName.replaceFirst( \"%1\", OUString::number( nDisplay ) );"
+      ]
+    },
+    {
+      "id": "console-mode-load",
+      "method_signature": "SdStartPresentationDlg::SdStartPresentationDlg(",
+      "note": "On load, the three-way presenter-console combo item is bound from the PresenterConsoleMode enum.",
+      "patterns": [
+        "m_xLbConsole->set_active(PresenterConsoleMode::Disabled);",
+        "m_xLbConsole->set_active(PresenterConsoleMode::FullScreen);",
+        "m_xLbConsole->set_active(PresenterConsoleMode::Windowed);"
+      ]
+    },
+    {
+      "id": "console-mode-commit",
+      "method_signature": "short SdStartPresentationDlg::run()",
+      "note": "On commit, the presenter-console combo selection is mapped back through the PresenterConsoleMode enum into officecfg.",
+      "patterns": [
+        "auto nActive = m_xLbConsole->get_active();",
+        "bool bEnabled = nActive != PresenterConsoleMode::Disabled;",
+        "nActive == PresenterConsoleMode::FullScreen"
+      ]
+    }
+  ],
+  "modal_exclusion": {
+    "ui_path": "sd/uiconfig/simpress/ui/presentationdialog.ui",
+    "object_id": "PresentationDialog",
+    "expected_policy": "native-exclusion"
+  },
+  "registry_closure_override": {
+    "surface": "sd/uiconfig/simpress/ui/presentationdialog.ui",
+    "inventory_id": "WIN-IM-003",
+    "applied": false,
+    "note": "Coordination hand-off for the registry-closure agent: add this exact-path OVERRIDES entry to bin/check-windows-ui-registry-closure.py and re-run --regenerate AFTER Batch C's concurrent ui-registry edits land. Without it the dialog silently falls under the blanket sd/uiconfig/simpress/ -> WIN-IM-001 prefix rule. This contract does NOT apply or assert the override (that checker is not in this slice's owned files)."
+  },
+  "carveouts": {
+    "custom_slide_show_dialogs": {
+      "status": "specified",
+      "note": "The Custom Slide Show list/editor dialogs (customslideshows.ui, definecustomslideshow.ui, cusshow.cxx/hxx) reachable from the Custom slide show radio are the same composition-pinning pattern but are deliberately scoped out of this slice; sized as a separate same-pattern follow-on triad, not folded in silently."
+    },
+    "playback_engine": {
+      "status": "specified",
+      "note": "Real full-screen window creation/placement (sd/source/ui/slideshow/*, vcl/win) and the OpenGL slide-transition engine (slideshow/source/engine/**, slideshow/opengl/*.glsl) are pure runtime with no .ui and no themeable definition.xml part; build-bound and never promoted by this composition pin."
+    },
+    "multimonitor_placement": {
+      "status": "specified",
+      "note": "Actual multi-monitor window placement on a chosen presentation display, and the always-on-top / windowed / loop / pointer-as-pen behaviours, are only observable at runtime behind Application::GetScreenCount()/GetDisplayExternalScreen(); the dialog only records the intent, so these stay spec-only."
+    }
+  }
+}

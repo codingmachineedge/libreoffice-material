@@ -4,7 +4,7 @@
   "platform": "windows",
   "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
   "chapter": "docs/design/11-impress-draw.md",
-  "expected_surfaces": 6,
+  "expected_surfaces": 10,
   "surfaces": [
     {
       "surface_id": "draw.tool-rail",
@@ -361,6 +361,128 @@
       ],
       "status_model": null,
       "token_consumption": [],
+      "disabled_policy": null,
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "impress.pane-composition",
+      "title": "Impress presentation shell composition (slide panel, center canvas pane, Layouts panel)",
+      "chapter_section": "11.1",
+      "status": "source-declared",
+      "notes": "Pins only the real drawing-framework/sidebar WIRING that names the shell regions -- ImpressModule binding SlideSorterModule to the LeftImpressPane, the SlideSorter anchoring its main view to the CenterPane, and the Layouts resource URL routing to LayoutMenu backed by layoutpanel.ui. These owner_markers prove the composition identities still exist as written; they do NOT prove any Material theming. No definition.xml/token claim is made (none exists honestly): the selected-thumbnail border/elevation, the Layouts selected-cell @primary-container treatment, the canvas card rendering, and the empty/loading/error and adaptive-collapse states are all specified-not-implemented build-bound remainder per §11.1.",
+      "owner_sources": [
+        "sd/source/ui/framework/module/ImpressModule.cxx",
+        "sd/source/ui/framework/tools/FrameworkHelper.cxx",
+        "sd/source/ui/framework/module/SlideSorterModule.cxx",
+        "sd/source/ui/sidebar/PanelFactory.cxx",
+        "sd/source/ui/sidebar/LayoutMenu.cxx",
+        "sd/uiconfig/simpress/ui/layoutpanel.ui"
+      ],
+      "owner_markers": [
+        {"source": "sd/source/ui/framework/module/ImpressModule.cxx", "markers": ["new SlideSorterModule(", "FrameworkHelper::msLeftImpressPaneURL"]},
+        {"source": "sd/source/ui/framework/tools/FrameworkHelper.cxx", "markers": ["msLeftImpressPaneURL( msPaneURLPrefix + \"LeftImpressPane\")", "msCenterPaneURL( msPaneURLPrefix + \"CenterPane\")"]},
+        {"source": "sd/source/ui/framework/module/SlideSorterModule.cxx", "markers": ["mxMainViewAnchorId(new ::sd::framework::ResourceId(FrameworkHelper::msCenterPaneURL))"]},
+        {"source": "sd/source/ui/sidebar/PanelFactory.cxx", "markers": ["endsWith(\"/Layouts\")", "std::make_unique<LayoutMenu>"]},
+        {"source": "sd/source/ui/sidebar/LayoutMenu.cxx", "markers": ["weld_icon_view(u\"layoutpanel_icons\"_ustr)", "modules/simpress/ui/layoutpanel.ui"]},
+        {"source": "sd/uiconfig/simpress/ui/layoutpanel.ui", "markers": ["layoutpanel_icons", "GtkIconView"]}
+      ],
+      "definition_parts": [],
+      "status_model": null,
+      "token_consumption": [],
+      "disabled_policy": null,
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "impress.status-bar",
+      "title": "Impress status bar (slide-count and layout-name model)",
+      "chapter_section": "11.1",
+      "status": "source-declared",
+      "notes": "The Impress-side 'Slide N of N' plus layout-name text model lives in DrawViewShell::GetStatusBarState, distinct from the already-registered Draw branch (draw.status-bar). Honesty caveat mirroring draw.status-bar: the marker check is a whole-file substring match over comment-stripped drviewsa.cxx, so it proves the Impress markers exist somewhere in the file, not that they execute only outside the DocumentType::Draw branch. No Material token wiring exists for this surface to claim.",
+      "owner_sources": [
+        "sd/source/ui/view/drviewsa.cxx"
+      ],
+      "owner_markers": [],
+      "definition_parts": [],
+      "status_model": {
+        "source": "sd/source/ui/view/drviewsa.cxx",
+        "resource_file": "sd/inc/strings.hrc",
+        "resource": "STR_SD_PAGE_COUNT",
+        "resource_text_contains": "Slide %1 of %2",
+        "markers": [
+          "SdResId(STR_SD_PAGE_COUNT)",
+          "maTabControl->GetCurPagePos()",
+          "SID_STATUS_LAYOUT",
+          "GetLayoutName()"
+        ]
+      },
+      "token_consumption": [],
+      "disabled_policy": null,
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "draw.canvas-grid",
+      "title": "Draw canvas grid dots (guarded @outline-variant color source)",
+      "chapter_section": "11.2",
+      "status": "source-declared",
+      "notes": "Only the grid-DOT COLOR is source-side: a guarded helper sources the @outline-variant token for the grid color instead of the DRAWGRID app-color-config value, inert under the native theme. The token_consumption.ordering block pins that the helper short-circuits to nothing under GetHighContrastMode() BEFORE resolving the Material color, so resolved high contrast keeps the native GetGridColor() path (HC wins). Grid GEOMETRY (document-unit GetGridCoarse()/GetGridFine() spacing vs. a fixed CSS cell), the procedural 3x3 corner-bitmap dot SHAPE, and the separate canvas base-fill (APPBACKGROUNDCOLOR) are explicitly out of this entry's scope and remain build-bound. Cross-module reach: viewobjectcontactofsdrpage.cxx is shared SdrView engine code, so the guarded recolor also reaches Writer/Calc/Base embedded draw grids and Impress grid-visible -- broader than the Draw-shell scope; flagged for product sign-off.",
+      "owner_sources": [
+        "svx/source/sdr/contact/viewobjectcontactofsdrpage.cxx"
+      ],
+      "owner_markers": [],
+      "definition_parts": [],
+      "status_model": null,
+      "token_consumption": [
+        {
+          "source": "svx/source/sdr/contact/viewobjectcontactofsdrpage.cxx",
+          "include": "<vcl/MaterialTokens.hxx>",
+          "markers": [
+            "VCL_FILE_WIDGET_THEME",
+            "vcl::MaterialTokens::fromThemeDefinition",
+            "findColor(\"outline-variant\")",
+            "GetHighContrastMode()"
+          ],
+          "ordering": {
+            "function": "lcl_getMaterialGridColor",
+            "high_contrast_marker": "GetHighContrastMode()",
+            "contiguous": "if (Application::GetSettings().GetStyleSettings().GetHighContrastMode()) return std::nullopt;"
+          }
+        }
+      ],
+      "disabled_policy": null,
+      "runtime_verified": false
+    },
+    {
+      "surface_id": "draw.selection-overlay-guide-color",
+      "title": "Draw selection/marquee/guide overlay color (guarded @primary stripe source)",
+      "chapter_section": "11.3",
+      "status": "source-declared",
+      "notes": "Only the overlay stripe COLOR is source-side: a guarded helper feeds the @primary token into setStripeColorA()/setStripeColorB() inside SdrPaintView::InitOverlayManager, which is the real seed for snapping/help-line guides and the marquee rubber-band. The token_consumption.ordering block pins the Material assignment as the ELSE branch of the existing GetHighContrastMode() check, so resolved high contrast keeps the native stripe colors (HC wins). Two honesty caveats: (1) InitOverlayManager is shared SdrPaintView infrastructure -- this also retints Calc's cell-range marquee and cui's crop marquee, not a Draw/Impress-exclusive change, and non-regression there is a build-bound follow-up. (2) The 8px square/round selection HANDLES (SdrHdlBitmapSet static bitmaps), the persistent 2px @primary selected-object outline, and the marquee's marching-ants SHAPE have no single color chokepoint to swap and are new-rendering build-bound remainder, NOT covered here.",
+      "owner_sources": [
+        "svx/source/svdraw/sdrpaintwindow.cxx"
+      ],
+      "owner_markers": [],
+      "definition_parts": [],
+      "status_model": null,
+      "token_consumption": [
+        {
+          "source": "svx/source/svdraw/sdrpaintwindow.cxx",
+          "include": "<vcl/MaterialTokens.hxx>",
+          "markers": [
+            "VCL_FILE_WIDGET_THEME",
+            "vcl::MaterialTokens::fromThemeDefinition",
+            "findColor(\"primary\")",
+            "GetHighContrastMode()",
+            "setStripeColorA(",
+            "setStripeColorB(",
+            "SvtOptionsDrawinglayer::GetStripeColorA()"
+          ],
+          "ordering": {
+            "function": "SdrPaintView::InitOverlayManager",
+            "high_contrast_marker": "GetHighContrastMode()",
+            "contiguous": "else if (const std::optional<Color> oColor = lcl_getMaterialOverlayGuideColor())"
+          }
+        }
+      ],
       "disabled_policy": null,
       "runtime_verified": false
     }

@@ -8,10 +8,13 @@
 """Fail-closed source contract for the Material Impress/Draw shell surfaces.
 
 ``qa/windows-ui-contract/impress-draw-surfaces.json`` registers the Impress/Draw
-shell surfaces from docs/design/11-impress-draw.md §11.2 -- the tool rail, the
+shell surfaces from docs/design/11-impress-draw.md §11.1-§11.3 -- the tool rail, the
 Fill/Line property panel, the status bar, the Position-and-Size and Shadow object
-property panels (shared weld sidebars), and the graphic/text object bars -- and
-this checker cross-validates each declaration against the real tree:
+property panels (shared weld sidebars), the graphic/text object bars, the Impress
+presentation-shell composition (slide panel / center canvas pane / Layouts panel)
+and its status model, the guarded Draw canvas-grid dot color, and the guarded Draw
+selection/marquee/guide overlay color -- and this checker cross-validates each
+declaration against the real tree:
 
 * ``definition_parts`` -- every declared (control, part) must exist in
   vcl/uiconfig/theme_definitions/material/definition.xml, its ``<part>`` sizing
@@ -20,7 +23,13 @@ this checker cross-validates each declaration against the real tree:
   changed token (token drift) fails closed.
 * ``token_consumption`` -- the declared owner source must include the token
   accessor header and contain each marker in *code* (comments are stripped first),
-  so comment-only wiring cannot satisfy the contract.
+  so comment-only wiring cannot satisfy the contract. An optional ``ordering`` block
+  additionally pins that a guarded Material color branch is sequenced to LOSE to the
+  resolved high-contrast check: the declared high-contrast marker must be present on
+  the consuming function's path and the Material branch must be wired as the exact
+  ``contiguous`` HC-losing statement (an ``else if`` of the high-contrast ``if``, or a
+  high-contrast short-circuit that runs before the token resolution). This is a
+  scoped heuristic, not full control-flow proof.
 * ``status_model`` -- the status text resource must be defined with the expected
   copy, and the composing source must carry each code marker.
 * ``disabled_policy`` -- the declared method body must set every listed control
@@ -48,7 +57,8 @@ DEFINITION_PATH = "vcl/uiconfig/theme_definitions/material/definition.xml"
 REQUIRED_SURFACE_IDS = {
     "draw.tool-rail", "draw.property-panel", "draw.status-bar",
     "impress.object-property-panel.possize", "impress.object-property-panel.shadow",
-    "impress.object-bars",
+    "impress.object-bars", "impress.pane-composition", "impress.status-bar",
+    "draw.canvas-grid", "draw.selection-overlay-guide-color",
 }
 
 # definition.xml <state> attribute keys, so declared attrs are validated as a
@@ -72,6 +82,12 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _without_cpp_comments(source: str) -> str:
     return re.sub(r"//[^\n]*|/\*.*?\*/", "", source, flags=re.DOTALL)
+
+
+def _collapse_ws(source: str) -> str:
+    """Collapse every run of whitespace to a single space so a contiguous
+    statement can be matched regardless of indentation or line wrapping."""
+    return re.sub(r"\s+", " ", source).strip()
 
 
 def _function_body(source: str, signature: str) -> str | None:
@@ -256,6 +272,46 @@ def _validate_status_model(
                 errors.append(f"{context}:status-model:marker missing in code ({marker})")
 
 
+def _validate_token_ordering(
+    context: str, source: str, ordering: Mapping[str, Any], errors: list[str]
+) -> None:
+    """Stronger-than-presence check that a guarded Material color branch is
+    sequenced to LOSE to the resolved high-contrast check (chapter 11's rule that
+    high contrast bypasses Material drawing entirely).
+
+    The generic marker validator above only proves a marker exists *somewhere* in
+    the comment-stripped file; it cannot prove branch ordering. This scopes to the
+    consuming function body and requires (a) the high-contrast marker to be present
+    on that path and (b) the Material branch to be wired as the exact declared
+    ``contiguous`` statement -- for the overlay this is the ``else if`` bound to the
+    high-contrast ``if``; for the grid this is the ``if (... GetHighContrastMode())
+    return std::nullopt;`` short-circuit that runs before the token resolution. It
+    remains a heuristic: it proves the HC-losing statement is written as declared
+    inside the function, not full control-flow dominance -- a dedicated ordering
+    mutation test guards it, and code review remains the backstop.
+    """
+    function = ordering.get("function")
+    if not isinstance(function, str):
+        errors.append(f"{context}:token-ordering:function must be a string")
+        return
+    body = _function_body(_without_cpp_comments(source), function + "(")
+    if body is None:
+        errors.append(f"{context}:token-ordering:function {function} not found")
+        return
+    collapsed = _collapse_ws(body)
+    high_contrast = ordering.get("high_contrast_marker")
+    if isinstance(high_contrast, str) and _collapse_ws(high_contrast) not in collapsed:
+        errors.append(
+            f"{context}:token-ordering:high-contrast marker missing in {function} ({high_contrast})"
+        )
+    contiguous = ordering.get("contiguous")
+    if isinstance(contiguous, str) and _collapse_ws(contiguous) not in collapsed:
+        errors.append(
+            f"{context}:token-ordering:guard structure not contiguous in {function} "
+            f"({contiguous}); the Material branch must be sequenced to lose to high contrast"
+        )
+
+
 def _validate_token_consumption(
     context: str, consumption: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
@@ -271,6 +327,9 @@ def _validate_token_consumption(
     for marker in consumption.get("markers", []):
         if isinstance(marker, str) and marker not in code:
             errors.append(f"{context}:token-consumption:marker missing in code ({marker})")
+    ordering = consumption.get("ordering")
+    if isinstance(ordering, dict):
+        _validate_token_ordering(context, source, ordering, errors)
 
 
 def _validate_disabled_policy(

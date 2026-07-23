@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "contract": "material-reduced-motion",
+  "platform": "windows",
+  "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+  "chapter": "docs/design/01-foundations.md",
+  "chapter_section": "5",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "notes": "WIN-FND-004 (reduced-motion half). This pins the pre-existing, general LibreOffice accessibility reduced-motion primitive (predates this fork; tdf#115688/tdf#161765 lineage) as the mandatory foundation any future native Material motion role must route through, per docs/design/01-foundations.md section 5. It is deliberately thin and does NOT satisfy this row's Material-motion (SRC/M) gate: the trip-wire keeps that gate visibly open by failing closed the moment a native motion/duration/easing token appears in definition.xml. Native Material duration/easing token roles, the lo-pop entrance, and their VclBuilder/weld wiring do not exist in source and are the separate build gates. Source evidence only: runtime_verified is false.",
+  "declarations": {
+    "source": "include/vcl/settings.hxx",
+    "note": "The four MiscSettings reduced-motion / allow-animation declarations must still exist.",
+    "markers": [
+      "GetUseReducedAnimation();",
+      "IsAnimatedGraphicAllowed();",
+      "IsAnimatedOthersAllowed();",
+      "IsAnimatedTextAllowed();"
+    ]
+  },
+  "checkpoints": [
+    {
+      "id": "delegation",
+      "source": "vcl/source/app/settings.cxx",
+      "note": "GetUseReducedAnimation delegates to the platform frame rather than returning a hardcoded value.",
+      "markers": [
+        "bool MiscSettings::GetUseReducedAnimation()",
+        "pDefWindow->ImplGetFrame()->GetUseReducedAnimation()"
+      ]
+    },
+    {
+      "id": "officecfg-reads",
+      "source": "vcl/source/app/settings.cxx",
+      "note": "Each IsAnimated*Allowed reads its officecfg Accessibility::AllowAnimated* key.",
+      "markers": [
+        "officecfg::Office::Common::Accessibility::AllowAnimatedOthers::get()",
+        "officecfg::Office::Common::Accessibility::AllowAnimatedGraphic::get()",
+        "officecfg::Office::Common::Accessibility::AllowAnimatedText::get()"
+      ]
+    },
+    {
+      "id": "windows-decl",
+      "source": "vcl/inc/win/salframe.h",
+      "note": "The Windows frame overrides GetUseReducedAnimation.",
+      "markers": [
+        "GetUseReducedAnimation() const override;"
+      ]
+    }
+  ],
+  "contiguous": [
+    {
+      "id": "windows-spi-backend",
+      "source": "vcl/win/window/salframe.cxx",
+      "note": "The Windows backend reads SPI_GETCLIENTAREAANIMATION and returns its negation, as a contiguous pair.",
+      "statement": "SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, &bEnableAnimation, 0); return !bEnableAnimation;"
+    }
+  ],
+  "repeated": [
+    {
+      "id": "system-case-negation",
+      "source": "vcl/source/app/settings.cxx",
+      "note": "On the 'System' (0) case each of the three IsAnimated*Allowed functions negates GetUseReducedAnimation(), so the OS preference is respected once per function.",
+      "marker": "bIsAllowed = ! MiscSettings::GetUseReducedAnimation();",
+      "min_count": 3
+    }
+  ],
+  "schema": {
+    "source": "officecfg/registry/schema/org/openoffice/Office/Common.xcs",
+    "note": "The three accessibility animation toggles keep xs:short type and default value 0 ('System' = use the OS setting).",
+    "type": "xs:short",
+    "default": "0",
+    "props": ["AllowAnimatedGraphic", "AllowAnimatedText", "AllowAnimatedOthers"]
+  },
+  "consumers": [
+    {
+      "function": "IsAnimatedOthersAllowed",
+      "source": "sc/source/ui/view/overlayobject.cxx",
+      "marker": "MiscSettings::IsAnimatedOthersAllowed()"
+    },
+    {
+      "function": "IsAnimatedTextAllowed",
+      "source": "svx/source/sdr/contact/objectcontactofpageview.cxx",
+      "marker": "MiscSettings::IsAnimatedTextAllowed()"
+    },
+    {
+      "function": "IsAnimatedGraphicAllowed",
+      "source": "sw/source/core/view/viewsh.cxx",
+      "marker": "MiscSettings::IsAnimatedGraphicAllowed()"
+    }
+  ],
+  "trip_wire": {
+    "definition_file": "vcl/uiconfig/theme_definitions/material/definition.xml",
+    "forbidden_token_names": ["motion", "duration", "easing", "transition", "animation"],
+    "note": "definition.xml must carry zero motion/duration/easing token elements or attributes. This fails closed the moment native Material motion tokens land, forcing this contract (and the row's SRC gate) to be revisited rather than silently satisfied."
+  }
+}

@@ -116,6 +116,190 @@ OVERRIDES: Mapping[str, str] = {
     "desktop/uiconfig/ui/updatedialog.ui": "WIN-SYS-012",
     "desktop/uiconfig/ui/updateinstalldialog.ui": "WIN-SYS-012",
     "desktop/uiconfig/ui/updaterequireddialog.ui": "WIN-SYS-012",
+    # WIN-IM-003 Impress slideshow settings. The Slide Show Settings dialog is
+    # anatomy-pinned by bin/check-impress-slideshow-settings-contract.py, so it
+    # is attributed to WIN-IM-003 explicitly rather than falling under the
+    # sd/uiconfig/simpress/ -> WIN-IM-001 prefix rule with the rest of Impress.
+    "sd/uiconfig/simpress/ui/presentationdialog.ui": "WIN-IM-003",
+    # WIN-DLG-002 Options dialog (cui). The Tools > Options panes are self-evident
+    # opt*page surfaces plus a few named Options sub-panes (connection-pool,
+    # database registry, spelling options, security options-and-warnings,
+    # LanguageTool config). cui has no module prefix rule, so these are
+    # enumerated explicitly. Owner-level attribution; per-pane anatomy deferred.
+    "cui/uiconfig/ui/optaccessibilitypage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optadvancedpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optasianpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optbasicidepage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optchartcolorspage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optctlpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optemailpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optfltrembedpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optfltrpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optfontspage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optgeneralpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/opthtmlpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optjsearchpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optlanguagespage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optlingupage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optonlineupdatepage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optpathspage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optproxypage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optsavepage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optsecuritypage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optuserpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/optviewpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/connpooloptions.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/dbregisterpage.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/spelloptionsdialog.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/securityoptionsdialog.ui": "WIN-DLG-002",
+    "cui/uiconfig/ui/langtoolconfigpage.ui": "WIN-DLG-002",
+    # WIN-DLG-001 destructive/confirmation query prompts (cui + svx + svtools +
+    # vcl). Every query*.ui here is a modal confirmation/query message box
+    # (delete/save/overwrite prompts, e.g. querydeletecolordialog.ui is a
+    # GtkMessageDialog "Do you want to delete the color?"); savemodifieddialog.ui
+    # is the form "Do you want to save your changes?" discard prompt. WIN-DLG-001
+    # owns shared modal-dialog anatomy and destructive confirmation.
+    "cui/uiconfig/ui/querychangelineenddialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletebitmapdialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletechartcolordialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletecolordialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletedictionarydialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletegradientdialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletehatchdialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletelineenddialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydeletelinestyledialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querydialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/queryduplicatedialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querynoloadedfiledialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querynosavefiledialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/querysavelistdialog.ui": "WIN-DLG-001",
+    "cui/uiconfig/ui/queryupdategalleryfilelistdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querydeletecontourdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querydeleteobjectdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querydeletethemedialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querymodifyimagemapchangesdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querynewcontourdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querysavecontchangesdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/querysaveimagemapchangesdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/queryunlinkgraphicsdialog.ui": "WIN-DLG-001",
+    "svx/uiconfig/ui/savemodifieddialog.ui": "WIN-DLG-001",
+    "svtools/uiconfig/ui/querydeletedialog.ui": "WIN-DLG-001",
+    "vcl/uiconfig/ui/querydialog.ui": "WIN-DLG-001",
+    # WIN-SYS-009 safe mode / crash recovery / profile recovery (svx). The
+    # Document Recovery wizard pages, Safe Mode, and the crash-report dialog.
+    # (savemodifieddialog.ui is deliberately NOT here: it is a form save/discard
+    # prompt, so it belongs with the WIN-DLG-001 confirmation cluster above.)
+    "svx/uiconfig/ui/docrecoverybrokendialog.ui": "WIN-SYS-009",
+    "svx/uiconfig/ui/docrecoveryprogressdialog.ui": "WIN-SYS-009",
+    "svx/uiconfig/ui/docrecoveryrecoverdialog.ui": "WIN-SYS-009",
+    "svx/uiconfig/ui/docrecoverysavedialog.ui": "WIN-SYS-009",
+    "svx/uiconfig/ui/safemodedialog.ui": "WIN-SYS-009",
+    "svx/uiconfig/ui/crashreportdlg.ui": "WIN-SYS-009",
+    # WIN-CON-007 panels and side panes (svx sidebar decks). Every entry is a
+    # non-dialog GtkGrid/GtkBox panel body hosted inside a sidebar deck (verified
+    # no dialog toplevel), including the style-inspector, theme-selector, and
+    # default-shapes panels.
+    "svx/uiconfig/ui/sidebararea.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebareffect.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarempty.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarfontwork.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebargallery.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebargraphic.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarline.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarlists.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarparagraph.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarpossize.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarshadow.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebarstylespanel.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebartextcolumnspanel.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebartexteffect.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/sidebartextpanel.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/inspectortextpanel.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/themeselectorpanel.ui": "WIN-CON-007",
+    "svx/uiconfig/ui/defaultshapespanel.ui": "WIN-CON-007",
+    # WIN-DLG-004 Print dialog family (vcl printer pages / progress / CUPS
+    # password + svtools printer setup). Owner-level attribution to the Print
+    # dialog row; printdialog.ui itself is already an exact override above.
+    "vcl/uiconfig/ui/printerdevicepage.ui": "WIN-DLG-004",
+    "vcl/uiconfig/ui/printerpaperpage.ui": "WIN-DLG-004",
+    "vcl/uiconfig/ui/printerpropertiesdialog.ui": "WIN-DLG-004",
+    "vcl/uiconfig/ui/printprogressdialog.ui": "WIN-DLG-004",
+    "vcl/uiconfig/ui/cupspassworddialog.ui": "WIN-DLG-004",
+    "svtools/uiconfig/ui/printersetupdialog.ui": "WIN-DLG-004",
+    # WIN-SYS-011 generic errors and conflicts (vcl). "no content"/"no printer"
+    # generic error boxes and the document-locked conflict prompt.
+    "vcl/uiconfig/ui/errornocontentdialog.ui": "WIN-SYS-011",
+    "vcl/uiconfig/ui/errornoprinterdialog.ui": "WIN-SYS-011",
+    "vcl/uiconfig/ui/openlockedquerybox.ui": "WIN-SYS-011",
+    # WIN-SYS-013 restart-required lifecycle (svtools). The "restart to apply"
+    # prompt shown after install/update/settings changes that need a relaunch.
+    "svtools/uiconfig/ui/restartdialog.ui": "WIN-SYS-013",
+    # WIN-BA-002 XForms model / form-design surfaces (svx). Data Navigator, the
+    # XForms add-* model editors, the namespaces dialog, the XForms options page,
+    # and the form-design property/navigator/link dialogs. (*menu.ui form context
+    # menus are handled by the WIN-NAV-002 context-menu cluster instead.)
+    "svx/uiconfig/ui/datanavigator.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/addconditiondialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/adddataitemdialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/addinstancedialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/addmodeldialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/addnamespacedialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/addsubmissiondialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/namespacedialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/xformspage.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/formfielddialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/formlinkwarndialog.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/formnavigator.ui": "WIN-BA-002",
+    "svx/uiconfig/ui/formpropertydialog.ui": "WIN-BA-002",
+    # WIN-WR-005 review / tracked changes (svx). The shared Accept-or-Reject
+    # Changes manager, redline toolbar control, and redline filter/view pages.
+    "svx/uiconfig/ui/acceptrejectchangesdialog.ui": "WIN-WR-005",
+    "svx/uiconfig/ui/redlinecontrol.ui": "WIN-WR-005",
+    "svx/uiconfig/ui/redlinefilterpage.ui": "WIN-WR-005",
+    "svx/uiconfig/ui/redlineviewpage.ui": "WIN-WR-005",
+    # WIN-NAV-002 context menus (svx + editeng + vcl + cui + svtools). Every
+    # entry is a GtkMenu-rooted right-click/pop-up menu (verified). The screenshot
+    # test harness menu (vcl/screenshotmenu.ui) is excluded as a non-product
+    # surface, and the bibliography autofilter menu is already covered by the
+    # extensions/uiconfig/sbibliography/ prefix rule.
+    "svx/uiconfig/ui/cellmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/charsetmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/clipboardmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/colsmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/filtermenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/formdatamenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/formnavimenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/functionmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/gallerymenu1.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/gallerymenu2.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/imapmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/presetmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/rowsmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/rulermenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/selectionmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/stylemenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/xmlsecstatmenu.ui": "WIN-NAV-002",
+    "svx/uiconfig/ui/zoommenu.ui": "WIN-NAV-002",
+    "editeng/uiconfig/ui/spellmenu.ui": "WIN-NAV-002",
+    "vcl/uiconfig/ui/editmenu.ui": "WIN-NAV-002",
+    "cui/uiconfig/ui/entrycontextmenu.ui": "WIN-NAV-002",
+    "svtools/uiconfig/ui/fileviewmenu.ui": "WIN-NAV-002",
+    # WIN-SYS-007 certificates / digital signatures / macro security (cui + svx).
+    # Certificate path, timestamp-authority URL, signature-line insert/sign,
+    # stored-web-connection credentials, and the document classification dialog.
+    "cui/uiconfig/ui/certdialog.ui": "WIN-SYS-007",
+    "cui/uiconfig/ui/tsaurldialog.ui": "WIN-SYS-007",
+    "cui/uiconfig/ui/signatureline.ui": "WIN-SYS-007",
+    "cui/uiconfig/ui/signsignatureline.ui": "WIN-SYS-007",
+    "cui/uiconfig/ui/storedwebconnectiondialog.ui": "WIN-SYS-007",
+    "svx/uiconfig/ui/classificationdialog.ui": "WIN-SYS-007",
+    # WIN-SYS-005 extension manager / additions (cui). The "Get more extensions"
+    # additions browser and its per-entry fragment.
+    "cui/uiconfig/ui/additionsdialog.ui": "WIN-SYS-005",
+    "cui/uiconfig/ui/additionsfragment.ui": "WIN-SYS-005",
+    # WIN-SYS-002 export flows (svtools). The graphic (PNG/JPEG/...) export
+    # options dialog.
+    "svtools/uiconfig/ui/graphicexport.ui": "WIN-SYS-002",
 }
 
 # (path_prefix, inventory_id). Prefixes always end with "/" so a module name is
@@ -137,6 +321,18 @@ PREFIX_RULES: Sequence[tuple[str, str]] = (
     ("writerperfect/", "WIN-SYS-002"),
     ("desktop/", "WIN-SYS-005"),
     ("sfx2/", "WIN-SHL-001"),
+    # Clean single-owner extension/formula subtrees. Each has a real
+    # ``.../ui/`` path segment and one honest owning inventory row, so a subtree
+    # prefix is safe (unlike the flat shared cui/svx modules, which get exact
+    # overrides instead). spropctrlr = form-control property browser and
+    # sabpilot = the form/data-source auto-pilots (Base form workflows,
+    # WIN-BA-002); sbibliography = the Bibliography Database workspace
+    # (WIN-BA-001); formula = the Function Wizard (Calc function controls,
+    # WIN-CA-002). scanner/ is deliberately left unmapped (documented floor).
+    ("extensions/uiconfig/spropctrlr/", "WIN-BA-002"),
+    ("extensions/uiconfig/sabpilot/", "WIN-BA-002"),
+    ("extensions/uiconfig/sbibliography/", "WIN-BA-001"),
+    ("formula/", "WIN-CA-002"),
 )
 
 # Native-only / custom-drawn / optional / platform surfaces with no .ui file.

@@ -37,6 +37,10 @@ GRAPHIC_BAR = "sd/source/ui/view/GraphicObjectBar.cxx"
 TEXT_OBJECT_BAR = "sd/source/ui/view/drtxtob.cxx"
 GRAPHIC_BAR_XML = "sd/uiconfig/sdraw/toolbar/graphicobjectbar.xml"
 TEXT_BAR_XML = "sd/uiconfig/sdraw/toolbar/textobjectbar.xml"
+IMPRESS_MODULE = "sd/source/ui/framework/module/ImpressModule.cxx"
+LAYOUTPANEL_UI = "sd/uiconfig/simpress/ui/layoutpanel.ui"
+SDR_GRID = "svx/source/sdr/contact/viewobjectcontactofsdrpage.cxx"
+SDR_PAINT = "svx/source/svdraw/sdrpaintwindow.cxx"
 
 
 class ImpressDrawSurfaceContractTest(unittest.TestCase):
@@ -263,6 +267,148 @@ class ImpressDrawSurfaceContractTest(unittest.TestCase):
         registry["expected_surfaces"] = len(registry["surfaces"])
         errors = self.failures(registry=registry)
         self.assertTrue(any("missing required impress.object-bars" in e for e in errors), errors)
+
+    # -- impress.pane-composition (owner markers, empty definition_parts) ---
+    def test_pane_composition_owner_marker_missing_fails(self) -> None:
+        source = self.contents[IMPRESS_MODULE].replace(
+            "new SlideSorterModule(", "new Nope(", 1
+        )
+        errors = self.failures(contents=self.with_content(IMPRESS_MODULE, source))
+        self.assertTrue(any(":owner-marker:" in e for e in errors), errors)
+
+    def test_pane_composition_layoutpanel_ui_marker_missing_fails(self) -> None:
+        # layoutpanel.ui is not C++, so the marker match is a plain substring.
+        source = self.contents[LAYOUTPANEL_UI].replace("GtkIconView", "GtkFlowBox", 1)
+        errors = self.failures(contents=self.with_content(LAYOUTPANEL_UI, source))
+        self.assertTrue(any(":owner-marker:GtkIconView missing" in e for e in errors), errors)
+
+    # -- impress.status-bar (status model, distinct from draw.status-bar) ---
+    def test_impress_status_marker_missing_fails(self) -> None:
+        # GetLayoutName() belongs to the Impress status model; the Draw branch
+        # markers are unrelated, so this only trips impress.status-bar.
+        source = self.contents[DRVIEWSA].replace(
+            "mpActualPage->GetLayoutName()", "mpActualPage->Renamed()", 1
+        )
+        errors = self.failures(contents=self.with_content(DRVIEWSA, source))
+        self.assertTrue(
+            any("status-model:marker missing in code (GetLayoutName())" in e for e in errors),
+            errors,
+        )
+
+    def test_impress_status_resource_missing_fails(self) -> None:
+        strings = self.contents[STRINGS].replace(
+            '"STR_SD_PAGE_COUNT", "Slide %1 of %2"', '"STR_RENAMED", "Slide %1 of %2"', 1
+        )
+        errors = self.failures(contents=self.with_content(STRINGS, strings))
+        self.assertTrue(any("STR_SD_PAGE_COUNT not defined in" in e for e in errors), errors)
+
+    def test_impress_status_wrong_copy_fails(self) -> None:
+        strings = self.contents[STRINGS].replace(
+            'NC_("STR_SD_PAGE_COUNT", "Slide %1 of %2")',
+            'NC_("STR_SD_PAGE_COUNT", "Page %1 of %2")',
+            1,
+        )
+        errors = self.failures(contents=self.with_content(STRINGS, strings))
+        self.assertTrue(any("lacks 'Slide %1 of %2'" in e for e in errors), errors)
+
+    # -- draw.canvas-grid (guarded @outline-variant grid dot color) --------
+    def test_canvas_grid_missing_include_fails(self) -> None:
+        source = self.contents[SDR_GRID].replace("#include <vcl/MaterialTokens.hxx>\n", "", 1)
+        errors = self.failures(contents=self.with_content(SDR_GRID, source))
+        self.assertTrue(any(":token-consumption:missing #include" in e for e in errors), errors)
+
+    def test_canvas_grid_marker_missing_fails(self) -> None:
+        source = self.contents[SDR_GRID].replace(
+            'findColor("outline-variant")', 'findColor("nope")', 1
+        )
+        errors = self.failures(contents=self.with_content(SDR_GRID, source))
+        self.assertTrue(
+            any('token-consumption:marker missing in code (findColor("outline-variant"))' in e
+                for e in errors),
+            errors,
+        )
+
+    def test_canvas_grid_comment_only_wiring_fails(self) -> None:
+        source = self.contents[SDR_GRID].replace(
+            'return aTokens.findColor("outline-variant");',
+            '// return aTokens.findColor("outline-variant");',
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SDR_GRID, source))
+        self.assertTrue(any(":token-consumption:marker missing" in e for e in errors), errors)
+
+    def test_canvas_grid_ordering_not_contiguous_fails(self) -> None:
+        # Defeat the high-contrast short-circuit (Material would then also apply
+        # under resolved high contrast). GetHighContrastMode() stays present, so
+        # only the ordering guard-structure check fires.
+        source = self.contents[SDR_GRID].replace(
+            "if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())\n"
+            "        return std::nullopt;",
+            "if (false && Application::GetSettings().GetStyleSettings().GetHighContrastMode())\n"
+            "        return std::nullopt;",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SDR_GRID, source))
+        self.assertTrue(
+            any(":token-ordering:guard structure not contiguous" in e for e in errors), errors
+        )
+
+    # -- draw.selection-overlay-guide-color (guarded @primary stripe color) -
+    def test_overlay_guide_missing_include_fails(self) -> None:
+        source = self.contents[SDR_PAINT].replace("#include <vcl/MaterialTokens.hxx>\n", "", 1)
+        errors = self.failures(contents=self.with_content(SDR_PAINT, source))
+        self.assertTrue(any(":token-consumption:missing #include" in e for e in errors), errors)
+
+    def test_overlay_guide_marker_missing_fails(self) -> None:
+        source = self.contents[SDR_PAINT].replace('findColor("primary")', 'findColor("nope")', 1)
+        errors = self.failures(contents=self.with_content(SDR_PAINT, source))
+        self.assertTrue(
+            any('token-consumption:marker missing in code (findColor("primary"))' in e
+                for e in errors),
+            errors,
+        )
+
+    def test_overlay_guide_stripe_marker_missing_fails(self) -> None:
+        source = self.contents[SDR_PAINT].replace("setStripeColorA(", "setStripeRenamedA(", 1)
+        errors = self.failures(contents=self.with_content(SDR_PAINT, source))
+        self.assertTrue(
+            any("token-consumption:marker missing in code (setStripeColorA()" in e for e in errors),
+            errors,
+        )
+
+    def test_overlay_guide_ordering_not_contiguous_fails(self) -> None:
+        # Turn the guarded else-if into a bare if: the Material tint would then run
+        # even when high contrast already set the stripe colors, so it no longer
+        # loses to high contrast. GetHighContrastMode() stays present.
+        source = self.contents[SDR_PAINT].replace(
+            "else if (const std::optional<Color> oColor = lcl_getMaterialOverlayGuideColor())",
+            "if (const std::optional<Color> oColor = lcl_getMaterialOverlayGuideColor())",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SDR_PAINT, source))
+        self.assertTrue(
+            any(":token-ordering:guard structure not contiguous" in e for e in errors), errors
+        )
+
+    def test_overlay_guide_ordering_missing_high_contrast_fails(self) -> None:
+        source = self.contents[SDR_PAINT].replace(
+            "if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())",
+            "if (false)",
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SDR_PAINT, source))
+        self.assertTrue(
+            any(":token-ordering:high-contrast marker missing" in e for e in errors), errors
+        )
+
+    def test_missing_required_canvas_grid_fails(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["surfaces"] = [
+            s for s in registry["surfaces"] if s["surface_id"] != "draw.canvas-grid"
+        ]
+        registry["expected_surfaces"] = len(registry["surfaces"])
+        errors = self.failures(registry=registry)
+        self.assertTrue(any("missing required draw.canvas-grid" in e for e in errors), errors)
 
     # -- registry integrity ------------------------------------------------
     def test_runtime_verified_true_fails(self) -> None:
