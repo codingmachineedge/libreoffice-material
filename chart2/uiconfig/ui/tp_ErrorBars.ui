@@ -25,7 +25,10 @@
   <object class="GtkBox" id="tp_ErrorBars">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
     <child>
@@ -203,6 +206,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_ErrorBars|label1">Error Category</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -337,6 +341,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_ErrorBars|label2">Error Indicator</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -381,6 +386,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="tp_ErrorBars|FT_POSITIVE">P_ositive (+)</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">MF_POSITIVE</property>
                   </object>
@@ -465,6 +471,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="tp_ErrorBars|FT_NEGATIVE">_Negative (-)</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">MF_NEGATIVE</property>
                   </object>
@@ -565,6 +572,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="tp_ErrorBars|label3">Parameters</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -582,6 +590,7 @@
       <object class="GtkLabel" id="STR_DATA_SELECT_RANGE_FOR_POSITIVE_ERRORBARS">
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_ErrorBars|STR_DATA_SELECT_RANGE_FOR_POSITIVE_ERRORBARS">Select Range for Positive Error Bars</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -593,6 +602,7 @@
       <object class="GtkLabel" id="STR_DATA_SELECT_RANGE_FOR_NEGATIVE_ERRORBARS">
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_ErrorBars|STR_DATA_SELECT_RANGE_FOR_NEGATIVE_ERRORBARS">Select Range for Negative Error Bars</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -604,6 +614,7 @@
       <object class="GtkLabel" id="STR_CONTROLTEXT_ERROR_BARS_FROM_DATA">
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_ErrorBars|STR_CONTROLTEXT_ERROR_BARS_FROM_DATA">From Data Table</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>

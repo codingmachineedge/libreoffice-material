@@ -33,7 +33,10 @@
   <object class="GtkFrame" id="tp_Scale">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -100,6 +103,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_Scale|TXT_AXIS_TYPE">T_ype</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_AXIS_TYPE</property>
                     <property name="xalign">0</property>
@@ -157,6 +161,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_Scale|TXT_MIN">_Minimum</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">EDT_MIN</property>
                 <property name="xalign">0</property>
@@ -171,6 +176,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_Scale|TXT_MAX">Ma_ximum</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">EDT_MAX</property>
                 <property name="xalign">0</property>
@@ -263,6 +269,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_Scale|TXT_TIME_RESOLUTION">R_esolution</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">LB_TIME_RESOLUTION</property>
                 <property name="xalign">0</property>
@@ -326,6 +333,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_Scale|TXT_STEP_MAIN">Ma_jor interval</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="xalign">0</property>
               </object>
@@ -457,6 +465,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_Scale|TXT_STEP_HELP">Minor inter_val</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -471,6 +480,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_Scale|TXT_STEP_HELP_COUNT">Minor inter_val count</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -560,6 +570,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_Scale|TXT_ORIGIN">Re_ference value</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="xalign">0</property>
               </object>
@@ -623,6 +634,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="tp_Scale|FL_SCALE">Scale</property>
+        <property name="ellipsize">end</property>
         <property name="xalign">0</property>
         <attributes>
           <attribute name="weight" value="bold"/>

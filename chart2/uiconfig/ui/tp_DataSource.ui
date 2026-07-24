@@ -48,7 +48,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="column_spacing">6</property>
     <child>
       <!-- n-columns=1 n-rows=1 -->
@@ -71,6 +74,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_DataSource|FT_SERIES">Data _series:</property>
+                <property name="ellipsize">end</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">LB_SERIES</property>
                 <property name="xalign">0</property>
@@ -242,6 +246,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="tp_DataSource|FT_ROLE">_Data ranges:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">LB_ROLE</property>
                     <property name="xalign">0</property>
@@ -310,6 +315,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="tp_DataSource|FT_RANGE">Ran_ge for %VALUETYPE</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">EDT_RANGE</property>
                     <property name="xalign">0</property>
@@ -371,6 +377,8 @@
                 <child>
                   <!-- n-columns=1 n-rows=1 -->
                   <object class="GtkGrid" id="box4">
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">12</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -379,6 +387,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="tp_DataSource|FT_CATEGORIES">_Categories</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">EDT_CATEGORIES</property>
                         <property name="xalign">0</property>
@@ -393,6 +402,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="tp_DataSource|FT_DATALABELS">Data _labels</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">EDT_CATEGORIES</property>
                         <property name="xalign">0</property>
@@ -480,6 +490,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_DataSource|FT_CAPTION_FOR_WIZARD">Customize Data Ranges for Individual Data Series</property>
+        <property name="ellipsize">end</property>
         <property name="xalign">0</property>
         <attributes>
           <attribute name="weight" value="bold"/>

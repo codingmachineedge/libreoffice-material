@@ -18,7 +18,6 @@
   </object>
   <object class="GtkDialog" id="SmoothLinesDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="smoothlinesdlg|SmoothLinesDialog">Smooth Lines</property>
     <property name="modal">True</property>
     <property name="default_width">-1</property>
@@ -32,6 +31,10 @@
         <property name="can_focus">False</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <child internal-child="action_area">
@@ -39,6 +42,7 @@
             <property name="can_focus">False</property>
             <property name="homogeneous">True</property>
             <property name="layout_style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -112,7 +116,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="smoothlinesdlg|TypeLabel">Line _Type:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">SplineTypeComboBox</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -165,6 +171,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="smoothlinesdlg|ResolutionLabel">_Resolution:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">ResolutionSpinbutton</property>
                   </object>
@@ -179,6 +186,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="smoothlinesdlg|PolynomialsLabel">_Degree of polynomials:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">PolynomialsSpinButton</property>
                   </object>
@@ -240,9 +248,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="SmoothLinesDialog-atkobject">

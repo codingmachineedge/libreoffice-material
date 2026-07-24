@@ -10,7 +10,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -55,6 +58,7 @@
                 <property name="can-focus">False</property>
                 <property name="margin-top">40</property>
                 <property name="label" translatable="yes" context="titlerotationtabpage|degreeL">_Degrees</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
               </object>
               <packing>
@@ -111,6 +115,7 @@
               <object class="GtkLabel" id="labelABCD">
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="titlerotationtabpage|labelABCD">ABCD</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -128,6 +133,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="titlerotationtabpage|textdirL">Te_xt direction:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
           </object>
           <packing>
@@ -176,6 +182,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="titlerotationtabpage|labelTextOrient">Text Orientation</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>

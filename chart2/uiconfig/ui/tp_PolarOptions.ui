@@ -10,7 +10,10 @@
   <object class="GtkBox" id="tp_PolarOptions">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
     <child>
@@ -41,6 +44,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="tp_PolarOptions|label1">Orientation</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -111,6 +115,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_PolarOptions|FT_ROTATION_DEGREES">_Degrees</property>
+                <property name="ellipsize">end</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">NF_STARTING_ANGLE</property>
                 <property name="xalign">0</property>
@@ -128,6 +133,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="tp_PolarOptions|label2">Starting Angle</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -164,6 +170,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="tp_PolarOptions|label3">Plot Options</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>

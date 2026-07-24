@@ -29,7 +29,10 @@
   <object class="GtkGrid" id="tp_3DSceneGeometry">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row_spacing">6</property>
     <property name="column_spacing">12</property>
     <child>
@@ -57,6 +60,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_3D_SceneGeometry|FT_X_ROTATION">_X rotation</property>
+        <property name="ellipsize">end</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">MTR_FLD_X_ROTATION</property>
         <property name="xalign">0</property>
@@ -71,6 +75,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_3D_SceneGeometry|FT_Y_ROTATION">_Y rotation</property>
+        <property name="ellipsize">end</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">MTR_FLD_Y_ROTATION</property>
         <property name="xalign">0</property>
@@ -85,6 +90,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="tp_3D_SceneGeometry|FT_Z_ROTATION">_Z rotation</property>
+        <property name="ellipsize">end</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">MTR_FLD_Z_ROTATION</property>
         <property name="xalign">0</property>

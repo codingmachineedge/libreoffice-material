@@ -10,7 +10,10 @@
   <object class="GtkBox" id="tp_DataLabel">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkBox">
@@ -167,6 +170,7 @@
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="tp_DataLabel|CT_LABEL_DIAL">ABCD</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -180,6 +184,7 @@
                   <object class="GtkLabel" id="STR_DLG_NUMBERFORMAT_FOR_PERCENTAGE_VALUE">
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_DataLabel|STR_DLG_NUMBERFORMAT_FOR_PERCENTAGE_VALUE">Number Format for Percentage Value</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -218,6 +223,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_DataLabel|label1">Text Attributes</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -252,6 +258,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_DataLabel|FT_LABEL_PLACEMENT">Place_ment</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_LABEL_PLACEMENT</property>
                     <property name="xalign">0</property>
@@ -297,6 +304,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tp_DataLabel|FT_TEXT_SEPARATOR">_Separator</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_TEXT_SEPARATOR</property>
                     <property name="xalign">0</property>
@@ -336,6 +344,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_DataLabel|label1">Attribute Options</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -423,6 +432,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tp_DataLabel|FT_LABEL_DEGREES">_Degrees</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -448,6 +458,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tp_DataLabel|FT_LABEL_TEXTDIR">Te_xt direction</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">LB_LABEL_TEXTDIR</property>
                       </object>
@@ -488,6 +499,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_DataLabel|label2">Rotate Text</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -541,6 +553,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tp_DataLabel|label3">Leader Lines</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
