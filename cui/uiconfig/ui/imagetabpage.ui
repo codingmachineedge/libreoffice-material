@@ -22,7 +22,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">6</property>
     <child>
       <object class="GtkFrame" id="Fill Frame">
@@ -131,6 +134,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="imagetabpage|label3">Style:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">imagestyle</property>
                     <property name="xalign">0</property>
@@ -194,6 +198,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="imagetabpage|label5">Width:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">width</property>
                               </object>
@@ -233,6 +238,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="imagetabpage|label6">Height:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">height</property>
                               </object>
@@ -312,6 +318,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="imagetabpage|label7">Position:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">positionlb</property>
                     <property name="xalign">0</property>
@@ -382,6 +389,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="imagetabpage|label10">X-Offset:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">posoffx</property>
                               </object>
@@ -421,6 +429,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="imagetabpage|label11">Y-Offset:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">posoffy</property>
                               </object>

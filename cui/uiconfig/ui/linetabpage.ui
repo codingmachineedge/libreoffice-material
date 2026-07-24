@@ -129,7 +129,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -163,6 +166,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_LINE_STYLE">_Style:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">LB_LINE_STYLE</property>
                         <property name="xalign">0</property>
@@ -213,6 +217,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_COLOR">Colo_r:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">LB_COLOR</property>
                         <property name="xalign">0</property>
@@ -258,6 +263,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_LINE_WIDTH">T_hickness:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MTR_FLD_LINE_WIDTH</property>
                         <property name="xalign">0</property>
@@ -300,6 +306,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_TRANSPARENT">_Transparency:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MTR_LINE_TRANSPARENT</property>
                         <property name="xalign">0</property>
@@ -381,6 +388,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="linetabpage|FT_LINE_ENDS_STYLE">Start st_yle:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">LB_START_STYLE</property>
                             <property name="xalign">0</property>
@@ -440,6 +448,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="linetabpage|FT_LINE_START_WIDTH">Wi_dth:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">MTR_FLD_START_WIDTH</property>
                                 <property name="xalign">0</property>
@@ -532,6 +541,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="linetabpage|label5">End sty_le:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">LB_END_STYLE</property>
                             <property name="xalign">0</property>
@@ -553,6 +563,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="linetabpage|FT_LINE_END_WIDTH">W_idth:</property>
+                                <property name="ellipsize">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">MTR_FLD_END_WIDTH</property>
                                 <property name="xalign">0</property>
@@ -655,6 +666,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="linetabpage|FT_EDGE_STYLE">_Corner style:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_EDGE_STYLE</property>
                     <property name="xalign">0</property>
@@ -669,6 +681,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="linetabpage|FT_CAP_STYLE">Ca_p style:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_CAP_STYLE</property>
                     <property name="xalign">0</property>
@@ -773,6 +786,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_SYMBOL_WIDTH">Widt_h:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MF_SYMBOL_WIDTH</property>
                         <property name="xalign">0</property>
@@ -816,6 +830,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="linetabpage|FT_SYMBOL_HEIGHT">Hei_ght:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MF_SYMBOL_HEIGHT</property>
                         <property name="xalign">0</property>
