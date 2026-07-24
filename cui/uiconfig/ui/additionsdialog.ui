@@ -92,7 +92,6 @@
     <property name="width-request">550</property>
     <property name="height-request">600</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="additionsdialog|AdditionsDialog">Additions</property>
     <property name="modal">True</property>
     <property name="default-width">300</property>
@@ -106,6 +105,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkBox">
@@ -119,6 +119,7 @@
                     <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
                     <property name="label" translatable="yes" context="additionsdialog|ProgressLabel">Progress Label</property>
+                    <property name="ellipsize">end</property>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="labelProgress-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes" context="additionsdialog|ProgressLabel">Progress label</property>
