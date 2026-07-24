@@ -46,7 +46,9 @@
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                     <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                      <object class="GtkCellRendererText" id="cellrenderertext1">
+                        <property name="ellipsize">end</property>
+                      </object>
                       <attributes>
                         <attribute name="text">0</attribute>
                       </attributes>
