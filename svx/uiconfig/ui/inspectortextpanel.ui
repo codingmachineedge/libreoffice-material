@@ -34,7 +34,10 @@
         <property name="can-focus">False</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="border-width">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkScrolledWindow">
@@ -173,6 +176,7 @@
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="spotlightfeatures|label">Spotlight:</property>
             <property name="mnemonic-widget">toolbar</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>

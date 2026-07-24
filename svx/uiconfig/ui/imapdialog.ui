@@ -19,6 +19,7 @@
           <object class="GtkButtonBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="hexpand">True</property>
             <property name="layout-style">end</property>
             <child>
@@ -456,6 +457,7 @@
                     <property name="label" translatable="yes" context="imapdialog|urlft">Address:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">url</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -478,6 +480,7 @@
                         <property name="label" translatable="yes" context="imapdialog|targetft">Frame:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">target</property>
+                        <property name="ellipsize">end</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -535,6 +538,7 @@
                     <property name="tooltip_text" translatable="yes" context="imapdialog|textft">Enter a short description of essential features of the image map for persons who do not see the image.</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">text</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
