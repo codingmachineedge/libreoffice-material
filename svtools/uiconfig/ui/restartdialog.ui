@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="RestartDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="restartdialog|RestartDialog">Restart %PRODUCTNAME</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -19,6 +18,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="homogeneous">True</property>
             <property name="layout-style">end</property>
             <child>
@@ -269,8 +269,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-8">yes</action-widget>
       <action-widget response="-9">no</action-widget>
+      <action-widget response="-8">yes</action-widget>
     </action-widgets>
   </object>
 </interface>
