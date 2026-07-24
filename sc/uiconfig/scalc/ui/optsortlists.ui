@@ -15,7 +15,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <child>
       <!-- n-columns=2 n-rows=2 -->
@@ -249,6 +252,7 @@
                 <property name="label" translatable="yes" context="optsortlists|copyfromlabel">Copy list _from:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">copyfrom</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>

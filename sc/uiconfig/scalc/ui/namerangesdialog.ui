@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="NameRangesDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="namerangesdialog|NameRangesDialog">Define Label Range</property>
     <property name="resizable">False</property>
     <property name="default_width">0</property>
@@ -28,6 +27,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -111,7 +111,9 @@
                 <property name="vexpand">True</property>
                 <property name="row_spacing">6</property>
                 <property name="margin-start">12</property>
+                <property name="margin-end">6</property>
                 <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
                 <child>
                   <!-- n-columns=1 n-rows=1 -->
                   <object class="GtkGrid" id="grid2">
@@ -224,6 +226,7 @@
                     <property name="label" translatable="yes" context="namerangesdialog|datarange">For _data range</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">edassign2</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -400,9 +403,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>
