@@ -18,6 +18,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -85,6 +86,7 @@
             <property name="column-spacing">12</property>
             <child>
               <object class="GtkLabel" id="label1">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="colwidthdialog|label1">Width</property>

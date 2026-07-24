@@ -17,6 +17,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -91,6 +92,7 @@
                 <property name="column-spacing">12</property>
                 <child>
                   <object class="GtkLabel" id="input-range-label">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="covariancedialog|input-range-label">Input range:</property>
@@ -131,6 +133,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="output-range-label">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="covariancedialog|output-range-label">Results to:</property>
@@ -173,6 +176,7 @@
             </child>
             <child type="label">
               <object class="GtkLabel" id="label1">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="covariancedialog|label1">Data</property>
@@ -239,6 +243,7 @@
             </child>
             <child type="label">
               <object class="GtkLabel" id="label2">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="covariancedialog|label2">Grouped by</property>

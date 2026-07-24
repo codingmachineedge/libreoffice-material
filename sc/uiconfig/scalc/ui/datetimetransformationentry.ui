@@ -23,6 +23,7 @@
     </child>
     <child>
       <object class="GtkLabel" id="label1">
+        <property name="ellipsize">end</property>
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="halign">start</property>
