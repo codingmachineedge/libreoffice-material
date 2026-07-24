@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="IMapDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="cuiimapdlg|IMapDialog">Properties</property>
     <property name="modal">True</property>
     <property name="default_width">0</property>
@@ -17,6 +16,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">10</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
             <property name="layout_style">end</property>
@@ -95,6 +95,7 @@
                     <property name="label" translatable="yes" context="cuiimapdlg|label1">_URL:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">urlentry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -143,6 +144,7 @@
                     <property name="label" translatable="yes" context="cuiimapdlg|label2">F_rame:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">frameCB</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -197,6 +199,7 @@
                     <property name="label" translatable="yes" context="cuiimapdlg|label3">_Name:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">nameentry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -246,6 +249,7 @@
                     <property name="tooltip_text" translatable="yes" context="cuiimapdlg|label4">Enter a short description of essential features of the image map for persons who do not see the image.</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">textentry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -295,6 +299,7 @@
                     <property name="tooltip_text" translatable="yes" context="cuiimapdlg|label5">Give a longer explanation of the image map if it is too complex to be described briefly in “Text Alternative.”</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">descTV</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -350,9 +355,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>

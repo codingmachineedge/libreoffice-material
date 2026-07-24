@@ -76,6 +76,7 @@
                 <property name="label" translatable="yes" context="calloutpage|label2">_Extension:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">extension</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -144,6 +145,7 @@
                 <property name="label" translatable="yes" context="calloutpage|lengthft">_Length:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">length</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -190,6 +192,7 @@
                 <property name="label" translatable="yes" context="calloutpage|positionft">_Position:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">position</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -204,6 +207,7 @@
                 <property name="label" translatable="yes" context="calloutpage|byft">_By:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">by</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -273,6 +277,7 @@
                 <property name="label" translatable="yes" context="calloutpage|label1">_Spacing:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">spacing</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

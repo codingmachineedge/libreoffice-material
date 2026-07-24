@@ -56,7 +56,6 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="colorpickerdialog|ColorPicker">Pick a Color</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -72,6 +71,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">10</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -413,6 +413,7 @@
                             <property name="label" translatable="yes" context="colorpickerdialog|label2">Hex _#:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">hexEntry</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -639,6 +640,7 @@
                             <property name="label" translatable="yes" context="colorpickerdialog|label5" comments="This is the C of the CMYK color model: https://en.wikipedia.org/wiki/CMYK_color_model">_Cyan:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">cyanSpinbutton</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -654,6 +656,7 @@
                             <property name="label" translatable="yes" context="colorpickerdialog|label6" comments="This is the M of the CMYK color model: https://en.wikipedia.org/wiki/CMYK_color_model">_Magenta:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">magSpinbutton</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -669,6 +672,7 @@
                             <property name="label" translatable="yes" context="colorpickerdialog|label7" comments="This is the Y of the CMYK color model: https://en.wikipedia.org/wiki/CMYK_color_model">_Yellow:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">yellowSpinbutton</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -684,6 +688,7 @@
                             <property name="label" translatable="yes" context="colorpickerdialog|label8" comments="This is the K of the CMYK color model: https://en.wikipedia.org/wiki/CMYK_color_model">_Key:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">keySpinbutton</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -803,9 +808,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="ColorPicker-atkobject">

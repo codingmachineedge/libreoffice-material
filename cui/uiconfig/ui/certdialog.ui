@@ -20,7 +20,6 @@
   </object>
   <object class="GtkDialog" id="CertDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="certdialog|CertDialog">Certificate Path</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -32,6 +31,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
+            <property name="spacing">10</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
