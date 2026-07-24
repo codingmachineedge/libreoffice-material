@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="ManageLanguagesDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="managelanguages|ManageLanguagesDialog">Manage User Interface Languages [$1]</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -26,11 +25,13 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="close">
                 <property name="label" translatable="yes" context="stock">_Close</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -70,6 +71,10 @@
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
             <property name="row-spacing">6</property>
             <child>
               <object class="GtkLabel" id="label1">
@@ -78,6 +83,7 @@
                 <property name="label" translatable="yes" context="managelanguages|label1">Present languages:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">treeview</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -222,8 +228,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-7">close</action-widget>
     </action-widgets>
   </object>
 </interface>

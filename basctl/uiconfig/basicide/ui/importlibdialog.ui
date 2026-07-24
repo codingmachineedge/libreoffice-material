@@ -18,7 +18,6 @@
   </object>
   <object class="GtkDialog" id="ImportLibDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="importlibdialog|ImportLibDialog">Import Libraries</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -34,6 +33,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -94,6 +94,10 @@
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
             <property name="row-spacing">12</property>
             <child>
               <object class="GtkFrame" id="frame1">
@@ -153,6 +157,7 @@
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="ellipsize">end</property>
                     <property name="label" translatable="yes" context="importlibdialog|label1">Options</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -245,9 +250,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="ImportLibDialog-atkobject">

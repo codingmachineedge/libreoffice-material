@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="ColorSchemeDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="colorscheme|ColorSchemeDialog">Color Scheme</property>
     <property name="resizable">False</property>
     <property name="type-hint">dialog</property>
@@ -25,6 +24,7 @@
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="btn_help">
                 <property name="label" translatable="yes" context="stock">_Help</property>
@@ -44,6 +44,8 @@
                 <property name="label" translatable="yes" context="stock">_OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -78,6 +80,10 @@
           <object class="GtkFrame" id="options">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
             <property name="label-xalign">0</property>
             <property name="shadow-type">none</property>
             <child>
@@ -122,6 +128,7 @@
               <object class="GtkLabel" id="lb_title">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="ellipsize">end</property>
                 <property name="label" translatable="yes" context="colorscheme|lb_title">Basic IDE Color Options</property>
               </object>
             </child>
@@ -197,8 +204,8 @@
     </child>
     <action-widgets>
       <action-widget response="-11">btn_help</action-widget>
-      <action-widget response="-5">btn_ok</action-widget>
       <action-widget response="-6">btn_cancel</action-widget>
+      <action-widget response="-5">btn_ok</action-widget>
     </action-widgets>
   </object>
 </interface>
