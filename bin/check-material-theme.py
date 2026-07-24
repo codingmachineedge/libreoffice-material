@@ -255,7 +255,7 @@ REQUIRED_STYLE = {
     "tabTextColor": "on-surface-variant",
     "tabRolloverTextColor": "on-surface",
     "tabHighlightTextColor": "on-primary-container",
-    "disableColor": "disabled-container",
+    "disableColor": "on-surface-variant",
     "helpColor": "inverse-surface",
     "helpTextColor": "inverse-on-surface",
     "linkColor": "primary",

@@ -50,7 +50,24 @@
 #include <comphelper/lok.hxx>
 #include <sfx2/lokhelper.hxx>
 
+#include <cstdlib>
+#include <string_view>
+
 namespace sd {
+
+namespace
+{
+// Material file-widget theme gate, mirroring the documented
+// VCL_FILE_WIDGET_THEME=material activation used across the Material paint paths
+// (see vcl/source/gdi/FileDefinitionWidgetDraw.cxx and
+// vcl/source/window/status.cxx). Under the default/native theme this returns
+// false, so every stock code path below stays byte-for-byte unchanged.
+bool lcl_materialThemeActive()
+{
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    return pThemeName && std::string_view(pThemeName) == "material";
+}
+}
 
 #define SCROLL_LINE_FACT   0.05     ///< factor for line scrolling
 #define SCROLL_PAGE_FACT   0.5      ///< factor for page scrolling
@@ -566,6 +583,26 @@ void Window::UpdateMapOrigin(bool bInvalidate)
         }
         if ( aWinSize.Height() > maViewSize.Height() || maWinPos.Y() < 0 )
         {
+            maWinPos.setY( maViewSize.Height() / 2 - aWinSize.Height() / 2 );
+            bChanged = true;
+        }
+
+        // Material file-widget theme: on the initialization pass (the documented
+        // "center the position" case above, where maPrevSize is still the -1
+        // sentinel so no resize adjust ran) the page must be centered in the
+        // workspace. The stock clamp branches (maWinPos > maViewSize - aWinSize)
+        // pin the view to the max-scroll edge whenever the working area only
+        // marginally exceeds the content window -- which the Material chrome
+        // metrics make the common initial case -- leaving the slide/page docked
+        // to the bottom (and right) instead of centered. Re-center both axes for
+        // that first layout so the canvas opens centered, exactly as the native
+        // theme already does when its larger symmetric margins keep the working
+        // area well above the window size. Inert under the native theme, and only
+        // on initialization, so subsequent resizes keep the stock
+        // preserve-scroll-position behavior untouched.
+        if ( maPrevSize == Size(-1, -1) && lcl_materialThemeActive() )
+        {
+            maWinPos.setX( maViewSize.Width()  / 2 - aWinSize.Width()  / 2 );
             maWinPos.setY( maViewSize.Height() / 2 - aWinSize.Height() / 2 );
             bChanged = true;
         }

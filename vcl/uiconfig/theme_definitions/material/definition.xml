@@ -443,7 +443,7 @@
         <tabTextColor value="@on-surface-variant"/>
         <tabRolloverTextColor value="@on-surface"/>
         <tabHighlightTextColor value="@on-primary-container"/>
-        <disableColor value="@disabled-container"/>
+        <disableColor value="@on-surface-variant"/>
         <helpColor value="@inverse-surface"/>
         <helpTextColor value="@inverse-on-surface"/>
         <linkColor value="@primary"/>
