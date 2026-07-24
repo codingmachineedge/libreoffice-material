@@ -18,7 +18,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin_start">6</property>
+    <property name="margin_end">6</property>
+    <property name="margin_top">6</property>
+    <property name="margin_bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -72,6 +75,7 @@
                                 <property name="label" translatable="yes" context="mmlayoutpage|label6">_From top</property>
                                 <property name="use_underline">True</property>
                                 <property name="mnemonic_widget">top</property>
+                                <property name="ellipsize">end</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
@@ -171,6 +175,7 @@
                                         <property name="label" translatable="yes" context="mmlayoutpage|leftft">From _left</property>
                                         <property name="use_underline">True</property>
                                         <property name="mnemonic_widget">left</property>
+                                        <property name="ellipsize">end</property>
                                         <property name="xalign">0</property>
                                       </object>
                                       <packing>
@@ -204,6 +209,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="mmlayoutpage|label2">Address Block Position</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -237,6 +243,7 @@
                             <property name="label" translatable="yes" context="mmlayoutpage|label4">Move</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">up</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -251,6 +258,7 @@
                             <property name="label" translatable="yes" context="mmlayoutpage|label5">Move</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">down</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -301,6 +309,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="mmlayoutpage|label3">Salutation Position</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -340,6 +349,7 @@
                         <property name="label" translatable="yes" context="mmlayoutpage|label7">_Zoom</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">zoom</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -421,6 +431,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="mmlayoutpage|label1">Adjust Layout of Address Block and Salutation</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

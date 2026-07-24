@@ -20,7 +20,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -100,6 +103,7 @@
                         <property name="label" translatable="yes" context="labeloptionspage|label4">Colu_mn</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">cols</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -144,6 +148,7 @@
                         <property name="label" translatable="yes" context="labeloptionspage|label5">Ro_w</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">rows</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -208,6 +213,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="labeloptionspage|label1">Distribute</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -262,6 +268,7 @@
                 <property name="label" translatable="yes" context="labeloptionspage|printername">Printer Name</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">setup</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -276,6 +283,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="labeloptionspage|label2">Printer</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

@@ -13,7 +13,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -54,6 +57,7 @@
                 <property name="label" translatable="yes" context="mailconfigpage|displayname_label">_Your name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">displayname</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -100,6 +104,7 @@
                 <property name="label" translatable="yes" context="mailconfigpage|address_label">_Email address:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">address</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -180,6 +185,7 @@
                 <property name="label" translatable="yes" context="mailconfigpage|replyto_label">_Reply address:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">replyto</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -212,6 +218,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="mailconfigpage|label1">User Information</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -262,6 +269,7 @@
                 <property name="label" translatable="yes" context="mailconfigpage|server_label">_Server name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">server</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -308,6 +316,7 @@
                 <property name="label" translatable="yes" context="mailconfigpage|port_label">_Port:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">port</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -449,6 +458,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="mailconfigpage|label2">Outgoing Email Server (SMTP Only)</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

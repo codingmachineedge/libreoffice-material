@@ -33,7 +33,6 @@
   </object>
   <object class="GtkDialog" id="InsertTableDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="inserttable|InsertTableDialog">Insert Table</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -48,6 +47,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="inserttable|ok">Insert</property>
@@ -161,6 +161,7 @@
                         <property name="label" translatable="yes" context="inserttable|label3">_Name:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">nameedit</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -175,6 +176,7 @@
                         <property name="label" translatable="yes" context="inserttable|3">_Columns:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">colspin</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -208,6 +210,7 @@
                         <property name="label" translatable="yes" context="inserttable|4">_Rows:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">rowspin</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">1</property>
                       </object>
                       <packing>
@@ -255,6 +258,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="inserttable|label1">General</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -379,6 +383,7 @@
                             <property name="label" translatable="yes" context="inserttable|repeatheaderafter">Header ro_ws:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">repeatheaderspin</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -398,6 +403,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="inserttable|label2">Options</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -497,6 +503,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="inserttable|lbTableStyle">Styles</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -519,9 +526,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="InsertTableDialog-atkobject">
