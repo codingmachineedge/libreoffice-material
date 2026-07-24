@@ -39,7 +39,6 @@
   </object>
   <object class="GtkDialog" id="EditDurationDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="editdurationdialog|EditDurationDialog">Edit Duration</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -54,6 +53,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -149,6 +149,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label1">_Years:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">years</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -163,6 +164,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label">_Months:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">months</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -177,6 +179,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label3">_Days:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">days</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -191,6 +194,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label4">H_ours:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hours</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -205,6 +209,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label5">Min_utes:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">minutes</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -219,6 +224,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label6">_Seconds:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">seconds</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -233,6 +239,7 @@
                     <property name="label" translatable="yes" context="editdurationdialog|label7">Millise_conds:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">milliseconds</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -353,9 +360,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>
