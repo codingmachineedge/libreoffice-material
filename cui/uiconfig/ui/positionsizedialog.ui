@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="PositionAndSizeDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="positionsizedialog|PositionAndSizeDialog">Position and Size</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -19,10 +18,11 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="reset">
-                <property name="label" translatable="yes" context="stock">_Reset</property>
+              <object class="GtkButton" id="help">
+                <property name="label" translatable="yes" context="stock">_Help</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -32,15 +32,14 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
+                <property name="secondary">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="ok">
-                <property name="label" translatable="yes" context="stock">_OK</property>
+              <object class="GtkButton" id="reset">
+                <property name="label" translatable="yes" context="stock">_Reset</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="can-default">True</property>
-                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -65,10 +64,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="help">
-                <property name="label" translatable="yes" context="stock">_Help</property>
+              <object class="GtkButton" id="ok">
+                <property name="label" translatable="yes" context="stock">_OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -76,7 +77,6 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">3</property>
-                <property name="secondary">True</property>
               </packing>
             </child>
           </object>
@@ -107,10 +107,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="101">reset</action-widget>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="101">reset</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

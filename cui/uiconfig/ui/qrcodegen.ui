@@ -10,7 +10,6 @@
   </object>
   <object class="GtkDialog" id="QrCodeGenDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="qrcodegen|QrCodeGenDialog">QR and Barcode</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -24,6 +23,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="cancel">
@@ -117,6 +117,7 @@
                         <property name="label" translatable="yes" context="qrcodegen|label_text" comments="Text to be stored in the QR">URL/Text:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_text</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -165,6 +166,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes" context="qrcodegen|label_ecc" comments="Error Correction Level of QR code">Error correction:</property>
                             <property name="use-underline">True</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                             <accessibility>
                               <relation type="label-for" target="button_low"/>
@@ -296,6 +298,7 @@
                         <property name="label" translatable="yes" context="qrcodegen|label_margin" comments="Set Margin around QR">Margin:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_margin</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -331,6 +334,7 @@
                         <property name="label" translatable="yes" context="qrcodegen|label_type" comments="Select type">Type:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">choose_type</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -387,9 +391,9 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="-6">cancel</action-widget>
       <action-widget response="-5">ok</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="QrCodeGenDialog-atkobject">
