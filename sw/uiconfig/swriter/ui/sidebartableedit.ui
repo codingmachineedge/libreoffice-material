@@ -28,6 +28,8 @@
   <object class="GtkGrid" id="TableEditPanel">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
+    <property name="row-spacing">12</property>
+    <property name="column-spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=14 -->
       <object class="GtkGrid" id="grid1">
@@ -452,6 +454,7 @@
             <property name="label" translatable="yes" context="sidebartableedit|align_label">Alignment:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">alignmentLB</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>

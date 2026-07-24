@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="StringInputDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
     <property name="default-height">0</property>
@@ -17,6 +16,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -66,6 +66,7 @@
             <property name="margin-top">5</property>
             <property name="margin-bottom">5</property>
             <property name="row-spacing">6</property>
+            <property name="column-spacing">12</property>
             <property name="column-homogeneous">True</property>
             <child>
               <object class="GtkLabel" id="name">
@@ -74,6 +75,7 @@
                 <property name="label" translatable="yes" context="stringinput|name">Name</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">edit</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -112,8 +114,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

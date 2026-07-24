@@ -23,6 +23,7 @@
             <property name="label" translatable="yes" context="sidebarwrap|label1">Spacing:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">spacingLB</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
