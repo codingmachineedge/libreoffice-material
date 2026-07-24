@@ -102,6 +102,7 @@
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="slidetransitionspanel|duration_label">Duration:</property>
                     <property name="use-underline">True</property>
+                    <property name="ellipsize">end</property>
                     <property name="mnemonic-widget">transition_duration</property>
                     <property name="xalign">1</property>
                   </object>
@@ -137,6 +138,7 @@
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="slidetransitionspanel|sound_label">Sound:</property>
                     <property name="use-underline">True</property>
+                    <property name="ellipsize">end</property>
                     <property name="mnemonic-widget">sound_list</property>
                     <property name="xalign">1</property>
                   </object>
@@ -192,6 +194,7 @@
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="slidetransitionspanel|variant_label">Variant:</property>
                     <property name="use-underline">True</property>
+                    <property name="ellipsize">end</property>
                     <property name="mnemonic-widget">variant_list</property>
                     <property name="xalign">1</property>
                   </object>
