@@ -27,6 +27,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -100,6 +101,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="watermarkdialog|TextLabel">Text</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -130,6 +132,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="watermarkdialog|FontLabel">Font</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -142,6 +145,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="watermarkdialog|AngleLabel">Angle</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -154,6 +158,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="watermarkdialog|TransparencyLabel">Transparency</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -166,6 +171,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes" context="watermarkdialog|ColorLabel">Color</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">Color</property>
                   </object>
@@ -274,8 +280,8 @@
     </child>
     <action-widgets>
       <action-widget response="-11">help</action-widget>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="WatermarkDialog-atkobject">

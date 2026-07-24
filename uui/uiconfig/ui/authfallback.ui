@@ -19,6 +19,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -78,6 +79,7 @@
                       <object class="GtkLabel" id="google_prefix_label">
                         <property name="can-focus">False</property>
                         <property name="label">G-</property>
+                        <property name="ellipsize">end</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -111,6 +113,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="authfallback|label1">Enter the 6 digit PIN:</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -189,8 +192,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

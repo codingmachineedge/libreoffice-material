@@ -16,6 +16,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="cancel">
@@ -53,6 +54,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="printprogressdialog|label">Page %p of %n</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">progressbar</property>
               </object>

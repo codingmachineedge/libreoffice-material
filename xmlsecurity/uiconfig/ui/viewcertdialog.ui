@@ -19,6 +19,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -82,6 +83,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="viewcertdialog|general">General</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="tab-fill">False</property>
@@ -105,6 +107,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="viewcertdialog|details">Details</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -129,6 +132,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="viewcertdialog|path">Certificate Path</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="position">2</property>

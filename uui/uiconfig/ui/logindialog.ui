@@ -18,6 +18,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -127,6 +128,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="logindialog|accountft">A_ccount:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">accounted</property>
                 <property name="xalign">0</property>
@@ -141,6 +143,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="logindialog|passwordft">Pass_word:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">passworded</property>
                 <property name="xalign">0</property>
@@ -182,6 +185,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="logindialog|nameft">_User name:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">nameed</property>
                 <property name="xalign">0</property>
@@ -197,6 +201,7 @@
                 <property name="no-show-all">True</property>
                 <property name="label" translatable="yes" context="logindialog|loginrealm">Enter user name and password for:
 “%2” on %1</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -211,6 +216,7 @@
                 <property name="no-show-all">True</property>
                 <property name="label" translatable="yes" context="logindialog|wrongloginrealm">Wrong user name and password for:
 “%2” on %1</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -225,6 +231,7 @@
                 <property name="no-show-all">True</property>
                 <property name="label" translatable="yes" context="logindialog|wrongrequestinfo">Wrong user name and password for:
 %1</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -239,6 +246,7 @@
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="logindialog|requestinfo">Enter user name and password for:
 %1</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -252,6 +260,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="logindialog|errorft">Message from server:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">errorinfo</property>
                 <property name="xalign">0</property>
@@ -292,9 +301,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

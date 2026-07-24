@@ -82,6 +82,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|guideslabel">Guides</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -247,6 +248,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|displaylabel">Display</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -345,6 +347,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|fieldslabel">Display Fields</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -438,6 +441,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|changeslabel">Display Tracked Changes</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -537,6 +541,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|outlinelabel">Outline Folding</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -768,6 +773,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|label3">View</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -815,6 +821,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="viewoptionspage|measureunitlabel">Measurement unit:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">measureunit</property>
                       </object>
@@ -843,6 +850,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|settingslabel">Settings</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -1071,6 +1079,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="viewoptionspage|outlinelabel">Zoom</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>

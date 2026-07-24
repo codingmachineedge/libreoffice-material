@@ -31,6 +31,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="certpage|label1">Certificate Path</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">signatures</property>
             <property name="xalign">0</property>
@@ -120,6 +121,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="certpage|label2">Certificate status</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">status</property>
             <property name="xalign">0</property>
@@ -168,6 +170,7 @@
         <property name="can-focus">False</property>
         <property name="no-show-all">True</property>
         <property name="label" translatable="yes" context="certpage|certok">The certificate is OK.</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -180,6 +183,7 @@
         <property name="can-focus">False</property>
         <property name="no-show-all">True</property>
         <property name="label" translatable="yes" context="certpage|certnotok">The certificate could not be validated.</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>

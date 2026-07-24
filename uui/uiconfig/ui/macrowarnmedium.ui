@@ -87,6 +87,7 @@ Macros may contain viruses. Disabling macros for a document is always safe. If y
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="label" translatable="yes" context="macrowarnmedium|descr1Label">The document contains document macros signed by:</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -169,6 +170,7 @@ Macros may contain viruses. Disabling macros for a document is always safe. If y
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="label" translatable="yes" context="macrowarnmedium|certNoLongerValidLabel">Warning: The certificate is no longer valid.</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -181,6 +183,7 @@ Macros may contain viruses. Disabling macros for a document is always safe. If y
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="label" translatable="yes" context="macrowarnmedium|certNotYetValidLabel">Warning: The certificate is not yet valid.</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>

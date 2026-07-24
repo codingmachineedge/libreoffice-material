@@ -96,6 +96,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="openlockedquerybox|messagetext">This file has been locked by another user.</property>
+                    <property name="ellipsize">end</property>
                     <property name="width-chars">0</property>
                     <property name="max-width-chars">0</property>
                     <property name="xalign">0</property>
@@ -121,6 +122,7 @@
                     <property name="valign">start</property>
                     <property name="label" translatable="yes" context="openlockedquerybox|ReadOnlyMessage">You can open it read only  and
 receive a notification if ready.</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="ReadOnlyMessage-atkobject">
@@ -180,6 +182,7 @@ receive a notification if ready.</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="openlockedquerybox|OpenCopyMessage">You can open a copy on your
 local system.</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="OpenCopyMessage-atkobject">
@@ -228,6 +231,7 @@ local system.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="openlockedquerybox|expandertext">_More Details</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>

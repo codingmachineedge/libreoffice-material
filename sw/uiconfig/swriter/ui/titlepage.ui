@@ -44,6 +44,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -125,6 +126,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="titlepage|label6">Number of title pages:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">NF_PAGE_COUNT</property>
                         <property name="xalign">0</property>
@@ -139,6 +141,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="titlepage|label7">Place title pages at:</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <accessibility>
                           <relation type="label-for" target="RB_DOCUMENT_START"/>
@@ -295,6 +298,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="titlepage|label1">Make Title Pages</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -352,6 +356,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="titlepage|FT_PAGE_COUNT">Page number:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">NF_RESTART_NUMBERING</property>
                           </object>
@@ -421,6 +426,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="titlepage|FT_PAGE_PAGES">Page number:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">NF_SET_PAGE_NUMBER</property>
                           </object>
@@ -466,6 +472,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="titlepage|label2">Page Numbering</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -496,6 +503,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="titlepage|label4">_Style:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">LB_PAGE_PROPERTIES</property>
                       </object>
@@ -546,6 +554,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="titlepage|label3">Edit Page Properties</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -568,9 +577,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="DLG_TITLEPAGE-atkobject">
