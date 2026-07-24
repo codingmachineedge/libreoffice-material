@@ -71,6 +71,14 @@
     "default": "0",
     "props": ["AllowAnimatedGraphic", "AllowAnimatedText", "AllowAnimatedOthers"]
   },
+  "material_flag": {
+    "source": "officecfg/registry/schema/org/openoffice/Office/Common.xcs",
+    "prop": "MaterialReducedMotion",
+    "type": "xs:boolean",
+    "default": "false",
+    "stage": "stored-value-only",
+    "note": "Stage 1 of the Material rewrite adds a stored MaterialReducedMotion boolean (Appearance group, default false), surfaced by the Options > Appearance 'materialtheme' checkbox. It is honest-inert: no native Material motion role consumes it yet. Its EFFECTIVE value is the OR of this flag with MiscSettings::GetUseReducedAnimation() (the pre-existing chain pinned above), realized only when a native Material motion primitive lands (Stage 3+). Pinning the stored key here keeps it from silently gaining a live effect without revisiting this contract; the definition.xml trip-wire stays the SRC gate."
+  },
   "consumers": [
     {
       "function": "IsAnimatedOthersAllowed",

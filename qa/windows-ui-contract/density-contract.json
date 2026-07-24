@@ -8,7 +8,8 @@
   "theme_flag": "VCL_FILE_WIDGET_THEME",
   "status": "source-declared",
   "runtime_verified": false,
-  "notes": "WIN-FND-005. Source-only ledger proving the row's 'compact/comfortable metrics compiled; selectable density is target-only' claim is internally consistent and not silently regressing. It pins the 15 single-profile native metric roles (re-parsed independently of check-material-theme.py), the target compact/comfortable table (docs/design/01-foundations.md section 6), MATERIAL_DESIGN.md's density honesty language, the calc-chrome.json per-surface density carve-out consistency, and a Git-tracked selector-absence guard. It implements no selector and advances none of the row's build/pixel/matrix/perf/compat gates: extending the metric schema, a Tools > Options density surface, and rendered evidence are the separate build gates. Source evidence only: runtime_verified is false.",
+  "selectable_stage": "stored-value-only",
+  "notes": "WIN-FND-005. Source-only ledger proving the row's 'compact/comfortable metrics compiled; density selection is STORED-value-only, metric plumbing still target-only' claim is internally consistent and not silently regressing. Stage 1 of the Material rewrite adds a selectable MaterialDensity (Appearance group, default 0 = Comfortable) and the density radios in cui/uiconfig/ui/appearance.ui, but the value is honest-inert: no compact/comfortable metric mapping consumes it yet (that is Stage 3, WIN-FND-005's build gate). This ledger pins the 15 single-profile native metric roles (re-parsed independently of check-material-theme.py), the target compact/comfortable table (docs/design/01-foundations.md section 6), MATERIAL_DESIGN.md's density honesty language, the calc-chrome.json per-surface density carve-out consistency, and a Git-tracked selector-PRESENCE guard (migrated from the earlier absence guard: the selector must now exist, and vanishing would mean the stored selection regressed). It implements no metric selector and advances none of the row's build/pixel/matrix/perf/compat gates: wiring the metric schema to comfortable/compact, and rendered evidence, are the separate build gates. Source evidence only: runtime_verified is false.",
   "native_metrics": {
     "stroke-none": "0",
     "stroke-thin": "1",
@@ -49,9 +50,13 @@
     "note": "calc-chrome.json's density carve-out (--tb, --menu) must stay byte-consistent with the section-6 master table (px stripped) and keep status 'specified', so a per-surface value cannot silently diverge from the foundation."
   },
   "reader_test_fixture": "definitionMetricsSectionAttribute.xml",
-  "selector_absence": {
-    "note": "A density selection would surface as a .ui widget id or an officecfg property carrying 'density'. A Git-tracked walk over *.ui and *.xcs/*.xcu must find zero such controls; any match means density became selectable and this ledger must be revisited.",
+  "selector_presence": {
+    "note": "Stage 1 makes density selectable but stored-value-only (honest-inert; the compact/comfortable metric plumbing is Stage 3). The selector now surfaces as the MaterialDensity officecfg property and the density radio widgets in cui/uiconfig/ui/appearance.ui. This guard was MIGRATED from the earlier absence guard per the migrate-never-freeze-stock rule: a Git-tracked walk over *.ui and *.xcs/*.xcu must now FIND both selectors; their disappearance means the stored selection regressed and this ledger must be revisited.",
     "ui_pattern": "id=\"[^\"]*[Dd]ensity",
-    "officecfg_pattern": "oor:name=\"[^\"]*[Dd]ensity"
+    "ui_globs": ["*.ui"],
+    "ui_expected": ["cui/uiconfig/ui/appearance.ui"],
+    "officecfg_pattern": "oor:name=\"[^\"]*[Dd]ensity",
+    "officecfg_globs": ["*.xcs", "*.xcu"],
+    "officecfg_expected": ["officecfg/registry/schema/org/openoffice/Office/Common.xcs"]
   }
 }

@@ -60,6 +60,22 @@ public:
         $BRAND_BASE_DIR/<share>/theme_definitions/material/definition.xml. */
     static MaterialTokens fromThemeDefinition(const OString& rColorScheme = OString());
 
+    /** Compose the active palette scheme key from a bounded accent base name and
+        the dark flag, matching the definition.xml scheme naming exactly:
+          bDark == false -> "<accent>"       (Violet is the unnamed default "")
+          bDark == true  -> "<accent>-dark"  (Violet is "dark")
+        @p rAccentBase is the light-scheme name ("" = Violet, "blue", "teal",
+        "green", "amber", "rose"); the dark variants append "-dark". Violet with
+        any dark flag resolves to the byte-identical default ("" / "dark") path,
+        so genuine captures never drift. This mints no palette: an unknown accent
+        composes a key that fromDefinitionFile()/read() falls back to default on. */
+    static OString computeMaterialScheme(std::string_view rAccentBase, bool bDark);
+
+    /** Accent-aware convenience over fromThemeDefinition(): resolves the active
+        scheme via computeMaterialScheme(rAccentBase, bDark). Violet + any dark
+        flag stays byte-identical to the default/"dark" path. */
+    static MaterialTokens fromThemeDefinition(std::string_view rAccentBase, bool bDark);
+
     /** True only when the file was read, every token section validated, and the
         loaded token names matched the published vocabulary exactly. */
     bool isValid() const { return mbValid; }

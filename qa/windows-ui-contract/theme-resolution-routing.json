@@ -9,7 +9,7 @@
   "opt_in_flag": "VCL_DRAW_WIDGETS_FROM_FILE",
   "status": "source-declared",
   "runtime_verified": false,
-  "notes": "WIN-FND-002. Composition pin over the already-compiled theme-resolution routing chain from docs/design/01-foundations.md section 3: high contrast > dark > light precedence, the officecfg HighContrast override layer, the Windows platform HC (SPI_GETHIGHCONTRAST) and dark-mode (uxtheme.dll ordinal 132 ShouldAppsUseDarkMode) signal reads, and the WM_SETTINGCHANGE -> SalEvent::SettingsChanged -> Application::MergeSystemSettings app-wide re-resolution loop. This closes no source gap (the chain is already present and compiled); it locks control-flow ordering and platform-signal call sites against drift. Source evidence only: runtime_verified is false. The platform matrix (named Windows contrast themes, 100/125/200% scale, RTL/CJK), live-toggle interaction, and the settings-cascade performance budget stay the separate build/runtime gates and are not claimed here.",
+  "notes": "WIN-FND-002. Composition pin over the already-compiled theme-resolution routing chain from docs/design/01-foundations.md section 3: high contrast > dark > light precedence, the officecfg HighContrast override layer, the Windows platform HC (SPI_GETHIGHCONTRAST) and dark-mode (uxtheme.dll ordinal 132 ShouldAppsUseDarkMode) signal reads, and the WM_SETTINGCHANGE -> SalEvent::SettingsChanged -> Application::MergeSystemSettings app-wide re-resolution loop. This closes no source gap (the chain is already present and compiled); it locks control-flow ordering and platform-signal call sites against drift. Source evidence only: runtime_verified is false. The platform matrix (named Windows contrast themes, 100/125/200% scale, RTL/CJK), live-toggle interaction, and the settings-cascade performance budget stay the separate build/runtime gates and are not claimed here. The bounded accent scheme set is resolved through MaterialTokens::computeMaterialScheme (accent-scheme-composition checkpoint); Stage-1 adds only the scheme-key composition -- Violet stays the byte-identical default and no static token cache is re-keyed (Stage-3 live-apply).",
   "checkpoints": [
     {
       "id": "hc-precedence",
@@ -95,6 +95,16 @@
         "SalEvent::SettingsChanged",
         "Application::MergeSystemSettings",
         "Application::SetSettings"
+      ]
+    },
+    {
+      "id": "accent-scheme-composition",
+      "source": "vcl/source/gdi/MaterialTokens.cxx",
+      "note": "MaterialTokens::computeMaterialScheme composes the active palette scheme key from the bounded accent base name + the dark flag: '<accent>' for light, '<accent>-dark' for dark. Violet is the unnamed default so an empty accent base yields '' (light) / 'dark' (dark), keeping the pre-accent resolution path byte-identical. fromThemeDefinition(std::string_view, bool) resolves through computeMaterialScheme. This is orthogonal to the HC>dark>light precedence above; Stage-1 adds only the scheme-key composition and re-keys no static token cache (the live-apply re-key is separate Stage-3 work), so genuine default captures never drift.",
+      "markers": [
+        "OString MaterialTokens::computeMaterialScheme(",
+        "aKey.append(toOString(DARK_SCHEME));",
+        "return fromThemeDefinition(computeMaterialScheme(rAccentBase, bDark));"
       ]
     }
   ],

@@ -68,6 +68,276 @@
     </palette>
 
     <!--
+      Bounded accent palette schemes (Stage-1 appearance foundation). Each
+      recolors ONLY the primary* family + visited-link; the 14 neutral roles are
+      byte-identical to the default light/dark palettes above, so the unnamed
+      default palette and scheme="dark" never drift. Every scheme exposes the
+      identical 23-role set with light/dark parity, so MaterialTokens keeps
+      mbValid closed on any divergence. The active scheme key is composed as
+      "<accent>" (light) / "<accent>-dark" (dark); Violet is the unnamed default
+      ("" / "dark"). Only primary* + visited-link differ between accents.
+    -->
+    <palette scheme="blue">
+        <color name="primary" value="#0061A4"/>
+        <color name="on-primary" value="#FFFFFF"/>
+        <color name="primary-container" value="#D1E4FF"/>
+        <color name="on-primary-container" value="#001D36"/>
+        <color name="primary-hover" value="#9ECAFF"/>
+        <color name="primary-pressed" value="#C2DDFF"/>
+        <color name="primary-action-hover" value="#1E6FB0"/>
+        <color name="primary-action-pressed" value="#00558F"/>
+        <color name="surface" value="#FFFBFE"/>
+        <color name="surface-container" value="#F3EDF7"/>
+        <color name="surface-container-low" value="#F7F2FA"/>
+        <color name="on-surface" value="#1D1B20"/>
+        <color name="on-surface-variant" value="#49454F"/>
+        <color name="outline" value="#79747E"/>
+        <color name="outline-variant" value="#CAC4D0"/>
+        <color name="disabled-container" value="#E6E0E9"/>
+        <color name="inverse-surface" value="#313033"/>
+        <color name="inverse-on-surface" value="#F4EFF4"/>
+        <color name="warning-container" value="#FFDDB3"/>
+        <color name="on-warning-container" value="#2A1800"/>
+        <color name="error-container" value="#F9DEDC"/>
+        <color name="on-error-container" value="#410E0B"/>
+        <color name="visited-link" value="#00497D"/>
+    </palette>
+
+    <palette scheme="blue-dark">
+        <color name="primary" value="#9ECAFF"/>
+        <color name="on-primary" value="#003258"/>
+        <color name="primary-container" value="#00497D"/>
+        <color name="on-primary-container" value="#D1E4FF"/>
+        <color name="primary-hover" value="#00497D"/>
+        <color name="primary-pressed" value="#38598A"/>
+        <color name="primary-action-hover" value="#86BBF5"/>
+        <color name="primary-action-pressed" value="#6FA8E8"/>
+        <color name="surface" value="#141218"/>
+        <color name="surface-container" value="#211F26"/>
+        <color name="surface-container-low" value="#1D1B20"/>
+        <color name="on-surface" value="#E6E0E9"/>
+        <color name="on-surface-variant" value="#CAC4D0"/>
+        <color name="outline" value="#938F99"/>
+        <color name="outline-variant" value="#49454F"/>
+        <color name="disabled-container" value="#36343B"/>
+        <color name="inverse-surface" value="#E6E0E9"/>
+        <color name="inverse-on-surface" value="#322F35"/>
+        <color name="warning-container" value="#5F4100"/>
+        <color name="on-warning-container" value="#FFDDB3"/>
+        <color name="error-container" value="#8C1D18"/>
+        <color name="on-error-container" value="#F9DEDC"/>
+        <color name="visited-link" value="#9ECAFF"/>
+    </palette>
+
+    <palette scheme="teal">
+        <color name="primary" value="#006A60"/>
+        <color name="on-primary" value="#FFFFFF"/>
+        <color name="primary-container" value="#A6F2E7"/>
+        <color name="on-primary-container" value="#00201C"/>
+        <color name="primary-hover" value="#52DBC8"/>
+        <color name="primary-pressed" value="#86E3D4"/>
+        <color name="primary-action-hover" value="#1E8175"/>
+        <color name="primary-action-pressed" value="#00564E"/>
+        <color name="surface" value="#FFFBFE"/>
+        <color name="surface-container" value="#F3EDF7"/>
+        <color name="surface-container-low" value="#F7F2FA"/>
+        <color name="on-surface" value="#1D1B20"/>
+        <color name="on-surface-variant" value="#49454F"/>
+        <color name="outline" value="#79747E"/>
+        <color name="outline-variant" value="#CAC4D0"/>
+        <color name="disabled-container" value="#E6E0E9"/>
+        <color name="inverse-surface" value="#313033"/>
+        <color name="inverse-on-surface" value="#F4EFF4"/>
+        <color name="warning-container" value="#FFDDB3"/>
+        <color name="on-warning-container" value="#2A1800"/>
+        <color name="error-container" value="#F9DEDC"/>
+        <color name="on-error-container" value="#410E0B"/>
+        <color name="visited-link" value="#005048"/>
+    </palette>
+
+    <palette scheme="teal-dark">
+        <color name="primary" value="#52DBC8"/>
+        <color name="on-primary" value="#003731"/>
+        <color name="primary-container" value="#005048"/>
+        <color name="on-primary-container" value="#A6F2E7"/>
+        <color name="primary-hover" value="#005048"/>
+        <color name="primary-pressed" value="#266F65"/>
+        <color name="primary-action-hover" value="#3FBAA8"/>
+        <color name="primary-action-pressed" value="#2E9E8E"/>
+        <color name="surface" value="#141218"/>
+        <color name="surface-container" value="#211F26"/>
+        <color name="surface-container-low" value="#1D1B20"/>
+        <color name="on-surface" value="#E6E0E9"/>
+        <color name="on-surface-variant" value="#CAC4D0"/>
+        <color name="outline" value="#938F99"/>
+        <color name="outline-variant" value="#49454F"/>
+        <color name="disabled-container" value="#36343B"/>
+        <color name="inverse-surface" value="#E6E0E9"/>
+        <color name="inverse-on-surface" value="#322F35"/>
+        <color name="warning-container" value="#5F4100"/>
+        <color name="on-warning-container" value="#FFDDB3"/>
+        <color name="error-container" value="#8C1D18"/>
+        <color name="on-error-container" value="#F9DEDC"/>
+        <color name="visited-link" value="#52DBC8"/>
+    </palette>
+
+    <palette scheme="green">
+        <color name="primary" value="#386A20"/>
+        <color name="on-primary" value="#FFFFFF"/>
+        <color name="primary-container" value="#B8F397"/>
+        <color name="on-primary-container" value="#002106"/>
+        <color name="primary-hover" value="#9DD67D"/>
+        <color name="primary-pressed" value="#B0E890"/>
+        <color name="primary-action-hover" value="#4A7D30"/>
+        <color name="primary-action-pressed" value="#275107"/>
+        <color name="surface" value="#FFFBFE"/>
+        <color name="surface-container" value="#F3EDF7"/>
+        <color name="surface-container-low" value="#F7F2FA"/>
+        <color name="on-surface" value="#1D1B20"/>
+        <color name="on-surface-variant" value="#49454F"/>
+        <color name="outline" value="#79747E"/>
+        <color name="outline-variant" value="#CAC4D0"/>
+        <color name="disabled-container" value="#E6E0E9"/>
+        <color name="inverse-surface" value="#313033"/>
+        <color name="inverse-on-surface" value="#F4EFF4"/>
+        <color name="warning-container" value="#FFDDB3"/>
+        <color name="on-warning-container" value="#2A1800"/>
+        <color name="error-container" value="#F9DEDC"/>
+        <color name="on-error-container" value="#410E0B"/>
+        <color name="visited-link" value="#1F5200"/>
+    </palette>
+
+    <palette scheme="green-dark">
+        <color name="primary" value="#9DD67D"/>
+        <color name="on-primary" value="#0A3900"/>
+        <color name="primary-container" value="#1F5200"/>
+        <color name="on-primary-container" value="#B8F397"/>
+        <color name="primary-hover" value="#1F5200"/>
+        <color name="primary-pressed" value="#3D6B26"/>
+        <color name="primary-action-hover" value="#83BA65"/>
+        <color name="primary-action-pressed" value="#6A9F4D"/>
+        <color name="surface" value="#141218"/>
+        <color name="surface-container" value="#211F26"/>
+        <color name="surface-container-low" value="#1D1B20"/>
+        <color name="on-surface" value="#E6E0E9"/>
+        <color name="on-surface-variant" value="#CAC4D0"/>
+        <color name="outline" value="#938F99"/>
+        <color name="outline-variant" value="#49454F"/>
+        <color name="disabled-container" value="#36343B"/>
+        <color name="inverse-surface" value="#E6E0E9"/>
+        <color name="inverse-on-surface" value="#322F35"/>
+        <color name="warning-container" value="#5F4100"/>
+        <color name="on-warning-container" value="#FFDDB3"/>
+        <color name="error-container" value="#8C1D18"/>
+        <color name="on-error-container" value="#F9DEDC"/>
+        <color name="visited-link" value="#9DD67D"/>
+    </palette>
+
+    <palette scheme="amber">
+        <color name="primary" value="#7A5900"/>
+        <color name="on-primary" value="#FFFFFF"/>
+        <color name="primary-container" value="#FFDEA6"/>
+        <color name="on-primary-container" value="#271900"/>
+        <color name="primary-hover" value="#F5BD48"/>
+        <color name="primary-pressed" value="#FBD37E"/>
+        <color name="primary-action-hover" value="#8F6B14"/>
+        <color name="primary-action-pressed" value="#5D4200"/>
+        <color name="surface" value="#FFFBFE"/>
+        <color name="surface-container" value="#F3EDF7"/>
+        <color name="surface-container-low" value="#F7F2FA"/>
+        <color name="on-surface" value="#1D1B20"/>
+        <color name="on-surface-variant" value="#49454F"/>
+        <color name="outline" value="#79747E"/>
+        <color name="outline-variant" value="#CAC4D0"/>
+        <color name="disabled-container" value="#E6E0E9"/>
+        <color name="inverse-surface" value="#313033"/>
+        <color name="inverse-on-surface" value="#F4EFF4"/>
+        <color name="warning-container" value="#FFDDB3"/>
+        <color name="on-warning-container" value="#2A1800"/>
+        <color name="error-container" value="#F9DEDC"/>
+        <color name="on-error-container" value="#410E0B"/>
+        <color name="visited-link" value="#5D4200"/>
+    </palette>
+
+    <palette scheme="amber-dark">
+        <color name="primary" value="#F5BD48"/>
+        <color name="on-primary" value="#412D00"/>
+        <color name="primary-container" value="#5D4200"/>
+        <color name="on-primary-container" value="#FFDEA6"/>
+        <color name="primary-hover" value="#5D4200"/>
+        <color name="primary-pressed" value="#7A5F1F"/>
+        <color name="primary-action-hover" value="#D9A733"/>
+        <color name="primary-action-pressed" value="#BE9020"/>
+        <color name="surface" value="#141218"/>
+        <color name="surface-container" value="#211F26"/>
+        <color name="surface-container-low" value="#1D1B20"/>
+        <color name="on-surface" value="#E6E0E9"/>
+        <color name="on-surface-variant" value="#CAC4D0"/>
+        <color name="outline" value="#938F99"/>
+        <color name="outline-variant" value="#49454F"/>
+        <color name="disabled-container" value="#36343B"/>
+        <color name="inverse-surface" value="#E6E0E9"/>
+        <color name="inverse-on-surface" value="#322F35"/>
+        <color name="warning-container" value="#5F4100"/>
+        <color name="on-warning-container" value="#FFDDB3"/>
+        <color name="error-container" value="#8C1D18"/>
+        <color name="on-error-container" value="#F9DEDC"/>
+        <color name="visited-link" value="#F5BD48"/>
+    </palette>
+
+    <palette scheme="rose">
+        <color name="primary" value="#984061"/>
+        <color name="on-primary" value="#FFFFFF"/>
+        <color name="primary-container" value="#FFD9E2"/>
+        <color name="on-primary-container" value="#3E001D"/>
+        <color name="primary-hover" value="#FFB0C8"/>
+        <color name="primary-pressed" value="#FFC5D5"/>
+        <color name="primary-action-hover" value="#B15676"/>
+        <color name="primary-action-pressed" value="#7B2949"/>
+        <color name="surface" value="#FFFBFE"/>
+        <color name="surface-container" value="#F3EDF7"/>
+        <color name="surface-container-low" value="#F7F2FA"/>
+        <color name="on-surface" value="#1D1B20"/>
+        <color name="on-surface-variant" value="#49454F"/>
+        <color name="outline" value="#79747E"/>
+        <color name="outline-variant" value="#CAC4D0"/>
+        <color name="disabled-container" value="#E6E0E9"/>
+        <color name="inverse-surface" value="#313033"/>
+        <color name="inverse-on-surface" value="#F4EFF4"/>
+        <color name="warning-container" value="#FFDDB3"/>
+        <color name="on-warning-container" value="#2A1800"/>
+        <color name="error-container" value="#F9DEDC"/>
+        <color name="on-error-container" value="#410E0B"/>
+        <color name="visited-link" value="#7B2949"/>
+    </palette>
+
+    <palette scheme="rose-dark">
+        <color name="primary" value="#FFB0C8"/>
+        <color name="on-primary" value="#5E1133"/>
+        <color name="primary-container" value="#7B2949"/>
+        <color name="on-primary-container" value="#FFD9E2"/>
+        <color name="primary-hover" value="#7B2949"/>
+        <color name="primary-pressed" value="#8A3A56"/>
+        <color name="primary-action-hover" value="#E89AB2"/>
+        <color name="primary-action-pressed" value="#D5849E"/>
+        <color name="surface" value="#141218"/>
+        <color name="surface-container" value="#211F26"/>
+        <color name="surface-container-low" value="#1D1B20"/>
+        <color name="on-surface" value="#E6E0E9"/>
+        <color name="on-surface-variant" value="#CAC4D0"/>
+        <color name="outline" value="#938F99"/>
+        <color name="outline-variant" value="#49454F"/>
+        <color name="disabled-container" value="#36343B"/>
+        <color name="inverse-surface" value="#E6E0E9"/>
+        <color name="inverse-on-surface" value="#322F35"/>
+        <color name="warning-container" value="#5F4100"/>
+        <color name="on-warning-container" value="#FFDDB3"/>
+        <color name="error-container" value="#8C1D18"/>
+        <color name="on-error-container" value="#F9DEDC"/>
+        <color name="visited-link" value="#FFB0C8"/>
+    </palette>
+
+    <!--
       Semantic corner roles keep repeated component geometry consistent. The
       reader resolves each role to both native rectangle radius axes before
       the existing VCL drawing action reaches the renderer.
@@ -238,6 +508,9 @@
             </state>
             <state enabled="true" pressed="true" extra="flat">
                 <rect stroke="@primary-hover" fill="@primary-hover" stroke-width="@stroke-none" radius="@corner-pill"/>
+            </state>
+            <state enabled="true" selected="true" extra="flat">
+                <rect stroke="@primary-container" fill="@primary-container" stroke-width="@stroke-none" radius="@corner-pill"/>
             </state>
             <state enabled="false" extra="flat"/>
         </part>

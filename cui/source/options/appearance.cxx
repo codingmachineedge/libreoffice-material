@@ -125,11 +125,19 @@ SvxAppearanceTabPage::SvxAppearanceTabPage(weld::Container* pPage,
     , m_xDialogFrame(m_xBuilder->weld_widget(u"dialogs"_ustr))
     , m_xVerticalToolbars(m_xBuilder->weld_radio_button(u"rbVertical"_ustr))
     , m_xHorizontalToolbars(m_xBuilder->weld_radio_button(u"rbHorizontal"_ustr))
+    , m_xMaterialAccent(m_xBuilder->weld_combo_box(u"materialaccent"_ustr))
+    , m_xDensityComfortable(m_xBuilder->weld_radio_button(u"densitycomfortable"_ustr))
+    , m_xDensityCompact(m_xBuilder->weld_radio_button(u"densitycompact"_ustr))
+    , m_xMaterialReducedMotion(m_xBuilder->weld_check_button(u"materialreducedmotion"_ustr))
+    , nInitialMaterialAccent(0)
+    , nInitialMaterialDensity(0)
+    , bInitialMaterialReducedMotion(false)
 {
     InitThemes();
     InitCustomization();
     InitIcons();
     InitDialogs();
+    InitMaterial();
 }
 
 void SvxAppearanceTabPage::LoadSchemeList()
@@ -186,7 +194,8 @@ OUString SvxAppearanceTabPage::GetAllStrings()
 {
     OUStringBuffer sAllStrings;
     OUString labels[] = { u"libreofficethemeslb"_ustr, u"optionslb"_ustr, u"appearancelb"_ustr,
-                          u"itemslb"_ustr, u"colorlb"_ustr };
+                          u"itemslb"_ustr,            u"colorlb"_ustr,    u"materialthemelb"_ustr,
+                          u"materialaccentlabel"_ustr, u"materialdensitylabel"_ustr };
 
     for (const auto& label : labels)
     {
@@ -202,6 +211,10 @@ bool SvxAppearanceTabPage::FillItemSet(SfxItemSet* /* rSet */)
     // commit ColorConfig
     if (pColorConfig->IsModified())
         pColorConfig->Commit();
+
+    // commit the Material appearance settings; Stage 1 applies them through the
+    // existing restart path (no live token-cache re-key -- that is Stage 3).
+    CommitMaterialAppearance();
 
     return true;
 }
@@ -296,6 +309,8 @@ void SvxAppearanceTabPage::Reset(const SfxItemSet* /* rSet */)
     m_xIconsDropDown->set_active(nInitialIconThemeSel);
     m_xIconsDropDown->set_sensitive(bEnable);
     m_xIconsDropDown->save_value();
+
+    ResetMaterial();
 }
 
 IMPL_LINK_NOARG(SvxAppearanceTabPage, ShowInDocumentHdl, weld::Toggleable&, void)
@@ -587,6 +602,89 @@ IMPL_LINK_NOARG(SvxAppearanceTabPage, OnTabPosChange, weld::Toggleable&, void)
     bool bSet = m_xVerticalToolbars->get_active();
     officecfg::Office::Common::Misc::UseVerticalNotebookbar::set(bSet, xChanges);
     xChanges->commit();
+}
+
+void SvxAppearanceTabPage::InitMaterial()
+{
+    // Stage 1 stores the Material appearance selection and applies it through the
+    // existing restart path; there is no live handler because live token-cache
+    // re-keying (accent recolor without restart) is Stage 3. Initial values and the
+    // saved baseline are set in ResetMaterial(), and the change is committed in
+    // CommitMaterialAppearance() from FillItemSet.
+    ResetMaterial();
+}
+
+void SvxAppearanceTabPage::ResetMaterial()
+{
+    const sal_Int16 nAccent = officecfg::Office::Common::Appearance::MaterialAccent::get();
+    nInitialMaterialAccent = nAccent;
+    m_xMaterialAccent->set_active(nAccent);
+    m_xMaterialAccent->set_sensitive(
+        !officecfg::Office::Common::Appearance::MaterialAccent::isReadOnly());
+    m_xMaterialAccent->save_value();
+
+    const sal_Int16 nDensity = officecfg::Office::Common::Appearance::MaterialDensity::get();
+    nInitialMaterialDensity = nDensity;
+    if (nDensity == 1)
+        m_xDensityCompact->set_active(true);
+    else
+        m_xDensityComfortable->set_active(true);
+    const bool bDensityReadOnly
+        = officecfg::Office::Common::Appearance::MaterialDensity::isReadOnly();
+    m_xDensityComfortable->set_sensitive(!bDensityReadOnly);
+    m_xDensityCompact->set_sensitive(!bDensityReadOnly);
+    m_xDensityComfortable->save_state();
+    m_xDensityCompact->save_state();
+
+    const bool bReduced = officecfg::Office::Common::Appearance::MaterialReducedMotion::get();
+    bInitialMaterialReducedMotion = bReduced;
+    m_xMaterialReducedMotion->set_active(bReduced);
+    m_xMaterialReducedMotion->set_sensitive(
+        !officecfg::Office::Common::Appearance::MaterialReducedMotion::isReadOnly());
+    m_xMaterialReducedMotion->save_state();
+}
+
+void SvxAppearanceTabPage::CommitMaterialAppearance()
+{
+    std::shared_ptr<comphelper::ConfigurationChanges> xChanges(
+        comphelper::ConfigurationChanges::create());
+    bool bChanged = false;
+
+    const sal_Int32 nAccent = m_xMaterialAccent->get_active();
+    if (nAccent >= 0 && nAccent != nInitialMaterialAccent
+        && !officecfg::Office::Common::Appearance::MaterialAccent::isReadOnly())
+    {
+        officecfg::Office::Common::Appearance::MaterialAccent::set(static_cast<sal_Int16>(nAccent),
+                                                                   xChanges);
+        nInitialMaterialAccent = nAccent;
+        bChanged = true;
+    }
+
+    const sal_Int16 nDensity = m_xDensityCompact->get_active() ? sal_Int16(1) : sal_Int16(0);
+    if (nDensity != nInitialMaterialDensity
+        && !officecfg::Office::Common::Appearance::MaterialDensity::isReadOnly())
+    {
+        officecfg::Office::Common::Appearance::MaterialDensity::set(nDensity, xChanges);
+        nInitialMaterialDensity = nDensity;
+        bChanged = true;
+    }
+
+    const bool bReduced = m_xMaterialReducedMotion->get_active();
+    if (bReduced != bInitialMaterialReducedMotion
+        && !officecfg::Office::Common::Appearance::MaterialReducedMotion::isReadOnly())
+    {
+        officecfg::Office::Common::Appearance::MaterialReducedMotion::set(bReduced, xChanges);
+        bInitialMaterialReducedMotion = bReduced;
+        bChanged = true;
+    }
+
+    xChanges->commit();
+
+    // Density and reduced-motion are stored only in this stage (honest-inert until the
+    // metric / motion primitives are wired in Stage 3); the accent takes effect after a
+    // restart. Offer the existing restart dialog whenever any Material setting changed.
+    if (bChanged)
+        m_bRestartRequired = true;
 }
 
 IMPL_LINK_NOARG(SvxAppearanceTabPage, OnIconThemeChange, weld::ComboBox&, void)

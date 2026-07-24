@@ -25,6 +25,57 @@ TOKEN_REFERENCE = re.compile(r"^@([a-z][a-z0-9-]*)$")
 RADIUS_VALUE = re.compile(r"^(?:0|[1-9][0-9]*)$")
 METRIC_VALUE = re.compile(r"^(?:0|[1-9][0-9]*)$")
 REQUIRED_SCHEMES = {"light", "dark"}
+# The bounded accent scheme set (Stage-1 appearance foundation). Each recolors
+# only the primary* family + visited-link over the default light/dark neutrals;
+# the composed active-scheme key is "<accent>" / "<accent>-dark" (Violet is the
+# unnamed default "light"/"dark", never listed here so it can never be replaced).
+ACCENT_SCHEMES = {
+    "blue", "blue-dark", "teal", "teal-dark", "green", "green-dark",
+    "amber", "amber-dark", "rose", "rose-dark",
+}
+ALLOWED_SCHEMES = REQUIRED_SCHEMES | ACCENT_SCHEMES
+# Roles an accent scheme is permitted to recolor. Every other role must stay
+# byte-identical to the accent's base neutrals (light for "<accent>", dark for
+# "<accent>-dark").
+PRIMARY_FAMILY_ROLES = {
+    "primary", "on-primary", "primary-container", "on-primary-container",
+    "primary-hover", "primary-pressed", "primary-action-hover",
+    "primary-action-pressed", "visited-link",
+}
+NEUTRAL_ROLES = {
+    "surface", "surface-container", "surface-container-low", "on-surface",
+    "on-surface-variant", "outline", "outline-variant", "disabled-container",
+    "inverse-surface", "inverse-on-surface", "warning-container",
+    "on-warning-container", "error-container", "on-error-container",
+}
+# The unnamed default (light) and scheme="dark" palettes are FROZEN: adding
+# accent schemes must never drift them, so genuine captures stay byte-stable.
+EXPECTED_DEFAULT_LIGHT = {
+    "primary": "#6750A4", "on-primary": "#FFFFFF", "primary-container": "#E8DEF8",
+    "on-primary-container": "#1D192B", "primary-hover": "#D0BCFF",
+    "primary-pressed": "#CCC2DC", "primary-action-hover": "#7965AF",
+    "primary-action-pressed": "#5B3F91", "surface": "#FFFBFE",
+    "surface-container": "#F3EDF7", "surface-container-low": "#F7F2FA",
+    "on-surface": "#1D1B20", "on-surface-variant": "#49454F", "outline": "#79747E",
+    "outline-variant": "#CAC4D0", "disabled-container": "#E6E0E9",
+    "inverse-surface": "#313033", "inverse-on-surface": "#F4EFF4",
+    "warning-container": "#FFDDB3", "on-warning-container": "#2A1800",
+    "error-container": "#F9DEDC", "on-error-container": "#410E0B",
+    "visited-link": "#7D5260",
+}
+EXPECTED_DEFAULT_DARK = {
+    "primary": "#D0BCFF", "on-primary": "#381E72", "primary-container": "#4F378B",
+    "on-primary-container": "#EADDFF", "primary-hover": "#4F378B",
+    "primary-pressed": "#625B71", "primary-action-hover": "#C4AEFF",
+    "primary-action-pressed": "#B69DF8", "surface": "#141218",
+    "surface-container": "#211F26", "surface-container-low": "#1D1B20",
+    "on-surface": "#E6E0E9", "on-surface-variant": "#CAC4D0", "outline": "#938F99",
+    "outline-variant": "#49454F", "disabled-container": "#36343B",
+    "inverse-surface": "#E6E0E9", "inverse-on-surface": "#322F35",
+    "warning-container": "#5F4100", "on-warning-container": "#FFDDB3",
+    "error-container": "#8C1D18", "on-error-container": "#F9DEDC",
+    "visited-link": "#EFB8C8",
+}
 ALLOWED_TYPOGRAPHY_WEIGHTS = {"preserve", "normal", "medium", "semibold", "bold"}
 REQUIRED_TYPOGRAPHY = {
     "body": (100, "preserve"),
@@ -59,7 +110,7 @@ REQUIRED_METRICS = {
     "height-tab": 40,
 }
 REQUIRED_METRIC_USAGE = {
-    "stroke-none": 95,
+    "stroke-none": 96,
     "stroke-thin": 49,
     "stroke-standard": 155,
     "stroke-track": 8,
@@ -126,7 +177,7 @@ STROKE_METRICS = {
 }
 METRIC_PART_ATTRIBUTES = ("width", "height", "margin-width", "margin-height")
 METRIC_GEOMETRY_SHA256 = (
-    "dc16a577f59c30ce215aeebb3c930617477572ec31884feebe43585e65c60515"
+    "b14802df66934f83303c7da311fb8b421c5d58d119e418edb345dd68e20504fa"
 )
 NORMALIZED_COORDINATE_SHA256 = (
     "8345cd2865759bc8a73f9a7845af2b5d420ea4812c75bcdfe3ba038a13c402e8"
@@ -501,10 +552,10 @@ def read_palettes(
 
     if not palettes:
         fail("missing semantic <palette>")
-    missing_schemes = sorted(REQUIRED_SCHEMES - palettes.keys())
+    missing_schemes = sorted(ALLOWED_SCHEMES - palettes.keys())
     if missing_schemes:
         fail(f"missing palette schemes: {', '.join(missing_schemes)}")
-    unexpected_schemes = sorted(palettes.keys() - REQUIRED_SCHEMES)
+    unexpected_schemes = sorted(palettes.keys() - ALLOWED_SCHEMES)
     if unexpected_schemes:
         fail(f"unexpected palette schemes: {', '.join(unexpected_schemes)}")
 
@@ -535,6 +586,66 @@ def read_palettes(
                 )
 
     return palettes, palette_elements
+
+
+def validate_scheme_stability(
+    palettes: dict[str, dict[str, tuple[int, int, int]]]
+) -> None:
+    """The default (light) + scheme="dark" palettes are frozen byte-identical, and
+    every accent scheme recolors only the primary* family + visited-link, keeping
+    its base neutrals unchanged. This fails closed if the default drifts or an
+    accent silently retints a neutral role."""
+
+    for scheme_name, expected in (
+        ("light", EXPECTED_DEFAULT_LIGHT),
+        ("dark", EXPECTED_DEFAULT_DARK),
+    ):
+        tokens = palettes.get(scheme_name)
+        if tokens is None:
+            fail(f"{scheme_name} palette missing")
+        actual_names = set(tokens)
+        expected_names = set(expected)
+        if actual_names != expected_names:
+            extra = sorted(actual_names - expected_names)
+            missing = sorted(expected_names - actual_names)
+            details = []
+            if missing:
+                details.append(f"missing {', '.join(missing)}")
+            if extra:
+                details.append(f"unexpected {', '.join(extra)}")
+            fail(f"frozen {scheme_name} palette role set drifted: {'; '.join(details)}")
+        for role, hex_value in expected.items():
+            expected_rgb = parse_color(hex_value)
+            if tokens[role] != expected_rgb:
+                fail(
+                    f"frozen {scheme_name} palette role {role!r} must stay "
+                    f"{hex_value} (default scheme is byte-frozen so genuine "
+                    f"captures never drift), found {format_color(tokens[role])}"
+                )
+
+    for scheme_name, tokens in palettes.items():
+        if scheme_name not in ACCENT_SCHEMES:
+            continue
+        base_name = "dark" if scheme_name.endswith("-dark") else "light"
+        base_tokens = palettes[base_name]
+        recolored = {
+            role
+            for role in tokens
+            if base_tokens.get(role) != tokens.get(role)
+        }
+        illegal = sorted(recolored - PRIMARY_FAMILY_ROLES)
+        if illegal:
+            fail(
+                f"accent scheme {scheme_name!r} recolors non-primary role(s) "
+                f"{', '.join(illegal)}: only the primary* family + visited-link "
+                f"may differ from the {base_name} neutrals"
+            )
+        for role in NEUTRAL_ROLES:
+            if tokens.get(role) != base_tokens.get(role):
+                fail(
+                    f"accent scheme {scheme_name!r} neutral role {role!r} must be "
+                    f"byte-identical to the {base_name} palette"
+                )
 
 
 def read_typography(root: ET.Element) -> dict[str, tuple[int, str]]:
@@ -1380,6 +1491,11 @@ def validate(path: Path) -> tuple[int, int, int, int, int, int, int, int]:
                 f"{scheme} outline/disabled-container contrast is only "
                 f"{disabled_ratio:.2f}:1"
             )
+
+    # Runs after the per-scheme contrast pass so a default-neutral edit still
+    # surfaces its concrete contrast/feedback failure first; this then fails
+    # closed on any surviving default drift or illegal accent neutral retint.
+    validate_scheme_stability(palettes)
 
     part_count = sum(
         len(control.findall("part"))

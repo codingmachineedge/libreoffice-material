@@ -29,6 +29,9 @@ The chain, end to end:
 * the three officecfg properties keep ``xs:short`` type and default value ``0``
   ("System");
 * each ``IsAnimated*Allowed`` function has at least one real (non-comment) consumer;
+* the Stage-1 stored ``MaterialReducedMotion`` boolean (Appearance group, default
+  false) is pinned as a stored-value-only, honest-inert key -- it has no live consumer
+  yet, so this is not the SRC gate, only a regression guard on the stored key;
 * and the Material theme definition still carries **zero** motion/duration/easing token
   elements -- the trip-wire that keeps this row's Material-motion (SRC) gate open.
 
@@ -83,6 +86,9 @@ def _referenced_sources(registry: Mapping[str, Any]) -> set[str]:
     schema = registry.get("schema")
     if isinstance(schema, dict) and isinstance(schema.get("source"), str):
         paths.add(schema["source"])
+    material_flag = registry.get("material_flag")
+    if isinstance(material_flag, dict) and isinstance(material_flag.get("source"), str):
+        paths.add(material_flag["source"])
     for section in ("checkpoints", "contiguous", "repeated", "consumers"):
         for entry in registry.get(section, []) or []:
             if isinstance(entry, dict) and isinstance(entry.get("source"), str):
@@ -244,6 +250,47 @@ def _validate_schema(
             )
 
 
+def _validate_material_flag(
+    registry: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+) -> None:
+    # The Stage-1 stored MaterialReducedMotion flag: pinned as a stored-value-only key
+    # (honest-inert) so it cannot silently gain a live effect without revisiting this
+    # contract. It does NOT satisfy the SRC gate -- the definition.xml trip-wire does.
+    flag = registry.get("material_flag")
+    if not isinstance(flag, dict):
+        errors.append("registry:material_flag:object required")
+        return
+    source_path = flag.get("source")
+    source = contents.get(source_path) if isinstance(source_path, str) else None
+    if source is None:
+        errors.append(f"material_flag:source {source_path!r} missing")
+        return
+    prop = flag.get("prop")
+    if not isinstance(prop, str):
+        errors.append("material_flag:prop must be a string")
+        return
+    match = re.search(
+        r'<prop\s+oor:name="' + re.escape(prop) + r'"(.*?)</prop>', source, flags=re.DOTALL
+    )
+    if not match:
+        errors.append(f"material_flag:prop {prop!r} not found in {source_path}")
+        return
+    block = match.group(0)
+    prop_type = flag.get("type")
+    default = flag.get("default")
+    if isinstance(prop_type, str) and f'oor:type="{prop_type}"' not in block:
+        errors.append(f"material_flag:prop {prop!r} is not oor:type={prop_type!r}")
+    if isinstance(default, str) and f"<value>{default}</value>" not in block:
+        errors.append(
+            f"material_flag:prop {prop!r} default drifted (expected <value>{default}</value>)"
+        )
+    if flag.get("stage") != "stored-value-only":
+        errors.append(
+            "material_flag:stage must be 'stored-value-only' (honest-inert until a native "
+            "Material motion primitive lands)"
+        )
+
+
 def _validate_consumers(
     registry: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
@@ -304,6 +351,7 @@ def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list
     _validate_contiguous(registry, contents, errors)
     _validate_repeated(registry, contents, errors)
     _validate_schema(registry, contents, errors)
+    _validate_material_flag(registry, contents, errors)
     _validate_consumers(registry, contents, errors)
     _validate_trip_wire(registry, contents, errors)
     return errors
@@ -333,8 +381,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(
         "Reduced-motion signal chain contract passed: the MiscSettings declarations, "
         "the officecfg-gated System-case negation, the Windows SPI_GETCLIENTAREAANIMATION "
-        "backend, the xs:short/default-0 schema, live consumers, and the zero-motion-token "
-        "trip-wire are intact."
+        "backend, the xs:short/default-0 schema, the stored-value-only MaterialReducedMotion "
+        "flag, live consumers, and the zero-motion-token trip-wire are intact."
     )
     return 0
 

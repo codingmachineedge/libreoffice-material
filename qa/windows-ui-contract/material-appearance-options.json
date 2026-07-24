@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "contract": "material-appearance-options",
+  "platform": "windows",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "apply_stage": "restart",
+  "schema_source": "officecfg/registry/schema/org/openoffice/Office/Common.xcs",
+  "schema_group": "Appearance",
+  "ui_source": "cui/uiconfig/ui/appearance.ui",
+  "controller_source": "cui/source/options/appearance.cxx",
+  "controller_header": "cui/source/options/appearance.hxx",
+  "frame_id": "materialtheme",
+  "frame_label_id": "materialthemelb",
+  "notes": "Cluster E (Stage 1) appearance-options triad. Pins the Material appearance controls added over the existing Options > Appearance page: the officecfg Appearance-group schema (MaterialAccent/MaterialDensity/MaterialReducedMotion + optional MaterialSurfaceStyle), the 'materialtheme' GtkFrame widget ids in appearance.ui, the weld bindings + FillItemSet officecfg commit in appearance.cxx, and the accent scheme-string composition. Apply is the EXISTING restart path (executeRestartDialog / RESTART_REASON_THEME_CHANGE); live token-cache re-key (accent recolor without restart) is Stage 3 and must be ABSENT here (forbidden_live_markers). Density and reduced motion are stored-value-only and honest-inert this stage (metric/motion plumbing is Stage 3). Source evidence only: runtime_verified is false.",
+  "header_markers": [
+    "m_xMaterialAccent",
+    "m_xDensityComfortable",
+    "m_xDensityCompact",
+    "m_xMaterialReducedMotion",
+    "CommitMaterialAppearance"
+  ],
+  "properties": [
+    {
+      "name": "MaterialAccent",
+      "type": "xs:short",
+      "default": "0",
+      "enum_values": ["0", "1", "2", "3", "4", "5"],
+      "schema_only": false,
+      "ui_ids": ["materialaccent"],
+      "ui_class": "GtkComboBoxText",
+      "weld_bindings": ["weld_combo_box(u\"materialaccent\""],
+      "officecfg_accessor": "officecfg::Office::Common::Appearance::MaterialAccent",
+      "committed": true,
+      "stage1_inert": false
+    },
+    {
+      "name": "MaterialDensity",
+      "type": "xs:short",
+      "default": "0",
+      "enum_values": ["0", "1"],
+      "schema_only": false,
+      "ui_ids": ["densitycomfortable", "densitycompact"],
+      "ui_class": "GtkRadioButton",
+      "weld_bindings": [
+        "weld_radio_button(u\"densitycomfortable\"",
+        "weld_radio_button(u\"densitycompact\""
+      ],
+      "officecfg_accessor": "officecfg::Office::Common::Appearance::MaterialDensity",
+      "committed": true,
+      "stage1_inert": true
+    },
+    {
+      "name": "MaterialReducedMotion",
+      "type": "xs:boolean",
+      "default": "false",
+      "schema_only": false,
+      "ui_ids": ["materialreducedmotion"],
+      "ui_class": "GtkCheckButton",
+      "weld_bindings": ["weld_check_button(u\"materialreducedmotion\""],
+      "officecfg_accessor": "officecfg::Office::Common::Appearance::MaterialReducedMotion",
+      "committed": true,
+      "stage1_inert": true
+    },
+    {
+      "name": "MaterialSurfaceStyle",
+      "type": "xs:short",
+      "default": "0",
+      "enum_values": ["0", "1"],
+      "schema_only": true,
+      "stage1_inert": true
+    }
+  ],
+  "scheme_string": {
+    "note": "D's computeMaterialScheme(accent,bDark) composes the accent key as '<accent>' in light and '<accent>-dark' in dark; Violet(0) resolves to the unnamed default / 'dark' scheme so the shipped default stays byte-identical. The accent_order MUST match the MaterialAccent enum order AND the appearance.ui combo items so the three surfaces cannot silently diverge.",
+    "accent_property": "MaterialAccent",
+    "accent_key_format": "<accent>[-dark]",
+    "default_accent_value": "0",
+    "default_accent_name": "Violet",
+    "accent_order": ["Violet", "Blue", "Teal", "Green", "Amber", "Rose"],
+    "ui_items_id": "materialaccent"
+  },
+  "apply": {
+    "note": "Stage 1 applies Material appearance through the existing restart dialog. Live token-cache re-key (Stage 3) must be ABSENT from the cui page.",
+    "controller_markers": [
+      "bool SvxAppearanceTabPage::FillItemSet",
+      "CommitMaterialAppearance",
+      "executeRestartDialog",
+      "RESTART_REASON_THEME_CHANGE",
+      "m_bRestartRequired = true"
+    ],
+    "forbidden_live_markers": [
+      "computeMaterialScheme",
+      "spLightTokens",
+      "spDarkTokens"
+    ]
+  }
+}

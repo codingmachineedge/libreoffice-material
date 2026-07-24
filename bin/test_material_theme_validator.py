@@ -49,6 +49,27 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         )
         return self.definition.replace(old, new, 1)
 
+    def mutate_default(self, scheme: str, old: str, new: str) -> str:
+        """Replace ``old`` with ``new`` inside only the default light or dark
+        palette block. Accent schemes copy the default neutrals byte-identical,
+        so a neutral <color> line now appears once per light/dark-family scheme;
+        this keeps the mutation scoped to the frozen default it targets."""
+
+        if scheme == "light":
+            start = self.definition.index("    <palette>")
+        elif scheme == "dark":
+            start = self.definition.index('    <palette scheme="dark">')
+        else:
+            raise AssertionError(f"unknown default scheme {scheme!r}")
+        end = self.definition.index("    </palette>", start) + len("    </palette>")
+        block = self.definition[start:end]
+        self.assertEqual(
+            block.count(old),
+            1,
+            f"default {scheme} palette no longer has one copy of {old!r}",
+        )
+        return self.definition[:start] + block.replace(old, new, 1) + self.definition[end:]
+
     def assert_definition_fails(self, definition: str, message: str) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "definition.xml"
@@ -71,7 +92,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
 
     def test_canonical_theme_and_native_sources_pass(self) -> None:
         self.assertEqual(
-            VALIDATOR.validate(DEFINITION_PATH), (2, 23, 3, 8, 15, 72, 79, 205)
+            VALIDATOR.validate(DEFINITION_PATH), (12, 23, 3, 8, 15, 72, 79, 206)
         )
         VALIDATOR.validate_native_typography_source(
             (RENDERER_PATH, TYPOGRAPHY_SOURCE_PATH)
@@ -450,8 +471,8 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         rects = list(root.iter("rect"))
         rounded = [element for element in rects if "radius" in element.attrib]
         square = [element for element in rects if "radius" not in element.attrib]
-        self.assertEqual(len(rects), 170)
-        self.assertEqual(len(rounded), 159)
+        self.assertEqual(len(rects), 171)
+        self.assertEqual(len(rounded), 160)
         self.assertEqual(len(square), 11)
         self.assertFalse(
             any("rx" in element.attrib or "ry" in element.attrib for element in root.iter())
@@ -467,7 +488,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                     "corner-control": 26,
                     "corner-container": 53,
                     "corner-toolbar": 9,
-                    "corner-pill": 19,
+                    "corner-pill": 20,
                 }
             ),
         )
@@ -478,7 +499,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 205)
+            self.validate_definition(moved), (12, 23, 3, 8, 15, 72, 79, 206)
         )
 
     def test_metric_structure_is_strict(self) -> None:
@@ -855,7 +876,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         metrics = VALIDATOR.read_metrics(root)
         references, digest = VALIDATOR.validate_metric_usage(root, metrics)
         self.assertEqual(references, Counter(VALIDATOR.REQUIRED_METRIC_USAGE))
-        self.assertEqual(sum(references.values()), 346)
+        self.assertEqual(sum(references.values()), 347)
         self.assertEqual(digest, VALIDATOR.METRIC_GEOMETRY_SHA256)
         self.assertFalse(
             any(
@@ -872,7 +893,7 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         moved = self.definition[:start] + self.definition[end:]
         moved = moved.replace("</widgets>", f"{section}\n\n</widgets>", 1)
         self.assertEqual(
-            self.validate_definition(moved), (2, 23, 3, 8, 15, 72, 79, 205)
+            self.validate_definition(moved), (12, 23, 3, 8, 15, 72, 79, 206)
         )
 
         swapped = self.definition.replace(
@@ -992,8 +1013,10 @@ class MaterialThemeValidatorTest(unittest.TestCase):
         for (scheme, name), color in expected.items():
             with self.subTest(scheme=scheme, token=name):
                 line = f'        <color name="{name}" value="{color}"/>'
-                definition = self.replace_once(
-                    line, f'        <color name="{name}" value="#000000"/>'
+                # Scope to the frozen default block: accent schemes copy the same
+                # neutral feedback values, so the raw line now recurs per scheme.
+                definition = self.mutate_default(
+                    scheme, line, f'        <color name="{name}" value="#000000"/>'
                 )
                 self.assert_definition_fails(
                     definition,
@@ -1001,18 +1024,25 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                     "found #000000",
                 )
 
+        # Removing warning-container from every scheme (default + accents) keeps
+        # token-name parity intact so the missing-feedback branch fires rather
+        # than a scheme token mismatch.
         light = '        <color name="warning-container" value="#FFDDB3"/>'
         dark = '        <color name="warning-container" value="#5F4100"/>'
-        definition = self.definition.replace(light, "", 1).replace(dark, "", 1)
+        definition = self.definition.replace(light, "").replace(dark, "")
         self.assert_definition_fails(
             definition,
             "light palette is missing required feedback token 'warning-container'",
         )
 
     def test_list_selection_warning_and_error_contrast_is_enforced(self) -> None:
+        # Neutral roles (on-surface / on-warning-container / on-error-container)
+        # recur once per light-family scheme, so scope those to the default light
+        # block; on-primary-container is primary-family and stays unique.
         cases = {
             "list": (
-                self.replace_once(
+                self.mutate_default(
+                    "light",
                     '        <color name="on-surface" value="#1D1B20"/>',
                     '        <color name="on-surface" value="#FFFBFE"/>',
                 ),
@@ -1030,7 +1060,8 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                 None,
             ),
             "warning": (
-                self.replace_once(
+                self.mutate_default(
+                    "light",
                     '        <color name="on-warning-container" value="#2A1800"/>',
                     '        <color name="on-warning-container" value="#FFDDB3"/>',
                 ),
@@ -1038,7 +1069,8 @@ class MaterialThemeValidatorTest(unittest.TestCase):
                 ("on-warning-container", "#FFDDB3"),
             ),
             "error": (
-                self.replace_once(
+                self.mutate_default(
+                    "light",
                     '        <color name="on-error-container" value="#410E0B"/>',
                     '        <color name="on-error-container" value="#F9DEDC"/>',
                 ),

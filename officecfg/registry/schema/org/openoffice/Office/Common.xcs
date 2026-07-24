@@ -4902,6 +4902,101 @@
         </info>
         <value>Tiled</value>
       </prop>
+      <prop oor:name="MaterialAccent" oor:type="xs:short" oor:nillable="false">
+        <info>
+          <desc>Selects the Material accent palette. The enumeration mirrors the
+          bounded accent scheme set in the Material theme definition; the accent
+          key is composed as "&lt;accent&gt;" in light and "&lt;accent&gt;-dark" in
+          dark, with Violet resolving to the unnamed default / "dark" scheme so the
+          shipped default stays byte-identical.</desc>
+          <label>Material accent color</label>
+        </info>
+        <constraints>
+          <enumeration oor:value="0">
+            <info>
+              <desc>Violet (default)</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="1">
+            <info>
+              <desc>Blue</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="2">
+            <info>
+              <desc>Teal</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="3">
+            <info>
+              <desc>Green</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="4">
+            <info>
+              <desc>Amber</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="5">
+            <info>
+              <desc>Rose</desc>
+            </info>
+          </enumeration>
+        </constraints>
+        <value>0</value>
+      </prop>
+      <prop oor:name="MaterialDensity" oor:type="xs:short" oor:nillable="false">
+        <info>
+          <desc>Selects the Material control density. Stored only in this stage:
+          the compact/comfortable metric plumbing is target-only, so the value is
+          honest-inert until the density metric mapping is wired.</desc>
+          <label>Material density</label>
+        </info>
+        <constraints>
+          <enumeration oor:value="0">
+            <info>
+              <desc>Comfortable (default)</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="1">
+            <info>
+              <desc>Compact</desc>
+            </info>
+          </enumeration>
+        </constraints>
+        <value>0</value>
+      </prop>
+      <prop oor:name="MaterialReducedMotion" oor:type="xs:boolean" oor:nillable="false">
+        <info>
+          <desc>Requests reduced Material motion. Stored only in this stage: no
+          native Material motion role consumes it yet, so it is honest-inert. Its
+          effective value is the OR of this flag with the platform reduced-motion
+          preference (MiscSettings::GetUseReducedAnimation()) once a native Material
+          motion primitive lands.</desc>
+          <label>Reduce Material motion</label>
+        </info>
+        <value>false</value>
+      </prop>
+      <prop oor:name="MaterialSurfaceStyle" oor:type="xs:short" oor:nillable="false">
+        <info>
+          <desc>Selects the Material surface tonal style. Stored only in this
+          stage; honest-inert until the surface-style mapping is wired.</desc>
+          <label>Material surface style</label>
+        </info>
+        <constraints>
+          <enumeration oor:value="0">
+            <info>
+              <desc>Tonal (default)</desc>
+            </info>
+          </enumeration>
+          <enumeration oor:value="1">
+            <info>
+              <desc>Neutral</desc>
+            </info>
+          </enumeration>
+        </constraints>
+        <value>0</value>
+      </prop>
     </group>
     <group oor:name="Misc">
       <info>

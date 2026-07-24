@@ -14,6 +14,7 @@
 
 #include <config_folders.h>
 #include <rtl/bootstrap.hxx>
+#include <rtl/strbuf.hxx>
 #include <sal/log.hxx>
 
 #include <array>
@@ -182,6 +183,29 @@ MaterialTokens MaterialTokens::fromThemeDefinition(const OString& rColorScheme)
     rtl::Bootstrap::expandMacros(sResourcePath);
     OUString sDefinitionFile = sResourcePath + "definition.xml";
     return fromDefinitionFile(sDefinitionFile, sResourcePath, rColorScheme);
+}
+
+OString MaterialTokens::computeMaterialScheme(std::string_view rAccentBase, bool bDark)
+{
+    // Compose the definition.xml scheme key: "<accent>" light / "<accent>-dark"
+    // dark. Violet is the unnamed default, so an empty accent base yields "" for
+    // light and the DARK_SCHEME key for dark -- byte-identical to the pre-accent
+    // resolution path. This never mints a palette; an unknown accent simply
+    // composes a key that fromDefinitionFile()/read() falls back to default on.
+    OString aBase = toOString(rAccentBase);
+    if (!bDark)
+        return aBase;
+    if (aBase.isEmpty())
+        return toOString(DARK_SCHEME);
+    OStringBuffer aKey(aBase);
+    aKey.append("-");
+    aKey.append(toOString(DARK_SCHEME));
+    return aKey.makeStringAndClear();
+}
+
+MaterialTokens MaterialTokens::fromThemeDefinition(std::string_view rAccentBase, bool bDark)
+{
+    return fromThemeDefinition(computeMaterialScheme(rAccentBase, bDark));
 }
 
 std::optional<Color> MaterialTokens::findColor(std::string_view rRole) const

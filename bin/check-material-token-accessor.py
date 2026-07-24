@@ -170,10 +170,17 @@ def violations(contents: Mapping[str, str]) -> list[str]:
         errors.append("definition:palette:default (light) palette missing")
     if isinstance(palettes, dict) and "dark" not in palettes:
         errors.append("definition:palette:dark palette missing")
-    # Both schemes must carry an identical token-name set.
-    if isinstance(palettes, dict) and "" in palettes and "dark" in palettes:
-        if set(palettes[""]) != set(palettes["dark"]):
-            errors.append("definition:palette:light and dark token names differ")
+    # Every palette scheme (default light/dark + the bounded accent set) must
+    # carry the identical token-name set, so the single C++ vocabulary mirrors
+    # them all and MaterialTokens stays valid across every composed scheme.
+    if isinstance(palettes, dict) and "" in palettes:
+        light_names = set(palettes[""])
+        for scheme, names in palettes.items():
+            if set(names) != light_names:
+                label = scheme or "light"
+                errors.append(
+                    f"definition:palette:scheme {label!r} token names differ from light"
+                )
 
     header = contents[HEADER]
     source = contents[SOURCE]

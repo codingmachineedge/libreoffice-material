@@ -125,6 +125,33 @@ class ReducedMotionContractTest(unittest.TestCase):
         errors = self.failures(registry=registry)
         self.assertTrue(any("schema:prop" in e and "default drifted" in e for e in errors), errors)
 
+    # -- material stored flag ---------------------------------------------
+    def test_material_flag_prop_removed_fails(self) -> None:
+        source = self.contents[SCHEMA].replace(
+            '<prop oor:name="MaterialReducedMotion" oor:type="xs:boolean" oor:nillable="false">',
+            '<prop oor:name="Renamed" oor:type="xs:boolean" oor:nillable="false">',
+            1,
+        )
+        errors = self.failures(contents=self.with_content(SCHEMA, source))
+        self.assertTrue(
+            any("material_flag:prop 'MaterialReducedMotion' not found" in e for e in errors),
+            errors,
+        )
+
+    def test_material_flag_default_drift_fails(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["material_flag"]["default"] = "true"
+        errors = self.failures(registry=registry)
+        self.assertTrue(
+            any("material_flag:prop" in e and "default drifted" in e for e in errors), errors
+        )
+
+    def test_material_flag_stage_drift_fails(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["material_flag"]["stage"] = "live"
+        errors = self.failures(registry=registry)
+        self.assertTrue(any("material_flag:stage must be" in e for e in errors), errors)
+
     # -- consumers ---------------------------------------------------------
     def test_consumer_call_site_removed_fails(self) -> None:
         source = self.contents[VIEWSH].replace(

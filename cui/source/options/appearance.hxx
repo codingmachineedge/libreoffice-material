@@ -51,10 +51,21 @@ private:
     std::unique_ptr<weld::RadioButton> m_xVerticalToolbars;
     std::unique_ptr<weld::RadioButton> m_xHorizontalToolbars;
 
+    // Material appearance controls (Stage 1: stored and applied via the existing
+    // restart path; live token-cache re-keying is Stage 3).
+    std::unique_ptr<weld::ComboBox> m_xMaterialAccent;
+    std::unique_ptr<weld::RadioButton> m_xDensityComfortable;
+    std::unique_ptr<weld::RadioButton> m_xDensityCompact;
+    std::unique_ptr<weld::CheckButton> m_xMaterialReducedMotion;
+
     sal_Int32 nInitialToolbarIconSizeSel;
     sal_Int32 nInitialSidebarIconSizeSel;
     sal_Int32 nInitialNotebookbarIconSizeSel;
     sal_Int32 nInitialIconThemeSel;
+
+    sal_Int32 nInitialMaterialAccent;
+    sal_Int32 nInitialMaterialDensity;
+    bool bInitialMaterialReducedMotion;
 
     DECL_LINK(ColorEntryChgHdl, weld::ComboBox&, void);
     DECL_LINK(ColorValueChgHdl, ColorListBox&, void);
@@ -81,6 +92,9 @@ private:
     void InitCustomization();
     void InitIcons();
     void InitDialogs();
+    void InitMaterial();
+    void ResetMaterial();
+    void CommitMaterialAppearance();
 
     void LoadSchemeList();
 

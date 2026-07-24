@@ -626,5 +626,167 @@
         <property name="top-attach">3</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkFrame" id="materialtheme">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label-xalign">0</property>
+        <property name="shadow-type">none</property>
+        <child>
+          <!-- n-columns=2 n-rows=3 -->
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="margin-start">12</property>
+            <property name="margin-top">6</property>
+            <property name="row-spacing">3</property>
+            <property name="column-spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="materialaccentlabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes" context="appearance|materialaccentlabel">Accent color:</property>
+                <property name="xalign">0</property>
+                <accessibility>
+                  <relation type="label-for" target="materialaccent"/>
+                </accessibility>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBoxText" id="materialaccent">
+                <property name="width-request">200</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <items>
+                  <item translatable="yes" context="appearance|materialaccent">Violet</item>
+                  <item translatable="yes" context="appearance|materialaccent">Blue</item>
+                  <item translatable="yes" context="appearance|materialaccent">Teal</item>
+                  <item translatable="yes" context="appearance|materialaccent">Green</item>
+                  <item translatable="yes" context="appearance|materialaccent">Amber</item>
+                  <item translatable="yes" context="appearance|materialaccent">Rose</item>
+                </items>
+                <accessibility>
+                  <relation type="labelled-by" target="materialaccentlabel"/>
+                </accessibility>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="materialaccent-atkobject">
+                    <property name="AtkObject::accessible-description" translatable="yes" context="appearance|extended_tip|materialaccent">Select the Material accent color. Applied after a restart.</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="materialdensitylabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes" context="appearance|materialdensitylabel">Density:</property>
+                <property name="xalign">0</property>
+                <accessibility>
+                  <relation type="label-for" target="densitycomfortable"/>
+                  <relation type="label-for" target="densitycompact"/>
+                </accessibility>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkRadioButton" id="densitycomfortable">
+                    <property name="label" translatable="yes" context="appearance|densitycomfortable">Comfortable</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw-indicator">True</property>
+                    <accessibility>
+                      <relation type="labelled-by" target="materialdensitylabel"/>
+                    </accessibility>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRadioButton" id="densitycompact">
+                    <property name="label" translatable="yes" context="appearance|densitycompact">Compact</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">densitycomfortable</property>
+                    <accessibility>
+                      <relation type="labelled-by" target="materialdensitylabel"/>
+                    </accessibility>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="materialreducedmotion">
+                <property name="label" translatable="yes" context="appearance|materialreducedmotion">Reduce motion</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="draw-indicator">True</property>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="materialreducedmotion-atkobject">
+                    <property name="AtkObject::accessible-description" translatable="yes" context="appearance|extended_tip|materialreducedmotion">Request reduced Material motion. Combined with the system reduced-motion preference.</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+        <child type="label">
+          <object class="GtkLabel" id="materialthemelb">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes" context="appearance|materialthemelb">Material Theme</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="left-attach">0</property>
+        <property name="top-attach">4</property>
+      </packing>
+    </child>
   </object>
 </interface>

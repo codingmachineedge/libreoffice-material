@@ -10,9 +10,9 @@
 Each mutation weakens one guarantee -- a drifted native metric, a smuggled density
 attribute on the metrics section, a target-table row that no longer matches the doc or
 is no longer tagged 'specified', lost design honesty language, a calc-chrome carve-out
-that drifted from the master table, or a density selector appearing in the tree -- and
-asserts the checker fails closed. A green baseline proves the production tree currently
-passes.
+that drifted from the master table, the stored density selector disappearing from the
+tree, or a drifted selectable-stage marker -- and asserts the checker fails closed. A
+green baseline proves the production tree currently passes.
 """
 
 from __future__ import annotations
@@ -146,18 +146,36 @@ class DensityContractTest(unittest.TestCase):
         errors = self.failures(contents=self.with_content(READER_TEST, source))
         self.assertTrue(any("reader_test:" in e for e in errors), errors)
 
-    # -- selector-absence guard (git-grep is monkeypatched) ---------------
-    def test_selector_appearance_fails(self) -> None:
+    # -- selector-presence guard (git-grep is monkeypatched) --------------
+    def test_selector_missing_fails(self) -> None:
+        # git grep returns 1 (found nothing): the stored density selector regressed.
         original = VALIDATOR._git_grep
         try:
             VALIDATOR._git_grep = (  # type: ignore[assignment]
-                lambda repo, pattern, globs: (0, ["cui/uiconfig/ui/densitypage.ui"], "")
+                lambda repo, pattern, globs: (1, [], "")
             )
             errors: list[str] = []
-            VALIDATOR._validate_selector_absence(REPOSITORY, errors)
+            VALIDATOR._validate_selector_presence(self.registry, REPOSITORY, errors)
         finally:
             VALIDATOR._git_grep = original  # type: ignore[assignment]
-        self.assertTrue(any("selector_absence:" in e and "now exists" in e for e in errors), errors)
+        self.assertTrue(
+            any("selector_presence:" in e and "is missing" in e for e in errors), errors
+        )
+
+    def test_selector_wrong_file_fails(self) -> None:
+        # git grep finds a match, but not in the expected file.
+        original = VALIDATOR._git_grep
+        try:
+            VALIDATOR._git_grep = (  # type: ignore[assignment]
+                lambda repo, pattern, globs: (0, ["sc/uiconfig/scalc/ui/other.ui"], "")
+            )
+            errors: list[str] = []
+            VALIDATOR._validate_selector_presence(self.registry, REPOSITORY, errors)
+        finally:
+            VALIDATOR._git_grep = original  # type: ignore[assignment]
+        self.assertTrue(
+            any("selector_presence:" in e and "among the matches" in e for e in errors), errors
+        )
 
     def test_selector_git_unavailable_fails_closed(self) -> None:
         original = VALIDATOR._git_grep
@@ -166,10 +184,18 @@ class DensityContractTest(unittest.TestCase):
                 lambda repo, pattern, globs: (-1, [], "git not found")
             )
             errors: list[str] = []
-            VALIDATOR._validate_selector_absence(REPOSITORY, errors)
+            VALIDATOR._validate_selector_presence(self.registry, REPOSITORY, errors)
         finally:
             VALIDATOR._git_grep = original  # type: ignore[assignment]
-        self.assertTrue(any("selector_absence:could not run git grep" in e for e in errors), errors)
+        self.assertTrue(
+            any("selector_presence:could not run git grep" in e for e in errors), errors
+        )
+
+    def test_selectable_stage_drift_fails(self) -> None:
+        registry = copy.deepcopy(self.registry)
+        registry["selectable_stage"] = "live"
+        errors = self.failures(registry=registry)
+        self.assertTrue(any("registry:selectable_stage:" in e for e in errors), errors)
 
     # -- registry integrity ------------------------------------------------
     def test_runtime_verified_true_fails(self) -> None:

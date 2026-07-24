@@ -26,13 +26,16 @@ It asserts, source-only:
 * **Carve-out consistency** -- qa/windows-ui-contract/calc-chrome.json's existing
   per-surface density carve-out (``--tb`` / ``--menu``) is byte-consistent with the
   master section-6 table, so the two cannot silently drift;
-* **Selector absence** -- a Git-tracked walk over ``.ui`` files and officecfg schemas
-  finds **zero** density-selector controls, guarding the "target only" claim against
-  regression.
+* **Selector presence** -- Stage 1 makes density selectable but *stored-value-only*
+  (the compact/comfortable metric plumbing is still target-only). This guard was
+  migrated from the earlier absence guard per the migrate-never-freeze-stock rule: a
+  Git-tracked walk over ``.ui`` files and officecfg schemas must now **find** the
+  MaterialDensity officecfg property and the density radio widgets in
+  ``cui/uiconfig/ui/appearance.ui``, and their disappearance fails closed.
 
 Source evidence only: ``runtime_verified`` is false throughout. It advances none of the
-row's build/pixel/matrix/perf/compat gates; extending the metric schema, a Tools >
-Options density surface, and any rendered evidence are the separate build gates.
+row's build/pixel/matrix/perf/compat gates; wiring the metric schema to comfortable/
+compact and any rendered evidence are the separate build gates.
 """
 
 from __future__ import annotations
@@ -57,8 +60,10 @@ READER_TEST_PATH = "vcl/qa/cppunit/widgetdraw/WidgetDefinitionReaderTest.cxx"
 CONTRACT = "material-density-model"
 THEME_FLAG = "VCL_FILE_WIDGET_THEME"
 
-# The selector-absence guard: a density selection would surface as an officecfg
-# property or a .ui widget whose name/id carries "density". Neither may exist.
+# The selector-presence guard (migrated from an absence guard): Stage 1 makes density
+# a stored-value-only selection, so an officecfg property and a .ui widget whose
+# name/id carries "density" must now BOTH exist. Their patterns/expected files live in
+# the registry's ``selector_presence`` block; these are the fallback defaults.
 UI_SELECTOR_PATTERN = r'id="[^"]*[Dd]ensity'
 CFG_SELECTOR_PATTERN = r'oor:name="[^"]*[Dd]ensity'
 
@@ -295,24 +300,53 @@ def _git_grep(repo_root: Path, pattern: str, globs: Sequence[str]) -> tuple[int,
     return completed.returncode, matches, completed.stderr.decode("utf-8", errors="replace").strip()
 
 
-def _validate_selector_absence(repo_root: Path, errors: list[str]) -> None:
-    for pattern, globs, label in (
-        (UI_SELECTOR_PATTERN, ["*.ui"], "a .ui density-selector widget"),
-        (CFG_SELECTOR_PATTERN, ["*.xcs", "*.xcu"], "an officecfg density property"),
-    ):
+def _validate_selector_presence(
+    registry: Mapping[str, Any], repo_root: Path, errors: list[str]
+) -> None:
+    presence = registry.get("selector_presence")
+    if not isinstance(presence, dict):
+        errors.append(
+            "selector_presence:registry must carry a selector_presence object "
+            "(density is now a stored-value-only selection, not absent)"
+        )
+        return
+
+    checks = (
+        (
+            presence.get("ui_pattern", UI_SELECTOR_PATTERN),
+            presence.get("ui_globs") or ["*.ui"],
+            presence.get("ui_expected") or [],
+            "the .ui density-selector widget",
+        ),
+        (
+            presence.get("officecfg_pattern", CFG_SELECTOR_PATTERN),
+            presence.get("officecfg_globs") or ["*.xcs", "*.xcu"],
+            presence.get("officecfg_expected") or [],
+            "the MaterialDensity officecfg property",
+        ),
+    )
+    for pattern, globs, expected, label in checks:
+        if not isinstance(pattern, str) or not pattern:
+            errors.append(f"selector_presence:{label}:pattern must be a non-empty string")
+            continue
         returncode, matches, stderr = _git_grep(repo_root, pattern, globs)
-        if returncode == 0:
+        if returncode == 1:
             errors.append(
-                f"selector_absence:{label} now exists (density became selectable): "
-                + ", ".join(sorted(matches)[:12])
+                f"selector_presence:{label} is missing -- density is stored-value-only "
+                "in Stage 1, so the selector must exist (did the stored selection regress?)"
             )
-        elif returncode == 1:
-            continue  # git grep found nothing: the guarded absence holds.
-        else:
+        elif returncode != 0:
             errors.append(
-                f"selector_absence:could not run git grep for {label} "
+                f"selector_presence:could not run git grep for {label} "
                 f"(returncode {returncode}: {stderr or 'unknown error'})"
             )
+        else:
+            for want in expected:
+                if isinstance(want, str) and want not in matches:
+                    errors.append(
+                        f"selector_presence:{label}:expected {want!r} among the matches, "
+                        f"found {sorted(matches)[:12]}"
+                    )
 
 
 # --------------------------------------------------------------------------------------------------
@@ -340,12 +374,18 @@ def violations(
     elif registry["runtime_verified"]:
         errors.append("registry:runtime_verified:no runtime evidence exists; must be false")
 
+    if registry.get("selectable_stage") != "stored-value-only":
+        errors.append(
+            "registry:selectable_stage:must be 'stored-value-only' "
+            "(Stage 1 stores the density selection; metric plumbing is Stage 3)"
+        )
+
     _validate_native_metrics(registry, contents, errors)
     _validate_target_table(registry, contents, errors)
     _validate_design_honesty(registry, contents, errors)
     _validate_carveout_consistency(registry, contents, errors)
     _validate_reader_test(registry, contents, errors)
-    _validate_selector_absence(repo_root, errors)
+    _validate_selector_presence(registry, repo_root, errors)
 
     return errors
 
@@ -375,7 +415,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "Material density model contract passed: the 15 single-profile native metrics "
         "and their zero-attribute <metrics> element, the section-6 target table, the "
         "MATERIAL_DESIGN honesty language, the calc-chrome carve-out consistency, and "
-        "the density-selector-absence guard are intact."
+        "the stored-value-only density-selector-presence guard are intact."
     )
     return 0
 
