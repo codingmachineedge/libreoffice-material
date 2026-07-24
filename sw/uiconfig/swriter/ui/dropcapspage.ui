@@ -26,7 +26,10 @@
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="column-spacing">6</property>
     <child>
       <!-- n-columns=1 n-rows=2 -->
@@ -100,6 +103,7 @@
                     <property name="label" translatable="yes" context="dropcapspage|labelFT_DROPCAPS">Number of _characters:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinFLD_DROPCAPS</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -114,6 +118,7 @@
                     <property name="label" translatable="yes" context="dropcapspage|labelTXT_LINES">_Lines:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinFLD_LINES</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -128,6 +133,7 @@
                     <property name="label" translatable="yes" context="dropcapspage|labelTXT_DISTANCE">_Space to text:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinFLD_DISTANCE</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -233,6 +239,7 @@
                     <property name="label" translatable="yes" context="dropcapspage|labelTXT_TEXT">_Text:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">entryEDT_TEXT</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -247,6 +254,7 @@
                     <property name="label" translatable="yes" context="dropcapspage|labelTXT_TEMPLATE">Character st_yle:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboBOX_TEMPLATE</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>

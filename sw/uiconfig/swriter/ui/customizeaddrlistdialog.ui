@@ -22,7 +22,6 @@
   </object>
   <object class="GtkDialog" id="CustomizeAddrListDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="customizeaddrlistdialog|CustomizeAddrListDialog">Customize Address List</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -38,6 +37,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -184,6 +184,7 @@
                     <property name="label" translatable="yes" context="customizeaddrlistdialog|label1">A_ddress list elements:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">treeview</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -290,9 +291,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>
