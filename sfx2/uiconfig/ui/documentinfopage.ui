@@ -8,7 +8,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">12</property>
+    <property name="margin-start">12</property>
+    <property name="margin-end">12</property>
+    <property name="margin-top">12</property>
+    <property name="margin-bottom">12</property>
     <property name="row-spacing">6</property>
     <property name="column-spacing">12</property>
     <child>
@@ -19,6 +22,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label13">_Created:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showcreate</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -33,6 +37,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label14">_Modified:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showmodify</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -47,6 +52,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label15">_Digitally signed:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showsigned</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -61,6 +67,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label16">Last pri_nted:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showprint</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -75,6 +82,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label17">Total _editing time:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showedittime</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -89,6 +97,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label18">Re_vision number:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showrevision</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -234,6 +243,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label11">_Size:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showsize</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -262,6 +272,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label8">_Location:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showlocation</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -276,6 +287,7 @@
         <property name="label" translatable="yes" context="documentinfopage|label7">_Type:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showtype</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
@@ -317,6 +329,7 @@
         <property name="label" translatable="yes" context="documentinfopage|templateft">Template:</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">showtemplate</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="left-attach">0</property>
