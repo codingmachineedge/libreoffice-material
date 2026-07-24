@@ -22,7 +22,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin_start">6</property>
+    <property name="margin_end">6</property>
+    <property name="margin_top">6</property>
+    <property name="margin_bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkScrolledWindow">
@@ -107,6 +110,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="typeselectpage|columns">Column Information</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -142,6 +146,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="typeselectpage|autolabel">Lines (ma_x.):</property>
+                    <property name="ellipsize">end</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">auto</property>
                     <property name="xalign">0</property>
@@ -185,6 +190,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="typeselectpage|autotype">Automatic Type Recognition</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
