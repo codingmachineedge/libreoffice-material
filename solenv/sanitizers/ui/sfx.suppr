@@ -62,3 +62,5 @@ sfx2/uiconfig/ui/notificationcard.ui://GtkDrawingArea[@id='sev_strip'] no-labell
 sfx2/uiconfig/ui/notificationcard.ui://GtkImage[@id='sev_icon'] no-labelled-by
 sfx2/uiconfig/ui/notificationmanager.ui://GtkImage[@id='header_icon'] no-labelled-by
 sfx2/uiconfig/ui/notificationstack.ui://GtkButton[@id='overflow_button'] button-no-label
+sfx2/uiconfig/ui/startcenter.ui://GtkLabel[@id='welcome_title'] orphan-label
+sfx2/uiconfig/ui/startcenter.ui://GtkLabel[@id='welcome_subtitle'] orphan-label

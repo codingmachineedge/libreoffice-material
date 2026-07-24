@@ -938,6 +938,11 @@
                         <property name="events">GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject" id="all_recent-atkobject">
+                            <property name="AtkObject::accessible-name" translatable="yes" context="startcenter|all_recent-atkobject">Recent documents</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -969,6 +974,11 @@
                         <property name="events">GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject" id="local_view-atkobject">
+                            <property name="AtkObject::accessible-name" translatable="yes" context="startcenter|local_view-atkobject">Templates</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
