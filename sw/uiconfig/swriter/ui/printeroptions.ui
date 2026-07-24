@@ -134,6 +134,7 @@
                     <property name="label" translatable="yes" context="printeroptions|formcontrols">Comments:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">writercomments</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

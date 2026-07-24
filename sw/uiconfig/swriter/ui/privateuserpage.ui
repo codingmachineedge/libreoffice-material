@@ -26,6 +26,7 @@
             <property name="label" translatable="yes" context="privateuserpage|nameft">First/last _name/initials:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">firstname</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -109,6 +110,7 @@
             <property name="label" translatable="yes" context="privateuserpage|eastnameft">First/last _name/initials 2:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">firstname2</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -192,6 +194,7 @@
             <property name="label" translatable="yes" context="privateuserpage|titleft">_Title/profession:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">title</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -257,6 +260,7 @@
             <property name="label" translatable="yes" context="privateuserpage|streetft">_Street:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">street</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -302,6 +306,7 @@
             <property name="label" translatable="yes" context="privateuserpage|icityft">_Zip/city:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">izip</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -366,6 +371,7 @@
             <property name="label" translatable="yes" context="privateuserpage|countryft">Co_untry/state:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">country</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -431,6 +437,7 @@
             <property name="label" translatable="yes" context="privateuserpage|phoneft">Phone/mobile:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">phone</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -496,6 +503,7 @@
             <property name="label" translatable="yes" context="privateuserpage|faxft">Fa_x:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">fax</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -542,6 +550,7 @@
             <property name="label" translatable="yes" context="privateuserpage|homepageft">Homepage/email:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">url</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>

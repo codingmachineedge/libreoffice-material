@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="PrintMonitorDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="printmonitordialog|PrintMonitorDialog">Print monitor</property>
     <property name="default-width">0</property>
     <property name="default-height">0</property>
@@ -52,6 +51,7 @@
               <object class="GtkLabel" id="docname">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -76,6 +76,7 @@
               <object class="GtkLabel" id="printer">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -87,6 +88,7 @@
               <object class="GtkLabel" id="printinfo">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
