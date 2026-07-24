@@ -17,7 +17,10 @@
   <object class="GtkBox" id="FootnotesEndnotesTabPage">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -100,6 +103,7 @@
                         <property name="label" translatable="yes" context="footnotesendnotestabpage|ftnoffset_label">_Start at:</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">ftnoffset</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>

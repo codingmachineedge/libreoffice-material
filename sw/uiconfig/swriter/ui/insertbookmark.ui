@@ -20,7 +20,6 @@
   </object>
   <object class="GtkDialog" id="InsertBookmarkDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="insertbookmark|InsertBookmarkDialog">Bookmark</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -36,6 +35,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="close">
                 <property name="label" translatable="yes" context="stock">_Close</property>
@@ -78,6 +78,10 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
             <property name="row-spacing">6</property>
             <property name="column-spacing">6</property>
             <child>
@@ -136,6 +140,7 @@
                 <property name="label" translatable="yes" context="insertbookmark|name">Name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">name</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -403,8 +408,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-7">close</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="InsertBookmarkDialog-atkobject">

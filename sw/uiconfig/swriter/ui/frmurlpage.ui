@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -72,6 +75,7 @@
                 <property name="label" translatable="yes" context="frmurlpage|url_label">_URL:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">url</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

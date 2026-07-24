@@ -19,7 +19,10 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row_spacing">12</property>
     <child>
       <!-- n-columns=1 n-rows=1 -->
@@ -55,6 +58,7 @@
                     <property name="label" translatable="yes" context="indentpage|label1">_Before section</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">before</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
