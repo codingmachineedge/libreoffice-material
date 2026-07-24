@@ -6,7 +6,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -33,6 +36,7 @@
                 <property name="label" translatable="yes" context="managestylepage|nameft">_Name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">name</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -87,6 +91,7 @@
                 <property name="label" translatable="yes" context="managestylepage|nextstyleft">Ne_xt style:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">nextstyle</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -135,6 +140,7 @@
                 <property name="label" translatable="yes" context="managestylepage|linkedwithft">Inherit from:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">linkedwith</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -183,6 +189,7 @@
                 <property name="label" translatable="yes" context="managestylepage|categoryft">_Category:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">category</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
