@@ -59,7 +59,6 @@
   <object class="GtkGrid" id="BorderPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">24</property>
     <child>
@@ -85,6 +84,7 @@
                 <property name="label" translatable="yes" context="borderpage|label14">Pr_esets:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">presets</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
