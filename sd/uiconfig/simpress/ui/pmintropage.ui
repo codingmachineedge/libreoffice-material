@@ -93,6 +93,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="pmintropage|STR_CHOSE_SETTINGS">_Choose settings for Presentation Minimizer</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">LB_SETTINGS</property>
               </object>
@@ -118,6 +119,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="pmintropage|STR_INTRODUCTION">Introduction</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

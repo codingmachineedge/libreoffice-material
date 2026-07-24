@@ -9,7 +9,6 @@
   </object>
   <object class="GtkDialog" id="PresentationDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="presentationdialog|PresentationDialog">Slide Show Settings</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -26,6 +25,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -239,6 +239,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="presentationdialog|label1">Range</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -388,6 +389,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="presentationdialog|label2">Presentation Mode</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -557,6 +559,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="presentationdialog|label4">Presentation Options</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -621,6 +624,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="presentationdialog|presdisplay_label">P_resentation display:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">presdisplay_cb</property>
                             <property name="xalign">0</property>
@@ -652,6 +656,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="presentationdialog|console_label">Presenter console:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">console_cb</property>
                             <property name="xalign">0</property>
@@ -684,6 +689,7 @@
                             <property name="halign">start</property>
                             <property name="margin-start">24</property>
                             <property name="label" translatable="yes" context="presentationdialog|navbar_btn_size_label">Buttons size:</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -775,6 +781,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="presentationdialog|label3">Display</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -859,6 +866,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="presentationdialog|label3">Remote control</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
