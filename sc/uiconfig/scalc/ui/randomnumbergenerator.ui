@@ -27,7 +27,6 @@
   </object>
   <object class="GtkDialog" id="RandomNumberGeneratorDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="randomnumbergenerator|RandomNumberGeneratorDialog">Random Number Generator</property>
     <property name="resizable">False</property>
     <property name="default_width">0</property>
@@ -42,6 +41,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="apply">
                 <property name="label" translatable="yes" context="stock">_Apply</property>
@@ -133,6 +133,7 @@
                     <property name="label" translatable="yes" context="randomnumbergenerator|cell-range-label">Cell range:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">cell-range-edit</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -485,10 +486,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="100">apply</action-widget>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="100">apply</action-widget>
+      <action-widget response="-7">close</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>
