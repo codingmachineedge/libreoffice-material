@@ -54,8 +54,15 @@ namespace
 // than any raw color literal.
 std::optional<Color> lcl_getMaterialGridColor()
 {
-    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
-    if (!pThemeName || std::string_view(pThemeName) != "material")
+    // The activation environment is fixed before VCL starts (see
+    // desktop/source/app/sofficemain.cxx) and never changes afterwards, so read it
+    // once. This helper runs inside createPrimitive2DSequence(), i.e. on every
+    // grid repaint, where a per-call getenv() is pure overhead.
+    static const bool bMaterial = []() {
+        const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+        return pThemeName && std::string_view(pThemeName) == "material";
+    }();
+    if (!bMaterial)
         return std::nullopt;
 
     if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())

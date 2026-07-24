@@ -199,6 +199,15 @@ public:
                                                                   ControlState eState,
                                                                   ImplControlValue const& rValue);
 
+    /** Same matching rules as getStates(), but returns only the last matching
+        state -- the one the renderer actually draws. Scans in reverse and stops
+        at the first match, so the paint path allocates no vector and does no
+        redundant string comparison. Pure fast path: the result is by
+        construction getStates(...).back() (or null when that would be empty). */
+    const std::shared_ptr<WidgetDefinitionState>&
+    getLastState(ControlType eType, ControlPart ePart, ControlState eState,
+                 ImplControlValue const& rValue);
+
     std::vector<std::shared_ptr<WidgetDefinitionState>> maStates;
 };
 

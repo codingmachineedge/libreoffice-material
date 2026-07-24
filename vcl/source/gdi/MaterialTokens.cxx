@@ -18,6 +18,8 @@
 #include <sal/log.hxx>
 
 #include <array>
+#include <map>
+#include <mutex>
 
 namespace vcl
 {
@@ -178,11 +180,39 @@ MaterialTokens MaterialTokens::fromDefinitionFile(const OUString& rDefinitionFil
 
 MaterialTokens MaterialTokens::fromThemeDefinition(const OString& rColorScheme)
 {
+    // definition.xml is an immutable installed resource: it cannot change while
+    // soffice runs. Parsing it costs a file open plus a full XML walk of ~72 KB,
+    // and several native call sites resolve a token from inside a paint or
+    // primitive-decomposition helper (e.g. the Impress/Draw page grid color, the
+    // Calc formula-bar and sheet-tab bands, the Base app-window surfaces). Without
+    // memoisation each of those re-parsed the whole file on every repaint, which
+    // is the dominant per-frame cost of the Material theme. Cache the parsed table
+    // per scheme key; the returned value is a copy, so callers keep their existing
+    // by-value semantics and no rendered pixel changes.
+    static std::mutex aCacheMutex;
+    static std::map<OString, MaterialTokens> aCache;
+
+    {
+        std::scoped_lock aGuard(aCacheMutex);
+        auto aIterator = aCache.find(rColorScheme);
+        if (aIterator != aCache.end())
+            return aIterator->second;
+    }
+
     OUString sResourcePath(u"$BRAND_BASE_DIR/" LIBO_SHARE_FOLDER
                            "/theme_definitions/material/"_ustr);
     rtl::Bootstrap::expandMacros(sResourcePath);
     OUString sDefinitionFile = sResourcePath + "definition.xml";
-    return fromDefinitionFile(sDefinitionFile, sResourcePath, rColorScheme);
+    MaterialTokens aTokens = fromDefinitionFile(sDefinitionFile, sResourcePath, rColorScheme);
+
+    // A transient packaging or deployment failure must not poison the cache: only
+    // a fully validated table is remembered, so a later successful read still wins.
+    if (aTokens.isValid())
+    {
+        std::scoped_lock aGuard(aCacheMutex);
+        aCache.emplace(rColorScheme, aTokens);
+    }
+    return aTokens;
 }
 
 OString MaterialTokens::computeMaterialScheme(std::string_view rAccentBase, bool bDark)

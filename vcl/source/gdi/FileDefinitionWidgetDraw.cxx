@@ -846,16 +846,13 @@ bool FileDefinitionWidgetDraw::resolveDefinition(ControlType eType, ControlPart 
     auto const pPart = pWidgetDefinition->getDefinition(eType, ePart);
     if (pPart)
     {
-        auto const aStates = pPart->getStates(eType, ePart, eState, rValue);
-        if (!aStates.empty())
+        // Use the last defined matching state -- resolved without building a
+        // vector of every match, since only the last one is ever drawn.
+        auto const& pState = pPart->getLastState(eType, ePart, eState, rValue);
+        if (pState)
         {
-            // use last defined state
-            auto const& pState = aStates.back();
-            {
-                munchDrawCommands(pState->mpWidgetDrawActions, m_rGraphics, nX, nY, nWidth,
-                                  nHeight);
-                bOK = true;
-            }
+            munchDrawCommands(pState->mpWidgetDrawActions, m_rGraphics, nX, nY, nWidth, nHeight);
+            bOK = true;
         }
     }
     return bOK;

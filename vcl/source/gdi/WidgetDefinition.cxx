@@ -101,13 +101,14 @@ std::shared_ptr<WidgetDefinitionPart> WidgetDefinition::getDefinition(ControlTyp
     return std::shared_ptr<WidgetDefinitionPart>();
 }
 
-std::vector<std::shared_ptr<WidgetDefinitionState>>
-WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlState eState,
-                                ImplControlValue const& rValue)
+namespace
 {
-    std::vector<std::shared_ptr<WidgetDefinitionState>> aStatesToAdd;
-
-    for (const auto& state : maStates)
+// Single matching predicate shared by getStates() and the allocation-free
+// getLastState() fast path, so the two can never diverge. The logic is
+// byte-for-byte the body of the former getStates() loop.
+bool lcl_stateMatches(const std::shared_ptr<WidgetDefinitionState>& state, ControlType eType,
+                      ControlPart ePart, ControlState eState, ImplControlValue const& rValue)
+{
     {
         bool bAdd = true;
 
@@ -212,11 +213,41 @@ WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlSta
             bAdd = false;
         }
 
-        if (bAdd)
+        return bAdd;
+    }
+}
+}
+
+std::vector<std::shared_ptr<WidgetDefinitionState>>
+WidgetDefinitionPart::getStates(ControlType eType, ControlPart ePart, ControlState eState,
+                                ImplControlValue const& rValue)
+{
+    std::vector<std::shared_ptr<WidgetDefinitionState>> aStatesToAdd;
+
+    for (const auto& state : maStates)
+    {
+        if (lcl_stateMatches(state, eType, ePart, eState, rValue))
             aStatesToAdd.push_back(state);
     }
 
     return aStatesToAdd;
+}
+
+const std::shared_ptr<WidgetDefinitionState>&
+WidgetDefinitionPart::getLastState(ControlType eType, ControlPart ePart, ControlState eState,
+                                   ImplControlValue const& rValue)
+{
+    static const std::shared_ptr<WidgetDefinitionState> saNone;
+
+    // The renderer only ever draws the last matching state, so scan backwards and
+    // stop at the first hit: no vector allocation, no shared_ptr refcount traffic
+    // and no comparisons past the winner. Identical result to getStates().back().
+    for (auto aIterator = maStates.rbegin(); aIterator != maStates.rend(); ++aIterator)
+    {
+        if (lcl_stateMatches(*aIterator, eType, ePart, eState, rValue))
+            return *aIterator;
+    }
+    return saNone;
 }
 
 WidgetDefinitionState::WidgetDefinitionState(OString sEnabled, OString sFocused, OString sPressed,
