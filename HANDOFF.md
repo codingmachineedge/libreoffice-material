@@ -1,5 +1,71 @@
 # Windows-only handoff — 2026-07-21
 
+## 2026-07-24 session handoff — msi-95 evidence campaign + clipping fixes
+
+**Tip at handoff:** `f3c0aa2e2` on `main`, pushed; working tree clean; no other
+branches, worktrees, or stashes (one dead worktree directory
+`.claude/worktrees/unruffled-ramanujan-c72713` may linger until its owning
+process exits — metadata already pruned, branch deleted after merge proof).
+
+### State
+- **Program burn-down (earned, static):** 16.06% — 204/1,270 surfaces
+  `rewritten-material` in `qa/windows-ui-contract/material-rewrite-ledger.json`.
+  Untouched families: menus 0/70, sidebar panels 0/54, vcl 0/22.
+- **Runtime evidence:** the whole `docs/screenshots/genuine/` gallery (22
+  images) is re-captured from shipped `windows-msi-95-1-317f016605`; four new
+  `20260724-*` evidence runs all pass
+  `bin/Validate-Windows-Headless-Evidence.ps1 -Path <run>/manifest.json
+  -RequirePassed`. Registry: `docs/SCREENSHOTS.md` + per-entry
+  `PROVENANCE.json` notes; deviations from the canonical `Libre Office.zip`
+  design are recorded as defects (operator directive 2026-07-24: the zip is
+  the 100% target, no stock chrome).
+- **Fixed this session:** Start Center nav-label loss (`dc4a18971`,
+  separate session), font-size combo clipping + Base wizard notice clipping
+  (`f3c0aa2e2`).
+- **CI at handoff:** Windows UI contract + Linux source validation green on
+  `f3c0aa2e2`; `Build Windows MSI` run `30116161946` was still in progress —
+  verify its release before claiming it.
+
+### Open work, in priority order
+1. **Unlabeled Find & Replace action buttons** (Find All/Prev/Next/Replace/
+   Replace All render as blank pills; same defect class as the fixed Start
+   Center labels — likely dropped `label` properties or the VCL nested-box
+   limitation from `dc4a18971`). Evidence:
+   `docs/screenshots/genuine/find-replace-light.png`. Also audit
+   Template Manager (one blank pill) and Document Properties (two blank
+   right-column pills) and the Base wizard Back/Next/Finish pills.
+2. **Impress/Draw canvas layout:** page renders bottom-left instead of
+   centered, vertical scrollbar floats mid-window overlapping the canvas
+   (all four impress/draw gallery images).
+3. **Templates navigation regression:** background pointer navigation to
+   Templates no longer lands (msi-95 evidence run
+   `20260724-133349-*`); after the nav fixes, re-run the harness with
+   `-Templates` and restore `start-center-templates-light.png` to the gallery.
+4. **Re-capture after next MSI:** once the in-flight (or any newer) MSI
+   release ships with the label/clipping fixes, repeat the campaign. Recipe:
+   `gh release download <tag>` → verify sha256 + `version.ini` buildid →
+   `msiexec /a <msi> /qn TARGETDIR=<short path>` → detached clean worktree at
+   the release commit (`git -c core.longpaths=true worktree add`) →
+   `bin/Run-Windows-Headless-Smoke.ps1 -PayloadRoot ... -SourceRoot ...
+   -SourceCommit ...` per appearance (needs `uv` on PATH; on this host it is
+   at `C:\Users\Administrator\AppData\Roaming\Python\Python39\Scripts\uv.exe`)
+   → direct-MCP module/dialog captures (modal dialogs: dispatch via
+   non-blocking Popen — `executeDispatch` blocks until the dialog closes;
+   Base wizard needs ~25s settle and titled-window selection or PrintWindow
+   returns black).
+5. **Program continuation:** next rewrite waves — menus (70), sidebar panels
+   (54), remaining dialogs; keep earning the ledger number via
+   `bin/check-material-rewrite-ledger.py`, never hand-edit it.
+
+### Standing blockers / facts
+- Discussion pinning is unavailable via the GraphQL API on this repo
+  (no `pinDiscussion` mutation); no repository Project exists or is
+  reachable with current token scopes.
+- Changelogs: Discussions #8 (gallery) and #9 (clipping fixes); rolling
+  program thread is Discussion #5.
+- CRLF flips keep happening (8 instances; latest: `fontsizebox.ui` this
+  session) — always check `git diff --numstat` before committing.
+
 > **2026-07-24 evidence update:** the entire `docs/screenshots/genuine/`
 > gallery (22 images) was re-captured from the shipped
 > `windows-msi-95-1-317f016605` release payload — four Start Center harness
