@@ -27,6 +27,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="xalign">0</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>
@@ -43,6 +44,7 @@
         <property name="label" translatable="yes" context="clientboxfragment|STR_ENTER_PIN">Enter PIN:</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">pin</property>
+        <property name="ellipsize">end</property>
         <property name="xalign">0</property>
       </object>
       <packing>
