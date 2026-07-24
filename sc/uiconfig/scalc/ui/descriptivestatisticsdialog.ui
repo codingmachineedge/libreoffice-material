@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="DescriptiveStatisticsDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="descriptivestatisticsdialog|DescriptiveStatisticsDialog">Descriptive Statistics</property>
     <property name="resizable">False</property>
     <property name="default-width">0</property>
@@ -19,6 +18,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -77,6 +77,9 @@
           <object class="GtkFrame" id="framedata">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
             <property name="label-xalign">0</property>
             <property name="shadow-type">none</property>
             <child>
@@ -97,6 +100,7 @@
                     <property name="label" translatable="yes" context="descriptivestatisticsdialog|input-range-label">Input range:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">input-range-edit</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -137,6 +141,7 @@
                     <property name="label" translatable="yes" context="descriptivestatisticsdialog|output-range-label">Results to:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">output-range-edit</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -193,6 +198,9 @@
           <object class="GtkFrame" id="frame2">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">6</property>
             <property name="label-xalign">0</property>
             <property name="shadow-type">none</property>
             <child>
@@ -258,9 +266,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="DescriptiveStatisticsDialog-atkobject">
