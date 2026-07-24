@@ -1,35 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.40.0 -->
+<!-- Material dialog anatomy (docs/design/08-dialogs.md 8.1): footer Help | spacer | safe | primary; -->
+<!-- the primary carries a verb label and holds the Enter default. -->
 <interface domain="cui">
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkMessageDialog" id="AskChangeLineEndDialog">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes" context="querychangelineenddialog|AskChangeLineEndDialog">Save Arrow Style?</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="message_type">warning</property>
-    <property name="buttons">yes-no</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="message-type">warning</property>
     <property name="text" translatable="yes" context="querychangelineenddialog|AskChangeLineEndDialog">The arrow style was modified without saving.</property>
-    <property name="secondary_text" translatable="yes" context="querychangelineenddialog|AskChangeLineEndDialog">Would you like to save the arrow style now?</property>
+    <property name="secondary-text" translatable="yes" context="querychangelineenddialog|AskChangeLineEndDialog">Would you like to save the arrow style now?</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
+            <property name="spacing">12</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="help">
+                <property name="label" translatable="yes" context="stock">_Help</property>
+                <property name="visible">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+                <property name="secondary">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="safe">
+                <property name="label" translatable="yes" context="querychangelineenddialog|safe">Do_n't Save</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="destructive">
+                <property name="label" translatable="yes" context="querychangelineenddialog|destructive">_Save</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-11">help</action-widget>
+      <action-widget response="-9">safe</action-widget>
+      <action-widget response="-8">destructive</action-widget>
+    </action-widgets>
   </object>
 </interface>

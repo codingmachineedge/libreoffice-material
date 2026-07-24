@@ -10,7 +10,6 @@
   </object>
   <object class="GtkDialog" id="PercentDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="percentdialog|PercentDialog">Combine</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -24,7 +23,22 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
-            <property name="layout-style">start</property>
+            <property name="spacing">12</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -38,23 +52,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
-                <property name="secondary">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label" translatable="yes" context="stock">_Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="use-underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
                 <property name="position">1</property>
-                <property name="secondary">True</property>
               </packing>
             </child>
           </object>
@@ -91,6 +89,8 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="percentdialog|label1">Minimum Size</property>
+                <property name="mnemonic-widget">margin</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -106,8 +106,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="PercentDialog-atkobject">
