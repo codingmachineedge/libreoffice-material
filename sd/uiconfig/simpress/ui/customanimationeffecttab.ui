@@ -15,7 +15,10 @@
   <object class="GtkBox" id="EffectTab">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -44,6 +47,7 @@
                     <property name="valign">center</property>
                     <property name="label" translatable="yes" context="customanimationeffecttab|prop_label1">_Direction:</property>
                     <property name="use_underline">True</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -157,6 +161,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="customanimationeffecttab|label3">Settings</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -193,6 +198,7 @@
                 <property name="label" translatable="yes" context="customanimationeffecttab|aeffect_label">A_fter animation:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">aeffect_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -207,6 +213,7 @@
                 <property name="label" translatable="yes" context="customanimationeffecttab|sound_label">_Sound:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">sound_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -221,6 +228,7 @@
                 <property name="label" translatable="yes" context="customanimationeffecttab|text_animation_label">_Text animation:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">text_animation_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -235,6 +243,7 @@
                 <property name="label" translatable="yes" context="customanimationeffecttab|dim_color_label">Di_m color:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">dim_color_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -327,6 +336,7 @@
                     <property name="label" translatable="yes" context="customanimationeffecttab|text_delay_label">Delay between characters</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">text_delay</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -414,6 +424,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="customanimationeffecttab|label4">Enhancement</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

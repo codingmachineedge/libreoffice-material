@@ -23,7 +23,6 @@
   </object>
   <object class="GtkDialog" id="VectorizeDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="vectorize|VectorizeDialog">Convert to Polygon</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -40,6 +39,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="preview">
                 <property name="label" translatable="yes" context="vectorize|preview">Preview</property>
@@ -126,6 +126,7 @@
                 <property name="label" translatable="yes" context="vectorize|label2">Number of colors:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">colors</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -158,6 +159,7 @@
                 <property name="label" translatable="yes" context="vectorize|label3">Point reduction:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">points</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -191,6 +193,7 @@
                 <property name="label" translatable="yes" context="vectorize|tilesft">Tile size:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">tiles</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -259,6 +262,7 @@
                 <property name="label" translatable="yes" context="vectorize|label5">Source image:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">source</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -273,6 +277,7 @@
                 <property name="label" translatable="yes" context="vectorize|label6">Vectorized image:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">vectorized</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -360,9 +365,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>
