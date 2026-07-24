@@ -17,7 +17,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -43,6 +46,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|path_label">_Path:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">path</property>
                 <property name="xalign">0</property>
@@ -135,6 +139,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|target_label">Targ_et:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">target</property>
                 <property name="xalign">0</property>
@@ -150,6 +155,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|url_label">URL:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="xalign">0</property>
               </object>
@@ -253,6 +259,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|frame_label">F_rame:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">frame</property>
                 <property name="xalign">0</property>
@@ -268,6 +275,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|indication_label">Te_xt:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">indication</property>
                 <property name="xalign">0</property>
@@ -283,6 +291,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="hyperlinkdocpage|name_label">N_ame:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">name</property>
                 <property name="xalign">0</property>
@@ -321,6 +330,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="hyperlinkdocpage|form_label">F_orm:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">form</property>
                     <property name="xalign">0</property>

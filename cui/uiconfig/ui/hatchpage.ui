@@ -31,7 +31,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">6</property>
     <child>
       <object class="GtkFrame" id="frame3">
@@ -167,6 +170,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="hatchpage|distanceft">_Spacing:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">distancemtr</property>
                 <property name="xalign">0</property>
@@ -201,7 +205,9 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="hatchpage|angleft">A_ngle:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
+                <property name="mnemonic-widget">anglemtr</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -260,6 +266,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="hatchpage|linetypeft">_Line type:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">linetypelb</property>
                 <property name="xalign">0</property>
@@ -296,6 +303,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="hatchpage|linecolorft">Line _color:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">linecolorlb</property>
                 <property name="xalign">0</property>
