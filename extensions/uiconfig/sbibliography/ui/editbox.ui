@@ -14,6 +14,7 @@
         <property name="label" translatable="yes" context="editbox|TBC_FT_QUERY">Search Key</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">entry</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>
