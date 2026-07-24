@@ -17,6 +17,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -97,6 +98,7 @@
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label4">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -111,6 +113,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="label5">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -211,6 +214,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label1">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="databaroptions|label1">Entry Values</property>
@@ -245,6 +249,7 @@
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label6">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -259,6 +264,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="label7">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -317,6 +323,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="label10">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -352,6 +359,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label2">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="databaroptions|label2">Bar Colors</property>
@@ -386,6 +394,7 @@
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label8">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -400,6 +409,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="label9">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -459,6 +469,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label3">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="databaroptions|label3">Axis</property>
@@ -493,6 +504,7 @@
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label12">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -507,6 +519,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="label13">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -557,6 +570,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label11">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="databaroptions|label11">Bar Lengths</property>
@@ -594,6 +608,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="str_same_value">
+                <property name="ellipsize">end</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="databaroptions|str_same_value">The minimum value must be less than the maximum value.</property>
                 <property name="xalign">0</property>

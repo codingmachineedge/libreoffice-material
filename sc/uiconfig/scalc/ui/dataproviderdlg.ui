@@ -14,6 +14,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="margin-end">6</property>
             <property name="margin-bottom">6</property>
@@ -101,6 +102,7 @@
                         <property name="column-spacing">12</property>
                         <child>
                           <object class="GtkLabel" id="label2">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="dataproviderdlg|db_name">Database Range:</property>
@@ -131,6 +133,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="label3">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="dataproviderdlg/provider">Data Format:</property>
@@ -166,6 +169,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="label4">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="dataproviderdlg/url">URL:</property>
@@ -209,6 +213,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="label5">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="dataproviderdlg/id">Identifier:</property>
@@ -362,6 +367,7 @@
                     </child>
                     <child type="label">
                       <object class="GtkLabel" id="label_transformation">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="dataproviderdlg/transformation">Transformations</property>
@@ -447,6 +453,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label_preview">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="dataproviderdlg/preview">Preview</property>

@@ -28,6 +28,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -187,6 +188,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="Name">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="definedatabaserangedialog|Name">Name</property>
@@ -257,6 +259,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="Range">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="definedatabaserangedialog|Range">Range</property>
@@ -453,6 +456,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="Source">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="definedatabaserangedialog|Source">Source:</property>
@@ -466,6 +470,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="Operations">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="definedatabaserangedialog|Operations">Operations:</property>
@@ -479,6 +484,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="invalid">
+                        <property name="ellipsize">end</property>
                         <property name="can-focus">False</property>
                         <property name="no-show-all">True</property>
                         <property name="label" translatable="yes" context="definedatabaserangedialog|invalid">Invalid range</property>
@@ -494,6 +500,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label1">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="definedatabaserangedialog|label1">Options</property>

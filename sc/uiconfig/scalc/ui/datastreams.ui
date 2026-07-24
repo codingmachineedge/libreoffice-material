@@ -17,6 +17,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
@@ -100,6 +101,7 @@
                         <property name="spacing">12</property>
                         <child>
                           <object class="GtkLabel" id="label6">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes" context="datastreams|label6">URL:</property>
@@ -217,6 +219,7 @@
                         </child>
                         <child type="label">
                           <object class="GtkLabel" id="label4">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes" context="datastreams|label4">Interpret stream data as</property>
@@ -250,6 +253,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="datastreams|label">Source Stream</property>
@@ -339,6 +343,7 @@
                     </child>
                     <child type="label">
                       <object class="GtkLabel" id="label2">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="datastreams|label2">When New Data Arrives</property>
@@ -422,6 +427,7 @@
                     </child>
                     <child type="label">
                       <object class="GtkLabel" id="label3">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="datastreams|label3">Maximal Amount of Rows</property>

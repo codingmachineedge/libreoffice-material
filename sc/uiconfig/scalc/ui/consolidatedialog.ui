@@ -26,6 +26,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="layout-style">end</property>
@@ -104,6 +105,7 @@
             <property name="row-spacing">6</property>
             <child>
               <object class="GtkLabel" id="label1">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
@@ -119,6 +121,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="label2">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
@@ -411,6 +414,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="ftdataarea">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="consolidatedialog|ftdataarea">_Source data ranges:</property>
@@ -425,6 +429,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="ftdestarea">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="consolidatedialog|ftdestarea">Copy results _to:</property>
@@ -521,6 +526,7 @@
                     </child>
                     <child type="label">
                       <object class="GtkLabel" id="label3">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="consolidatedialog|label3">Consolidate by</property>
@@ -566,6 +572,7 @@
                     </child>
                     <child type="label">
                       <object class="GtkLabel" id="label4">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="consolidatedialog|label4">Options</property>
@@ -585,6 +592,7 @@
             </child>
             <child type="label">
               <object class="GtkLabel" id="more_label">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="consolidatedialog|more_label">Options</property>

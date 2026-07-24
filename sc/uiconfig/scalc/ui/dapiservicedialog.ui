@@ -21,6 +21,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -95,6 +96,7 @@
                 <property name="column-spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="label2">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -109,6 +111,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label3">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -123,6 +126,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label4">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -137,6 +141,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label5">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -151,6 +156,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label6">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -230,6 +236,7 @@
             </child>
             <child type="label">
               <object class="GtkLabel" id="label1">
+                <property name="ellipsize">end</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="dapiservicedialog|label1">Selection</property>
