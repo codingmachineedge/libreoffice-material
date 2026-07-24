@@ -33,6 +33,7 @@
                 <property name="label" translatable="yes" context="impressprinteroptions|label2">Type:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">impressdocument</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -47,6 +48,7 @@
                 <property name="label" translatable="yes" context="impressprinteroptions|label7">Slides per page:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">slidesperpage</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -61,6 +63,7 @@
                 <property name="label" translatable="yes" context="impressprinteroptions|label1">Order:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">slidesperpageorder</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
