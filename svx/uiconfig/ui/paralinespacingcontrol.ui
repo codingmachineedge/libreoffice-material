@@ -107,6 +107,7 @@
                     <property name="label" translatable="yes" context="paralinespacingcontrol|label3">Line Spacing:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">line_dist</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -142,6 +143,7 @@
                     <property name="label" translatable="yes" context="paralinespacingcontrol|value_label">Value:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">grid1</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

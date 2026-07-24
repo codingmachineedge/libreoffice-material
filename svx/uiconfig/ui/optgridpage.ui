@@ -215,6 +215,7 @@
                     <property name="label" translatable="yes" context="optgridpage|flddrawx">H_orizontal:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">mtrflddrawx</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -229,6 +230,7 @@
                     <property name="label" translatable="yes" context="optgridpage|flddrawy">_Vertical:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">mtrflddrawy</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -423,6 +425,7 @@
                     <property name="label" translatable="yes" context="optgridpage|divisionx">Horizont_al:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">numflddivisionx</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -437,6 +440,7 @@
                     <property name="label" translatable="yes" context="optgridpage|divisiony">V_ertical:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">numflddivisiony</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -623,6 +627,7 @@
                         <property name="label" translatable="yes" context="optgridpage|label7">_Snap range:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">mtrfldsnaparea</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -850,6 +855,7 @@
                         <property name="label" translatable="yes" context="optgridpage|label9">Point reducti_on:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">mtrfldbezangle</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
