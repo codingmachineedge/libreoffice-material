@@ -18,7 +18,10 @@
   <object class="GtkBox" id="TextColumnsPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -35,6 +38,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textcolumnstabpage|labelColNumber">_Number of columns:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">FLD_COL_NUMBER</property>
             <property name="xalign">0</property>
@@ -49,6 +53,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textcolumnstabpage|labelColSpacing">_Spacing:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">MTR_FLD_COL_SPACING</property>
             <property name="xalign">0</property>

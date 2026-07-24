@@ -94,7 +94,10 @@
   <object class="GtkGrid" id="TextFlowPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">12</property>
     <child>
@@ -160,6 +163,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelLineEnd">C_haracters at line end</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinLineEnd</property>
               </object>
@@ -194,6 +198,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelLineBegin">Cha_racters at line begin</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinLineBegin</property>
               </object>
@@ -228,6 +233,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelCompoundLineEnd">C_ompound characters at line end</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinCompoundLineEnd</property>
               </object>
@@ -262,6 +268,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelCompoundLineBegin">C_ompound characters at line begin</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinCompoundLineBegin</property>
               </object>
@@ -296,6 +303,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelMaxNum">_Maximum consecutive hyphenated lines</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinMaxNum</property>
               </object>
@@ -330,6 +338,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="textflowpage|labelMinLen">_Minimum word length in characters</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinMinLen</property>
               </object>
@@ -352,6 +361,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="textflowpage|labelHyphenZone">Hyphenation _zone:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinHyphenZone</property>
                     <property name="xalign">0</property>
@@ -425,6 +435,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="textflowpage|labelBetterSpacing">Better Spacing</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hyphenslider</property>
                     <property name="xalign">0</property>
@@ -457,6 +468,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="textflowpage|labelLessHyphen">Less Hyphen</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hyphenslider</property>
                     <property name="xalign">0</property>
@@ -480,6 +492,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textflowpage|LabelHyphenation">Hyphenation</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -533,6 +546,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelParagraphEndZone">Paragraph end _zone:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinParagraphEndZone</property>
                 <property name="xalign">0</property>
@@ -580,6 +594,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelColumnEndZone">Column end _zone:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinColumnEndZone</property>
                 <property name="xalign">0</property>
@@ -627,6 +642,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelPageEndZone">Page end _zone:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinPageEndZone</property>
                 <property name="xalign">0</property>
@@ -674,6 +690,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelSpreadEndZone">Spread end _zone:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinSpreadEndZone</property>
                 <property name="xalign">0</property>
@@ -732,6 +749,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textflowpage|labelHyphenAcross">Hyphenation across</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -784,6 +802,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelType">_Type:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">comboBreakType</property>
                 <property name="xalign">1</property>
@@ -817,6 +836,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelPosition">Position:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="justify">right</property>
                 <property name="mnemonic-widget">comboBreakPosition</property>
@@ -942,6 +962,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textflowpage|label3">Breaks</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -1061,6 +1082,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelOrphan">lines</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -1120,6 +1142,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textflowpage|labelWidow">lines</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -1134,6 +1157,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="textflowpage|labelOptions">Split Options</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
