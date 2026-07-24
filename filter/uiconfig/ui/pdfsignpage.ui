@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -33,6 +36,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label2">Use this X.509 certificate to digitally sign PDF documents:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cert</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -212,6 +216,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label7">Certificate password:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">password</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -226,6 +231,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label12">Location:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">location</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -240,6 +246,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label13">Contact information:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">contact</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -254,6 +261,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label14">Reason:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">reason</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -268,6 +276,7 @@
                 <property name="label" translatable="yes" context="pdfsignpage|label15">Time Stamp Authority:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">tsa</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
