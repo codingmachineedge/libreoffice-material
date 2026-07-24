@@ -45,6 +45,12 @@
       </object>
     </child>
     <child>
+      <object class="GtkSeparatorMenuItem" id="viewseparator">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="50">
         <property name="visible">True</property>
         <property name="can_focus">False</property>

@@ -22,7 +22,10 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="hexpand">True</property>
-        <property name="border-width">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="row-spacing">3</property>
         <property name="column-spacing">6</property>
         <child>
@@ -31,6 +34,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes" context="sidebartextglow|glow">Text Glow</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -48,6 +52,7 @@
             <property name="label" translatable="yes" context="sidebartextglow|radius">Radius:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">LB_GLOW_TEXT_RADIUS</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -62,6 +67,7 @@
             <property name="label" translatable="yes" context="sidebartextglow|color">Color:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">LB_GLOW_TEXT_COLOR</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -76,6 +82,7 @@
             <property name="label" translatable="yes" context="sidebartextglow|transparency">Transparency:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">LB_GLOW_TEXT_TRANSPARENCY</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>

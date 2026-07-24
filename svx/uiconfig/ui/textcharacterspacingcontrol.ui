@@ -56,6 +56,7 @@
         <property name="can-focus">False</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
+        <property name="row-spacing">3</property>
         <child>
           <object class="GtkButton" id="very_tight">
             <property name="label" translatable="yes" context="textcharacterspacingcontrol|very_tight">Very Tight</property>
@@ -186,6 +187,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="textcharacterspacingcontrol|label2">Custom Value</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
