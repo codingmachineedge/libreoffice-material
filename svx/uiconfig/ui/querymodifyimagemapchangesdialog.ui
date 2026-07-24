@@ -9,8 +9,7 @@
     <property name="modal">True</property>
     <property name="type-hint">dialog</property>
     <property name="skip-taskbar-hint">True</property>
-    <property name="message-type">question</property>
-    <property name="buttons">yes-no</property>
+    <property name="message-type">warning</property>
     <property name="text" translatable="yes" context="querymodifyimagemapchangesdialog|QueryModifyImageMapChangesDialog">The ImageMap has been modified.</property>
     <property name="secondary-text" translatable="yes" context="querymodifyimagemapchangesdialog|QueryModifyImageMapChangesDialog">Do you want to save the changes?</property>
     <child internal-child="vbox">
@@ -21,9 +20,41 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area5">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkButton" id="discard">
+                <property name="label" translatable="yes" context="querymodifyimagemapchangesdialog|discard">Do_n’t Save</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+                <style>
+                  <class name="destructive-action"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="cancel">
                 <property name="label" translatable="yes" context="stock">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="save">
+                <property name="label" translatable="yes" context="querymodifyimagemapchangesdialog|save">_Save</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
@@ -48,7 +79,9 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-9">discard</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-8">save</action-widget>
     </action-widgets>
   </object>
 </interface>

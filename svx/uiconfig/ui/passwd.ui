@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="PasswordDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="passwd|PasswordDialog">Change Password</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -18,6 +17,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="cancel">
@@ -101,6 +101,7 @@
                         <property name="label" translatable="yes" context="passwd|oldpassL">_Password:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">oldpassEntry</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">1</property>
                       </object>
                       <packing>
@@ -213,6 +214,7 @@
                         <property name="label" translatable="yes" context="passwd|label4">Pa_ssword:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">newpassEntry</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">1</property>
                       </object>
                       <packing>
@@ -227,6 +229,7 @@
                         <property name="label" translatable="yes" context="passwd|label5">Confi_rm:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">confirmpassEntry</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">1</property>
                       </object>
                       <packing>
@@ -263,9 +266,9 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="-6">cancel</action-widget>
       <action-widget response="-5">ok</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="PasswordDialog-atkobject">
