@@ -18,10 +18,16 @@
  */
 
 #include <chrono>
+#include <cstdlib>
+#include <optional>
+#include <string_view>
 #include <vcl/builderfactory.hxx>
 #include <vcl/commandevent.hxx>
 #include <vcl/layout.hxx>
+#include <vcl/MaterialTokens.hxx>
 #include <vcl/notebookbar/notebookbar.hxx>
+#include <vcl/settings.hxx>
+#include <vcl/svapp.hxx>
 #include <vcl/tabpage.hxx>
 #include <sfx2/viewfrm.hxx>
 #include <notebookbar/NotebookbarTabControl.hxx>
@@ -46,6 +52,47 @@ constexpr OUString TOOLBAR_STR = u"private:resource/toolbar/notebookbarshortcuts
 using namespace css::uno;
 using namespace css::ui;
 using namespace css::frame;
+
+namespace
+{
+// Resolve a Material semantic color token for the notebookbar tab-row band, but only
+// when the Material file-widget theme is the active, documented activation
+// (VCL_FILE_WIDGET_THEME=material -- the same gate used in
+// vcl/source/control/notebookbar.cxx (group-area @surface wash) and
+// vcl/source/window/status.cxx; see docs/design/05-navigation.md section 4, tab-row
+// band). System forced colors take precedence over the Material treatment for
+// accessibility, so high-contrast mode ALWAYS wins and returns nothing here. Under the
+// default/native theme this also returns nothing, so NotebookbarTabControl::Paint()
+// overlays no Material treatment and the stock tab drawing stays byte-for-byte
+// unchanged -- keyboard, mouse, a11y and RTL behavior are untouched. Values flow
+// exclusively through vcl::MaterialTokens, the single named-token view over
+// definition.xml, so the @primary active-tab underline and @outline-variant tab-row
+// hairline can never drift from the definition they mirror (no raw hex literal here).
+// The per-scheme token table is parsed at most once because definition.xml is immutable
+// at runtime, keeping the paint path cheap; the cheap getenv gate short-circuits before
+// any parse under the native theme.
+std::optional<Color> lcl_materialTabControlColor(std::string_view rRole)
+{
+    // System forced colors take precedence over the Material treatment for
+    // accessibility; never override the HC-aware colors.
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return std::nullopt;
+
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    const bool bDark = Application::GetSettings().GetStyleSettings().GetWindowColor().IsDark();
+    static std::optional<vcl::MaterialTokens> spLightTokens;
+    static std::optional<vcl::MaterialTokens> spDarkTokens;
+    std::optional<vcl::MaterialTokens>& rCache = bDark ? spDarkTokens : spLightTokens;
+    if (!rCache)
+        rCache = vcl::MaterialTokens::fromThemeDefinition(bDark ? "dark"_ostr : OString());
+    if (!rCache->isValid())
+        return std::nullopt;
+    return rCache->findColor(rRole);
+}
+}
 
 class ChangedUIEventListener : public ::cppu::WeakImplHelper<XUIConfigurationListener>
 {
@@ -159,6 +206,49 @@ NotebookbarTabControl::NotebookbarTabControl( Window* pParent )
 
 NotebookbarTabControl::~NotebookbarTabControl()
 {
+}
+
+void NotebookbarTabControl::Paint( vcl::RenderContext& rRenderContext, const tools::Rectangle& rRect )
+{
+    // Draw the stock/native tab pane, header and tab items first; the Material band
+    // treatment below is a pure overlay that never alters that geometry or hit-testing.
+    NotebookbarTabControlBase::Paint( rRenderContext, rRect );
+
+    // Material file-widget theme: overlay the tab-row band treatment -- a full-width
+    // @outline-variant hairline along the bottom of the 38px tab row (the rule that
+    // separates the tab row from the grouped command strip carrying the landed
+    // @surface group-area wash) plus a 2px @primary underline beneath the active tab
+    // (docs/design/05-navigation.md section 4). Both colors resolve through
+    // vcl::MaterialTokens; high-contrast mode and the native/default theme both return
+    // nullopt from the guard helper, so no Material code path runs and the stock tab
+    // drawing above is the final pixel result (HC precedence on every branch).
+    const std::optional<Color> oRule = lcl_materialTabControlColor("outline-variant");
+    const std::optional<Color> oPrimary = lcl_materialTabControlColor("primary");
+    if (!oRule && !oPrimary)
+        return;
+
+    const tools::Rectangle aTab = GetTabBounds( GetCurPageId() );
+    if (aTab.IsEmpty())
+        return;
+
+    const tools::Long nWidth = GetOutputSizePixel().Width();
+    const tools::Long nBaseline = aTab.Bottom();
+
+    // @outline-variant tab-row band hairline (full width, 1px)
+    if (oRule)
+    {
+        rRenderContext.SetLineColor(*oRule);
+        rRenderContext.DrawLine(Point(0, nBaseline), Point(nWidth - 1, nBaseline));
+    }
+
+    // 2px @primary active-tab underline, drawn over the hairline segment so the active
+    // tab reads as selected
+    if (oPrimary)
+    {
+        rRenderContext.SetLineColor();
+        rRenderContext.SetFillColor(*oPrimary);
+        rRenderContext.DrawRect(tools::Rectangle(aTab.Left(), nBaseline - 1, aTab.Right(), nBaseline));
+    }
 }
 
 void NotebookbarTabControl::ArrowStops( sal_uInt16 nCode )

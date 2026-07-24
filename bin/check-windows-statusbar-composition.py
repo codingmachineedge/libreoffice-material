@@ -18,7 +18,11 @@ against the real tree:
   exist with the exact values (in *both* the light and dark palettes for colors),
   and the owning source vcl/source/window/status.cxx must include the token accessor
   and carry each Material-guard marker in *code* (comments are stripped first, so
-  comment-only wiring cannot satisfy the contract);
+  comment-only wiring cannot satisfy the contract). ``band.height`` additionally
+  pins that status.cxx *consumes* the fixed 28px ``size-compact-control`` band
+  height (``CalcWindowSizePixel`` floored via ``lcl_materialStatusMetric`` ->
+  ``MaterialTokens::findMetric``): the source marker must name the pinned metric and
+  survive comment stripping, so a dropped or commented-out floor fails closed;
 * ``field_hover`` -- the hover wash color and ``corner-small`` radius the spec
   depends on must exist in definition.xml. The hover slot is honestly ``specified``
   (spec-only, not a native part), so no part wiring is claimed for it;
@@ -336,6 +340,42 @@ def _validate_band_owner(
             errors.append(f"band:owner:marker missing in code ({marker})")
 
 
+def _validate_band_height(
+    band: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+) -> None:
+    """The 28px band height must be *consumed* by the owner source, not merely
+    declared in definition.xml. status.cxx floors CalcWindowSizePixel() to the
+    ``size-compact-control`` metric via ``lcl_materialStatusMetric``; this pins
+    that consumption. The source marker must name the same metric the band height
+    pins (a drift-lock), and it must survive comment stripping so commented-out
+    wiring fails closed -- exactly like the band-fill / top-rule markers."""
+    height = band.get("height")
+    if not isinstance(height, dict):
+        errors.append("band:height:object required")
+        return
+    metric = height.get("metric")
+    marker = height.get("source_marker")
+    if not isinstance(metric, str) or not isinstance(marker, str):
+        errors.append("band:height:metric and source_marker must be strings")
+        return
+    if metric not in marker:
+        errors.append(
+            f"band:height:source_marker {marker!r} must reference the height metric {metric!r}"
+        )
+    owner = band.get("owner")
+    source_path = owner.get("source") if isinstance(owner, dict) else None
+    source = contents.get(source_path) if isinstance(source_path, str) else None
+    if source is None:
+        errors.append(f"band:height:owner source {source_path!r} missing")
+        return
+    code = _without_cpp_comments(source)
+    if marker not in code:
+        errors.append(
+            f"band:height:owner must consume the fixed 28px band height "
+            f"({marker} missing from code; comment-only wiring fails closed)"
+        )
+
+
 def _validate_accessibility(
     accessibility: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
 ) -> None:
@@ -440,6 +480,7 @@ def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list
         _validate_zoom_slider(root, zoom_slider, errors)
 
     _validate_band_owner(band, contents, errors)
+    _validate_band_height(band, contents, errors)
     _validate_accessibility(accessibility, contents, errors)
 
     return errors

@@ -3,6 +3,7 @@
 <interface domain="sw">
   <requires lib="gtk+" version="3.24"/>
   <requires lib="LibreOffice" version="1.0"/>
+  <!-- material-notebookbar-ui-conformance family=groups wave=1 cluster=2 -->
   <!-- interface-local-resource-path ../../../icon-themes/galaxy/cmd/ -->
   <object class="GtkImage" id="boldi">
     <property name="visible">True</property>

@@ -1,0 +1,630 @@
+{
+  "schema_version": 1,
+  "contract": "windows-notebookbar-ui-conformance",
+  "platform": "windows",
+  "generator": "bin/check-windows-notebookbar-ui-conformance.py",
+  "design_ref": "docs/design/05-navigation.md#4",
+  "cross_reference": "qa/windows-ui-contract/notebookbar-composition.json",
+  "status": "source-declared",
+  "runtime_verified": false,
+  "source_note": "Deterministic source-level .ui structural conformance ledger for the module notebookbars (sw/sc/sd). Regenerate with --regenerate. Counterpart to notebookbar-composition.json (source colour guards); this contract owns the .ui geometry layer that one explicitly excludes. Not a claim of native build or runtime evidence.",
+  "rewrite_status_values": [
+    "pending",
+    "in-progress",
+    "rewritten-material"
+  ],
+  "families": {
+    "tabbed": {
+      "design_ref": "docs/design/05-navigation.md#4",
+      "required_markers": [
+        "conformance_marker(family=tabbed)",
+        "separator_count>0",
+        "row_spacing_decls>0",
+        "column_spacing_decls>0",
+        "legacy_padding_count==0",
+        "collapse_machinery preserved"
+      ],
+      "rewritten_status": "rewritten-material",
+      "note": "Ribbon notebookbar.ui: gd-grid command groups already declare Material row/column spacing and are divided by GtkSeparator rules; the last legacy separator paddings were converted to equivalent margins so the file is padding-free. Group captions widen-and-scroll (design 4.6), never ellipsize."
+    },
+    "groups": {
+      "design_ref": "docs/design/05-navigation.md#4",
+      "required_markers": [
+        "conformance_marker(family=groups)",
+        "separator_count>0",
+        "box_spacing_decls>0",
+        "legacy_padding_count==0"
+      ],
+      "rewritten_status": "rewritten-material",
+      "note": "notebookbar_groups.ui: GtkBox-spacing strip, zero legacy padding."
+    },
+    "grouped-compact-single": {
+      "design_ref": "docs/design/05-navigation.md#4",
+      "required_markers": [
+        "conformance_marker(family=grouped-compact-single)",
+        "separator_count>0",
+        "collapse_machinery preserved"
+      ],
+      "rewritten_status": "in-progress",
+      "note": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    }
+  },
+  "coverage": {
+    "total": 21,
+    "rewritten_material": 7,
+    "in_progress": 14,
+    "pending": 0,
+    "coverage_pct": 33.33,
+    "by_family": {
+      "grouped-compact-single": {
+        "total": 14,
+        "rewritten-material": 0
+      },
+      "groups": {
+        "total": 3,
+        "rewritten-material": 3
+      },
+      "tabbed": {
+        "total": 4,
+        "rewritten-material": 4
+      }
+    },
+    "by_module": {
+      "sc": {
+        "total": 5,
+        "rewritten-material": 2
+      },
+      "sd/sdraw": {
+        "total": 4,
+        "rewritten-material": 1
+      },
+      "sd/simpress": {
+        "total": 6,
+        "rewritten-material": 2
+      },
+      "sw": {
+        "total": 6,
+        "rewritten-material": 2
+      }
+    }
+  },
+  "surfaces": [
+    {
+      "surface": "sc/uiconfig/scalc/ui/notebookbar.ui",
+      "module": "sc",
+      "family": "tabbed",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "grid",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "tabbed",
+        "separator_count": 56,
+        "group_grid_count": 55,
+        "row_spacing_decls": 55,
+        "column_spacing_decls": 55,
+        "box_spacing_decls": 2,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 65,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 16,
+          "sfxlo-PriorityMergedHBox": 16,
+          "sfxlo-DropdownBox": 15,
+          "sfxlo-NotebookbarToolBox": 249
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sc/uiconfig/scalc/ui/notebookbar_compact.ui",
+      "module": "sc",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 113,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 114,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 15,
+          "sfxlo-PriorityMergedHBox": 15,
+          "sfxlo-DropdownBox": 15,
+          "sfxlo-NotebookbarToolBox": 274
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sc/uiconfig/scalc/ui/notebookbar_groupedbar_compact.ui",
+      "module": "sc",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 60,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 62,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 9,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 123
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sc/uiconfig/scalc/ui/notebookbar_groupedbar_full.ui",
+      "module": "sc",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 42,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 46,
+        "icon_size_decls": 25,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 7,
+          "sfxlo-DropdownBox": 5,
+          "sfxlo-NotebookbarToolBox": 137
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sc/uiconfig/scalc/ui/notebookbar_groups.ui",
+      "module": "sc",
+      "family": "groups",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "box",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "groups",
+        "separator_count": 10,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 22,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 1,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-NotebookbarToolBox": 12
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sd/uiconfig/sdraw/ui/notebookbar.ui",
+      "module": "sd/sdraw",
+      "family": "tabbed",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "grid",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "tabbed",
+        "separator_count": 58,
+        "group_grid_count": 57,
+        "row_spacing_decls": 57,
+        "column_spacing_decls": 57,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 68,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 16,
+          "sfxlo-PriorityMergedHBox": 16,
+          "sfxlo-DropdownBox": 16,
+          "sfxlo-NotebookbarToolBox": 221
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sd/uiconfig/sdraw/ui/notebookbar_compact.ui",
+      "module": "sd/sdraw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 148,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 148,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 17,
+          "sfxlo-PriorityMergedHBox": 17,
+          "sfxlo-DropdownBox": 17,
+          "sfxlo-NotebookbarToolBox": 352
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/sdraw/ui/notebookbar_groupedbar_compact.ui",
+      "module": "sd/sdraw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 74,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 76,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 10,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 158
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/sdraw/ui/notebookbar_single.ui",
+      "module": "sd/sdraw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 86,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 86,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 10,
+          "sfxlo-DropdownBox": 1,
+          "sfxlo-NotebookbarToolBox": 234
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar.ui",
+      "module": "sd/simpress",
+      "family": "tabbed",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "grid",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "tabbed",
+        "separator_count": 64,
+        "group_grid_count": 63,
+        "row_spacing_decls": 63,
+        "column_spacing_decls": 63,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 72,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 19,
+          "sfxlo-PriorityMergedHBox": 19,
+          "sfxlo-DropdownBox": 18,
+          "sfxlo-NotebookbarToolBox": 242
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar_compact.ui",
+      "module": "sd/simpress",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 144,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 144,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 17,
+          "sfxlo-PriorityMergedHBox": 17,
+          "sfxlo-DropdownBox": 17,
+          "sfxlo-NotebookbarToolBox": 340
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar_groupedbar_compact.ui",
+      "module": "sd/simpress",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 74,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 76,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 10,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 153
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar_groupedbar_full.ui",
+      "module": "sd/simpress",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 54,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 55,
+        "icon_size_decls": 31,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 8,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 158
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar_groups.ui",
+      "module": "sd/simpress",
+      "family": "groups",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "box",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "groups",
+        "separator_count": 10,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 21,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 1,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-NotebookbarToolBox": 8
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sd/uiconfig/simpress/ui/notebookbar_single.ui",
+      "module": "sd/simpress",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 84,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 84,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 10,
+          "sfxlo-DropdownBox": 1,
+          "sfxlo-NotebookbarToolBox": 227
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar.ui",
+      "module": "sw",
+      "family": "tabbed",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "grid",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "tabbed",
+        "separator_count": 68,
+        "group_grid_count": 64,
+        "row_spacing_decls": 62,
+        "column_spacing_decls": 62,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 69,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 16,
+          "sfxlo-PriorityMergedHBox": 17,
+          "sfxlo-DropdownBox": 16,
+          "sfxlo-NotebookbarToolBox": 276
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar_compact.ui",
+      "module": "sw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 126,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 126,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-NotebookbarTabControl": 1,
+          "sfxlo-PriorityHBox": 16,
+          "sfxlo-PriorityMergedHBox": 16,
+          "sfxlo-DropdownBox": 16,
+          "sfxlo-NotebookbarToolBox": 306
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar_groupedbar_compact.ui",
+      "module": "sw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 66,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 68,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 9,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 130
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar_groupedbar_full.ui",
+      "module": "sw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 62,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 66,
+        "icon_size_decls": 46,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 10,
+          "sfxlo-DropdownBox": 3,
+          "sfxlo-NotebookbarToolBox": 253
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar_groups.ui",
+      "module": "sw",
+      "family": "groups",
+      "rewrite_status": "rewritten-material",
+      "spacing_declared": "box",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "groups",
+        "separator_count": 10,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 22,
+        "legacy_padding_count": 0,
+        "icon_size_decls": 1,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-NotebookbarToolBox": 11
+        }
+      },
+      "deferred": null
+    },
+    {
+      "surface": "sw/uiconfig/swriter/ui/notebookbar_single.ui",
+      "module": "sw",
+      "family": "grouped-compact-single",
+      "rewrite_status": "in-progress",
+      "spacing_declared": "pending",
+      "markers": {
+        "conformance_marker": true,
+        "marker_family": "grouped-compact-single",
+        "separator_count": 66,
+        "group_grid_count": 0,
+        "row_spacing_decls": 0,
+        "column_spacing_decls": 0,
+        "box_spacing_decls": 0,
+        "legacy_padding_count": 66,
+        "icon_size_decls": 0,
+        "collapse_machinery": {
+          "sfxlo-ContextVBox": 1,
+          "sfxlo-PriorityHBox": 1,
+          "sfxlo-PriorityMergedHBox": 9,
+          "sfxlo-DropdownBox": 1,
+          "sfxlo-NotebookbarToolBox": 178
+        }
+      },
+      "deferred": "Legacy GtkSeparator child-packing 'padding' -> Material grid/box spacing conversion is build-bound (no local build to verify stock/collapse parity on this shared .ui); pinned as a regression net, flip to rewritten-material deferred."
+    }
+  ]
+}

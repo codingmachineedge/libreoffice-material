@@ -81,6 +81,34 @@ std::optional<Color> lcl_materialStatusColor(std::string_view rRole)
         return std::nullopt;
     return rCache->findColor(rRole);
 }
+
+// Resolve a Material integer metric token for the status band -- e.g. the 28px
+// size-compact-control band height (docs/design/05-navigation.md 8.1) -- gated on
+// the same documented VCL_FILE_WIDGET_THEME=material activation as
+// lcl_materialStatusColor. Metric tokens are scheme-independent, so a single
+// definition cache suffices; the cheap getenv gate short-circuits before any
+// parse under the native theme, so the stock band-height path stays inert and
+// the 28px value can never drift from definition.xml (no raw literal here).
+std::optional<tools::Long> lcl_materialStatusMetric(std::string_view rName)
+{
+    // System forced colors take precedence for accessibility: keep the stock
+    // geometry too, matching the sibling color helpers' HC-first ordering.
+    if (Application::GetSettings().GetStyleSettings().GetHighContrastMode())
+        return std::nullopt;
+
+    const char* pThemeName = std::getenv("VCL_FILE_WIDGET_THEME");
+    if (!pThemeName || std::string_view(pThemeName) != "material")
+        return std::nullopt;
+
+    static std::optional<vcl::MaterialTokens> spTokens;
+    if (!spTokens)
+        spTokens = vcl::MaterialTokens::fromThemeDefinition(OString());
+    if (!spTokens->isValid())
+        return std::nullopt;
+    if (const std::optional<sal_Int32> oValue = spTokens->findMetric(rName))
+        return static_cast<tools::Long>(*oValue);
+    return std::nullopt;
+}
 }
 
 class StatusBar::ImplData
@@ -1519,6 +1547,14 @@ Size StatusBar::CalcWindowSizePixel() const
     nCalcHeight = nMinHeight+nBarTextOffset;
     if( nCalcHeight < nProgressHeight+2 )
         nCalcHeight = nProgressHeight+2;
+
+    // Material file-widget theme: the status band is a fixed 28px bar
+    // (@size-compact-control, docs/design/05-navigation.md 8.1). Floor the
+    // text-derived height to that metric so the band matches the Material design;
+    // resolved through MaterialTokens::findMetric so it can never drift from
+    // definition.xml, and inert under the native theme (height unchanged there).
+    if (const std::optional<tools::Long> oBandHeight = lcl_materialStatusMetric("size-compact-control"))
+        nCalcHeight = std::max(nCalcHeight, *oBandHeight);
 
     return Size( nCalcWidth, nCalcHeight );
 }

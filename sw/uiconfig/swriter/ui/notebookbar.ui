@@ -3,6 +3,7 @@
 <interface domain="sw">
   <requires lib="gtk+" version="3.24"/>
   <requires lib="LibreOffice" version="1.0"/>
+  <!-- material-notebookbar-ui-conformance family=tabbed wave=1 cluster=2 -->
   <!-- interface-local-resource-path ../../../icon-themes/colibre/cmd/ -->
   <object class="GtkMenu" id="Menu Addons">
     <property name="visible">True</property>
@@ -13911,12 +13912,13 @@
                     <property name="halign">end</property>
                     <property name="margin-top">5</property>
                     <property name="margin-bottom">5</property>
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">5</property>
                     <property name="orientation">vertical</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="padding">5</property>
                     <property name="pack-type">end</property>
                     <property name="position">2</property>
                   </packing>
@@ -14791,12 +14793,13 @@
                     <property name="halign">end</property>
                     <property name="margin-top">5</property>
                     <property name="margin-bottom">5</property>
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">5</property>
                     <property name="orientation">vertical</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="padding">5</property>
                     <property name="pack-type">end</property>
                     <property name="position">2</property>
                   </packing>

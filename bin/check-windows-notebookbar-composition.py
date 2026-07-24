@@ -30,10 +30,26 @@ checker cross-validates that guarded swap against the real tree:
   verbatim (``must_retain``), proving the native/default-theme path is byte-for-byte
   untouched.
 
-SCOPE: this pins the group-area background wash ONLY, never the 38px tab-row band, the
-tab-row bottom rule, or any group/command ``.ui`` geometry. It is source evidence only:
-``runtime_verified`` is false throughout -- no native build, notebookbar pixels, or
-runtime interaction are claimed.
+The ``tab_row`` section pins the NEW composition-code structural markers the shared tab
+control owns: ``NotebookbarTabControl::Paint()`` in
+sfx2/source/notebookbar/NotebookbarTabControl.cxx overlays a 2px ``@primary`` active-tab
+underline and a full-width ``@outline-variant`` tab-row bottom hairline on top of the
+stock/native tab drawing. The checker cross-validates that:
+
+* ``@primary`` and ``@outline-variant`` exist in *both* palettes, and the pinned role
+  names (``role_primary``/``role_rule``) have not drifted;
+* the owning source includes the token header and carries the Material guard markers,
+  *including* the ``GetHighContrastMode`` short-circuit (high-contrast always wins);
+* the guard helper is both defined and invoked; and
+* each paint (underline, hairline) appears as a contiguous statement referencing the
+  guard-dereferenced colour (``*oPrimary`` / ``*oRule``) sitting *after* its guard
+  resolution -- a removed, reordered, or guard-detached paint fails closed.
+
+SCOPE: the ``group_area`` section pins the group-area background wash ONLY, and
+``tab_row`` pins the underline + hairline paints ONLY -- never the tab-row band FILL, the
+per-group inter-command dividers, group-label typography, or any ``.ui`` geometry. It is
+source evidence only: ``runtime_verified`` is false throughout -- no native build,
+notebookbar pixels, or runtime interaction are claimed.
 """
 
 from __future__ import annotations
@@ -79,11 +95,12 @@ def _collapse_ws(source: str) -> str:
 def load_repository(repo_root: Path = REPOSITORY) -> tuple[dict[str, Any], dict[str, str]]:
     registry = _read_json(repo_root / REGISTRY_PATH)
     paths: set[str] = {DEFINITION_PATH}
-    group_area = registry.get("group_area")
-    if isinstance(group_area, dict) and isinstance(group_area.get("owner"), dict):
-        source = group_area["owner"].get("source")
-        if isinstance(source, str):
-            paths.add(source)
+    for key in ("group_area", "tab_row"):
+        section = registry.get(key)
+        if isinstance(section, dict) and isinstance(section.get("owner"), dict):
+            source = section["owner"].get("source")
+            if isinstance(source, str):
+                paths.add(source)
     contents: dict[str, str] = {}
     for relative in paths:
         path = repo_root / relative
@@ -132,27 +149,61 @@ def _validate_palette(root: ET.Element, group_area: Mapping[str, Any], errors: l
                 errors.append(f"group_area:palette:@{name} missing from the {label} palette")
 
 
-def _validate_owner(
-    group_area: Mapping[str, Any], contents: Mapping[str, str], errors: list[str]
+def _validate_tab_row_palette(
+    root: ET.Element, tab_row: Mapping[str, Any], errors: list[str]
 ) -> None:
-    owner = group_area.get("owner")
+    if tab_row.get("role_primary") != "primary":
+        errors.append(
+            "tab_row:role_primary:must stay 'primary' (the 2px active-tab underline "
+            "token, docs/design/05-navigation.md 4); a role rename desyncs the guarded paint"
+        )
+    if tab_row.get("role_rule") != "outline-variant":
+        errors.append(
+            "tab_row:role_rule:must stay 'outline-variant' (the tab-row band hairline "
+            "token, docs/design/05-navigation.md 4); a role rename desyncs the guarded paint"
+        )
+    for name in tab_row.get("palette_colors", []) or []:
+        if not isinstance(name, str):
+            continue
+        for scheme in REQUIRED_SCHEMES:
+            if _palette_color(root, scheme, name) is None:
+                label = scheme or "light"
+                errors.append(f"tab_row:palette:@{name} missing from the {label} palette")
+
+
+def _validate_owner(
+    section: Mapping[str, Any],
+    contents: Mapping[str, str],
+    errors: list[str],
+    prefix: str = "group_area",
+) -> None:
+    owner = section.get("owner")
     if not isinstance(owner, dict):
-        errors.append("group_area:owner:object required")
+        errors.append(f"{prefix}:owner:object required")
         return
     source_path = owner.get("source")
     source = contents.get(source_path) if isinstance(source_path, str) else None
     if source is None:
-        errors.append(f"group_area:owner:source {source_path} missing")
+        errors.append(f"{prefix}:owner:source {source_path} missing")
         return
     code = _without_cpp_comments(source)
 
     include = owner.get("include")
     if isinstance(include, str) and f"#include {include}" not in code:
-        errors.append(f"group_area:owner:missing #include {include}")
+        errors.append(f"{prefix}:owner:missing #include {include}")
 
     for marker in owner.get("markers", []) or []:
         if isinstance(marker, str) and marker not in code:
-            errors.append(f"group_area:owner:marker missing in code ({marker})")
+            errors.append(f"{prefix}:owner:marker missing in code ({marker})")
+
+    # High-contrast must ALWAYS win: the guard helper has to short-circuit on the system
+    # forced-colors flag before any Material branch. A dropped HC check fails closed.
+    hc_marker = owner.get("hc_marker")
+    if isinstance(hc_marker, str) and hc_marker not in code:
+        errors.append(
+            f"{prefix}:owner:hc-marker missing in code ({hc_marker}); high-contrast must "
+            "always win before any Material colour branch"
+        )
 
     # The guard helper must be both defined AND invoked: a lone definition (call site
     # commented out) leaves exactly one occurrence after comment stripping, so require
@@ -160,9 +211,28 @@ def _validate_owner(
     guard = owner.get("guard_marker")
     if isinstance(guard, str) and code.count(guard) < 2:
         errors.append(
-            f"group_area:owner:guard {guard!r} must be both defined and invoked in code "
-            "(the @surface group-area override must not be comment-only)"
+            f"{prefix}:owner:guard {guard!r} must be both defined and invoked in code "
+            "(the guarded Material override must not be comment-only)"
         )
+
+    collapsed = _collapse_ws(code)
+
+    def _check_bound_statement(
+        spec: Mapping[str, Any], label: str, missing_msg: str, order_msg: str
+    ) -> None:
+        statement = spec.get("statement")
+        if not isinstance(statement, str):
+            return
+        statement_c = _collapse_ws(statement)
+        if statement_c not in collapsed:
+            errors.append(f"{label}:{missing_msg} ({statement!r} not found)")
+            return
+        anchor = spec.get("within_branch_after")
+        if isinstance(anchor, str):
+            anchor_c = _collapse_ws(anchor)
+            anchor_idx = collapsed.find(anchor_c)
+            if anchor_idx == -1 or collapsed.find(statement_c) < anchor_idx:
+                errors.append(f"{label}:{order_msg} ({anchor!r})")
 
     # Bind the guard to its effect: the @surface override must be the body of the guard,
     # expressed as a contiguous `if (... = guard("surface")) aColor = *oSurface;`
@@ -172,33 +242,38 @@ def _validate_owner(
     # leave the markers/guard-count intact but fail here.
     guarded_call = owner.get("guarded_call")
     if isinstance(guarded_call, dict):
-        collapsed = _collapse_ws(code)
-        statement = guarded_call.get("statement")
-        if isinstance(statement, str):
-            statement_c = _collapse_ws(statement)
-            if statement_c not in collapsed:
-                errors.append(
-                    "group_area:owner:guarded-call:the @surface override must be gated "
-                    f"directly by the theme guard as a contiguous statement ({statement!r} "
-                    "not found; an empty or detached guard body fails closed)"
-                )
-            else:
-                anchor = guarded_call.get("within_branch_after")
-                if isinstance(anchor, str):
-                    anchor_c = _collapse_ws(anchor)
-                    anchor_idx = collapsed.find(anchor_c)
-                    if anchor_idx == -1 or collapsed.find(statement_c) < anchor_idx:
-                        errors.append(
-                            "group_area:owner:guarded-call:the guarded @surface override "
-                            f"must sit after the base-colour line ({anchor!r})"
-                        )
+        _check_bound_statement(
+            guarded_call,
+            f"{prefix}:owner:guarded-call",
+            "the @surface override must be gated directly by the theme guard as a "
+            "contiguous statement (an empty or detached guard body fails closed)",
+            "the guarded @surface override must sit after the base-colour line",
+        )
+
+    # Bind each Material paint to the guard-resolved optional colour: every paint's
+    # SetColor+Draw pair must appear as a contiguous statement referencing the guard's
+    # dereferenced result (*oPrimary / *oRule) and sit after that guard resolution. A
+    # removed paint, a paint detached from the guard (e.g. a raw literal colour), or a
+    # reordered paint all leave the markers/guard-count intact but fail here -- this is
+    # what pins the NEW underline/hairline structural markers, not merely token presence.
+    for paint in owner.get("paints", []) or []:
+        if not isinstance(paint, dict):
+            continue
+        name = paint.get("name", "?")
+        _check_bound_statement(
+            paint,
+            f"{prefix}:owner:paint:{name}",
+            "the guard-resolved paint statement is missing or not contiguous (a removed "
+            "or guard-detached paint fails closed)",
+            "the paint must sit after its guard resolution",
+        )
 
     # The existing native/default-theme path must be retained byte-for-byte: every legacy
     # per-module accent Merge() call must still be present.
     for retained in owner.get("must_retain", []) or []:
         if isinstance(retained, str) and retained not in code:
             errors.append(
-                f"group_area:owner:must-retain accent Merge() dropped ({retained}); the "
+                f"{prefix}:owner:must-retain accent Merge() dropped ({retained}); the "
                 "native/default-theme path must stay byte-for-byte untouched"
             )
 
@@ -238,6 +313,16 @@ def violations(registry: Mapping[str, Any], contents: Mapping[str, str]) -> list
 
     _validate_owner(group_area, contents, errors)
 
+    tab_row = registry.get("tab_row")
+    if not isinstance(tab_row, dict):
+        errors.append("registry:tab_row:object required")
+        tab_row = {}
+
+    if root is not None:
+        _validate_tab_row_palette(root, tab_row, errors)
+
+    _validate_owner(tab_row, contents, errors, prefix="tab_row")
+
     return errors
 
 
@@ -264,9 +349,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
     print(
         "Material notebookbar composition contract passed: the guarded @surface group-area "
-        "wash resolves through vcl::MaterialTokens after the base-colour line, the four legacy "
-        "per-module accent Merge() calls are retained byte-for-byte, and @surface is present in "
-        "both palettes. Scope is the group-area wash only (not the tab-row band or .ui geometry)."
+        "wash resolves through vcl::MaterialTokens after the base-colour line (the four legacy "
+        "per-module accent Merge() calls retained byte-for-byte), and the tab-row overlay draws "
+        "a guard-bound 2px @primary active-tab underline plus a full-width @outline-variant "
+        "hairline, HC-first on every branch. @surface/@primary/@outline-variant are all present "
+        "in both palettes. Scope is those paints only (not the tab-row FILL or .ui geometry)."
     )
     return 0
 

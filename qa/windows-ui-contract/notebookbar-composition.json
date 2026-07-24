@@ -8,7 +8,7 @@
   "theme_flag": "VCL_FILE_WIDGET_THEME",
   "status": "source-declared",
   "runtime_verified": false,
-  "notes": "WIN-NAV-004. Behind the Material file-widget theme, NotebookBar::UpdateBackground() (vcl/source/control/notebookbar.cxx) resolves the ribbon group-area background wash to the @surface role (docs/design/05-navigation.md 4.1, 'Group area ... @surface fill') through vcl::MaterialTokens instead of the four legacy per-module accent tints (Writer #1a85d1, Calc #3cbc45, Impress #e75729, Draw #e5b443). Under the native/default theme every per-module accent Merge() call is retained byte-for-byte and no Material code path runs, so keyboard, mouse, a11y and RTL behaviour are untouched. SCOPE (deliberate honest narrowing): this pins the group-area background wash ONLY. It is NOT the 38px tab-row @surface-container band, NOT the tab-row @outline-variant bottom rule, and NOT the 96px group height / 8px padding / command-chip .ui geometry -- a single NotebookBar Wallpaper colour cannot carry the tab-row band and group area as two distinct tokens simultaneously, so those remain .ui/build-bound work outside this contract and this contract must never be cited as tab-row-band or .ui-geometry coverage. Replacing the recognisable per-module blue/green/orange/yellow tint under the Material theme is an intentional, design-directed change (05-navigation.md 4.1), not a regression. Source evidence only: no native build, notebookbar pixels, or runtime interaction are claimed (runtime_verified false).",
+  "notes": "WIN-NAV-004 (group-area wash) + tab-row band extension. This contract pins the concrete, already-executing colour/paint decisions the shared notebookbar/ribbon command surface owns today, in two independent sections. (1) group_area: behind the Material file-widget theme, NotebookBar::UpdateBackground() (vcl/source/control/notebookbar.cxx) resolves the ribbon group-area background wash to the @surface role (docs/design/05-navigation.md 4.1, 'Group area ... @surface fill') through vcl::MaterialTokens instead of the four legacy per-module accent tints (Writer #1a85d1, Calc #3cbc45, Impress #e75729, Draw #e5b443); under the native/default theme every accent Merge() is retained byte-for-byte and no Material code path runs. (2) tab_row: NotebookbarTabControl::Paint() (sfx2/source/notebookbar/NotebookbarTabControl.cxx) overlays a 2px @primary active-tab underline and a full-width @outline-variant tab-row bottom hairline ON TOP of the stock/native tab drawing -- the NEW structural markers this contract adds (underline paint, hairline group-rule) beyond the group-area @surface wash. Both sections gate on VCL_FILE_WIDGET_THEME=material with system high-contrast ALWAYS winning first (the guard helper short-circuits to nullopt in HC), so keyboard, mouse, a11y and RTL behaviour are untouched and the stock path is byte-for-byte preserved when the guard is off. SCOPE (deliberate honest narrowing): still OUTSIDE this contract and left as .ui/build-bound work are the tab-row band FILL (@surface / @surface-container -- a single NotebookBar Wallpaper colour cannot carry the tab-row band and group area as two distinct tokens simultaneously), the per-group inter-command vertical dividers inside the 96px command strip, group-label typography, and the 96px group height / 8px padding / command-chip .ui geometry; this contract must never be cited as tab-row-FILL or .ui-geometry coverage. Replacing the recognisable per-module blue/green/orange/yellow tint and adding the Material tab-row band treatment are intentional, design-directed changes (05-navigation.md 4), not regressions. Source evidence only: no native build, notebookbar pixels, or runtime interaction are claimed (runtime_verified false).",
   "group_area": {
     "role": "surface",
     "note": "docs/design/05-navigation.md 4.1: 'Group area | 96px tall, 8px padding | @surface fill'. Only the @surface fill token is pinned here; the 96px height, 8px padding, @outline-variant inter-group dividers and big/small/chip command sizing remain .ui/build-bound work outside this contract.",
@@ -19,9 +19,11 @@
       "source": "vcl/source/control/notebookbar.cxx",
       "include": "<vcl/MaterialTokens.hxx>",
       "guard_marker": "lcl_materialNotebookbarColor",
+      "hc_marker": "GetHighContrastMode",
       "markers": [
         "VCL_FILE_WIDGET_THEME",
         "MaterialTokens::fromThemeDefinition",
+        "GetHighContrastMode",
         "lcl_materialNotebookbarColor(\"surface\")"
       ],
       "guarded_call": {
@@ -33,6 +35,42 @@
         "aColor.Merge(Color(0x3c, 0xbc, 0x45), cTrans)",
         "aColor.Merge(Color(0xe7, 0x57, 0x29), cTrans)",
         "aColor.Merge(Color(0xe5, 0xb4, 0x43), cTrans)"
+      ]
+    }
+  },
+  "tab_row": {
+    "role_primary": "primary",
+    "role_rule": "outline-variant",
+    "note": "docs/design/05-navigation.md 4: the notebookbar tab row is a band closed by a full-width @outline-variant bottom hairline (the rule separating the 38px tab row from the grouped command strip that carries the landed @surface group-area wash), with a 2px @primary underline beneath the active tab. Both are drawn in composition code by NotebookbarTabControl::Paint() as a pure overlay ON TOP of the stock/native tab drawing -- so the underline paint and the hairline group-rule are the NEW structural markers this contract asserts beyond the group-area @surface wash. High-contrast mode and the native/default theme both make the guard helper return nullopt, so the overlay never runs and the stock tab drawing is the final pixel result (keyboard/mouse/a11y/RTL untouched). Only the underline and hairline paints are pinned here; the tab-row band FILL, per-group inter-command dividers, and group-label typography remain .ui/build-bound work outside this contract.",
+    "palette_colors": [
+      "primary",
+      "outline-variant"
+    ],
+    "owner": {
+      "source": "sfx2/source/notebookbar/NotebookbarTabControl.cxx",
+      "include": "<vcl/MaterialTokens.hxx>",
+      "guard_marker": "lcl_materialTabControlColor",
+      "hc_marker": "GetHighContrastMode",
+      "markers": [
+        "VCL_FILE_WIDGET_THEME",
+        "MaterialTokens::fromThemeDefinition",
+        "GetHighContrastMode",
+        "lcl_materialTabControlColor(\"primary\")",
+        "lcl_materialTabControlColor(\"outline-variant\")"
+      ],
+      "paints": [
+        {
+          "name": "hairline",
+          "role": "outline-variant",
+          "statement": "rRenderContext.SetLineColor(*oRule); rRenderContext.DrawLine(Point(0, nBaseline), Point(nWidth - 1, nBaseline));",
+          "within_branch_after": "const std::optional<Color> oRule = lcl_materialTabControlColor(\"outline-variant\");"
+        },
+        {
+          "name": "underline",
+          "role": "primary",
+          "statement": "rRenderContext.SetFillColor(*oPrimary); rRenderContext.DrawRect(tools::Rectangle(aTab.Left(), nBaseline - 1, aTab.Right(), nBaseline));",
+          "within_branch_after": "const std::optional<Color> oPrimary = lcl_materialTabControlColor(\"primary\");"
+        }
       ]
     }
   }

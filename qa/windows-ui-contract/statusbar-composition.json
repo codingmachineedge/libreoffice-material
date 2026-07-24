@@ -13,6 +13,12 @@
     "face_color_slot": {"slot": "faceColor", "token": "@surface-container"},
     "top_rule": {"token": "outline-variant", "stroke_width": "stroke-thin"},
     "height_metric": {"name": "size-compact-control", "value": "28"},
+    "height": {
+      "metric": "size-compact-control",
+      "value": 28,
+      "source_marker": "lcl_materialStatusMetric(\"size-compact-control\")",
+      "note": "docs/design/05-navigation.md 8.1: the Material status band is a fixed 28px bar. status.cxx floors CalcWindowSizePixel() to the size-compact-control metric via lcl_materialStatusMetric (MaterialTokens::findMetric), so the consumed band height stays drift-locked to definition.xml and inert under the native theme. The finer 14px side padding / 16px gaps / 12px field text from 8.1 remain prototype-only geometry over the shared owner-drawn item layout and are not claimed here."
+    },
     "metrics": [
       {"name": "size-compact-control", "value": "28"},
       {"name": "stroke-thin", "value": "1"},

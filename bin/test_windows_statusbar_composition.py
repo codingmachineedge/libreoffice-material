@@ -189,6 +189,33 @@ class StatusBarCompositionContractTest(unittest.TestCase):
         errors = self.failures(contents=self.with_content(STATUS, source))
         self.assertTrue(any("band:owner:missing #include" in e for e in errors), errors)
 
+    # -- band height consumption (28px size-compact-control floor) ---------
+    def test_band_height_comment_only_wiring_fails(self) -> None:
+        # The 28px band-height floor must be real code, not a comment: the
+        # checker strips C++ comments before matching the source marker.
+        source = self.contents[STATUS].replace(
+            'lcl_materialStatusMetric("size-compact-control")',
+            '/* lcl_materialStatusMetric("size-compact-control") */ std::nullopt',
+            1,
+        )
+        errors = self.failures(contents=self.with_content(STATUS, source))
+        self.assertTrue(
+            any("band:height:owner must consume the fixed 28px band height" in e for e in errors),
+            errors,
+        )
+
+    def test_band_height_marker_metric_mismatch_fails(self) -> None:
+        # If the source marker stops naming the pinned metric, the drift-lock
+        # fails closed even though the string is still present in code.
+        registry = copy.deepcopy(self.registry)
+        registry["band"]["height"]["source_marker"] = (
+            'lcl_materialStatusMetric("size-standard-control")'
+        )
+        errors = self.failures(registry=registry)
+        self.assertTrue(
+            any("must reference the height metric" in e for e in errors), errors
+        )
+
     # -- accessibility value-change path ----------------------------------
     def test_accessibility_guard_comment_only_fails(self) -> None:
         # Comment out the guarded call, leaving only the helper definition (one
