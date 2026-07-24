@@ -5,7 +5,10 @@
   <object class="GtkBox" id="TpViewPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <child>
       <!-- n-columns=2 n-rows=3 -->
       <object class="GtkGrid" id="grid3">
@@ -398,6 +401,7 @@
                     <property name="label" translatable="yes" context="tpviewpage|grid_label">_Grid lines:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">grid</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="grid_label-atkobject">

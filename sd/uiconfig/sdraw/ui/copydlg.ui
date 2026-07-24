@@ -22,7 +22,6 @@
   </object>
   <object class="GtkDialog" id="DuplicateDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="copydlg|DuplicateDialog">Duplicate</property>
     <property name="modal">True</property>
     <property name="default_width">0</property>
@@ -37,6 +36,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="default">
                 <property name="label" translatable="yes" context="copydlg|default">_Default</property>
@@ -139,6 +139,7 @@
                     <property name="label" translatable="yes" context="copydlg|label4">Number of _copies:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">copies</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -552,10 +553,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="101">default</action-widget>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="101">default</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>
