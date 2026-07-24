@@ -63,6 +63,7 @@
                     <property name="label" translatable="yes" context="connpooloptions|driverslabel">Drivers known in %PRODUCTNAME</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">driverlist</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -212,6 +213,7 @@
                             <property name="label" translatable="yes" context="connpooloptions|timeoutlabel">_Timeout (seconds):</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">timeout</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>

@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="RenameAutoTextDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="renameautotextdialog|RenameAutoTextDialog">Rename AutoText</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -33,7 +32,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -47,7 +46,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
@@ -80,6 +79,7 @@
                     <property name="label" translatable="yes" context="renameautotextdialog|label2">Na_me</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">oldname</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -94,6 +94,7 @@
                     <property name="label" translatable="yes" context="renameautotextdialog|label3">_New</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">newname</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -161,6 +162,7 @@
                     <property name="label" translatable="yes" context="renameautotextdialog|label4">Short_cut</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">oldsc</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -175,6 +177,7 @@
                     <property name="label" translatable="yes" context="renameautotextdialog|label5">_Shortcut</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">newsc</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -235,8 +238,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

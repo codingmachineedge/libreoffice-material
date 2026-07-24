@@ -43,7 +43,10 @@
     <property name="valign">start</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -178,6 +181,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_TYPE">Ty_pe:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_TRGR_GRADIENT_TYPES</property>
                     <property name="xalign">1</property>
@@ -216,6 +220,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_CENTER_X">Center _X:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_CENTER_X</property>
                     <property name="xalign">1</property>
@@ -249,6 +254,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_CENTER_Y">Center _Y:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_CENTER_Y</property>
                     <property name="xalign">1</property>
@@ -282,6 +288,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_ANGLE">_Angle:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_ANGLE</property>
                     <property name="xalign">1</property>
@@ -315,6 +322,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_BORDER">Transition start:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_BORDER</property>
                     <property name="xalign">1</property>
@@ -348,6 +356,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_START_VALUE">_Start value:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_START_VALUE</property>
                     <property name="xalign">1</property>
@@ -381,6 +390,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="transparencytabpage|FT_TRGR_END_VALUE">_End value:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_TRGR_END_VALUE</property>
                     <property name="xalign">1</property>
@@ -531,6 +541,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="transparencytabpage|FL_PROP">Area Transparency Mode</property>
+        <property name="ellipsize">end</property>
         <property name="xalign">0</property>
         <attributes>
           <attribute name="weight" value="bold"/>

@@ -22,7 +22,10 @@
   <object class="GtkBox" id="Rotation">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <property name="homogeneous">True</property>
@@ -59,6 +62,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="rotationtabpage|FT_POS_X">Position _X:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MTR_FLD_POS_X</property>
                         <property name="xalign">0</property>
@@ -73,6 +77,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="rotationtabpage|FT_POS_Y">Position _Y:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">MTR_FLD_POS_Y</property>
                         <property name="xalign">0</property>
@@ -134,6 +139,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="rotationtabpage|label1">Pivot Point</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -201,6 +207,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="rotationtabpage|pivot_location_label">Pivot Location</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -252,6 +259,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="rotationtabpage|FT_ANGLE">_Angle:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="xalign">0</property>
                         <accessibility>
@@ -300,6 +308,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="rotationtabpage|label2">Rotation Angle</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -370,6 +379,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="rotationtabpage|wheel_frame">Rotation Wheel</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>

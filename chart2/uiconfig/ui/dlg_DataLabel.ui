@@ -322,6 +322,7 @@
                             <property name="label" translatable="yes" context="dlg_DataLabel|FT_TEXT_SEPARATOR">_Separator</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">LB_TEXT_SEPARATOR</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -359,6 +360,7 @@
                             <property name="label" translatable="yes" context="dlg_DataLabel|FT_LABEL_PLACEMENT">Place_ment</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">LB_LABEL_PLACEMENT</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -518,6 +520,7 @@
                                 <property name="label" translatable="yes" context="dlg_DataLabel|FT_LABEL_TEXTDIR">Te_xt direction</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">LB_LABEL_TEXTDIR</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>

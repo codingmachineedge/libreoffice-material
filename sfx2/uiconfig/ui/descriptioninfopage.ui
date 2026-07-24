@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="shadow-type">in</property>
     <child>
       <object class="GtkViewport">
@@ -29,6 +32,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label27">_Title:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">title</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -43,6 +47,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label28">_Subject:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">subject</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -57,6 +62,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label29">_Keywords:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">keywords</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -72,6 +78,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label31">Co_ntributor:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">contributor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -87,6 +94,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label32">Co_verage:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">coverage</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -102,6 +110,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label37">_Identifier:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">identifier</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -117,6 +126,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label39">_Publisher:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">publisher</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -132,6 +142,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label40">R_elation:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">relation</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -147,6 +158,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label41">Ri_ghts:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">rights</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -162,6 +174,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label42">So_urce:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">source</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -177,6 +190,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label45">T_ype:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">type</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -192,6 +206,7 @@
                 <property name="label" translatable="yes" context="descriptioninfopage|label30">_Comments:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">comments</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>

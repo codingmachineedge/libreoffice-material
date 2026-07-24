@@ -129,6 +129,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocindexpage|typeft">Type:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">type</property>
                     <property name="xalign">0</property>
@@ -191,6 +192,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocindexpage|label3">Type and Title</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -230,6 +232,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocindexpage|mainstyleft2">For:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">scope</property>
                         <property name="xalign">0</property>
@@ -275,6 +278,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocindexpage|levelft">Include up to level:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">level</property>
                         <property name="xalign">0</property>
@@ -316,6 +320,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocindexpage|label1">Create Index or Table of Contents</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -647,6 +652,7 @@
                             <property name="can-focus">False</property>
                             <property name="no-show-all">True</property>
                             <property name="label" translatable="yes" context="tocindexpage|categoryft">Category:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">category</property>
                             <property name="xalign">0</property>
@@ -676,6 +682,7 @@
                             <property name="can-focus">False</property>
                             <property name="no-show-all">True</property>
                             <property name="label" translatable="yes" context="tocindexpage|displayft">Display:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">display</property>
                             <property name="xalign">0</property>
@@ -725,6 +732,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocindexpage|label2">Create From</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -800,6 +808,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocindexpage|label6">Create From the Following Objects</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -885,6 +894,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocindexpage|mainstyleft9">_Brackets:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">brackets</property>
                     <property name="xalign">0</property>
@@ -944,6 +954,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocindexpage|label7">Formatting of the Entries</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -1148,6 +1159,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocindexpage|label5">Options</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -1188,6 +1200,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocindexpage|mainstyleft3">Language:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">lang</property>
                             <property name="xalign">0</property>
@@ -1229,6 +1242,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocindexpage|mainstyleft5">Key type:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">keytype</property>
                             <property name="xalign">0</property>
@@ -1266,6 +1280,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocindexpage|label4">Sort</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>

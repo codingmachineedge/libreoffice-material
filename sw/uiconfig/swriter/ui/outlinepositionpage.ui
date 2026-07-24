@@ -46,7 +46,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame3">
@@ -136,6 +139,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|num2align">Alignment:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">num2alignlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -166,6 +170,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|alignedat">Aligned at:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">alignedatmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -200,6 +205,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|numfollowedby">Followed by:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">numfollowedbylb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -236,6 +242,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|at">Tab stop at:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">atmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -270,6 +277,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|indentat">Indent at:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">indentatmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -304,6 +312,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|indent">Indent:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">indentmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -357,6 +366,7 @@
                 <property name="label" translatable="yes" context="outlinepositionpage|numberingwidth">Width of numbering:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">numberingwidthmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -392,6 +402,7 @@
 numbering and text:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">numdistmf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -426,6 +437,7 @@ numbering and text:</property>
                 <property name="label" translatable="yes" context="outlinepositionpage|numalign">Alignment:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">numalignlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

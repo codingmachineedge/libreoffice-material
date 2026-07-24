@@ -7,7 +7,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">12</property>
+    <property name="margin-end">12</property>
+    <property name="margin-top">12</property>
+    <property name="margin-bottom">12</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -55,6 +58,7 @@
                 <property name="label" translatable="yes" context="fieldlinkpage|label2">Field from the _Value Table</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">valuefield</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -105,6 +109,7 @@
                 <property name="label" translatable="yes" context="fieldlinkpage|label3">Field from the _List Table</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">listtable</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>

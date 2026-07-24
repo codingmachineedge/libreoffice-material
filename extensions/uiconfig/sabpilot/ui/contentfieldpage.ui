@@ -15,7 +15,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin_start">6</property>
+    <property name="margin_end">6</property>
+    <property name="margin_top">6</property>
+    <property name="margin_bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
     <child>
@@ -40,6 +43,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="contentfieldpage|label1">Existing fields</property>
+                <property name="ellipsize">end</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">selectfield</property>
               </object>

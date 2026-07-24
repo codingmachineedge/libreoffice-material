@@ -16,6 +16,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="hexpand">True</property>
             <property name="layout-style">end</property>
             <child>
@@ -208,6 +209,7 @@
                             <property name="label" translatable="yes" context="formuladialog|label2">Function result:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">result</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -402,6 +404,7 @@
                             <property name="label" translatable="yes" context="formuladialog|formula">For_mula:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">ed_formula</property>
+                            <property name="ellipsize">end</property>
                             <property name="yalign">1</property>
                           </object>
                           <packing>
@@ -417,6 +420,7 @@
                             <property name="label" translatable="yes" context="formuladialog|label1">Result:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">formula_result</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>

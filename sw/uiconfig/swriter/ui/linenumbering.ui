@@ -23,7 +23,6 @@
   </object>
   <object class="GtkDialog" id="LineNumberingDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="linenumbering|LineNumberingDialog">Line Numbering</property>
     <property name="modal">True</property>
     <property name="default_width">0</property>
@@ -38,6 +37,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -147,6 +147,7 @@
                             <property name="label" translatable="yes" context="linenumbering|characterstyle">Character style:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">styledropdown</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -160,6 +161,7 @@
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes" context="linenumbering|format">Format:</property>
                             <property name="mnemonic_widget">formatdropdown</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -174,6 +176,7 @@
                             <property name="label" translatable="yes" context="linenumbering|position">Position:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">positiondropdown</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -188,6 +191,7 @@
                             <property name="label" translatable="yes" context="linenumbering|spacing">Spacing:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">spacingspin</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -202,6 +206,7 @@
                             <property name="label" translatable="yes" context="linenumbering|interval">Interval:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">intervalspin</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -333,6 +338,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="linenumbering|view">View</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -366,6 +372,7 @@
                             <property name="label" translatable="yes" context="linenumbering|text">Text:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">textentry</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -380,6 +387,7 @@
                             <property name="label" translatable="yes" context="linenumbering|every">Every:</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">linesspin</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -457,6 +465,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="linenumbering|separator">Separator</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -565,6 +574,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes" context="linenumbering|count">Count</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -596,9 +606,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child type="titlebar">
       <placeholder/>

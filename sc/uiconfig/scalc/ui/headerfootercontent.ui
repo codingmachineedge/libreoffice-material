@@ -83,7 +83,10 @@
   <object class="GtkBox" id="HeaderFooterContent">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
     <child>
@@ -450,6 +453,7 @@
             <property name="label" translatable="yes" context="headerfootercontent|labelFT_LEFT">_Left area</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">textviewWND_LEFT</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -464,6 +468,7 @@
             <property name="label" translatable="yes" context="headerfootercontent|labelFT_CENTER">_Center area</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">textviewWND_CENTER</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -478,6 +483,7 @@
             <property name="label" translatable="yes" context="headerfootercontent|labelFT_RIGHT">R_ight area</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">textviewWND_RIGHT</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>

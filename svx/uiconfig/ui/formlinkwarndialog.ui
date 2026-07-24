@@ -21,6 +21,7 @@ How do you want to proceed?</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can_focus">False</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="formlinkwarndialog|ok">_Edit</property>
@@ -62,8 +63,8 @@ How do you want to proceed?</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

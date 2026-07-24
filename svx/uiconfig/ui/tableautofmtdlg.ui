@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="AutoFormatTableDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="autoformattable|AutoFormatTableDialog">AutoFormat</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -27,6 +26,7 @@
             <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="cancel">
                 <property name="label" translatable="yes" context="stock">_Cancel</property>
@@ -277,6 +277,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="autoformattable|label1">Format</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -425,6 +426,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="autoformattable|label2">Formatting</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -448,9 +450,9 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="-6">cancel</action-widget>
       <action-widget response="-5">ok</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="AutoFormatTableDialog-atkobject">

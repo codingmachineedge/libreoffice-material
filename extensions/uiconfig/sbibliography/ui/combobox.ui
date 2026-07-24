@@ -16,6 +16,7 @@
         <property name="label" translatable="yes" context="combobox|TBC_FT_SOURCE">Table</property>
         <property name="use_underline">True</property>
         <property name="mnemonic_widget">combobox</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>

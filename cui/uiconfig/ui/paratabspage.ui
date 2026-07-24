@@ -21,7 +21,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
@@ -113,6 +116,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label1">Position</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -333,6 +337,7 @@
                 <property name="valign">center</property>
                 <property name="margin-start">12</property>
                 <property name="label" translatable="yes" context="paratabspage|labelFT_TABTYPE_DECCHAR">_Character</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">entryED_TABTYPE_DECCHAR</property>
                 <property name="xalign">0</property>
@@ -349,6 +354,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label2">Type</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -481,6 +487,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label3">Fill Character</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -553,6 +560,7 @@
           <object class="GtkLabel" id="label4">
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label4">points</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">radiobuttonBTN_FILLCHAR_POINTS</property>
           </object>
@@ -566,6 +574,7 @@
           <object class="GtkLabel" id="label5">
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label5">dashes</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">radiobuttonBTN_FILLCHAR_DASHLINE</property>
           </object>
@@ -579,6 +588,7 @@
           <object class="GtkLabel" id="label6">
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="paratabspage|label6">underscores</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">radiobuttonBTN_FILLCHAR_UNDERSCORE</property>
           </object>

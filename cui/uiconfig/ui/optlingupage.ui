@@ -56,7 +56,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <object class="GtkFrame" id="lingumodulesframe">
@@ -171,6 +174,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optlingupage|lingumodulesft">_Available Language Modules</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">lingumodules</property>
             <property name="xalign">0</property>
@@ -332,6 +336,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optlingupage|lingudictsft">_User-defined Dictionaries</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">lingudicts</property>
             <property name="xalign">0</property>
@@ -484,6 +489,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optlingupage|label4">_Options</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">linguoptions</property>
             <property name="xalign">0</property>

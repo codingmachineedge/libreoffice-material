@@ -137,6 +137,7 @@
             <property name="halign">end</property>
             <property name="margin-end">3</property>
             <property name="label" translatable="yes" context="toolbartabpage|lbLockAll">_Lock all:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">cbLockAll</property>
           </object>

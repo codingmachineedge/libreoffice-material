@@ -14,7 +14,10 @@
         <property name="halign">end</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="border-width">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="row-spacing">6</property>
         <property name="column-spacing">6</property>
         <child>
@@ -24,6 +27,7 @@
             <property name="label" translatable="yes" context="pageformatpanel|size">Size:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">papersize</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="papersize"/>
@@ -41,6 +45,7 @@
             <property name="label" translatable="yes" context="pageformatpanel|width">Width:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">paperwidth</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="paperwidth"/>
@@ -58,6 +63,7 @@
             <property name="label" translatable="yes" context="pageformatpanel|height">Height:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">paperheight</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="paperheight"/>
@@ -75,6 +81,7 @@
             <property name="label" translatable="yes" context="pageformatpanel|orientation">Orientation:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">paperorientation</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="paperorientation"/>
@@ -180,6 +187,7 @@
             <property name="label" translatable="yes" context="pageformatpanel|margin">Margins:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">marginLB</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="marginLB"/>

@@ -28,7 +28,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <child>
       <object class="GtkScrolledWindow" id="scrolledwindow">
         <property name="visible">True</property>
@@ -60,6 +63,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_TAB_FIELD_NAME">Field name</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">ColumnName</property>
                         <property name="xalign">0</property>
@@ -86,6 +90,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_AUTOINCREMENT_VALUE">A_uto-increment statement</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">AutoIncrementValue</property>
                         <property name="xalign">0</property>
@@ -113,6 +118,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_DEFAULT_VALUE">_Default value</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">DefaultValue</property>
                         <property name="xalign">0</property>
@@ -139,6 +145,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_DEFAULT_VALUE">Format example</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">FormatText</property>
                         <property name="xalign">0</property>
@@ -192,6 +199,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_LENGTH">_Length</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">Length</property>
                         <property name="xalign">0</property>
@@ -219,6 +227,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_LENGTH">_Length</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">TextLength</property>
                         <property name="xalign">0</property>
@@ -246,6 +255,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_LENGTH">Decimal _places</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">Scale</property>
                         <property name="xalign">0</property>
@@ -273,6 +283,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_FIELD_REQUIRED">_Entry required</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">Required</property>
                         <property name="xalign">0</property>
@@ -298,6 +309,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_FIELD_AUTOINCREMENT">_AutoValue</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">AutoIncrement</property>
                         <property name="xalign">0</property>
@@ -323,6 +335,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_FIELD_REQUIRED">_Default value</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">BoolDefault</property>
                         <property name="xalign">0</property>
@@ -348,6 +361,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_NUMERIC_TYPE">_Type</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">NumType</property>
                         <property name="xalign">0</property>
@@ -373,6 +387,7 @@
                         <property name="can_focus">False</property>
                         <property name="no_show_all">True</property>
                         <property name="label" translatable="yes" context="fielddescpage|STR_TAB_FIELD_DATATYPE">Field _type</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">Type</property>
                         <property name="xalign">0</property>

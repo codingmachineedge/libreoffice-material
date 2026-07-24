@@ -8,7 +8,10 @@
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
@@ -39,6 +42,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelFormat">_Format:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboPageFormat</property>
                     <property name="xalign">0</property>
@@ -63,6 +67,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelWidth">_Width:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinWidth</property>
                     <property name="xalign">0</property>
@@ -91,6 +96,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelHeight">_Height:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinHeight</property>
                     <property name="xalign">0</property>
@@ -119,6 +125,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelOrientation">_Orientation:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">radiobuttonPortrait</property>
                     <property name="xalign">0</property>
@@ -176,6 +183,7 @@
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelTextFlow">_Text direction:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboTextFlowBox</property>
                     <property name="xalign">0</property>
@@ -252,6 +260,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelPaperTray">Paper _tray:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboPaperTray</property>
                     <property name="xalign">0</property>
@@ -284,6 +293,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="pageformatpage|labelPaperFormat">Paper Format</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -329,6 +339,7 @@
                       <object class="GtkLabel" id="labelLeftMargin">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="pageformatpage|labelLeftMargin">Left:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinMargLeft</property>
                         <property name="xalign">0</property>
@@ -343,6 +354,7 @@
                       <object class="GtkLabel" id="labelInner">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="pageformatpage|labelInner">I_nner:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinMargLeft</property>
                         <property name="xalign">0</property>
@@ -382,6 +394,7 @@
                       <object class="GtkLabel" id="labelRightMargin">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="pageformatpage|labelRightMargin">Right:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinMargRight</property>
                         <property name="xalign">0</property>
@@ -396,6 +409,7 @@
                       <object class="GtkLabel" id="labelOuter">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="pageformatpage|labelOuter">O_uter:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinMargRight</property>
                         <property name="xalign">0</property>
@@ -430,6 +444,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelTopMargin">Top:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinMargTop</property>
                     <property name="xalign">0</property>
@@ -457,6 +472,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelBottomMargin">Bottom:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinMargBot</property>
                     <property name="xalign">0</property>
@@ -484,6 +500,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelGutterMargin">Gutter:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinMargGut</property>
                     <property name="xalign">0</property>
@@ -513,6 +530,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="pageformatpage|labelMargins">Margins</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -546,6 +564,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelPageLayout">_Page layout:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboPageLayout</property>
                     <property name="xalign">0</property>
@@ -576,6 +595,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelPageNumbers">Page numbers:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboLayoutFormat</property>
                     <property name="xalign">0</property>
@@ -625,6 +645,7 @@
                     <property name="no-show-all">True</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelRegisterStyle">Reference _Style:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboRegisterStyle</property>
                     <property name="xalign">0</property>
@@ -649,6 +670,7 @@
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelTblAlign">Table alignment:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">checkbuttonHorz</property>
                     <property name="xalign">0</property>
@@ -705,6 +727,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="pageformatpage|labelGutterPosition">Gutter position:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboGutterPosition</property>
                     <property name="xalign">0</property>
@@ -781,6 +804,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="pageformatpage|label5">Layout Settings</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>

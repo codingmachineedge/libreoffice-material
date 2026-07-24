@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="DocRecoveryBrokenDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="docrecoverybrokendialog|DocRecoveryBrokenDialog">%PRODUCTNAME Document Recovery</property>
     <property name="modal">True</property>
     <property name="default_width">0</property>
@@ -29,6 +28,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -103,6 +103,7 @@ The documents listed below will be saved in the folder noted below if you click 
                 <property name="label" translatable="yes" context="docrecoverybrokendialog|label3">Documents:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">filelist</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -159,6 +160,7 @@ The documents listed below will be saved in the folder noted below if you click 
                 <property name="label" translatable="yes" context="docrecoverybrokendialog|label4">_Save to:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">savedir</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

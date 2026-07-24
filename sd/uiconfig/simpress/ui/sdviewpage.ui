@@ -15,8 +15,11 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
         <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="row-spacing">6</property>
+        <property name="column-spacing">12</property>
         <child>
           <object class="GtkCheckButton" id="ruler">
             <property name="label" translatable="yes" context="sdviewpage|ruler">_Rulers visible</property>
@@ -184,6 +187,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="sdviewpage|label1">Display</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>

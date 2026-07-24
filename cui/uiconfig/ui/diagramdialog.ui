@@ -23,6 +23,7 @@
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
+            <property name="spacing">10</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
@@ -153,8 +154,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">btnOk</action-widget>
       <action-widget response="-6">btnCancel</action-widget>
+      <action-widget response="-5">btnOk</action-widget>
     </action-widgets>
   </object>
 </interface>

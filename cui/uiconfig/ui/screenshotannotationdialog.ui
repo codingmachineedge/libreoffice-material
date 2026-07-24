@@ -4,7 +4,10 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="ScreenshotAnnotationDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="screenshotannotationdialog|ScreenshotAnnotationDialog">Interactive Screenshot Annotation</property>
     <property name="modal">True</property>
     <property name="default-width">600</property>
@@ -18,6 +21,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="copy">
@@ -80,6 +84,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes" context="screenshotannotationdialog|label2">Click the widgets to add annotation:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">picture</property>
           </object>

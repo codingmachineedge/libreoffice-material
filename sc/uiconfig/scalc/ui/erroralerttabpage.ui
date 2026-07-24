@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -50,6 +53,7 @@
             <property name="label" translatable="yes" context="erroralerttabpage|action_label">_Action:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">actionCB</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -105,6 +109,7 @@
             <property name="label" translatable="yes" context="erroralerttabpage|title_label">_Title:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">erroralert_title</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
           </object>
@@ -133,6 +138,7 @@
             <property name="label" translatable="yes" context="erroralerttabpage|errormsg_label">_Error message:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">errorMsg</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
           </object>

@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="SaveAsTemplateDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="saveastemplatedlg|SaveAsTemplateDialog">Save As Template</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -26,6 +25,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -105,6 +105,7 @@
                     <property name="label" translatable="yes" context="saveastemplatedlg|create_label">Enter Template _Name:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">name_entry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="normal"/>
@@ -157,6 +158,7 @@
                     <property name="label" translatable="yes" context="saveastemplatedlg|select_label">Select Template _Category:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">categorylb</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="normal"/>

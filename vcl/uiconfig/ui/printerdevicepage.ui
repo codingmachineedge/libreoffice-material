@@ -33,6 +33,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="printerdevicepage|label7">_Option:</property>
+        <property name="ellipsize">end</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">options</property>
         <property name="xalign">0</property>
@@ -47,6 +48,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="printerdevicepage|label8">Current _value:</property>
+        <property name="ellipsize">end</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">values</property>
         <property name="xalign">0</property>
@@ -172,6 +174,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="printerdevicepage|label11">Color _depth:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">colordepth</property>
             <property name="xalign">1</property>
@@ -186,6 +189,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="printerdevicepage|label10">Co_lor:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">colorspace</property>
             <property name="xalign">1</property>

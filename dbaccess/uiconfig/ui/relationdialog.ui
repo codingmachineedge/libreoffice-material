@@ -20,13 +20,12 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
-              <object class="GtkButton" id="ok">
-                <property name="label" translatable="yes" context="stock">_OK</property>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="can-default">True</property>
-                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -37,10 +36,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label" translatable="yes" context="stock">_Cancel</property>
+              <object class="GtkButton" id="ok">
+                <property name="label" translatable="yes" context="stock">_OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -126,6 +127,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="relationdialog|label1">Tables Involved</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -158,6 +160,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="relationdialog|label2">Fields Involved</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -258,6 +261,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="relationdialog|label3">Update Options</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -379,9 +383,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">

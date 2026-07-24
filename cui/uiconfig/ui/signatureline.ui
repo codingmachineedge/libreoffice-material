@@ -4,7 +4,10 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="SignatureLineDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="signatureline|SignatureLineDialog">Signature Line</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -18,6 +21,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="cancel">
@@ -163,6 +167,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signatureline|label_name" comments="Suggested Signer Name">Name:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_name</property>
                       </object>
@@ -177,6 +182,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signatureline|label_title" comments="Suggested Signer Title">Title:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_title</property>
                       </object>
@@ -191,6 +197,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signatureline|label_email" comments="Suggested Signer email">Email:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_email</property>
                       </object>
@@ -206,6 +213,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="signatureline|label_suggestedsigner">Suggested Signer</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -280,6 +288,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signatureline|label_instructions">Instructions to the signer:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_instructions</property>
                       </object>
@@ -322,6 +331,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="signatureline|label_more">More</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -343,9 +353,9 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="-6">cancel</action-widget>
       <action-widget response="-5">ok</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
   </object>
 </interface>

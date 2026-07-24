@@ -580,6 +580,7 @@
                                 <property name="label" translatable="yes" context="explorerfiledialog|file_name_label">File _name:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">file_name</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -592,6 +593,7 @@
                                 <property name="halign">end</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">shared</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -606,6 +608,7 @@
                                 <property name="label" translatable="yes" context="explorerfiledialog|file_type_label">File _type:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">file_type</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>

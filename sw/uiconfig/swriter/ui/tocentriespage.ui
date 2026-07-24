@@ -97,6 +97,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocentriespage|mainstyleft">Character style for main entries:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">mainstyle</property>
                         <property name="xalign">0</property>
@@ -189,6 +190,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocentriespage|label3">Format</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -265,6 +267,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocentriespage|label14">Sort by</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -300,6 +303,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocentriespage|label15">_1:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -370,6 +374,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocentriespage|label16">_2:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -440,6 +445,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="tocentriespage|label17">_3:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -512,6 +518,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocentriespage|label13">Sort Keys</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -579,6 +586,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="tocentriespage|levelft">_Level</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -627,6 +635,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|label4">_Structure:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">token</property>
                             <property name="xalign">0</property>
@@ -871,6 +880,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|label5">Character style:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">charstyle</property>
                             <property name="xalign">0</property>
@@ -920,6 +930,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|numberformatft">Format:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">numberformat</property>
                             <property name="xalign">0</property>
@@ -955,6 +966,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|fillcharft">Fill character:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">fillchar</property>
                             <property name="xalign">0</property>
@@ -993,6 +1005,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|tabstopposft">Tab stop position:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">tabstoppos</property>
                             <property name="xalign">0</property>
@@ -1061,6 +1074,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|chapterentryft">Heading _info:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">chapterentry</property>
                             <property name="xalign">0</property>
@@ -1098,6 +1112,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="tocentriespage|entryoutlinelevelft">Show up to level:</property>
+                            <property name="ellipsize">end</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">entryoutlinelevel</property>
                             <property name="xalign">0</property>
@@ -1188,6 +1203,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="tocentriespage|label1">Structure and Formatting</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>

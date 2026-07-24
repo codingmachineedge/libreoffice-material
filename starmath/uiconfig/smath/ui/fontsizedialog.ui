@@ -40,7 +40,6 @@
   </object>
   <object class="GtkDialog" id="FontSizeDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="fontsizedialog|FontSizeDialog">Font Sizes</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -55,6 +54,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area4">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="default">
@@ -149,6 +149,7 @@
                     <property name="label" translatable="yes" context="fontsizedialog|label4">Base _size:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinB_baseSize</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -208,6 +209,7 @@
                         <property name="label" translatable="yes" context="fontsizedialog|label5">_Text:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinB_text</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -241,6 +243,7 @@
                         <property name="label" translatable="yes" context="fontsizedialog|label6">_Indexes:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinB_index</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -274,6 +277,7 @@
                         <property name="label" translatable="yes" context="fontsizedialog|label7">_Functions:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinB_function</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -307,6 +311,7 @@
                         <property name="label" translatable="yes" context="fontsizedialog|label2">_Operators:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinB_operator</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -340,6 +345,7 @@
                         <property name="label" translatable="yes" context="fontsizedialog|label3">_Limits:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">spinB_limit</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -395,9 +401,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="FontSizeDialog-atkobject">

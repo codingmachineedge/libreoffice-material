@@ -50,7 +50,10 @@
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">24</property>
     <child>
@@ -242,6 +245,7 @@
                       <object class="GtkLabel" id="labelST_RIGHTALIGN_ASIAN">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="paragalignpage|labelST_RIGHTALIGN_ASIAN">Force R_ight/Bottom</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -254,6 +258,7 @@
                       <object class="GtkLabel" id="labelST_LEFTALIGN_ASIAN">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="paragalignpage|labelST_LEFTALIGN_ASIAN">Force _Left/Top</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                       </object>
                       <packing>
@@ -266,6 +271,7 @@
                       <object class="GtkLabel" id="labelST_VERTALIGN_SDR">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="paragalignpage|labelST_VERTALIGN_SDR">Vertical</property>
+                        <property name="ellipsize">end</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -290,6 +296,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="paragalignpage|labelLB_LASTLINE">_Last line:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">comboLB_LASTLINE</property>
                         <property name="xalign">0</property>
@@ -376,6 +383,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="paragalignpage|label1">Options</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -405,6 +413,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelFT_VERTALIGN">_Alignment:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboLB_VERTALIGN</property>
                     <property name="xalign">0</property>
@@ -446,6 +455,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="paragalignpage|labelFL_VERTALIGN">Text-to-text</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -466,6 +476,8 @@
             <child>
               <!-- n-columns=1 n-rows=2 -->
               <object class="GtkGrid" id="grid3">
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">12</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
@@ -480,6 +492,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="paragalignpage|label2">_Text direction:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">comboLB_TEXTDIRECTION</property>
                         <property name="xalign">0</property>
@@ -539,6 +552,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="paragalignpage|labelFL_PROPERTIES">Properties</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -570,6 +584,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelMinimum">Minimum</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -583,6 +598,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelDesired">Desired</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -596,6 +612,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelMaximum">Maximum</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -609,6 +626,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelWordSpacing">_Word spacing:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -696,6 +714,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelLetterSpacing">_Letter spacing:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -745,6 +764,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="paragalignpage|labelGlyphScaling">_Glyph scaling:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -805,6 +825,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="paragalignpage|labelFL_JUSTIFICATION">Justification</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>

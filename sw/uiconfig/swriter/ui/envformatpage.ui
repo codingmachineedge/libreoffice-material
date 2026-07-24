@@ -80,7 +80,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
@@ -125,6 +128,7 @@
                             <property name="label" translatable="yes" context="envformatpage|label5">from left</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">leftaddr</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -171,6 +175,7 @@
                             <property name="label" translatable="yes" context="envformatpage|label6">from top</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">topaddr</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -224,6 +229,7 @@
                         <property name="label" translatable="yes" context="envformatpage|label7">Format</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">addredit</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -331,6 +337,7 @@
                             <property name="label" translatable="yes" context="envformatpage|label8">from left</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">leftsender</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -377,6 +384,7 @@
                             <property name="label" translatable="yes" context="envformatpage|label9">from top</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">topsender</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -430,6 +438,7 @@
                         <property name="label" translatable="yes" context="envformatpage|label10">Format</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">senderedit</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -524,6 +533,7 @@
                     <property name="label" translatable="yes" context="envformatpage|label12">F_ormat</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">format</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -553,6 +563,7 @@
                     <property name="label" translatable="yes" context="envformatpage|label13">_Width</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">width</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -587,6 +598,7 @@
                     <property name="label" translatable="yes" context="envformatpage|label14">_Height</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">height</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

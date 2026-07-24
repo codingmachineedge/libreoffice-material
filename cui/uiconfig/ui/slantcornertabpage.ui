@@ -37,7 +37,10 @@
   <object class="GtkGrid" id="SlantAndCornerRadius">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">24</property>
     <property name="column-spacing">12</property>
     <child>
@@ -66,6 +69,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="slantcornertabpage|label5">_X:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">controlx1</property>
                     <property name="xalign">0</property>
@@ -112,6 +116,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="slantcornertabpage|label6">_Y:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">controly1</property>
                     <property name="xalign">0</property>
@@ -155,6 +160,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="slantcornertabpage|label3">Control Point 1</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -186,6 +192,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="slantcornertabpage|FT_RADIUS">_Radius:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">MTR_FLD_RADIUS</property>
                 <property name="xalign">0</property>
@@ -221,6 +228,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="slantcornertabpage|label1">Corner Radius</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -252,6 +260,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="slantcornertabpage|FT_ANGLE">_Angle:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">MTR_FLD_ANGLE</property>
                 <property name="xalign">0</property>
@@ -287,6 +296,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="slantcornertabpage|label2">Slant</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>
@@ -325,6 +335,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="slantcornertabpage|label4">_X:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">controlx2</property>
                     <property name="xalign">0</property>
@@ -371,6 +382,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="slantcornertabpage|label7">_Y:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">controly2</property>
                     <property name="xalign">0</property>
@@ -414,6 +426,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="slantcornertabpage|label8">Control Point 2</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
             <attributes>
               <attribute name="weight" value="bold"/>

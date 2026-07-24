@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -337,6 +340,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optjsearchpage|label1">Treat as Equal</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -432,6 +436,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optjsearchpage|label2">Ignore</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

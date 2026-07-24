@@ -264,6 +264,7 @@
                 <property name="column-homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="styleft">
+                    <property name="ellipsize">end</property>
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="conditionalentry|styleft">Apply Style:</property>
@@ -291,6 +292,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="valueft">
+                    <property name="ellipsize">end</property>
                     <property name="width-request">100</property>
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
@@ -476,6 +478,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="Label_minimum">
+                    <property name="ellipsize">end</property>
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="conditionalentry|Label_minimum">Minimum</property>
@@ -488,6 +491,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="Label_maximum">
+                    <property name="ellipsize">end</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="conditionalentry|Label_maximum">Maximum</property>
                     <property name="mnemonic-widget">colscalemax</property>

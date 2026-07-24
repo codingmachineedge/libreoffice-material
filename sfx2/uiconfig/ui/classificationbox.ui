@@ -12,12 +12,15 @@
         <property name="can-focus">False</property>
         <property name="margin-start">6</property>
         <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="spacing">6</property>
         <child>
           <object class="GtkLabel" id="label">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="use-underline">True</property>
+            <property name="ellipsize">end</property>
             <property name="mnemonic-widget">combobox</property>
           </object>
           <packing>

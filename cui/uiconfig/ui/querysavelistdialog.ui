@@ -10,7 +10,6 @@
     <property name="type-hint">dialog</property>
     <property name="skip-taskbar-hint">True</property>
     <property name="message-type">warning</property>
-    <property name="buttons">ok-cancel</property>
     <property name="text" translatable="yes" context="querysavelistdialog|AskSaveList">The list was modified without saving.</property>
     <property name="secondary-text" translatable="yes" context="querysavelistdialog|AskSaveList">Would you like to save the list now?</property>
     <child internal-child="vbox">
@@ -21,6 +20,38 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="ok">
+                <property name="label" translatable="yes" context="stock">_OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -31,5 +62,9 @@
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
+    </action-widgets>
   </object>
 </interface>

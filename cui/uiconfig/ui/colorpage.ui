@@ -105,6 +105,7 @@
                     <property name="label" translatable="yes" context="colorpage|label21">Palette:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">paletteselector</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                   </object>
@@ -198,6 +199,7 @@
                     <property name="label" translatable="yes" context="colorpage|label20">Recent Colors</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">recentcoloriconview</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -245,6 +247,7 @@
                     <property name="label" translatable="yes" context="colorpage|label22">Custom Palette</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">coloriconview</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -416,6 +419,7 @@
                     <property name="label" translatable="yes" context="colorpage|label9">R</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">R_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -442,6 +446,7 @@
                     <property name="label" translatable="yes" context="colorpage|label8">G</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">G_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -468,6 +473,7 @@
                     <property name="label" translatable="yes" context="colorpage|label7">B</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">B_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -494,6 +500,7 @@
                     <property name="label" translatable="yes" context="colorpage|label18">Hex</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hex_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -536,6 +543,7 @@
                     <property name="label" translatable="yes" context="colorpage|label10">_C</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">C_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -562,6 +570,7 @@
                     <property name="label" translatable="yes" context="colorpage|label15">_M</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">M_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -588,6 +597,7 @@
                     <property name="label" translatable="yes" context="colorpage|label17">_Y</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">Y_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -614,6 +624,7 @@
                     <property name="label" translatable="yes" context="colorpage|label16">_K</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">K_preset</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -739,6 +750,7 @@
                     <property name="label" translatable="yes" context="colorpage|label2">_R</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">R_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -766,6 +778,7 @@
                     <property name="label" translatable="yes" context="colorpage|label3">_G</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">G_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -793,6 +806,7 @@
                     <property name="label" translatable="yes" context="colorpage|label4">_B</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">B_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -820,6 +834,7 @@
                     <property name="label" translatable="yes" context="colorpage|label19">_Hex</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hex_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -864,6 +879,7 @@
                     <property name="label" translatable="yes" context="colorpage|label11">_C</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">C_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -890,6 +906,7 @@
                     <property name="label" translatable="yes" context="colorpage|label12">_M</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">M_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -916,6 +933,7 @@
                     <property name="label" translatable="yes" context="colorpage|label14">_Y</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">Y_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -942,6 +960,7 @@
                     <property name="label" translatable="yes" context="colorpage|label13">_K</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">K_custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>

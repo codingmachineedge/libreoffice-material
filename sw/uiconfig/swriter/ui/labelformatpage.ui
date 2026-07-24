@@ -20,7 +20,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=11 -->
@@ -36,6 +39,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label1">Hori_zontal pitch:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">hori</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -68,6 +72,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label2">_Vertical pitch:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">vert</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -100,6 +105,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label3">_Width:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">width</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -132,6 +138,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label4">_Height:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">height</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -164,6 +171,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label5">_Left margin:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">left</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -196,6 +204,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label6">_Top margin:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">top</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -228,6 +237,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label7">_Columns:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">cols</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -260,6 +270,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label8">R_ows:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">rows</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -292,6 +303,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label9">P_age width:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">pagewidth</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -319,6 +331,7 @@
             <property name="label" translatable="yes" context="labelformatpage|label10">Pa_ge height:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">pageheight</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>

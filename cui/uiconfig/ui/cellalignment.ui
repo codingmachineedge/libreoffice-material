@@ -49,6 +49,7 @@
                     <property name="label" translatable="yes" context="cellalignment|labelDegrees">_Degrees:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">spinDegrees</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -63,6 +64,7 @@
                     <property name="label" translatable="yes" context="cellalignment|labelRefEdge">_Reference edge:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">references</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -294,6 +296,7 @@
                     <property name="label" translatable="yes" context="cellalignment|LabelTxtDir">Te_xt direction:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">comboTextDirBox</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -377,6 +380,7 @@
                 <property name="label" translatable="yes" context="cellalignment|labelHorzAlign">Hori_zontal:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">comboboxHorzAlign</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -391,6 +395,7 @@
                 <property name="label" translatable="yes" context="cellalignment|labelVertAlign">_Vertical:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">comboboxVertAlign</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -405,6 +410,7 @@
                 <property name="label" translatable="yes" context="cellalignment|labelIndent">I_ndent:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">spinIndentFrom</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

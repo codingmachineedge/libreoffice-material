@@ -437,6 +437,7 @@
                             <property name="label" translatable="yes" context="dlg_InsertErrorBars|FT_POSITIVE">P_ositive (+)</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">MF_POSITIVE</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -521,6 +522,7 @@
                             <property name="label" translatable="yes" context="dlg_InsertErrorBars|FT_NEGATIVE">_Negative (-)</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">MF_NEGATIVE</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

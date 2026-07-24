@@ -14,7 +14,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
@@ -95,6 +98,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|label1">Help</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -181,6 +185,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|label2">Dialogs</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -245,6 +250,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|label4">Document Status</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -275,6 +281,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optgeneralpage|label6">_Interpret as years between </property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">year</property>
                 <property name="xalign">0</property>
@@ -307,6 +314,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optgeneralpage|toyear">and </property>
+                <property name="ellipsize">end</property>
                 <child internal-child="accessible">
                   <object class="AtkObject" id="toyear-atkobject">
                     <property name="AtkObject::accessible-role" translatable="no">static</property>
@@ -343,6 +351,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|label5">Year (Two Digits)</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -403,6 +412,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|label8">%PRODUCTNAME Quickstarter</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -452,6 +462,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optgeneralpage|fileassoc">%PRODUCTNAME File Associations</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

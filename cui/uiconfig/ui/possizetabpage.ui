@@ -58,6 +58,7 @@
                     <property name="label" translatable="yes" context="possizetabpage|FT_POS_X">Position _X:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_FLD_POS_X</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -72,6 +73,7 @@
                     <property name="label" translatable="yes" context="possizetabpage|FT_POS_Y">Position _Y:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_FLD_POS_Y</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -227,6 +229,7 @@
                     <property name="label" translatable="yes" context="possizetabpage|FT_WIDTH">Wi_dth:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_FLD_WIDTH</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -357,6 +360,7 @@
                     <property name="label" translatable="yes" context="possizetabpage|FT_HEIGHT">H_eight:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_FLD_HEIGHT</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

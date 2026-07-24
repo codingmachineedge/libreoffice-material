@@ -5,7 +5,10 @@
   <object class="GtkFrame" id="StatisticsInfoPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -23,6 +26,7 @@
             <property name="can-focus">False</property>
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="statisticsinfopage|label6">Pages:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">nopages</property>
           </object>
@@ -49,6 +53,7 @@
             <property name="can-focus">False</property>
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="statisticsinfopage|label5">Cells:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">nocells</property>
           </object>
@@ -75,6 +80,7 @@
             <property name="can-focus">False</property>
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="statisticsinfopage|label2">Sheets:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">nosheets</property>
           </object>
@@ -102,6 +108,7 @@
             <property name="can-focus">False</property>
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="statisticsinfopage|label3">Formula groups:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">noformula</property>
           </object>
@@ -130,6 +137,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="statisticsinfopage|label1">Document: </property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>

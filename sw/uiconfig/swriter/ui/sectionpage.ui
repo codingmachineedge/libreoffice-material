@@ -17,6 +17,7 @@
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
     <property name="border_width">6</property>
+    <property name="row_spacing">6</property>
     <property name="column_spacing">12</property>
     <child>
       <object class="GtkFrame" id="section">
@@ -195,6 +196,7 @@
                             <property name="label" translatable="yes" context="sectionpage|filelabel">_File name</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">filename</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -210,6 +212,7 @@
                             <property name="label" translatable="yes" context="sectionpage|ddelabel">DDE _command</property>
                             <property name="use_underline">True</property>
                             <property name="mnemonic_widget">filename</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -232,6 +235,7 @@
                         <property name="label" translatable="yes" context="sectionpage|sectionlabel">_Section</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">sectionname</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -494,6 +498,7 @@
                         <property name="label" translatable="yes" context="sectionpage|condlabel">_With Condition</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">withcond</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>

@@ -53,7 +53,6 @@
   </object>
   <object class="GtkDialog" id="InsertDbColumnsDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="insertdbcolumnsdialog|InsertDbColumnsDialog">Insert Database Columns</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -69,6 +68,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -143,6 +143,7 @@
                     <property name="label" translatable="yes" context="insertdbcolumnsdialog|label1">Insert data as:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">grid3</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -254,6 +255,7 @@
                         <property name="label" translatable="yes" context="insertdbcolumnsdialog|label4">Database _columns</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">box2</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -268,6 +270,7 @@
                         <property name="label" translatable="yes" context="insertdbcolumnsdialog|tablecolft">Tab_le column(s)</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">tablecols</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -722,6 +725,7 @@
                             <property name="label" translatable="yes" context="insertdbcolumnsdialog|parastylelabel">Paragraph _style:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">parastyle</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -833,6 +837,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="insertdbcolumnsdialog|label3">Format</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -854,9 +859,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">

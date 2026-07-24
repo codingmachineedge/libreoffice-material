@@ -14,7 +14,10 @@
   <object class="GtkGrid" id="PdfGeneralPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="column-spacing">24</property>
     <child>
       <object class="GtkBox" id="box1">
@@ -308,6 +311,7 @@
                         <property name="label" translatable="yes" context="pdfgeneralpage|label6">_Quality:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">quality</property>
+                        <property name="ellipsize">end</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -485,6 +489,7 @@
                     <property name="label" translatable="yes" context="pdfgeneralpage|watermarklabel">Text:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">watermarkentry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -596,6 +601,7 @@
                                 <property name="label" translatable="yes" context="pdfgeneralpage|pdf_version">PDF_ Version:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">pdf_version</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -785,6 +791,7 @@
                             <property name="label" translatable="yes" context="pdfgeneralpage|label7">Submit _format:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">format</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>

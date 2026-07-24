@@ -38,7 +38,10 @@
         <property name="halign">end</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="border-width">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="row-spacing">6</property>
         <property name="column-spacing">6</property>
         <child>
@@ -48,6 +51,7 @@
             <property name="label" translatable="yes" context="pagestylespanel|numberslabel">Number:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">numberbox</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="numberbox"/>
@@ -65,6 +69,7 @@
             <property name="label" translatable="yes" context="pagestylespanel|backgroundlabel">Background:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">bgselect</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="bgselect"/>
@@ -101,6 +106,7 @@
             <property name="label" translatable="yes" context="pagestylespanel|layoutlabel">Layout:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">layoutbox</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="layoutbox"/>
@@ -143,6 +149,7 @@
             <property name="label" translatable="yes" context="pagestylespanel|columnlabel">Columns:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">columnbox</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <accessibility>
               <relation type="label-for" target="columnbox"/>

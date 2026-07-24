@@ -18,6 +18,7 @@
         <property name="valign">center</property>
         <property name="use-underline">True</property>
         <property name="mnemonic-widget">button</property>
+        <property name="ellipsize">end</property>
         <property name="xalign">0</property>
       </object>
       <packing>

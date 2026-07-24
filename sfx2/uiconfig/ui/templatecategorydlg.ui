@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="TemplatesCategoryDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="templatecategorydlg|TemplatesCategoryDialog">Select Category</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -26,6 +25,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -105,6 +105,7 @@
                     <property name="label" translatable="yes" context="templatecategorydlg|select_label">Select from Existing Category</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">categorylb</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="normal"/>
@@ -175,6 +176,7 @@
                     <property name="label" translatable="yes" context="templatecategorydlg|create_label">or Create a New Category</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">category_entry</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="normal"/>

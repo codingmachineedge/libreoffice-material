@@ -19,13 +19,18 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="no">
-                <property name="label" translatable="yes" context="stock">_No</property>
+                <property name="label" translatable="yes" context="designsavemodifieddialog|discard">Do_n't Save</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
+                <style>
+                  <class name="destructive-action"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -34,12 +39,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="yes">
-                <property name="label" translatable="yes" context="stock">_Yes</property>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="can-default">True</property>
-                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -50,10 +53,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label" translatable="yes" context="stock">_Cancel</property>
+              <object class="GtkButton" id="yes">
+                <property name="label" translatable="yes" context="designsavemodifieddialog|save">_Save</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -75,8 +80,8 @@
     </child>
     <action-widgets>
       <action-widget response="-9">no</action-widget>
-      <action-widget response="-8">yes</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-8">yes</action-widget>
     </action-widgets>
   </object>
 </interface>

@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="DocRecoveryProgressDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="docrecoveryprogressdialog|DocRecoveryProgressDialog">Documents Are Being Saved</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>

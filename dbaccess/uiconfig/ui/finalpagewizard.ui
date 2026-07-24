@@ -8,7 +8,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="row_spacing">12</property>
     <child>
@@ -16,6 +19,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes" context="finalpagewizard|headerText">Decide How to Proceed After Saving the Database</property>
+        <property name="ellipsize">end</property>
         <property name="single_line_mode">True</property>
         <property name="xalign">0</property>
         <attributes>

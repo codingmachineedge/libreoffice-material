@@ -38,6 +38,7 @@
                 <property name="label" translatable="yes" context="effectspage|fontcolorft">_Font color:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">fontcolorlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -74,6 +75,7 @@
                 <property name="label" translatable="yes" context="effectspage|fonttransparencyft">_Transparency:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">fonttransparencymtr</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -158,6 +160,7 @@
                 <property name="label" translatable="yes" context="effectspage|label46">O_verlining:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">overlinelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -229,6 +232,7 @@
                 <property name="label" translatable="yes" context="effectspage|label47">Stri_kethrough:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">strikeoutlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -265,6 +269,7 @@
                 <property name="can-focus">False</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">underlinecolorlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -279,6 +284,7 @@
                 <property name="label" translatable="yes" context="effectspage|label48">_Underlining:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">underlinelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -368,6 +374,7 @@
                 <property name="can-focus">False</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">overlinecolorlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -420,6 +427,7 @@
                 <property name="label" translatable="yes" context="effectspage|effectsft">_Case:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">effectslb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -476,6 +484,7 @@
                 <property name="label" translatable="yes" context="effectspage|reliefft">R_elief:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">relieflb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -550,6 +559,7 @@
                 <property name="label" translatable="yes" context="effectspage|emphasisft">Emphasis _mark:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">emphasislb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -586,6 +596,7 @@
                 <property name="label" translatable="yes" context="effectspage|positionft">_Position:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">positionlb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

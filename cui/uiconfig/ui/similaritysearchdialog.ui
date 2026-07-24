@@ -22,7 +22,10 @@
   </object>
   <object class="GtkDialog" id="SimilaritySearchDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="similaritysearchdialog|SimilaritySearchDialog">Similarity Search</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -37,6 +40,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area3">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -107,6 +111,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="similaritysearchdialog|label2">_Exchange characters:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">otherfld</property>
                 <property name="xalign">1</property>
@@ -138,6 +143,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="similaritysearchdialog|label3">_Add characters:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">longerfld</property>
                 <property name="xalign">1</property>
@@ -169,6 +175,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="similaritysearchdialog|label4">_Remove characters:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">shorterfld</property>
                 <property name="xalign">1</property>
@@ -225,9 +232,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="SimilaritySearchDialog-atkobject">

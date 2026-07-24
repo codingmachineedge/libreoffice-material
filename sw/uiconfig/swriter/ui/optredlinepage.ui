@@ -8,8 +8,12 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
+    <property name="column-spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
@@ -34,6 +38,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|insert_label">_Attributes:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">insert</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -48,6 +53,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|insertcolor_label">Co_lor:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">insertcolor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -205,6 +211,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|deleted_label">Attri_butes:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">deleted</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -219,6 +226,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|deletedcolor_label">Col_or:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">deletedcolor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -363,6 +371,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|changed_label">Attrib_utes:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">changed</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -377,6 +386,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|changedcolor_label">Colo_r:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">changedcolor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -521,6 +531,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|markpos_label">Mar_k:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">markpos</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -558,6 +569,7 @@
                 <property name="label" translatable="yes" context="optredlinepage|markcolor_label">_Color:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">markcolor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

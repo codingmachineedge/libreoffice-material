@@ -5,8 +5,12 @@
   <object class="GtkBox" id="OptFormatAidsPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=3 -->
       <object class="GtkGrid" id="grid1">
@@ -599,6 +603,7 @@
                             <property name="label" translatable="yes" context="optformataidspage|fillmode">Insert:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">cxDirectCursorFillMode</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -717,6 +722,7 @@
                         <property name="label" translatable="yes" context="optformataidspage|anchor">_Anchor:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">cxDefaultAnchor</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>

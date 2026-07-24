@@ -291,6 +291,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|diagonalft">R_ounded edges</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">diagonal</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -305,6 +306,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|scaleddepthft">_Scaled depth</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">scaleddepth</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -319,6 +321,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|angleft">_Rotation angle</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">angle</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -333,6 +336,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|depthft">_Depth</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">depth</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -453,6 +457,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label6">_Horizontal</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">hori</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -467,6 +472,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label7">_Vertical</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">veri</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -924,6 +930,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label8">_Mode</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">mode</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -1034,6 +1041,7 @@
                         <property name="label" translatable="yes" context="docking3deffects|slantft">S_urface angle</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">slant</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">1</property>
                       </object>
                       <packing>
@@ -1125,6 +1133,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label15">_Focal length</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">focal</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -1139,6 +1148,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label14">_Distance</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">distance</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -1268,6 +1278,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label18">_Ambient light</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">ambientcolor</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -2061,6 +2072,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label27">_Object color</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">objcolor</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -2075,6 +2087,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label29">_Illumination color</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">illumcolor</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -2230,6 +2243,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label30">_Color</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">speccolor</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -2244,6 +2258,7 @@
                     <property name="label" translatable="yes" context="docking3deffects|label31">I_ntensity</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">intensity</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

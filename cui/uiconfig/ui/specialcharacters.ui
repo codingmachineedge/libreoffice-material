@@ -24,7 +24,10 @@
   </object>
   <object class="GtkDialog" id="SpecialCharactersDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="specialcharacters|SpecialCharactersDialog">Special Characters</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -38,6 +41,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="insert">
@@ -127,6 +131,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="specialcharacters|subsetft">Character block:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">subsetlb</property>
                   </object>
@@ -141,6 +146,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="specialcharacters|fontft">Font:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">fontlb</property>
                   </object>
@@ -155,6 +161,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes" context="specialcharacters|srchft">Search:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">search</property>
                   </object>
@@ -257,6 +264,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="specialcharacters|hexlabel">Hexadecimal:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">hexvalue</property>
                         <property name="xalign">0</property>
@@ -312,6 +320,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="specialcharacters|decimallabel">Decimal:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">decimalvalue</property>
                         <property name="xalign">0</property>
@@ -392,6 +401,7 @@
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="label" translatable="yes" context="specialcharacters|symboltext1">Recent Characters:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">recentchars_iconview</property>
                   </object>
@@ -443,6 +453,7 @@
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="label" translatable="yes" context="specialcharacters|favbtn|symboltext2">Favorite Characters:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">favchars_iconview</property>
                   </object>
@@ -565,9 +576,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="SpecialCharactersDialog-atkobject">

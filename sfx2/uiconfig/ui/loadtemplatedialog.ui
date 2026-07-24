@@ -20,7 +20,6 @@
   </object>
   <object class="GtkDialog" id="LoadTemplateDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="loadtemplatedialog|LoadTemplateDialog">New</property>
     <property name="modal">True</property>
     <property name="type-hint">dialog</property>
@@ -35,6 +34,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="fromfile">
                 <property name="label" translatable="yes" context="loadtemplatedialog|fromfile">From File...</property>
@@ -174,6 +174,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="loadtemplatedialog|label1">Categories</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -436,10 +437,10 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="100">fromfile</action-widget>
       <action-widget response="-6">cancel</action-widget>
       <action-widget response="-5">ok</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="LoadTemplateDialog-atkobject">

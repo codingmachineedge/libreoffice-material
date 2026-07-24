@@ -25,6 +25,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
@@ -157,6 +158,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label1">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="datafielddialog|label1">Function</property>
@@ -198,6 +200,7 @@
                 <property name="column_spacing">12</property>
                 <child>
                   <object class="GtkLabel" id="label2">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="datafielddialog|label2">Name:</property>
@@ -349,6 +352,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label3">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="datafielddialog|label3">Displayed Value</property>

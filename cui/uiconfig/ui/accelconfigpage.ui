@@ -50,7 +50,6 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
     <property name="row-spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=1 -->
@@ -133,6 +132,7 @@ To quickly find a shortcut in this list, simply press the key combination.</prop
                 <property name="label" translatable="yes" context="accelconfigpage|label21">Shortcu_t Keys</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">shortcuts</property>
+                <property name="ellipsize">end</property>
               </object>
             </child>
           </object>

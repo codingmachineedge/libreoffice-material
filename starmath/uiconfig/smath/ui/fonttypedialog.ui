@@ -72,7 +72,6 @@
   </object>
   <object class="GtkDialog" id="FontsDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="fonttypedialog|FontsDialog">Fonts</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -85,6 +84,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -215,6 +215,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label1">_Math:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">mathCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -232,6 +233,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label1">_Variables:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">variableCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -249,6 +251,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label2">_Functions:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">functionCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -266,6 +269,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label3">_Numbers:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">numberCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -283,6 +287,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label4">_Text:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">textCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -416,6 +421,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label5">_Serif:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">serifCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -433,6 +439,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label6">S_ans-serif:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">sansCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -450,6 +457,7 @@
                         <property name="label" translatable="yes" context="fonttypedialog|label7">F_ixed-width:</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">fixedCB</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="normal"/>
@@ -538,8 +546,8 @@
     </child>
     <action-widgets>
       <action-widget response="-11">help</action-widget>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="FontsDialog-atkobject">

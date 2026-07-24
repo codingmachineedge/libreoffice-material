@@ -39,7 +39,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <property name="homogeneous">True</property>
     <child>
@@ -282,6 +285,7 @@
                 <property name="label" translatable="yes" context="fldfuncpage|valueft">_Value</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">value</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -327,6 +331,7 @@
                 <property name="label" translatable="yes" context="fldfuncpage|nameft">Na_me</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">condFunction</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -367,6 +372,7 @@
                 <property name="label" translatable="yes" context="fldfuncpage|cond1ft">Then</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">cond1</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -411,6 +417,7 @@
                 <property name="label" translatable="yes" context="fldfuncpage|cond2ft">Else</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">cond2</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -462,6 +469,7 @@
                     <property name="label" translatable="yes" context="fldfuncpage|itemft">It_em</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">item</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -525,6 +533,7 @@
                     <property name="label" translatable="yes" context="fldfuncpage|listitemft">Items on _list</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">listitems</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -660,6 +669,7 @@
                         <property name="label" translatable="yes" context="fldfuncpage|listnameft">Na_me</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">listname</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>

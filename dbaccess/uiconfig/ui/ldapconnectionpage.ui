@@ -11,7 +11,10 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
     <child>
@@ -21,6 +24,7 @@
         <property name="halign">start</property>
         <property name="margin_bottom">6</property>
         <property name="label" translatable="yes" context="ldapconnectionpage|header">Set Up a Connection to an LDAP Directory</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>
@@ -61,6 +65,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="ldapconnectionpage|hostNameLabel">_Server:</property>
+            <property name="ellipsize">end</property>
             <property name="use_underline">True</property>
             <property name="mnemonic_widget">hostNameEntry</property>
             <property name="xalign">1</property>
@@ -75,6 +80,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="ldapconnectionpage|portNumLabel">_Port number:</property>
+            <property name="ellipsize">end</property>
             <property name="use_underline">True</property>
             <property name="mnemonic_widget">portNumEntry</property>
             <property name="xalign">1</property>
@@ -141,6 +147,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes" context="ldapconnectionpage|baseDNLabel">Base _DN:</property>
+            <property name="ellipsize">end</property>
             <property name="use_underline">True</property>
             <property name="mnemonic_widget">baseDNEntry</property>
             <property name="xalign">1</property>

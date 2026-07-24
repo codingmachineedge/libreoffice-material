@@ -22,7 +22,6 @@
   </object>
   <object class="GtkDialog" id="BasicMacroDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="basicmacrodialog|BasicMacroDialog">BASIC Macros</property>
     <property name="modal">True</property>
     <property name="type-hint">dialog</property>
@@ -38,6 +37,7 @@
             <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="basicmacrodialog|run">Run</property>
@@ -108,6 +108,10 @@
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
                 <property name="row-spacing">6</property>
                 <property name="column-spacing">12</property>
                 <child>
@@ -457,9 +461,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-7">close</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="BasicMacroDialog-atkobject">

@@ -42,7 +42,6 @@
   </object>
   <object class="GtkDialog" id="IndexEntryDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="indexentry|IndexEntryDialog">Insert Index Entry</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -54,6 +53,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="close">
                 <property name="label" translatable="yes" context="stock">_Close</property>
@@ -158,6 +158,7 @@
                 <property name="label" translatable="yes" context="indexentry|typeft">Index:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">typecb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -715,11 +716,11 @@
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">help</action-widget>
       <action-widget response="-7">close</action-widget>
       <action-widget response="101">delete</action-widget>
       <action-widget response="103">reset</action-widget>
       <action-widget response="102">insert</action-widget>
-      <action-widget response="-11">help</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="IndexEntryDialog-atkobject">

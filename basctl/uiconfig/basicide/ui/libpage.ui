@@ -18,7 +18,10 @@
   <object class="GtkGrid" id="LibPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=2 -->
@@ -44,6 +47,7 @@
                 <property name="label" translatable="yes" context="libpage|label1">L_ocation:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">location</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -89,6 +93,7 @@
                 <property name="label" translatable="yes" context="libpage|lingudictsft">_Library:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">library</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

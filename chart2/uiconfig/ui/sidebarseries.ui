@@ -218,6 +218,7 @@
                 <property name="label" translatable="yes" context="sidebarseries|label_box">P_lacement:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic_widget">comboboxtext_label</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>

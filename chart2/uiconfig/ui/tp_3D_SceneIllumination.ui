@@ -55,7 +55,10 @@
   <object class="GtkBox" id="tp_3D_SceneIllumination">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkBox" id="box2">
@@ -304,6 +307,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_3D_SceneIllumination|FT_LIGHTSOURCE">_Light Source</property>
+                <property name="ellipsize">end</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">BTN_LIGHT_1</property>
                 <property name="xalign">0</property>
@@ -381,6 +385,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes" context="tp_3D_SceneIllumination|FT_AMBIENTLIGHT">_Ambient Light</property>
+                <property name="ellipsize">end</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">LB_AMBIENTLIGHT</property>
                 <property name="xalign">0</property>

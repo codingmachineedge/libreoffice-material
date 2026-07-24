@@ -6,7 +6,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -37,6 +40,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|label2">Proxy s_erver:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">proxymode</property>
             <property name="xalign">0</property>
@@ -84,6 +88,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|httpft">HT_TP proxy:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">http</property>
             <property name="xalign">0</property>
@@ -130,6 +135,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|httpportft">_Port:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">httpport</property>
           </object>
@@ -177,6 +183,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|httpsft">HTTP_S proxy:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">https</property>
             <property name="xalign">0</property>
@@ -223,6 +230,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|httpsportft">P_ort:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">httpsport</property>
           </object>
@@ -270,6 +278,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|noproxyft">_No proxy for:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">noproxy</property>
             <property name="xalign">0</property>
@@ -303,6 +312,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optproxypage|noproxydesc">Separator ;</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">0</property>
           </object>
           <packing>
@@ -330,6 +340,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="optproxypage|label1">Settings</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>

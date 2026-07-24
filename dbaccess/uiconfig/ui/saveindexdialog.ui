@@ -19,6 +19,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can_focus">False</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="no">
                 <property name="label" translatable="yes" context="stock">_No</property>
@@ -34,12 +35,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="yes">
-                <property name="label" translatable="yes" context="stock">_Yes</property>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -50,10 +49,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label" translatable="yes" context="stock">_Cancel</property>
+              <object class="GtkButton" id="yes">
+                <property name="label" translatable="yes" context="stock">_Yes</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use-underline">True</property>
               </object>
@@ -75,8 +76,8 @@
     </child>
     <action-widgets>
       <action-widget response="-9">no</action-widget>
-      <action-widget response="-8">yes</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-8">yes</action-widget>
     </action-widgets>
   </object>
 </interface>

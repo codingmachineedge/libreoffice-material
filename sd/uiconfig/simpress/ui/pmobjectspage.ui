@@ -104,6 +104,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="pmobjectspages|STR_OLE_OPTIMIZATION">Choose settings for replacing OLE objects</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

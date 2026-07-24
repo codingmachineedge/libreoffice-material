@@ -121,6 +121,7 @@
                     <property name="label" translatable="yes" context="croppage|label2">_Left:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">left</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -149,6 +150,7 @@
                     <property name="label" translatable="yes" context="croppage|label3">_Right:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">right</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -205,6 +207,7 @@
                     <property name="label" translatable="yes" context="croppage|label4">_Top:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">top</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -219,6 +222,7 @@
                     <property name="label" translatable="yes" context="croppage|label5">_Bottom:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">bottom</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -322,6 +326,7 @@
                     <property name="hexpand">True</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">origsize</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -438,6 +443,7 @@
                 <property name="label" translatable="yes" context="croppage|label6">_Width:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">widthzoom</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -465,6 +471,7 @@
                 <property name="label" translatable="yes" context="croppage|label7">_Height:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">heightzoom</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -540,6 +547,7 @@
                 <property name="label" translatable="yes" context="croppage|label8">_Width:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">width</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -568,6 +576,7 @@
                 <property name="label" translatable="yes" context="croppage|label9">_Height:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">height</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

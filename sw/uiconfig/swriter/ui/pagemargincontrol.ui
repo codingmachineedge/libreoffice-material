@@ -281,6 +281,7 @@
                     <property name="label" translatable="yes" context="pagemargincontrol|label4">_Top</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">top</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -295,6 +296,7 @@
                     <property name="label" translatable="yes" context="pagemargincontrol|label5">_Bottom</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">bottom</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -313,6 +315,7 @@
                         <property name="label" translatable="yes" context="pagemargincontrol|leftLabel">_Left</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">left</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -328,6 +331,7 @@
                         <property name="label" translatable="yes" context="pagemargincontrol|innerLabel">I_nner</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">left</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -353,6 +357,7 @@
                         <property name="label" translatable="yes" context="pagemargincontrol|rightLabel">_Right</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">right</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -368,6 +373,7 @@
                         <property name="label" translatable="yes" context="pagemargincontrol|outerLabel">O_uter</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">right</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>

@@ -20,7 +20,10 @@
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">24</property>
     <child>
@@ -449,6 +452,7 @@
                     <property name="label" translatable="yes" context="optcalculatepage|precft">_Decimal places:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">prec</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -586,6 +590,7 @@
                     <property name="label" translatable="yes" context="optcalculatepage|stepsft">_Steps:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">steps</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -631,6 +636,7 @@
                     <property name="label" translatable="yes" context="optcalculatepage|minchangeft">_Minimum change:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">minchange</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

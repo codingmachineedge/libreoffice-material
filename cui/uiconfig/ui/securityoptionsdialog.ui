@@ -4,7 +4,10 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="SecurityOptionsDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="securityoptionsdialog|SecurityOptionsDialog">Security Options and Warnings</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -19,6 +22,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -241,6 +245,7 @@
                         <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="label" translatable="yes" context="securityoptionsdialog|label3">Warn if document contains recorded changes, versions or notes:</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -255,6 +260,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="securityoptionsdialog|label1">Security Warnings</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -599,6 +605,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="securityoptionsdialog|label2">Security Options</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -624,9 +631,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="SecurityOptionsDialog-atkobject">

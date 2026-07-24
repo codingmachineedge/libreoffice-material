@@ -12,6 +12,7 @@
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
     <property name="row-spacing">6</property>
+    <property name="column-spacing">6</property>
     <child>
       <object class="GtkScrolledWindow" id="valusetwin">
         <property name="visible">True</property>

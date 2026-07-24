@@ -37,6 +37,7 @@
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="sidebarslidebackground|label2">_Format:</property>
             <property name="use-underline">True</property>
+            <property name="ellipsize">end</property>
             <property name="mnemonic-widget">paperformat</property>
           </object>
           <packing>
@@ -51,6 +52,7 @@
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="sidebarslidebackground|label3">Background:</property>
             <property name="use-underline">True</property>
+            <property name="ellipsize">end</property>
             <property name="mnemonic-widget">fillstyle</property>
           </object>
           <packing>
@@ -251,6 +253,7 @@
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="sidebarslidebackground|label4">Orientation:</property>
             <property name="use-underline">True</property>
+            <property name="ellipsize">end</property>
             <property name="mnemonic-widget">orientation</property>
           </object>
           <packing>
@@ -312,6 +315,7 @@
             <property name="halign">end</property>
             <property name="label" translatable="yes" context="sidebarslidebackground|labelmargin">Margin:</property>
             <property name="use-underline">True</property>
+            <property name="ellipsize">end</property>
             <property name="mnemonic-widget">marginLB</property>
           </object>
           <packing>

@@ -43,6 +43,7 @@
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="help">
                 <property name="label" translatable="yes" context="stock">Help</property>
@@ -140,6 +141,7 @@
                                 <property name="label" translatable="yes" context="basicnamelb|label">Name:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">basicnameentry</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -184,6 +186,7 @@
                                 <property name="label" translatable="yes" context="linkedwithlb|label">Inherit from:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">linkedwithbox</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -311,6 +314,7 @@
                             <property name="label" translatable="yes" context="elementlb|label">Element:</property>
                             <property name="use-underline">True</property>
                             <property name="mnemonic-widget">elementbox</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -404,6 +408,7 @@
                                         <property name="label" translatable="yes" context="cellcolorlb|label">Color:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">cellcolormb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -448,6 +453,7 @@
                                         <property name="label" translatable="yes" context="cellpaddinglb|label">Padding:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">cellpaddingsb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -540,6 +546,7 @@
                                         <property name="label" translatable="yes" context="bordercolorlb|label">Color:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">bordercolormb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -582,6 +589,7 @@
                                         <property name="label" translatable="yes" context="borderlayoutlb|label">Layout:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">borders</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -624,6 +632,7 @@
                                         <property name="label" translatable="yes" context="borderstylelb|label">Style:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">borderstylemb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -666,6 +675,7 @@
                                         <property name="label" translatable="yes" context="borderwidthlb|label">Width:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">borderwidth</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -756,6 +766,7 @@
                                         <property name="label" translatable="yes" context="charhorilb|label">Horizontal:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charhoritb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -834,6 +845,7 @@
                                         <property name="label" translatable="yes" context="charvertlb|label">Vertical:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charverttb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -911,6 +923,7 @@
                                         <property name="label" translatable="yes" context="numberlb|label">Number:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">numbertb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -989,6 +1002,7 @@
                                         <property name="label" translatable="yes" context="charnamelb|label">Name:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charnamebox</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1038,6 +1052,7 @@
                                         <property name="label" translatable="yes" context="charsizelb|label">Size:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charsizebox</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1089,6 +1104,7 @@
                                         <property name="label" translatable="yes" context="charcolorlb|label">Color:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charcolormb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1131,6 +1147,7 @@
                                         <property name="label" translatable="yes" context="charstylelb|label">Style:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">charstyletb</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

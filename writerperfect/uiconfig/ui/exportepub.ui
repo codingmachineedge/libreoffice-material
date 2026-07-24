@@ -21,6 +21,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -107,6 +108,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|versionft">Version:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">versionlb</property>
                         <property name="xalign">0</property>
@@ -155,6 +157,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|splitft">Split method:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">splitlb</property>
                         <property name="xalign">0</property>
@@ -169,6 +172,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|layoutft">Layout method:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">layoutlb</property>
                         <property name="xalign">0</property>
@@ -202,6 +206,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="exportepub|generalft">General</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="xalign">0</property>
                     <attributes>
@@ -239,6 +244,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|coverimageft">Cover image:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">coverpath</property>
                         <property name="xalign">0</property>
@@ -278,6 +284,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|mediadirft">Media directory:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">mediadir</property>
                         <property name="xalign">0</property>
@@ -319,6 +326,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="exportepub|customizeft">Customize</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -354,6 +362,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|identifierft">Identifier:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">identifier</property>
                         <property name="xalign">0</property>
@@ -368,6 +377,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|titleft">Title:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">title</property>
                         <property name="xalign">0</property>
@@ -382,6 +392,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|authorft">Author:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">author</property>
                         <property name="xalign">0</property>
@@ -396,6 +407,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|dateft">Date:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">date</property>
                         <property name="xalign">0</property>
@@ -410,6 +422,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="exportepub|languageft">Language:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">language</property>
                         <property name="xalign">0</property>
@@ -491,6 +504,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="exportepub|metadataft">Metadata</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -513,9 +527,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">

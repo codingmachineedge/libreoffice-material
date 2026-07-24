@@ -86,7 +86,6 @@
     <property name="width-request">800</property>
     <property name="height-request">600</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="matrixeditor|MatrixEditorDialog">Matrix Editor</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -103,6 +102,7 @@
           <object class="GtkButtonBox" id="dialog-action_area3">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="button_ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -177,6 +177,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="matrixeditor|Name">Name:</property>
+                        <property name="ellipsize">end</property>
                         <accessibility>
                           <relation type="label-for" target="matrixname"/>
                         </accessibility>

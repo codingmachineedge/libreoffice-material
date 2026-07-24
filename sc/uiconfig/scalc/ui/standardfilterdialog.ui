@@ -72,7 +72,6 @@
   </object>
   <object class="GtkDialog" id="StandardFilterDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="standardfilterdialog|StandardFilterDialog">Standard Filter</property>
     <property name="resizable">False</property>
     <property name="default-width">0</property>
@@ -89,6 +88,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="clear">
                 <property name="label" translatable="yes" context="standardfilterdialog|clear">_Clear</property>
@@ -937,6 +937,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="standardfilterdialog|label1">Filter Criteria</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -1222,6 +1223,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="standardfilterdialog|label6">Op_tions</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
               </object>
             </child>

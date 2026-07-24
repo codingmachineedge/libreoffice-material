@@ -20,7 +20,10 @@
   <object class="GtkBox" id="ShadowTabPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">24</property>
     <child>
       <object class="GtkFrame" id="property">
@@ -101,6 +104,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="shadowtabpage|FT_SHADOW_COLOR">_Color:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_SHADOW_COLOR</property>
                     <property name="xalign">0</property>
@@ -137,6 +141,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="shadowtabpage|FT_DISTANCE">_Distance:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_FLD_DISTANCE</property>
                     <property name="xalign">0</property>
@@ -186,6 +191,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="shadowtabpage|FT_SHADOW_BLUR">_Blur:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">LB_SHADOW_BLUR</property>
                     <property name="xalign">0</property>
@@ -200,6 +206,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="shadowtabpage|FT_TRANSPARENT">_Transparency:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">MTR_SHADOW_TRANSPARENT</property>
                     <property name="xalign">0</property>
@@ -245,6 +252,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="shadowtabpage|label">Properties</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -310,6 +318,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="shadowtabpage|label">Preview</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

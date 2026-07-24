@@ -26,6 +26,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -71,7 +72,10 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="halign">center</property>
-            <property name="border-width">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">12</property>
             <child>
@@ -114,6 +118,7 @@
                 <property name="label" translatable="yes" context="gotopagedialog|page_label">Page:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">page</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -131,8 +136,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

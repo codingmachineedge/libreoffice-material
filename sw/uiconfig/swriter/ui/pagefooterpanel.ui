@@ -14,7 +14,10 @@
         <property name="halign">end</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="border-width">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="row-spacing">6</property>
         <property name="column-spacing">6</property>
         <child>
@@ -25,6 +28,7 @@
             <property name="label" translatable="yes" context="pagefooterpanel|spacing">Spacing:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">spacingpreset</property>
+            <property name="ellipsize">end</property>
             <accessibility>
               <relation type="label-for" target="spacingpreset"/>
             </accessibility>
@@ -61,6 +65,7 @@
             <property name="label" translatable="yes" context="pagefooterpanel|margins">Margins:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">footermarginpreset</property>
+            <property name="ellipsize">end</property>
             <accessibility>
               <relation type="label-for" target="footermarginpreset"/>
             </accessibility>
@@ -136,6 +141,7 @@
             <property name="label" translatable="yes" context="pagefooterpanel|samecontent">Same Content:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">samecontentLB</property>
+            <property name="ellipsize">end</property>
             <accessibility>
               <relation type="label-for" target="samecontentLB"/>
             </accessibility>

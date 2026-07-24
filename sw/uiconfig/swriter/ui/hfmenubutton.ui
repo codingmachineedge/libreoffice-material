@@ -26,6 +26,12 @@
       </object>
     </child>
     <child>
+      <object class="GtkSeparatorMenuItem" id="deleteseparator">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="delete">
         <property name="visible">True</property>
         <property name="can-focus">False</property>

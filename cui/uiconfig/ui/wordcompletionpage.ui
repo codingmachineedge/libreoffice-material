@@ -29,7 +29,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <child>
       <!-- n-columns=2 n-rows=1 -->
@@ -58,6 +61,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="wordcompletionpage|wordcompletion">Word Completion</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -158,6 +162,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="wordcompletionpage|label2">Mi_n. word length:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">maxentries</property>
                     <property name="xalign">0</property>
@@ -191,6 +196,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="wordcompletionpage|label1">_Max. entries:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">maxentries</property>
                     <property name="xalign">0</property>
@@ -224,6 +230,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="wordcompletionpage|label3">Acc_ept with:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">acceptwith</property>
                     <property name="xalign">0</property>
@@ -274,6 +281,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="acorreplacepage|collectedwords">Collected Words</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>

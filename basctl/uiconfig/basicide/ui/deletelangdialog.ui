@@ -10,7 +10,6 @@
     <property name="type-hint">dialog</property>
     <property name="skip-taskbar-hint">True</property>
     <property name="message-type">question</property>
-    <property name="buttons">ok-cancel</property>
     <property name="text" translatable="yes" context="deletelangdialog|DeleteLangDialog">Do you want to delete the resources of the selected language(s)?</property>
     <property name="secondary-text" translatable="yes" context="deletelangdialog|DeleteLangDialog">You are about to delete the resources for the selected language(s). All user interface strings for this language(s) will be deleted.</property>
     <child internal-child="vbox">
@@ -21,6 +20,41 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">
             <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes" context="stock">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="delete">
+                <property name="label" translatable="yes" context="deletelangdialog|delete">_Delete</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+                <style>
+                  <class name="destructive-action"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -31,5 +65,9 @@
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">delete</action-widget>
+    </action-widgets>
   </object>
 </interface>

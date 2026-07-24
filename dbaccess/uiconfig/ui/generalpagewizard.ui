@@ -13,7 +13,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="row-spacing">6</property>
     <child>
@@ -21,6 +24,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="generalpagewizard|headerText">Welcome to the %PRODUCTNAME Database Wizard</property>
+        <property name="ellipsize">end</property>
         <property name="single-line-mode">True</property>
         <property name="xalign">0</property>
         <attributes>
@@ -94,6 +98,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="generalpagewizard|embeddeddbLabel">_Embedded database:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">embeddeddbList</property>
             <property name="xalign">0</property>
@@ -153,6 +158,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="generalpagewizard|docListLabel">_Recently used:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">documentList</property>
             <property name="xalign">0</property>
@@ -240,6 +246,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="generalpagewizard|docListLabelDatasourceType">_Database:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">datasourceType</property>
             <property name="xalign">0</property>

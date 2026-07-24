@@ -13,7 +13,10 @@
   <object class="GtkGrid" id="EndnotePage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">24</property>
     <child>
@@ -38,6 +41,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label19">Numbering</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">numberinglb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -67,6 +71,7 @@
                 <property name="label" translatable="yes" context="endnotepage|offset">Start at</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">offsetnf</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -98,6 +103,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label22">Before</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">prefix</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -129,6 +135,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label25">After</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">suffix</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -193,6 +200,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label20">Paragraph</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">parastylelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -223,6 +231,7 @@
                 <property name="label" translatable="yes" context="endnotepage|pagestyleft">Page</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">pagestylelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -253,6 +262,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label27">Text area</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">charanchorstylelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -283,6 +293,7 @@
                 <property name="label" translatable="yes" context="endnotepage|label28">Endnote area</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">charstylelb</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

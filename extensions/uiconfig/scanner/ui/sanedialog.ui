@@ -42,7 +42,6 @@
   </object>
   <object class="GtkDialog" id="SaneDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="sanedialog|SaneDialog">Scanner</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -56,6 +55,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="homogeneous">True</property>
             <property name="layout-style">end</property>
             <child>
@@ -116,6 +116,8 @@
                 <property name="label" translatable="yes" context="sanedialog|scanButton">_Scan</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
                 <child internal-child="accessible">
@@ -413,6 +415,7 @@
                         <property name="label" translatable="yes" context="sanedialog|label7">Device _used</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">deviceCombobox</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -427,6 +430,7 @@
                         <property name="label" translatable="yes" context="sanedialog|label8">Resolution [_DPI]</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">reslCombobox</property>
+                        <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -771,8 +775,8 @@
       <action-widget response="-11">help</action-widget>
       <action-widget response="101">deviceInfoButton</action-widget>
       <action-widget response="102">previewButton</action-widget>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

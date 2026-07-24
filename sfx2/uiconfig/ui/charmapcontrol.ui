@@ -38,6 +38,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="charmapcontrol|label1">Favorites</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -70,6 +71,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="charmapcontrol|label2">Recent</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="expand">False</property>

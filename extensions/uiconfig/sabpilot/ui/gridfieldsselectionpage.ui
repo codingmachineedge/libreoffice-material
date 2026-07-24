@@ -24,7 +24,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">12</property>
+    <property name="margin-end">12</property>
+    <property name="margin-top">12</property>
+    <property name="margin-bottom">12</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -225,6 +228,7 @@
                 <property name="label" translatable="yes" context="gridfieldsselectionpage|label3">Selected fields</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">selectedfields</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -371,6 +375,7 @@
                 <property name="label" translatable="yes" context="gridfieldsselectionpage|label1">Existing fields</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">existingfields</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>

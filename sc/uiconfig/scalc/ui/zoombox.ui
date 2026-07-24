@@ -13,6 +13,7 @@
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="zoombox|zoom_label">Scale</property>
         <property name="mnemonic_widget">zoom</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
         <property name="expand">False</property>

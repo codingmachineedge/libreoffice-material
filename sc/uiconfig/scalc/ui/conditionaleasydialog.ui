@@ -14,6 +14,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -147,6 +148,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="with">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="conditionaleasydialog|label">Apply cell style</property>
@@ -202,6 +204,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="description">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="conditionaleasydialog|label">Highlight cells with values %1</property>
@@ -275,6 +278,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="range">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="conditionaleasydialog|label">Range:</property>

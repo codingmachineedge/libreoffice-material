@@ -40,7 +40,6 @@
   </object>
   <object class="GtkDialog" id="TemplateDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="templatedlg|TemplateDialog">Templates</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -55,6 +54,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">

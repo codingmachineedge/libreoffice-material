@@ -4,7 +4,10 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="SignSignatureLineDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="title" translatable="yes" context="signsignatureline|SignSignatureLineDialog">Sign Signature Line</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -18,6 +21,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -105,6 +109,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signsignatureline|label_name" comments="Name of the signer">Your Name:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_name</property>
                       </object>
@@ -178,6 +183,7 @@
                         <property name="halign">start</property>
                         <property name="margin-bottom">6</property>
                         <property name="label" translatable="yes" context="signsignatureline|label_image_dimensions">Best image size: 600 x 100 px</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="style" value="italic"/>
                         </attributes>
@@ -197,6 +203,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signsignatureline|label_certificate" comments="Certificate to be used for signing">Certificate:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">btn_select_certificate</property>
                       </object>
@@ -239,6 +246,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="signsignatureline|label_sign">Sign</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -273,6 +281,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signsignatureline|label_hint">Instructions from the document creator:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">label_hint_text</property>
                       </object>
@@ -308,6 +317,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes" context="signsignatureline|label_add_comment">Add comment:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use-underline">True</property>
                         <property name="mnemonic-widget">edit_comment</property>
                       </object>
@@ -351,6 +361,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="signsignatureline|label_more">More</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>

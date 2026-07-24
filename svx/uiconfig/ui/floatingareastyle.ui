@@ -35,13 +35,16 @@
   <object class="GtkPopover" id="FloatingAreaStyle">
     <property name="can-focus">False</property>
     <property name="no-show-all">True</property>
-    <property name="border-width">4</property>
     <property name="constrain-to">none</property>
     <child>
       <!-- n-columns=1 n-rows=4 -->
       <object class="GtkGrid" id="container">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
+        <property name="margin-start">4</property>
+        <property name="margin-end">4</property>
+        <property name="margin-top">4</property>
+        <property name="margin-bottom">4</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
         <property name="orientation">vertical</property>
@@ -60,6 +63,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label1">_Angle:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">angle</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -172,6 +176,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label4">_Start value:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">start</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -186,6 +191,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label5">_End value:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">end</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -238,6 +244,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label6">_Border:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">border</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -278,6 +285,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label2">Center _X:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">centerx</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -292,6 +300,7 @@
                 <property name="label" translatable="yes" context="floatingareastyle|label3">Center _Y:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">centery</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>

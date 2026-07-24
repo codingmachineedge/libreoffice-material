@@ -48,6 +48,7 @@
             <property name="label" translatable="yes" context="sidebarerrorbar|label2">Category:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">comboboxtext_type</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>

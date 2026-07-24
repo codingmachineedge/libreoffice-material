@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="RightHeaderDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="rightheaderdialog|RightHeaderDialog">Header (right)</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -20,6 +19,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="reset">
                 <property name="label" translatable="yes" context="stock">_Reset</property>
@@ -107,10 +107,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="100">reset</action-widget>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="100">reset</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
 </interface>

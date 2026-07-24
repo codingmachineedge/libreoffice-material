@@ -6,7 +6,10 @@
   <object class="GtkGrid" id="OptSecurityPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
@@ -66,6 +69,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label1">Security Options and Warnings</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -245,12 +249,16 @@ Do you want to delete password list and reset master password?</property>
             <child>
               <!-- n-columns=1 n-rows=2 -->
               <object class="GtkGrid" id="grid6">
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">12</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="row-homogeneous">True</property>
                 <child>
                   <!-- n-columns=1 n-rows=1 -->
                   <object class="GtkGrid" id="grid9">
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">12</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
@@ -281,6 +289,8 @@ Do you want to delete password list and reset master password?</property>
                 <child>
                   <!-- n-columns=1 n-rows=1 -->
                   <object class="GtkGrid" id="grid10">
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">12</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
@@ -321,6 +331,7 @@ Do you want to delete password list and reset master password?</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label2">Passwords for Web Connections</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -390,6 +401,7 @@ Do you want to delete password list and reset master password?</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label3">Macro Security</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -485,6 +497,7 @@ Do you want to delete password list and reset master password?</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label8">Certificate Path</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -580,6 +593,7 @@ Do you want to delete password list and reset master password?</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label10">TSAs</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -696,6 +710,7 @@ Do you want to delete password list and reset master password?</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optsecuritypage|label10">GPG Certificate Manager</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

@@ -18,6 +18,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="close">
@@ -74,6 +75,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="wordcount|label1">Words</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -86,6 +88,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="wordcount|label2">Characters including spaces</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -98,6 +101,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="wordcount|label3">Characters excluding spaces</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -112,6 +116,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -127,6 +132,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -142,6 +148,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -156,6 +163,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
                 <property name="label" translatable="yes" context="wordcount|label9">Selection</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -171,6 +179,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
                 <property name="label" translatable="yes" context="wordcount|label10">Document</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -187,6 +196,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -202,6 +212,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -217,6 +228,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -230,6 +242,7 @@
                 <property name="can-focus">False</property>
                 <property name="no-show-all">True</property>
                 <property name="label" translatable="yes" context="wordcount|cjkcharsft">Asian characters and Korean words</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -244,6 +257,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -259,6 +273,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -272,6 +287,7 @@
                 <property name="can-focus">False</property>
                 <property name="no-show-all">True</property>
                 <property name="label" translatable="yes" context="wordcount|standardizedpages">Standardized pages</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
               </object>
               <packing>
@@ -286,6 +302,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -301,6 +318,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
               </object>
@@ -314,6 +332,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="wordcount|lbComments">Comments</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
                 <accessibility>
                   <relation type="label-for" target="docComments"/>
@@ -331,6 +350,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">            0</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
                 <accessibility>
                   <relation type="labelled-by" target="lbComments"/>
@@ -352,6 +372,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="wordcount|label_cursor">Words before/after cursor</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">1</property>
                 <accessibility>
                   <relation type="label-for" target="wordscursor"/>
@@ -372,6 +393,7 @@
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
                 <property name="label">       0/0</property>
+                <property name="ellipsize">end</property>
                 <property name="justify">right</property>
                 <property name="xalign">1</property>
                 <accessibility>
@@ -394,8 +416,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-7">close</action-widget>
     </action-widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">

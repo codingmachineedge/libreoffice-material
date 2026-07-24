@@ -291,6 +291,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="printdialog|totalnumpages">/ %n</property>
+                            <property name="ellipsize">end</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -425,6 +426,7 @@
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="label" translatable="yes" context="printdialog|labelstatus">Status:</property>
+                                            <property name="ellipsize">end</property>
                                             <accessibility>
                                               <relation type="label-for" target="status"/>
                                             </accessibility>
@@ -440,6 +442,7 @@
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="label" translatable="yes" context="printdialog|status">Default Printer</property>
+                                            <property name="ellipsize">end</property>
                                             <accessibility>
                                               <relation type="labelled-by" target="labelstatus"/>
                                             </accessibility>
@@ -489,6 +492,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes" context="printdialog|labelprinter">Printer</property>
+                                    <property name="ellipsize">end</property>
                                     <property name="use-underline">True</property>
                                     <property name="mnemonic-widget">printersbox</property>
                                     <attributes>
@@ -615,6 +619,7 @@
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="label" translatable="yes" context="printdialog|labelcopies">_Number of copies:</property>
+                                            <property name="ellipsize">end</property>
                                             <property name="use-underline">True</property>
                                             <property name="mnemonic-widget">copycount</property>
                                             <property name="xalign">1</property>
@@ -671,6 +676,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|includeevenodd">Include:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">evenoddbox</property>
                                                 <property name="xalign">0</property>
@@ -707,6 +713,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|fromwhich">_From which print:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">printextrabox</property>
                                                 <property name="xalign">1</property>
@@ -732,6 +739,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|labelpapersides">Paper _sides:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">sidesbox</property>
                                                 <property name="xalign">1</property>
@@ -768,6 +776,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|cbPrintOrder">Order:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">collate</property>
                                                 <property name="xalign">1</property>
@@ -874,6 +883,7 @@
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="label" translatable="yes" context="printdialog|rangeexpander">Collation and Paper Sides</property>
+                                            <property name="ellipsize">end</property>
                                             <property name="use-underline">True</property>
                                           </object>
                                         </child>
@@ -890,6 +900,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes" context="printdialog|label2">Range and Copies</property>
+                                    <property name="ellipsize">end</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -929,6 +940,7 @@
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="label" translatable="yes" context="printdialog|labelsize">Paper size:</property>
+                                            <property name="ellipsize">end</property>
                                             <property name="use-underline">True</property>
                                             <property name="mnemonic-widget">papersizebox</property>
                                             <property name="xalign">0</property>
@@ -960,6 +972,7 @@
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="label" translatable="yes" context="printdialog|labelorientation">Orientation:</property>
+                                            <property name="ellipsize">end</property>
                                             <property name="use-underline">True</property>
                                             <property name="mnemonic-widget">pageorientationbox</property>
                                             <property name="xalign">0</property>
@@ -1095,6 +1108,7 @@
                                               <object class="GtkLabel" id="pagestxt">
                                                 <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes" context="printdialog|pagespersheettxt">Pages:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">pagerows</property>
                                                 <property name="xalign">1</property>
@@ -1127,6 +1141,7 @@
                                               <object class="GtkLabel" id="by">
                                                 <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes" context="printdialog|by">by</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">pagecols</property>
                                               </object>
@@ -1158,6 +1173,7 @@
                                               <object class="GtkLabel" id="pagemargintxt1">
                                                 <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes" context="printdialog|pagemargintxt1">Margin:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">pagemarginsb</property>
                                                 <property name="xalign">1</property>
@@ -1190,6 +1206,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|pagemargintxt2">between pages</property>
+                                                <property name="ellipsize">end</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">2</property>
@@ -1201,6 +1218,7 @@
                                               <object class="GtkLabel" id="sheetmargintxt1">
                                                 <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes" context="printdialog|sheetmargintxt1">Distance:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">sheetmarginsb</property>
                                                 <property name="xalign">1</property>
@@ -1233,6 +1251,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes" context="printdialog|sheetmargintxt2">to sheet border</property>
+                                                <property name="ellipsize">end</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">2</property>
@@ -1246,6 +1265,7 @@
                                                 <property name="can-focus">False</property>
                                                 <property name="valign">center</property>
                                                 <property name="label" translatable="yes" context="printdialog|labelorder">Order:</property>
+                                                <property name="ellipsize">end</property>
                                                 <property name="use-underline">True</property>
                                                 <property name="mnemonic-widget">orderbox</property>
                                                 <property name="xalign">1</property>
@@ -1363,6 +1383,7 @@
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="label" translatable="yes" context="printdialog|layoutexpander">Pages per Sheet</property>
+                                            <property name="ellipsize">end</property>
                                             <property name="use-underline">True</property>
                                           </object>
                                         </child>
@@ -1379,6 +1400,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes" context="printdialog|label3">Page Layout</property>
+                                    <property name="ellipsize">end</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -1402,6 +1424,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="printdialog|generallabel">General</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="tab-fill">False</property>
@@ -1426,6 +1449,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label">custom</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="position">1</property>

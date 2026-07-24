@@ -38,7 +38,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -62,6 +65,8 @@
             <child>
               <!-- n-columns=2 n-rows=1 -->
               <object class="GtkGrid" id="grid4">
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">12</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
@@ -117,6 +122,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optfontspage|label2">_Font:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">font1</property>
                     <property name="xalign">0</property>
@@ -131,6 +137,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optfontspage|label3">Re_place with:</property>
+                    <property name="ellipsize">end</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">font2</property>
                     <property name="xalign">0</property>
@@ -352,6 +359,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optfontspage|label4">Replacement Table</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -386,6 +394,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="optfontspage|label8">Fon_ts:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">fontname</property>
                 <property name="xalign">0</property>
@@ -401,6 +410,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="optfontspage|label9">_Size:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">fontheight</property>
                 <property name="xalign">0</property>
@@ -513,6 +523,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optfontspage|label1">Font Settings for HTML, Basic and SQL Sources</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

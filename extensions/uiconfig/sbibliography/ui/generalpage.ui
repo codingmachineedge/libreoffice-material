@@ -24,13 +24,16 @@
           <object class="GtkViewport" id="viewport">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="border-width">6</property>
             <child>
               <!-- n-columns=6 n-rows=15 -->
               <object class="GtkGrid" id="grid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="row-spacing">6</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="margin-top">12</property>
+                <property name="margin-bottom">12</property>
+                <property name="row-spacing">12</property>
                 <property name="column-spacing">12</property>
                 <child>
                   <object class="GtkLabel" id="shortname">
@@ -40,6 +43,7 @@
                     <property name="label" translatable="yes" context="generalpage|shortname">_Short name</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">shortnamecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -54,6 +58,7 @@
                     <property name="label" translatable="yes" context="generalpage|authtype">_Type</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">authtypecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -68,6 +73,7 @@
                     <property name="label" translatable="yes" context="generalpage|authors">Author(s)</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">authorscontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -82,6 +88,7 @@
                     <property name="label" translatable="yes" context="generalpage|publisher">_Publisher</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">publishercontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -96,6 +103,7 @@
                     <property name="label" translatable="yes" context="generalpage|chapter">_Chapter</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">chaptercontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -110,6 +118,7 @@
                     <property name="label" translatable="yes" context="generalpage|title">Tit_le</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">titlecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -124,6 +133,7 @@
                     <property name="label" translatable="yes" context="generalpage|address">A_ddress</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">addresscontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -138,6 +148,7 @@
                     <property name="label" translatable="yes" context="generalpage|pages">Pa_ge(s)</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">pagescontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -152,6 +163,7 @@
                     <property name="label" translatable="yes" context="generalpage|year">_Year</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">yearcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -166,6 +178,7 @@
                     <property name="label" translatable="yes" context="generalpage|isbn">_ISBN</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">isbncontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -180,6 +193,7 @@
                     <property name="label" translatable="yes" context="generalpage|editor">Editor</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">editorcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -194,6 +208,7 @@
                     <property name="label" translatable="yes" context="generalpage|booktitle">_Book title</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">booktitlecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -208,6 +223,7 @@
                     <property name="label" translatable="yes" context="generalpage|edition">Ed_ition</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">editioncontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -222,6 +238,7 @@
                     <property name="label" translatable="yes" context="generalpage|volume">Volume</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">volumecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -236,6 +253,7 @@
                     <property name="label" translatable="yes" context="generalpage|institution">Instit_ution</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">institutioncontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -250,6 +268,7 @@
                     <property name="label" translatable="yes" context="generalpage|month">_Month</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">monthcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -264,6 +283,7 @@
                     <property name="label" translatable="yes" context="generalpage|publicationtype">Publication t_ype</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">publicationtypecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -278,6 +298,7 @@
                     <property name="label" translatable="yes" context="generalpage|university">University</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">universitycontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -292,6 +313,7 @@
                     <property name="label" translatable="yes" context="generalpage|reporttype">Type of re_port</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">reporttypecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -306,6 +328,7 @@
                     <property name="label" translatable="yes" context="generalpage|organization">Organi_zation</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">organizationcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -320,6 +343,7 @@
                     <property name="label" translatable="yes" context="generalpage|journal">_Journal</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">journalcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -334,6 +358,7 @@
                     <property name="label" translatable="yes" context="generalpage|annotation">Ann_otation</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">annotationcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -348,6 +373,7 @@
                     <property name="label" translatable="yes" context="generalpage|number">Numb_er</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">numbercontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -362,6 +388,7 @@
                     <property name="label" translatable="yes" context="generalpage|note">_Note</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">notecontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -376,6 +403,7 @@
                     <property name="label" translatable="yes" context="generalpage|series">Se_ries</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">seriescontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -390,6 +418,7 @@
                     <property name="label" translatable="yes" context="generalpage|url">URL</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">urlcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -404,6 +433,7 @@
                     <property name="label" translatable="yes" context="generalpage|custom1">User-defined field _1</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">custom1control</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -418,6 +448,7 @@
                     <property name="label" translatable="yes" context="generalpage|custom4">User-defined field _4</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">custom4control</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -432,6 +463,7 @@
                     <property name="label" translatable="yes" context="generalpage|custom2">User-defined field _2</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">custom2control</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -446,6 +478,7 @@
                     <property name="label" translatable="yes" context="generalpage|custom5">User-defined field _5</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">custom5control</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -460,6 +493,7 @@
                     <property name="label" translatable="yes" context="generalpage|custom3">User-defined field _3</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">custom3control</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -881,6 +915,7 @@
                     <property name="label" translatable="yes" context="generalpage|localurl">Local copy</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">localurlcontrol</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>

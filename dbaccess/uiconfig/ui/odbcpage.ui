@@ -32,6 +32,7 @@
                 <property name="label" translatable="yes" context="odbcpage|charsetlabel">_Character set:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">charset</property>
+                <property name="ellipsize">end</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -99,6 +100,7 @@
                     <property name="label" translatable="yes" context="odbcpage|optionslabel">ODBC _options:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">options</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

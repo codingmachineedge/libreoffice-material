@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="PrinterSetupDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
     <property name="title" translatable="yes" context="printersetupdialog|PrinterSetupDialog">Printer Setup</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -19,6 +18,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="help">
@@ -109,6 +109,7 @@
                     <property name="label" translatable="yes" context="printersetupdialog|label2">Name:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">name</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -252,6 +253,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="printersetupdialog|label1">Printer</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -268,8 +270,8 @@
     </child>
     <action-widgets>
       <action-widget response="-11">help</action-widget>
-      <action-widget response="-5">ok</action-widget>
       <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="PrinterSetupDialog-atkobject">

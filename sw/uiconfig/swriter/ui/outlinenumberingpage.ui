@@ -26,7 +26,10 @@
   <object class="GtkGrid" id="OutlineNumberingPage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">6</property>
     <property name="column-spacing">12</property>
     <child>
@@ -173,6 +176,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label4">Number:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">numbering</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -203,6 +207,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label10">Start at:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">startat</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -236,6 +241,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label3">Paragraph style:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">style</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -267,6 +273,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label5">Character style:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">charstyle</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -297,6 +304,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|sublevelsft">Show sublevels:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">sublevelsnf</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -401,6 +409,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label8">Before:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">prefix</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -415,6 +424,7 @@
                     <property name="label" translatable="yes" context="outlinenumberingpage|label9">After:</property>
                     <property name="use-underline">True</property>
                     <property name="mnemonic-widget">suffix</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>

@@ -35,6 +35,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="sidebarnumberformat|numberformatcomboboxlabel">_Category</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">numberformatcombobox</property>
             <property name="xalign">0</property>
@@ -124,6 +125,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="sidebarnumberformat|decimalplaceslabel">_Decimal places:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">decimalplaces</property>
                 <property name="xalign">0</property>
@@ -138,6 +140,7 @@
               <object class="GtkLabel" id="denominatorplaceslabel">
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="sidebarnumberformat|denominatorplaceslabel">Den_ominator places:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">denominatorplaces</property>
                 <property name="xalign">0</property>
@@ -209,6 +212,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="sidebarnumberformat|leadingzeroeslabel">Leading _zeroes:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">leadingzeroes</property>
             <property name="xalign">0</property>

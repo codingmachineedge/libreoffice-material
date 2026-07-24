@@ -104,6 +104,7 @@
                 <property name="label" context="charnamepage|westfontnameft-cjk">Name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">edWestFontName</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -177,6 +178,7 @@
                 <property name="label" context="charnamepage|weststyleft-cjk">Style:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbWestStyle</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -214,6 +216,7 @@
                 <property name="label" translatable="yes" context="charnamepage|westsizeft-cjk">Size:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbWestSize</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -251,6 +254,7 @@
                 <property name="label" translatable="yes" context="charnamepage|westlangft-cjk">Language:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbWestLanguage</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -371,6 +375,7 @@
                 <property name="label" context="charnamepage|eastfontnameft">Name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">edCJKFontName</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -444,6 +449,7 @@
                 <property name="label" context="charnamepage|eaststyleft">Style:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCJKStyle</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -481,6 +487,7 @@
                 <property name="label" translatable="yes" context="charnamepage|eastsizeft">Size:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCJKSize</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -518,6 +525,7 @@
                 <property name="label" translatable="yes" context="charnamepage|eastlangft">Language:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCJKLanguage</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -626,6 +634,7 @@
                 <property name="label" context="charnamepage|ctlfontnameft">Name:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">edCTLFontName</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -699,6 +708,7 @@
                 <property name="label" context="charnamepage|ctlstyleft">Style:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCTLStyle</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -736,6 +746,7 @@
                 <property name="label" translatable="yes" context="charnamepage|ctlsizeft">Size:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCTLSize</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -773,6 +784,7 @@
                 <property name="label" translatable="yes" context="charnamepage|ctllangft">Language:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">cbCTLLanguage</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

@@ -44,7 +44,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <object class="GtkFrame" id="typeframe">
@@ -340,6 +343,7 @@
                 <property name="label" translatable="yes" context="flddocumentpage|levelft">_Up to level:</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">level</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -388,6 +392,7 @@
                 <property name="label" translatable="yes" context="flddocumentpage|daysft">Offs_et in days</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">offset</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -402,6 +407,7 @@
                 <property name="label" translatable="yes" context="flddocumentpage|minutesft">Offs_et in minutes</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">offset</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -428,6 +434,7 @@
                 <property name="label" translatable="yes" context="flddocumentpage|valueft">_Value</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">value</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

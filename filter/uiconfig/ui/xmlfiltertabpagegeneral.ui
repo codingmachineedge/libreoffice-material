@@ -5,7 +5,10 @@
   <object class="GtkBox" id="XmlFilterTabPageGeneral">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="spacing">12</property>
     <child>
       <!-- n-columns=2 n-rows=5 -->
@@ -23,6 +26,7 @@
             <property name="label" translatable="yes" context="xmlfiltertabpagegeneral|label2">_Filter name:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">filtername</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -56,6 +60,7 @@
             <property name="label" translatable="yes" context="xmlfiltertabpagegeneral|label3">_Application:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">application</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -94,6 +99,7 @@
             <property name="label" translatable="yes" context="xmlfiltertabpagegeneral|label4">_Name of file type:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">interfacename</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -127,6 +133,7 @@
             <property name="label" translatable="yes" context="xmlfiltertabpagegeneral|label5">File _extension:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">extension</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
           </object>
           <packing>
@@ -160,6 +167,7 @@
             <property name="label" translatable="yes" context="xmlfiltertabpagegeneral|label6">Comment_s:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">description</property>
+            <property name="ellipsize">end</property>
             <property name="xalign">1</property>
             <property name="yalign">0</property>
           </object>

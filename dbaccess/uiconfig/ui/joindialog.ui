@@ -4,7 +4,6 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="JoinDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">6</property>
     <property name="title" translatable="yes" context="joindialog|JoinDialog">Join Properties</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -22,6 +21,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="ok">
@@ -129,6 +129,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="joindialog|label1">Tables Involved</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -188,6 +189,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="joindialog|label2">Fields Involved</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -220,6 +222,7 @@
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="label" translatable="yes" context="joindialog|label5">_Type:</property>
+                        <property name="ellipsize">end</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">type</property>
                         <property name="xalign">1</property>
@@ -271,6 +274,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" context="joindialog|label6">Options</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -292,9 +296,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">

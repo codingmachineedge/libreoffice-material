@@ -6,7 +6,10 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="label-xalign">0</property>
     <property name="shadow-type">none</property>
     <child>
@@ -49,6 +52,8 @@
             <child>
               <!-- n-columns=1 n-rows=3 -->
               <object class="GtkGrid" id="grid4">
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">12</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-start">18</property>
@@ -154,6 +159,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optonlineupdatepage|lastchecked">Last checked: %DATE%, %TIME%</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="scale" value="0.90000000000000002"/>
@@ -170,6 +176,7 @@
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="label" translatable="yes" context="optonlineupdatepage|neverchecked">Last checked: Not yet</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="scale" value="0.90000000000000002"/>
@@ -297,6 +304,7 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="optonlineupdatepage|destpathlabel">Download destination:</property>
+                            <property name="ellipsize">end</property>
                             <property name="xalign">0</property>
                             <attributes>
                               <attribute name="scale" value="0.90000000000000002"/>
@@ -365,6 +373,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optonlineupdatepage|labeldest">Download Destination</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -421,6 +430,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="optonlineupdatepage|useragent_label">User Agent:</property>
+                        <property name="ellipsize">end</property>
                         <property name="yalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.90000000000000002"/>
@@ -436,6 +446,7 @@
                       <object class="GtkLabel" id="useragent_changed">
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="optonlineupdatepage|useragent_changed">Hit apply to update</property>
+                        <property name="ellipsize">end</property>
                         <property name="yalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.90000000000000002"/>
@@ -492,6 +503,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optonlineupdatepage|labelagent">User Agent</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -544,6 +556,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes" context="optonlineupdatepage|labelMar">Automatic Update</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -563,6 +576,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="label" translatable="yes" context="optonlineupdatepage|label1">Online Update Options</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>

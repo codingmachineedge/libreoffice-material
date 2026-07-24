@@ -39,6 +39,7 @@
         <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="spacing">12</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
@@ -205,6 +206,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label1">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="datafieldoptionsdialog|label1">Sort by</property>
@@ -236,6 +238,7 @@
                     <property name="column-spacing">12</property>
                     <child>
                       <object class="GtkLabel" id="label3">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="datafieldoptionsdialog|label3">_Layout:</property>
@@ -309,6 +312,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label2">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="datafieldoptionsdialog|label2">Display Options</property>
@@ -388,6 +392,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="showft">
+                            <property name="ellipsize">end</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes" context="datafieldoptionsdialog|showft">items</property>
@@ -408,6 +413,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="showfromft">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="datafieldoptionsdialog|showfromft">_From:</property>
@@ -441,6 +447,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="usingft">
+                        <property name="ellipsize">end</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="datafieldoptionsdialog|usingft">_Using field:</property>
@@ -472,6 +479,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label4">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="datafieldoptionsdialog|label4">Show Automatically</property>
@@ -548,6 +556,7 @@
                 </child>
                 <child type="label">
                   <object class="GtkLabel" id="label9">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="datafieldoptionsdialog|label9">Hide Items</property>
@@ -570,6 +579,7 @@
                 <property name="column-spacing">12</property>
                 <child>
                   <object class="GtkLabel" id="hierarchyft">
+                    <property name="ellipsize">end</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="datafieldoptionsdialog|hierarchyft">Hierarch_y:</property>

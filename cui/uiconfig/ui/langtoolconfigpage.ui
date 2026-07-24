@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -132,6 +135,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="langtoolconfigpage|base">Base URL:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">baseurl</property>
               </object>
@@ -158,6 +162,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="langtoolconfigpage|usernamelbl">Username:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">username</property>
               </object>
@@ -172,6 +177,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="langtoolconfigpage|apikeylbl">API key:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">apikey</property>
               </object>
@@ -268,6 +274,7 @@
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" context="langtoolconfigpage|restlbl">REST protocol:</property>
+                <property name="ellipsize">end</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">restprotocol</property>
               </object>

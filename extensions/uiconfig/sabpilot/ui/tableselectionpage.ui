@@ -25,9 +25,12 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">12</property>
+    <property name="margin-end">12</property>
+    <property name="margin-top">12</property>
+    <property name="margin-bottom">12</property>
     <property name="orientation">vertical</property>
-    <property name="spacing">6</property>
+    <property name="spacing">12</property>
     <child>
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
@@ -92,6 +95,7 @@ Please note that the settings made on this page will take effect immediately upo
                     <property name="label" translatable="yes" context="tableselectionpage|datasourcelabel">_Data source:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">datasource</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -177,6 +181,7 @@ Please note that the settings made on this page will take effect immediately upo
                     <property name="label" translatable="yes" context="tableselectionpage|tablelabel">_Table / Query:</property>
                     <property name="use_underline">True</property>
                     <property name="mnemonic_widget">table</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

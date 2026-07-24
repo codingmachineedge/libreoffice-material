@@ -34,7 +34,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="row-spacing">12</property>
     <property name="column-spacing">24</property>
     <child>
@@ -143,6 +146,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optfltrembedpage|label2" comments="The [L] here is repeated as the column title for the &quot;Load&quot; column of this options page">[L]: Load and convert the object</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="scale" value="0.90000000000000002"/>
@@ -159,6 +163,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optfltrembedpage|label3" comments="The [S] here is repeated as the column title for the &quot;Save&quot; column of this options page">[S]: Convert and save the object</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="scale" value="0.90000000000000002"/>
@@ -184,6 +189,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optfltrembedpage|label1">Embedded Objects</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -219,6 +225,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes" context="optfltrembedpage|label5">Export as:</property>
+                    <property name="ellipsize">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -306,6 +313,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optfltrembedpage|label4">Character Highlighting</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
@@ -382,6 +390,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="optfltrembedpage|label5">Lock Files</property>
+            <property name="ellipsize">end</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>

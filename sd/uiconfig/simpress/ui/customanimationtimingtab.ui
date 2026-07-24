@@ -17,7 +17,10 @@
     <property name="can_focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border_width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -44,6 +47,7 @@
                 <property name="label" translatable="yes" context="customanimationtimingtab|start_label">_Start:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">start_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -58,6 +62,7 @@
                 <property name="label" translatable="yes" context="customanimationtimingtab|delay_label">_Delay:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">delay_value</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -72,6 +77,7 @@
                 <property name="label" translatable="yes" context="customanimationtimingtab|duration_label">D_uration:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">anim_duration</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -86,6 +92,7 @@
                 <property name="label" translatable="yes" context="customanimationtimingtab|repeat_label">_Repeat:</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">repeat_list</property>
+                <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
               </object>
               <packing>

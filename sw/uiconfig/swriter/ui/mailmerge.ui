@@ -12,7 +12,6 @@
   </object>
   <object class="GtkDialog" id="MailmergeDialog">
     <property name="can-focus">False</property>
-    <property name="border-width">5</property>
     <property name="title" translatable="yes" context="mailmerge|MailmergeDialog">Mail Merge</property>
     <property name="modal">True</property>
     <property name="default-width">0</property>
@@ -27,6 +26,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkButton" id="ok">
                 <property name="label" translatable="yes" context="stock">_OK</property>
@@ -221,6 +221,7 @@
                                 <property name="label" translatable="yes" context="mailmerge|label3">_To:</property>
                                 <property name="use-underline">True</property>
                                 <property name="mnemonic-widget">to</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -262,6 +263,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="mailmerge|recordslabel">Records</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -480,6 +482,7 @@
                                         <property name="label" translatable="yes" context="mailmerge|pathlabel">_Path:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">path</property>
+                                        <property name="ellipsize">end</property>
                                         <property name="xalign">0</property>
                                       </object>
                                       <packing>
@@ -495,6 +498,7 @@
                                         <property name="label" translatable="yes" context="mailmerge|fileformatlabel">F_ile format:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">fileformat</property>
+                                        <property name="ellipsize">end</property>
                                         <property name="xalign">0</property>
                                       </object>
                                       <packing>
@@ -578,6 +582,7 @@
                                         <property name="label" translatable="yes" context="mailmerge|subjectlabel">_Subject:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">subject</property>
+                                        <property name="ellipsize">end</property>
                                         <property name="xalign">0</property>
                                       </object>
                                       <packing>
@@ -606,6 +611,7 @@
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes" context="mailmerge|attachmentslabel">Attachments:</property>
                                         <property name="mnemonic-widget">attachments</property>
+                                        <property name="ellipsize">end</property>
                                         <property name="xalign">0</property>
                                       </object>
                                       <packing>
@@ -732,6 +738,7 @@
                                         <property name="label" translatable="yes" context="mailmerge|passwd-label">Password field:</property>
                                         <property name="use-underline">True</property>
                                         <property name="mnemonic-widget">passwd-combobox</property>
+                                        <property name="ellipsize">end</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
@@ -793,6 +800,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes" context="mailmerge|savemergeddoclabel">Save Merged Document</property>
+                                <property name="ellipsize">end</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -812,6 +820,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes" context="mailmerge|outputlabel">Output</property>
+                        <property name="ellipsize">end</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -841,9 +850,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">ok</action-widget>
-      <action-widget response="-6">cancel</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
     </action-widgets>
     <child internal-child="accessible">
       <object class="AtkObject" id="MailmergeDialog-atkobject">

@@ -19,6 +19,7 @@
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="spacing">12</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="close">
@@ -374,8 +375,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">close</action-widget>
       <action-widget response="-11">help</action-widget>
+      <action-widget response="-7">close</action-widget>
     </action-widgets>
   </object>
 </interface>

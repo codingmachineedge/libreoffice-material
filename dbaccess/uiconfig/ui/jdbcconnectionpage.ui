@@ -7,7 +7,10 @@
     <property name="can-focus">False</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
-    <property name="border-width">6</property>
+    <property name="margin-start">6</property>
+    <property name="margin-end">6</property>
+    <property name="margin-top">6</property>
+    <property name="margin-bottom">6</property>
     <property name="orientation">vertical</property>
     <property name="spacing">12</property>
     <child>
@@ -17,6 +20,7 @@
         <property name="halign">start</property>
         <property name="margin-bottom">6</property>
         <property name="label" translatable="yes" context="jdbcconnectionpage|header">Set Up a Connection to a JDBC Database</property>
+        <property name="ellipsize">end</property>
         <attributes>
           <attribute name="weight" value="bold"/>
         </attributes>
@@ -150,6 +154,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes" context="jdbcconnectionpage|jdbcLabel">JDBC d_river class:</property>
+            <property name="ellipsize">end</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">jdbcEntry</property>
           </object>
