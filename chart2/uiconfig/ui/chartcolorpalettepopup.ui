@@ -46,6 +46,7 @@
                 <property name="label" translatable="yes" context="chartcolorpalettepopup|colorfulwin">Colorful</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">colorful_palettes</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -95,6 +96,7 @@
                 <property name="label" translatable="yes" context="chartcolorpalettepopup|monochromaticwin">Monochromatic</property>
                 <property name="use-underline">True</property>
                 <property name="mnemonic-widget">monochromatic_palettes</property>
+                <property name="ellipsize">end</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>

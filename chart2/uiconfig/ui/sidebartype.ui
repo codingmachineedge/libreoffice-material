@@ -111,6 +111,7 @@
             <property name="label" translatable="yes" context="sidebartype|shapeft">Sh_ape</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">shape</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -176,6 +177,7 @@
             <property name="label" translatable="yes" context="sidebartype|linetypeft">_Line type</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">linetype</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>

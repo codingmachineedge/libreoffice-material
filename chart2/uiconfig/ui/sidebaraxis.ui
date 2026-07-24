@@ -58,6 +58,7 @@
             <property name="label" translatable="yes" context="sidebaraxis|label1">_Label position:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">comboboxtext_label_position</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -90,6 +91,7 @@
             <property name="label" translatable="yes" context="sidebaraxis|label2">_Text orientation:</property>
             <property name="use-underline">True</property>
             <property name="mnemonic-widget">spinbutton1</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
